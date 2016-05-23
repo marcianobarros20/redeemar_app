@@ -46,7 +46,7 @@ public class RecyclerViewExample extends AppCompatActivity {
 
     private static final String LOGTAG = "BrandMain";
 
-    private ArrayList<Student> mDataSet;
+    private ArrayList<Offer> mDataSet;
 
     private Toolbar toolbar;
 
@@ -83,7 +83,7 @@ public class RecyclerViewExample extends AppCompatActivity {
         }
 
 
-        mDataSet = new ArrayList<Student>();
+        mDataSet = new ArrayList<Offer>();
         Log.d("RecyclerView", "First One");
 
         if (toolbar != null) {

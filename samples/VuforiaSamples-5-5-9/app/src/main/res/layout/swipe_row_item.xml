@@ -16,34 +16,16 @@
         android:weightSum="3">
 
         <TextView
-            android:id="@+id/tvEdit"
+            android:id="@+id/bank_offer"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="#0076a5"
             android:gravity="center"
-            android:text="Edit"
+            android:text="Bank"
             android:textColor="#fff" />
 
-        <TextView
-            android:id="@+id/tvShare"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#003c54"
-            android:gravity="center"
-            android:text="Share"
-            android:textColor="#fff" />
 
-        <TextView
-            android:id="@+id/tvDelete"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#0076a5"
-            android:gravity="center"
-            android:text="Delete"
-            android:textColor="#fff" />
     </LinearLayout>
 
 
@@ -55,14 +37,15 @@
         android:layout_height="match_parent"
         android:weightSum="1">
 
-        <ImageButton
-            android:id="@+id/btnLocation"
+        <TextView
+            android:id="@+id/pass_offer"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@null"
+            android:background="#0076a5"
             android:gravity="center"
-            android:src="@drawable/ic_map" />
+            android:text="Pass"
+            android:textColor="#fff" />
     </LinearLayout>
 
     <!-- Top View,  Row itemView of RecyclerView -->
