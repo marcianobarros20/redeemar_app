@@ -1,0 +1,245 @@
+[
+    {
+        "outputFile": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/res/merged/debug/values-v11/values-v11.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endLine": 4,
+                    "endColumn": 12,
+                    "endOffset": 187
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/src/main/res/values-v11/styles.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 182,
+                        "endLine": 8,
+                        "endColumn": 12,
+                        "endOffset": 316
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 192,
+                    "endLine": 10,
+                    "endColumn": 12,
+                    "endOffset": 606
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 11,
+                    "startColumn": 4,
+                    "startOffset": 611,
+                    "endLine": 16,
+                    "endColumn": 12,
+                    "endOffset": 1031
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 17,
+                    "startColumn": 4,
+                    "startOffset": 1036,
+                    "endLine": 22,
+                    "endColumn": 12,
+                    "endOffset": 1459
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 23,
+                    "startColumn": 4,
+                    "startOffset": 1464,
+                    "endLine": 28,
+                    "endColumn": 12,
+                    "endOffset": 1885
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 29,
+                    "startColumn": 4,
+                    "startOffset": 1890,
+                    "endLine": 34,
+                    "endColumn": 12,
+                    "endOffset": 2314
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 35,
+                    "startColumn": 4,
+                    "startOffset": 2319,
+                    "endLine": 40,
+                    "endColumn": 12,
+                    "endOffset": 2739
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 41,
+                    "startColumn": 4,
+                    "startOffset": 2744,
+                    "endColumn": 88,
+                    "endOffset": 2828
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 42,
+                    "startColumn": 4,
+                    "startOffset": 2833,
+                    "endColumn": 100,
+                    "endOffset": 2929
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 43,
+                    "startColumn": 4,
+                    "startOffset": 2934,
+                    "endLine": 47,
+                    "endColumn": 12,
+                    "endOffset": 3337
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 48,
+                    "startColumn": 4,
+                    "startOffset": 3342,
+                    "endLine": 52,
+                    "endColumn": 12,
+                    "endOffset": 3757
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 53,
+                    "startColumn": 4,
+                    "startOffset": 3762,
+                    "endLine": 54,
+                    "endColumn": 12,
+                    "endOffset": 3864
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 55,
+                    "startColumn": 4,
+                    "startOffset": 3869,
+                    "endLine": 56,
+                    "endColumn": 12,
+                    "endOffset": 3993
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 57,
+                    "startColumn": 4,
+                    "startOffset": 3998,
+                    "endLine": 61,
+                    "endColumn": 12,
+                    "endOffset": 4357
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 62,
+                    "startColumn": 4,
+                    "startOffset": 4362,
+                    "endColumn": 70,
+                    "endOffset": 4428
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 63,
+                    "startColumn": 4,
+                    "startOffset": 4433,
+                    "endColumn": 82,
+                    "endOffset": 4511
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 64,
+                    "startColumn": 4,
+                    "startOffset": 4516,
+                    "endLine": 114,
+                    "endColumn": 12,
+                    "endOffset": 8260
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            },
+            {
+                "to": {
+                    "startLine": 115,
+                    "startColumn": 4,
+                    "startOffset": 8265,
+                    "endLine": 166,
+                    "endColumn": 12,
+                    "endOffset": 12149
+                },
+                "from": {
+                    "file": "/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values-v11/values-v11.xml"
+                }
+            }
+        ]
+    }
+]

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg01">
+
+    <TextView
+        android:id="@+id/about_text_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_bgcolor"
+        android:gravity="center"
+        android:layout_alignParentTop="true"
+        android:fontFamily="sans-serif"
+        android:textStyle="bold"
+        android:text="@string/success"
+        android:padding="@dimen/menu_title_padding"
+        android:textSize="@dimen/menu_title" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/valid_logo_scanned"
+        android:id="@+id/tvSuccessMessage"
+        style="@style/success_msg"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/looking_for_offers"
+        android:id="@+id/tvUniqueTargetId"
+        style="@style/success_msg"
+        android:layout_below="@+id/tvSuccessMessage"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>

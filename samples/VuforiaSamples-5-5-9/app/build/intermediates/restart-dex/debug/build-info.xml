@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<instant-run
+    abi="armeabi-v7a,armeabi"
+    api-level="22"
+    density="xhdpi"
+    format="7"
+    timestamp="3601350540583" >
+
+    <task
+        name="javac"
+        duration="217" />
+    <task
+        name="instant-run-dex"
+        duration="0" />
+    <task
+        name="instant-run-transform"
+        duration="194" />
+    <task
+        name="verifier"
+        duration="16" />
+
+    <artifact
+        location="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/outputs/apk/VuforiaSamples-5-5-9-debug.apk"
+        type="MAIN" />
+
+    <build timestamp="3601350540583" >
+        <artifact
+            location="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/outputs/apk/VuforiaSamples-5-5-9-debug.apk"
+            type="MAIN" />
+    </build>
+
+</instant-run>

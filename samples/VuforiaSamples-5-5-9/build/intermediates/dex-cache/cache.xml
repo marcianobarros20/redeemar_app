@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.daimajia.swipelayout/library/1.2.0/jars/classes.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="e84b30031d4bab89a2b5c45af4eb9213828524dd">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.daimajia.swipelayout-library-1.2.0_f62c5611b887b2df908f6ba897617727c2d96e05/classes.dex" />
+    </item>
+    <item
+        jar="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/design/22.2.0/jars/classes.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="fc63b820d54c8a27a3a614bdd93920e0076581c2">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-design-22.2.0_188bdb6bea2e60b08bdb2c081e87734d0a4520d6/classes.dex" />
+    </item>
+    <item
+        jar="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/classes.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-v4-22.2.0_beff2b3e2eea699a1280f714a2c371fa66a1a9f2/classes.dex" />
+    </item>
+    <item
+        jar="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/libs/internal_impl-22.2.0.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-22.2.0_078b458d9d7c4f65196f0e348ead9188632a7ca1/classes.dex" />
+    </item>
+    <item
+        jar="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="2fdca0d757891906567dadf8442c0bfac294e287">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_2d03253bc12c328665ca3de33f692b31653ea2e2/classes.dex" />
+    </item>
+    <item
+        jar="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/cardview-v7/22.2.0/jars/classes.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="97f7e239e86ef994de894818fdd8a71d2e89d6aa">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-cardview-v7-22.2.0_58afd693baf22b66fb2df1dfb64fcb5af222b65d/classes.dex" />
+    </item>
+    <item
+        jar="/home/tier5/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/22.2.0/support-annotations-22.2.0.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-22.2.0_061cbd27cd5a2e553cdc4837523eb9056c29316a/classes.dex" />
+    </item>
+    <item
+        jar="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="699688949c8305bc31be7bcce1016bc44ee251b8">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_1d1494795f2cc0d5154b03ab33c499a20b287634/classes.dex" />
+    </item>
+    <item
+        jar="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/jars/classes.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-appcompat-v7-22.2.0_e4e91f3a68dc442cacb1493035853e2ef98fd088/classes.dex" />
+    </item>
+    <item
+        jar="/home/tier5/AndroidStudioProjects/redeemarapp/build/java/vuforia/Vuforia.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="f5b9729417d9e86d9bba6068e4a84f05ace53fd4">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/2/Vuforia_7c3f5fb853a19b1c84ae6fcb8e8e93aca0b45d3f/classes.dex" />
+    </item>
+    <item
+        jar="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.0/jars/classes.jar"
+        jumboMode="true"
+        revision="22.0.1"
+        sha1="5b37cf49773f7f17aca9830efd3053b0cac56728">
+        <dex dex="/home/tier5/AndroidStudioProjects/redeemarapp/samples/VuforiaSamples-5-5-9/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-recyclerview-v7-22.2.0_74770a7386c202f3436b67bf8a19e3c11a22f39f/classes.dex" />
+    </item>
+
+</items>
