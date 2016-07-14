@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_scroller"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg02"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/ToolBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/green_header"
+        android:elevation="8dp"
+        android:minHeight="?attr/actionBarSize">
+
+    </android.support.v7.widget.Toolbar>
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/offer_image"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="@string/address"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        style="@style/DarkBgTitle" />
+
+
+    <TextView
+        android:id="@+id/offer_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/address"
+        android:text="@string/offer_title"
+        android:layout_marginLeft="@dimen/content_padding_small"
+        android:layout_marginRight="@dimen/content_padding_small"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        style="@style/MedText" />
+
+
+    <LinearLayout
+        android:id="@+id/offer_ratings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/offer_title"
+        android:gravity="center|center_vertical"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:orientation="horizontal" >
+
+        <!-- Price Range -->
+        <TextView
+            android:id="@+id/price_range_id"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/price_range_id"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_marginRight="@dimen/button_padding"
+            android:textStyle="bold"
+            android:textColor="@color/midmgray1"
+            android:textSize="@dimen/text28" />
+
+
+        <!-- Star rating -->
+
+        <LinearLayout
+
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_height="40dp"
+                android:layout_width="40dp"
+                android:layout_gravity="left"
+                android:src="@drawable/star_1"/>
+
+            <ImageView
+                android:layout_height="40dp"
+                android:layout_width="40dp"
+                android:layout_gravity="left"
+                android:src="@drawable/star_1"/>
+
+            <ImageView
+                android:layout_height="40dp"
+                android:layout_width="40dp"
+                android:layout_gravity="left"
+                android:src="@drawable/star_1"/>
+
+
+            <ImageView
+                android:layout_height="40dp"
+                android:layout_width="40dp"
+                android:layout_gravity="left"
+                android:src="@drawable/star_2" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+
+        android:id="@+id/pay_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/discount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/discount"
+            android:gravity="center"
+            android:layout_marginLeft="@dimen/button_padding"
+            android:layout_marginRight="@dimen/button_padding"
+            style="@style/GreenXLargeText" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_margin="@dimen/margin_common"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:orientation="horizontal">
+
+
+
+        <Button
+            android:id="@+id/btn_redeem_offer"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:textSize="@dimen/button_title_larger"
+            android:background="@color/green_header"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:padding="@dimen/button_padding_med"
+            android:textColor="@color/white"
+            android:text="@string/validate_offer"
+            android:visibility="visible" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/redeem_before"
+            android:gravity="center"
+            android:paddingRight="@dimen/button_padding_small"
+            style="@style/MedText"
+            android:visibility="gone"  />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/expiry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttons"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/button_padding"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/redeem_before"
+            android:gravity="center"
+            android:paddingRight="@dimen/button_padding_small"
+            style="@style/MedText" />
+
+        <TextView
+            android:id="@+id/validate_within"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:gravity="center"
+            style="@style/MedText" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/validate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/expiry"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/button_padding"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/redeem_after"
+            android:gravity="center"
+            android:paddingRight="@dimen/button_padding_small"
+            style="@style/MedText" />
+
+        <TextView
+            android:id="@+id/validate_after"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:gravity="center"
+            style="@style/MedText" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
+
+</ScrollView>

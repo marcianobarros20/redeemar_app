@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg01"
+    android:padding="@dimen/baseline_padding">
+
+    <!-- Header aligned to top -->
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center" >
+
+        <ImageView
+            android:id="@+id/logo_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/logo_welcome"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/redeemar"></ImageView>
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_below="@+id/header"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/brand_logo_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:maxHeight="@dimen/medium_brand_logo_height"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/redeemar" />
+
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/join_our_community"
+            android:layout_marginLeft="@dimen/content_padding"
+            android:layout_marginRight="@dimen/content_padding"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/content_padding"
+            style="@style/GreenMedText"
+            android:layout_below="@+id/brand_logo_image"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+
+        <!-- Login Form -->
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:layout_below="@id/header">
+
+            <!--  Email Text -->
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="@string/email_address"
+                android:background="@drawable/box_tf"
+                android:gravity="center"
+                android:paddingLeft="@dimen/regular_padding"
+                android:paddingRight="@dimen/regular_padding"
+                android:singleLine="true"/>
+
+            <!--  Mobile Text -->
+            <EditText
+                android:id="@+id/mobile"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="@string/mobile"
+                android:background="@drawable/box_tf"
+                android:gravity="center"
+                android:paddingLeft="@dimen/regular_padding"
+                android:paddingRight="@dimen/regular_padding"
+                android:singleLine="true"
+                android:visibility="gone"/>
+
+            <!--  Password Text -->
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:singleLine="true"
+                android:hint="@string/password"
+                android:background="@drawable/box_tf"
+                android:gravity="center"
+                android:paddingLeft="@dimen/regular_padding"
+                android:paddingRight="@dimen/regular_padding"
+                android:inputType="textPassword"/>
+
+            <!--  Confirm Password Text -->
+            <EditText
+                android:id="@+id/confirm_password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:singleLine="true"
+                android:hint="@string/retype_password"
+                android:background="@drawable/box_tf"
+                android:gravity="center"
+                android:paddingLeft="@dimen/regular_padding"
+                android:paddingRight="@dimen/regular_padding"
+                android:inputType="textPassword"/>
+
+
+            <!-- Register button -->
+
+            <Button
+                android:id="@+id/btn_register"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/element_height_4x"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:textSize="@dimen/button_title_large"
+                android:background="@drawable/button_green"
+                android:padding="@dimen/button_padding_med"
+                android:layout_marginTop="@dimen/activity_vertical_margin2x"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:text="@string/sign_up"
+                android:textColor="@color/white" />
+
+
+
+        </LinearLayout>
+        <!-- Login Form Ends -->
+
+
+        <!-- Link to Forgot Password Screen -->
+        <TextView
+            android:id="@+id/sign_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/existing_user_sign_in"
+            android:textSize="@dimen/button_title_large"
+            android:textColor="@color/white"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

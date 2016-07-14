@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    swipe:leftEdgeSwipeOffset="0dp"
+    swipe:rightEdgeSwipeOffset="0dp">
+
+
+
+    <!--Bottom View For Right to Left-->
+
+    <LinearLayout
+        android:id="@+id/bottom_wrapper"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="@drawable/green_bar"
+        android:weightSum="1">
+
+
+        <TextView
+            android:id="@+id/validate_offer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/validate"
+            style="@style/WhiteLargeText"  />
+
+
+    </LinearLayout>
+
+
+
+
+    <!-- Top View,  Row itemView of RecyclerView -->
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/list_row_selector"
+        android:padding="4dp">
+        <!-- Thumbnail Image -->
+
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="140dp"
+            android:layout_height="120dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="6dp"
+            android:src="@drawable/icon_watermark"/>
+
+        <!-- Offer Title -->
+        <TextView
+            android:id="@+id/offer_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/thumbnail"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:text="@string/offer_title"
+            android:paddingBottom="8dp"
+            style="@style/MainTitle" />
+
+        <LinearLayout
+            android:id="@+id/offer_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:layout_below="@id/offer_description"
+            android:paddingBottom="10dp"
+            android:orientation="horizontal" >
+
+            <!-- Price Range -->
+            <TextView
+                android:id="@+id/price_range_id"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/price_range_id"
+                android:layout_gravity="left"
+                android:gravity="center_vertical|left"
+                android:layout_marginRight="8dp"
+                style="@style/MedText" />
+
+            <!-- Star rating -->
+
+            <LinearLayout
+
+                android:id="@+id/rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_toRightOf="@+id/thumbnail1"
+                android:layout_below="@id/price_range_id"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_height="@dimen/rating_small"
+                    android:layout_width="@dimen/rating_small"
+                    android:layout_gravity="left"
+                    android:src="@drawable/star_1"/>
+
+                <ImageView
+                    android:layout_height="@dimen/rating_small"
+                    android:layout_width="@dimen/rating_small"
+                    android:layout_gravity="left"
+                    android:src="@drawable/star_1"/>
+
+                <ImageView
+                    android:layout_height="@dimen/rating_small"
+                    android:layout_width="@dimen/rating_small"
+                    android:layout_gravity="left"
+                    android:src="@drawable/star_1"/>
+
+
+                <ImageView
+                    android:layout_height="@dimen/rating_small"
+                    android:layout_width="@dimen/rating_small"
+                    android:layout_gravity="left"
+                    android:src="@drawable/star_2" />
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
+        <!-- Discount -->
+        <TextView
+            android:id="@+id/discount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/offer_content"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:text="@string/discount"
+            style="@style/GreenMedText" />
+
+
+        <!-- Expires -->
+        <TextView
+            android:id="@+id/expires"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/discount"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:text="@string/expires"
+            style="@style/SmallText" />
+
+
+    </RelativeLayout>
+
+
+</com.daimajia.swipe.SwipeLayout>
+

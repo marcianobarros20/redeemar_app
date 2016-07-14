@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "476640364280",
+    "firebase_url": "https://redeemar-1314.firebaseio.com",
+    "project_id": "redeemar-1314",
+    "storage_bucket": "redeemar-1314.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:476640364280:android:d53c4cf75ea7d430",
+        "android_client_info": {
+          "package_name": "com.tier5.redeemar.RedeemarConsumerApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "476640364280-dh1eo7h8f8jq5odarttptnpb05b5ip4n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tier5.redeemar.RedeemarConsumerApp",
+            "certificate_hash": "C1D47514B6AC8163836B84112A9EC17A295A6120"
+          }
+        },
+        {
+          "client_id": "476640364280-5fsterp025ctp10tqctg4l93igj8agio.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "476640364280-88u2g53ii8fa5g412mio29ok6pt0aiu3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6pLt-ITMXDg8x-sCrw5xItUPFSxp0N60"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "476640364280-5fsterp025ctp10tqctg4l93igj8agio.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

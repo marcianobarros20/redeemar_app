@@ -1,0 +1,33 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bottom_scan_offer"
+        android:icon="@drawable/scan"
+        android:title="@string/scan_offer" />
+
+
+    <item
+        android:id="@+id/bottom_my_offers"
+        android:icon="@drawable/my_offer"
+        android:title="@string/my_offers" />
+
+
+    <item
+        android:id="@+id/bottom_nearby"
+        android:icon="@drawable/nearby"
+        android:title="@string/nearby" />
+
+
+    <item
+        android:id="@+id/bottom_browse_offers"
+        android:icon="@drawable/browse"
+        android:title="@string/browse_offers" />
+
+
+
+    <item
+        android:id="@+id/bottom_daily_deals"
+        android:icon="@drawable/daily_deals"
+        android:title="@string/daily_deals" />
+
+
+</menu>

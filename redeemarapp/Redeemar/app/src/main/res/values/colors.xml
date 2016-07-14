@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="primary">#73bf21</color>
+    <color name="primaryDark">#327a32</color>
+    <color name="colorPrimary">#73bf21</color>
+    <color name="colorPrimaryDark">#005a00</color>
+    <color name="textColorPrimary">#CCCFFF</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
+    <color name="colorAccent">#FF5722</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#575757</color>
+    <color name="midmgray1">#666666</color>
+    <color name="midmgray2">#888888</color>
+    <color name="light_gray">#D3D3D3</color>
+    <color name="list_divider">#d9d9d9</color>
+    <color name="red">#ff0000</color>
+
+    <color name="semi_transparent_black">#C8000000</color>
+    <color name="transparent">#000000</color>
+    
+    <color name="overlay_bottom_bar_separators">#333333</color>
+    <color name="overlay_bottom_bar_background">#1E1E1E</color>
+    <color name="header_bgcolor">#73bf21</color>
+
+    <color name="window_background">#f9f9f9</color>
+
+
+
+    <!--deep orange-->
+    <color name="md_deep_orange_50">#FBE9A7</color>
+    <color name="md_deep_orange_100">#FFCCBC</color>
+    <color name="md_deep_orange_200">#FFAB91</color>
+    <color name="md_deep_orange_300">#FF8A65</color>
+    <color name="md_deep_orange_400">#FF7043</color>
+    <color name="md_deep_orange_500">#FF5722</color>
+    <color name="md_deep_orange_600">#F4511E</color>
+    <color name="md_deep_orange_700">#E64A19</color>
+    <color name="md_deep_orange_800">#D84315</color>
+    <color name="md_deep_orange_900">#BF360C</color>
+    <color name="md_deep_orange_A100">#FF9E80</color>
+    <color name="md_deep_orange_A200">#FF6E40</color>
+    <color name="md_deep_orange_A400">#FF3D00</color>
+    <color name="md_deep_orange_A700">#DD2600</color>
+    <color name="deep_red">#c0050c</color>
+
+
+    <color name="list_row_start_color">#ffffff</color>
+    <color name="list_row_end_color">#fcfcfc</color>
+    <color name="list_row_hover_start_color">#ebeef0</color>
+    <color name="list_row_hover_end_color">#ebeef0</color>
+    <color name="green_header">#73bf21</color>
+    <color name="deep_green_header">#6ab21b</color>
+
+    <color name="green_text">#73bf21</color>
+
+
+
+</resources>

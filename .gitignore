@@ -30,3 +30,6 @@ proguard/
 
 # Android Studio captures folder
 captures/
+redeemarapp/Redeemar/.idea/
+redeemarapp/Redeemar/app/app.iml
+

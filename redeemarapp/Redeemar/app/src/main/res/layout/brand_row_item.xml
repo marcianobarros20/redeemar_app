@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_row_selector"
+    android:padding="4dp">
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="140dp"
+            android:layout_height="120dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="6dp"
+            android:src="@drawable/icon_watermark"/>
+
+        <!-- Brand Name -->
+        <TextView
+            android:id="@+id/brand_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/thumbnail"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:text="@string/brand"
+            android:paddingBottom="8dp"
+            style="@style/LargerText" />
+
+
+
+        <LinearLayout
+            android:id="@+id/brand_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:layout_below="@id/brand_name"
+            android:paddingBottom="10dp"
+            android:orientation="horizontal" >
+
+
+
+            <LinearLayout
+
+                android:id="@+id/rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_toRightOf="@+id/thumbnail1"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_height="@dimen/rating_small"
+                    android:layout_width="@dimen/rating_small"
+                    android:layout_gravity="left"
+                    android:src="@drawable/star_1"/>
+
+                <ImageView
+                    android:layout_height="@dimen/rating_small"
+                    android:layout_width="@dimen/rating_small"
+                    android:layout_gravity="left"
+                    android:src="@drawable/star_1"/>
+
+                <ImageView
+                    android:layout_height="@dimen/rating_small"
+                    android:layout_width="@dimen/rating_small"
+                    android:layout_gravity="left"
+                    android:src="@drawable/star_1"/>
+
+
+                <ImageView
+                    android:layout_height="@dimen/rating_small"
+                    android:layout_width="@dimen/rating_small"
+                    android:layout_gravity="left"
+                    android:src="@drawable/star_2" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <!-- Discount -->
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/brand_details"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:paddingBottom="10dp"
+            android:text="@string/address"
+            style="@style/MedText" />
+
+
+        <!-- Expires -->
+        <TextView
+            android:id="@+id/num_offers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/address"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:text="@string/offers"
+            style="@style/MedText"
+            android:visibility="gone"/>
+
+
+</RelativeLayout>
+
