@@ -59,6 +59,10 @@ dependencies {
     compile('com.mikepenz:materialdrawer:5.3.2@aar') {
         transitive = true
     }
+
+
+    compile 'com.google.code.gson:gson:2.3.1'
+
     //compile 'com.google.firebase:firebase-auth:9.0.0'
 
 

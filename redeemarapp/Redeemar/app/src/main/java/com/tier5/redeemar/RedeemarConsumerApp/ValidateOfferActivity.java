@@ -202,14 +202,6 @@ public class ValidateOfferActivity extends AppCompatActivity {
                 Toast.makeText(ValidateOfferActivity.this, "Search is Selected", Toast.LENGTH_SHORT).show();
                 return true;
 
-            case R.id.action_scan:
-                Intent intent = new Intent(this, CloudReco.class);
-                startActivity(intent);
-                finish();
-
-                return true;
-
-
 
             default:
                 return super.onOptionsItemSelected(item);

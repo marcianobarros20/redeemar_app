@@ -308,28 +308,6 @@ public class OfferListActivity extends AppCompatActivity {
                 Toast.makeText(OfferListActivity.this, "Search is Selected", Toast.LENGTH_SHORT).show();
                 return true;
 
-            case R.id.action_scan:
-                //Toast.makeText(OfferListActivity.this, "Save is Selected", Toast.LENGTH_SHORT).show();
-
-                /*Intent intent = new Intent(this, LogoutActivity.class);
-                intent.putExtra("finish", true);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
-                startActivity(intent);
-                finish();
-
-                Intent intent = new Intent(this, LoginActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                this.startActivity(intent);
-                this.finish();*/
-
-                Intent intent = new Intent(this, CloudReco.class);
-                startActivity(intent);
-                finish();
-
-                return true;
-
-
 
             default:
                 return super.onOptionsItemSelected(item);

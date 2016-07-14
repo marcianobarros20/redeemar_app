@@ -159,9 +159,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
         Log.d(LOGTAG, "Browse Offer User Id: "+user_id);
 
-
-
-
         // create class object
         GPSTracker gps = new GPSTracker(getActivity());
 
@@ -208,6 +205,8 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
             mAdapter = new MyOffersViewAdapter(getActivity(), listOffers, "MyOffers");
             mRecyclerOffers.setAdapter(mAdapter);
             mRecyclerOffers.setVisibility(View.VISIBLE);
+            tvEmptyView.setVisibility(View.GONE);
+
         }
         else
             tvEmptyView.setText(getString(R.string.no_records));

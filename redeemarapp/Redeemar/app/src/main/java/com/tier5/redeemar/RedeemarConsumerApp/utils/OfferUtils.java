@@ -68,7 +68,7 @@ public class OfferUtils {
 
         JSONObject response = Requestor.requestMyOffersJSON(requestQueue, Endpoints.getRequestUrlMyOffers(30), userId);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
-        Log.d(LOGTAG, "Inside loadBrowseOffers :"+listOffers.size());
+        Log.d(LOGTAG, "Inside loadMyOffers :"+listOffers.size());
         return listOffers;
     }
 

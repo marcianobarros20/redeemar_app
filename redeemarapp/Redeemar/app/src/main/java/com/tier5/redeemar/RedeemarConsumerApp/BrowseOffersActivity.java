@@ -133,8 +133,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
 
         setupToolbar();
-        initNavigationDrawer();
+
         setupBottombar(mBottomBar, savedInstanceState);
+        initNavigationDrawer();
         //setUpMap();
     }
 
@@ -162,6 +163,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     }
 
     private void setupBottombar(BottomBar mBottomBar, Bundle savedInstanceState) {
+
+        Log.d(LOGTAG, "Inside bottom bar logic");
 
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.setMaxFixedTabs(5);
@@ -411,7 +414,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 }
                                 mPreviousMenuItem = menuItem;
 
-                                mBottomBar.setDefaultTabPosition(3);
+                                //mBottomBar.setDefaultTabPosition(3);
+                                //mBottomBar.selectTabAtPosition(3, false);
 
 
 
@@ -545,6 +549,19 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+
+            case R.id.action_search:
+                Toast.makeText(getApplicationContext(), "Search option selected", Toast.LENGTH_SHORT).show();
+                return true;
+
+
+            case R.id.action_view_list:
+                Toast.makeText(getApplicationContext(), "List view option selected", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.action_view_thumb:
+                Toast.makeText(getApplicationContext(), "Thumbnail view option selected", Toast.LENGTH_SHORT).show();
                 return true;
 
 

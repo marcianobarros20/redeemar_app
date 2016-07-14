@@ -268,7 +268,9 @@
     <string name="signing_in">Signing in...</string>
     <string name="error_signing_in">Error occured in signing in. Please try again later.</string>
 
-
+    <string name="search">Search</string>
+    <string name="list_view">List View</string>
+    <string name="thumb_view">Thumbnail View</string>
 
 
 

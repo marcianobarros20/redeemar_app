@@ -483,18 +483,6 @@ public class NearMeActivity extends BaseMapActivity implements ActivityCompat.On
                 Toast.makeText(NearMeActivity.this, "Search is Selected", Toast.LENGTH_SHORT).show();
                 return true;
 
-            case R.id.action_scan:
-                //Toast.makeText(OfferListActivity.this, "Save is Selected", Toast.LENGTH_SHORT).show();
-
-
-
-                Intent intent = new Intent(this, CloudReco.class);
-                startActivity(intent);
-                finish();
-
-                return true;
-
-
 
             default:
                 return super.onOptionsItemSelected(item);
