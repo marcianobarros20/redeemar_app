@@ -121,20 +121,53 @@
                     android:textStyle="bold"
                     android:textColor="@color/gray" />
 
+
+
                 <LinearLayout
-                    android:id="@+id/middleInnerSubLayout"
+                    android:id="@+id/middleInnerSubLayout1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_gravity="left"
-                    android:padding="8dp"
-                    android:layout_below="@+id/topLayout">
+                    android:layout_below="@+id/offer_description">
+
+                    <ImageView
+                        android:id="@+id/discount_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_price_tag"
+                        android:layout_gravity="left|center_vertical"
+                        android:visibility="visible"
+                        />
+
+
+
+                    <TextView
+                        android:id="@+id/discount"
+                        android:layout_marginRight="1dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:layout_gravity="left|center_vertical"
+                        style="@style/LargerText" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/middleInnerSubLayout2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/middleInnerSubLayout1">
 
                     <ImageView
                         android:id="@+id/map_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_marker"
+                        android:layout_gravity="left|center_vertical"
+                        android:visibility="visible"
                         />
 
                     <TextView
@@ -144,19 +177,13 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.7"
                         android:text=""
+                        style="@style/LargeText"
                         android:layout_gravity="left|center_vertical"/>
 
-                    <TextView
-                        android:id="@+id/discount"
-                        android:layout_marginRight="1dp"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.3"
-                        android:text="Discount"
-                        android:layout_gravity="right|center_vertical"
-                        style="@style/GreenMedText"/>
-
                 </LinearLayout>
+
+
+
 
 
 
@@ -171,6 +198,7 @@
                 android:layout_weight="0.3"
                 android:orientation="vertical"
                 android:padding="8dp"
+                android:layout_gravity="center"
                 android:layout_marginRight="1dp"
                 android:layout_below="@+id/topLayout">
 
@@ -182,9 +210,8 @@
                     android:layout_height="wrap_content"
                     android:text="$750"
                     android:gravity="center_horizontal"
-                    android:paddingBottom="5dp"
-                    android:textSize="@dimen/menu_title_med"
-                    android:textColor="@color/gray" />
+                    android:paddingBottom="6dp"
+                    style="@style/LargeText" />
 
 
                 <TextView
@@ -196,7 +223,7 @@
                     android:gravity="center_horizontal"
                     android:paddingBottom="4dp"
                     android:textStyle="bold"
-                    style="@style/GreenXLargeText"/>
+                    style="@style/GreenXLargeText" />
 
             </LinearLayout>
 

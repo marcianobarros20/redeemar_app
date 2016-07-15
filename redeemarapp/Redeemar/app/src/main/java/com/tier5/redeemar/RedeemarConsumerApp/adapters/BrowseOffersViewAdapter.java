@@ -160,6 +160,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         if(item.getDistance().equals(""))
             viewHolder.mapIcon.setVisibility(View.GONE);
+        else
+            viewHolder.mapIcon.setVisibility(View.VISIBLE);
 
 
         viewHolder.tvOfferDescription.setTypeface(myFont);
@@ -203,10 +205,13 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         }
 
 
-        if(discVal > 0)
+        if(discVal > 0) {
             viewHolder.tvDiscount.setText(sb);
-        else
+            viewHolder.tvDiscount.setVisibility(View.VISIBLE);
+        }
+        else {
             viewHolder.tvDiscount.setVisibility(View.GONE);
+        }
 
         if(item.getExpiredInDays() > 0) {
             DecimalFormat format = new DecimalFormat("#");

@@ -128,7 +128,7 @@
                         android:layout_marginRight="1dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Discount"
+                        android:text=""
                         android:paddingBottom="@dimen/menu_entries_title"
                         android:layout_gravity="left|center_vertical"
                         style="@style/GreenMedText"
@@ -160,6 +160,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=""
+                            style="@style/MedText"
                             android:layout_gravity="left|center_vertical"/>
 
                     </LinearLayout>
