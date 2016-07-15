@@ -31,7 +31,7 @@ public class OfferUtils {
 
     public static ArrayList<Offer> loadBrowseOffers(RequestQueue requestQueue, String userId, String lat, String lng) {
 
-        JSONObject response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlOffers(30), userId, "0", "0", lat, lng);
+        JSONObject response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "0", "0", lat, lng);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadBrowseOffers :"+listOffers.size());
         return listOffers;

@@ -27,6 +27,13 @@ public class Endpoints {
                 + UrlEndpoints.URL_CHAR_QUESTION;
     }
 
+
+    public static String getRequestUrlBrowseOffers(int limit) {
+
+        return UrlEndpoints.URL_BRAND_OFFERS
+                + UrlEndpoints.URL_CHAR_QUESTION;
+    }
+
     public static String getRequestUrlOffers(int limit) {
 
         return UrlEndpoints.URL_ALL_OFFERS

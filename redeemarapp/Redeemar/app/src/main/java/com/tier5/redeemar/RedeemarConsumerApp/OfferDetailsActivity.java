@@ -287,6 +287,8 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
             String response = "";
             String offer_id = params[0];
 
+            Log.d(LOGTAG, "Offer Details Offer Id: "+offer_id);
+
 
             try {
                 myUrl = new URL(url);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +56,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
     //private ImageLoader mImageLoader;;
     private SharedPreferences sharedpref;
     private String activityName;
+    private String mViewType;
     private Resources res;
     private String offerId, userId;
     Typeface myFont;
@@ -85,10 +88,33 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         notifyDataSetChanged();
     }
 
+
+    @Override
+    public int getItemViewType(int position) {
+        // Just as an example, return 0 or 2 depending on position
+        // Note that unlike in ListView adapters, types don't have to be contiguous
+        return position % 2 * 2;
+    }
+
     @Override
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item, parent, false);
 
+        Log.d(LOGTAG, "View Type: "+viewType);
+        mViewType = "list";
+
+        if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+            mViewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
+        }
+
+        Log.d(LOGTAG, "View type: "+mViewType);
+
+        View view;
+        if(mViewType.equalsIgnoreCase("thumb"))
+            view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item_thumb, parent, false);
+        else
+            view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item, parent, false);
+
+        //view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item_thumb, parent, false);
 
         myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
         return new SimpleViewHolder(view);
@@ -96,18 +122,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
     @Override
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
-        final Offer item = offerList.get(position);
-        viewHolder.tvOfferDescription.setText(item.getOfferDescription());
-        viewHolder.tvPriceRangeId.setText(item.getPriceRangeId());
 
-        viewHolder.tvOfferDescription.setTypeface(myFont);
-        viewHolder.tvPriceRangeId.setTypeface(myFont);
 
-        int valCalc = item.getValueCalculate();
-        Double discVal = item.getDiscount();
-        String imageUrl = item.getImageUrl();
-
-        String discDesc = "";
         StringBuilder sb = new StringBuilder(14);
         StringBuilder esb = new StringBuilder(14);
 
@@ -118,6 +134,48 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         String save = mContext.getResources().getString(R.string.save);
         String expires_in = mContext.getResources().getString(R.string.expires_in);
         String days = mContext.getResources().getString(R.string.days);
+        String distance_unit = mContext.getResources().getString(R.string.distance_unit);
+
+
+        final Offer item = offerList.get(position);
+
+        String offer_desc = item.getOfferDescription();
+
+        if(offer_desc.length() > 100)
+            viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 100)+"...");
+        else
+            viewHolder.tvOfferDescription.setText(offer_desc);
+
+
+        if(item.getRetailvalue() > 0)
+            viewHolder.tvRetailValue.setText(cur_sym+String.valueOf(item.getRetailvalue()));
+
+        if(item.getPayValue() > 0)
+            viewHolder.tvPayValue.setText(cur_sym+(String.valueOf(item.getPayValue())));
+
+        if(!item.getDistance().equals(""))
+            viewHolder.tvDistance.setText(String.valueOf(item.getDistance())+" "+distance_unit);
+
+        Log.d(LOGTAG, "Distance: "+item.getDistance());
+
+        if(item.getDistance().equals(""))
+            viewHolder.mapIcon.setVisibility(View.GONE);
+
+
+        viewHolder.tvOfferDescription.setTypeface(myFont);
+        viewHolder.tvRetailValue.setTypeface(myFont);
+        viewHolder.tvPayValue.setTypeface(myFont);
+        viewHolder.tvDistance.setTypeface(myFont);
+        viewHolder.tvDiscount.setTypeface(myFont);
+
+        viewHolder.tvRetailValue.setPaintFlags(viewHolder.tvRetailValue.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+        //viewHolder.vi
+
+        int valCalc = item.getValueCalculate();
+        Double discVal = item.getDiscount();
+        String imageUrl = item.getImageUrl();
+
 
 
         switch(valCalc)
@@ -144,7 +202,11 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                 sb.append(cur_sym).append(discVal).append(" ").append(off);
         }
 
-        viewHolder.tvDiscount.setText(sb);
+
+        if(discVal > 0)
+            viewHolder.tvDiscount.setText(sb);
+        else
+            viewHolder.tvDiscount.setVisibility(View.GONE);
 
         if(item.getExpiredInDays() > 0) {
             DecimalFormat format = new DecimalFormat("#");
@@ -154,7 +216,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             esb.append(expires_in).append(" ").append(format.format(item.getExpiredInDays())).append(" ").append(days);
 
             //esb.append(expires_in).append(" ").append(Math.floor(item.getExpiredInDays())).append(" ").append(days);
-            viewHolder.tvExpires.setText(esb);
+            //viewHolder.tvPayValue.setText(esb);
         }
 
 
@@ -166,6 +228,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                     R.drawable.icon_watermark, android.R.drawable
                             .ic_dialog_alert));
             viewHolder.thumbnail.setImageUrl(imageUrl, viewHolder.mImageLoader);
+            viewHolder.thumbnail.setAdjustViewBounds(true);
         }
 
 
@@ -206,7 +269,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                 if(viewHolder.swipeLayout.getDragEdge() == SwipeLayout.DragEdge.Right) {
 
                     Log.d(LOGTAG, "Inside Bank");
-                    // Bank Offer
 
                     //Resources res = viewHolder.getResources();
 
@@ -482,8 +544,10 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
         private SwipeLayout swipeLayout;
-        private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvPriceRangeId, tvDiscount, tvExpires;
+        //private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvPriceRangeId, tvDiscount, tvExpires;
+        private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvRetailValue, tvDiscount, tvPayValue, tvDistance;
         private NetworkImageView thumbnail;
+        private ImageView mapIcon;
         private ImageLoader mImageLoader;;
 
 
@@ -496,9 +560,11 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             tvBankOffer = (TextView) itemView.findViewById(R.id.bank_offer);
             tvPassOffer = (TextView) itemView.findViewById(R.id.pass_offer);
             tvOfferDescription = (TextView) itemView.findViewById(R.id.offer_description);
-            tvPriceRangeId = (TextView) itemView.findViewById(R.id.price_range_id);
+            tvRetailValue = (TextView) itemView.findViewById(R.id.retail_value);
             tvDiscount = (TextView) itemView.findViewById(R.id.discount);
-            tvExpires = (TextView) itemView.findViewById(R.id.expires);
+            tvPayValue = (TextView) itemView.findViewById(R.id.pay_value);
+            tvDistance = (TextView) itemView.findViewById(R.id.distance);
+            mapIcon = (ImageView) itemView.findViewById(R.id.map_icon);
 
             thumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
 

@@ -110,6 +110,18 @@ public class ValidateOfferActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.validate);
             //getSupportActionBar().hide();
+
+            setSupportActionBar(toolbar);
+            //Your toolbar is now an action bar and you can use it like you always do, for example:
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // back button pressed
+                    finish();
+                }
+            });
         }
 
 

@@ -178,6 +178,7 @@
     <string name="spf_facebook_id">spf_facebook_id</string>
     <string name="spf_google_id">spf_google_id</string>
     <string name="spf_categories">spf_category_list</string>
+    <string name="spf_view_type">spf_view_type</string>
 
 
 
@@ -195,6 +196,7 @@
     <string name="ext_logo_id">LOGO_ID</string>
     <string name="ext_offer_list">OFFER_LIST</string>
     <string name="ext_category_id">CATEGORY_ID</string>
+    <string name="ext_view_type">VIEW_TYPE</string>
 
 
 
@@ -212,6 +214,7 @@
     <string name="expires_in">*Expires in</string>
     <string name="days">days</string>
     <string name="currency_symbol">$</string>
+    <string name="distance_unit">Km.</string>
     <string name="percentage_symbol">%</string>
     <string name="off">OFF</string>
     <string name="save">Save</string>
@@ -229,18 +232,20 @@
     <string name="nearby">Nearby</string>
     <string name="browse_offers">Browse</string>
     <string name="offer_list">Offers</string>
-    <string name="daily_deals">Logout</string>
+    <string name="daily_deals">Deals</string>
     <string name="open_drawer">Open</string>
     <string name="close_drawer">Close</string>
     <string name="my_banked">Banked Offers</string>
 
-    <string name="nearby_brands">Brands near you</string>
+    <string name="nearby_brands">Brands Nearby</string>
     <string name="offers_by_brand">Offers by brand</string>
     <string name="offers_by_campaign">Offers by campaign</string>
     <string name="offers_by_category">Offers by category</string>
 
 
     <string name="offer_title">Loading offer details...</string>
+    <string name="offer_title_new">Loading new offer details...</string>
+
     <string name="what_you_get"></string>
     <string name="bank">Bank Offer</string>
     <string name="pass">Pass Offer</string>
@@ -275,6 +280,7 @@
 
 
 
+
     <!-- Login -->
     <string name="alert_title">Alert!</string>
     <string name="enter_email">Please enter email</string>
@@ -305,6 +311,8 @@
     <string name="loading">Loading..</string>
 
     <string name="offers">offers</string>
+
+    ext_view_type
 
     <string name="error_timeout">Request timed out</string>
     <string name="error_auth_failure">Authentication failed</string>

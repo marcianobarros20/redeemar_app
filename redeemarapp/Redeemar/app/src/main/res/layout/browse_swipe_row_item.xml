@@ -16,7 +16,7 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:background="@drawable/green_bar"
+        android:background="@color/green_header"
         android:weightSum="2">
 
 
@@ -49,7 +49,7 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:background="@drawable/red_bar"
+        android:background="@color/accent"
         android:weightSum="2">
 
         <TextView
@@ -85,7 +85,7 @@
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/thumbnail"
             android:layout_width="140dp"
-            android:layout_height="120dp"
+            android:layout_height="104dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_marginRight="6dp"
@@ -99,7 +99,7 @@
             android:layout_alignTop="@+id/thumbnail"
             android:layout_toRightOf="@+id/thumbnail"
             android:text="@string/offer_title"
-            android:paddingBottom="8dp"
+            android:paddingBottom="12dp"
             style="@style/MainTitle" />
 
         <LinearLayout
@@ -111,85 +111,106 @@
             android:paddingBottom="10dp"
             android:orientation="horizontal" >
 
-            <!-- Price Range -->
-            <TextView
-                android:id="@+id/price_range_id"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/price_range_id"
-                android:layout_gravity="left"
-                android:gravity="center_vertical|left"
-                android:layout_marginRight="8dp"
-                style="@style/MedText" />
-
-            <!-- Star rating -->
-
-            <LinearLayout
-
-                android:id="@+id/rating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_toRightOf="@+id/thumbnail1"
-                android:layout_below="@id/price_range_id"
-                android:orientation="horizontal" >
-
-                <ImageView
-                    android:layout_height="@dimen/rating_small"
-                    android:layout_width="@dimen/rating_small"
-                    android:layout_gravity="left"
-                    android:src="@drawable/star_1"/>
-
-                <ImageView
-                    android:layout_height="@dimen/rating_small"
-                    android:layout_width="@dimen/rating_small"
-                    android:layout_gravity="left"
-                    android:src="@drawable/star_1"/>
-
-                <ImageView
-                    android:layout_height="@dimen/rating_small"
-                    android:layout_width="@dimen/rating_small"
-                    android:layout_gravity="left"
-                    android:src="@drawable/star_1"/>
 
 
-                <ImageView
-                    android:layout_height="@dimen/rating_small"
-                    android:layout_width="@dimen/rating_small"
-                    android:layout_gravity="left"
-                    android:src="@drawable/star_2" />
+                <LinearLayout
+                    android:id="@+id/middleInnerLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:orientation="vertical"
+                    android:layout_marginRight="1dp"
+                    android:layout_below="@+id/offer_content">
 
-            </LinearLayout>
 
+                    <TextView
+                        android:id="@+id/discount"
+                        android:layout_marginRight="1dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Discount"
+                        android:paddingBottom="@dimen/menu_entries_title"
+                        android:layout_gravity="left|center_vertical"
+                        style="@style/GreenMedText"
+                        android:textStyle="bold"/>
+
+
+
+
+                    <LinearLayout
+                        android:id="@+id/middleInnerSubLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="left"
+                        android:padding="0dp"
+                        android:layout_below="@+id/discount"
+                        android:gravity="left">
+
+                        <ImageView
+                            android:id="@+id/map_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_marker"
+                            />
+
+                        <TextView
+                            android:id="@+id/distance"
+                            android:layout_marginRight="10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:layout_gravity="left|center_vertical"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/middleInnerLayout2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    android:layout_marginRight="1dp"
+                    android:layout_below="@+id/topLayout">
+
+
+                    <TextView
+                        android:id="@+id/retail_value"
+                        android:layout_marginRight="1dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="$750"
+                        android:gravity="center_horizontal"
+                        android:paddingBottom="0dp"
+                        android:textSize="@dimen/button_title_med"
+                        android:textColor="@color/gray" />
+
+
+                    <TextView
+                        android:id="@+id/pay_value"
+                        android:layout_marginRight="1dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="$550"
+                        android:gravity="center_horizontal"
+                        android:paddingBottom="4dp"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/button_title_large"
+                        android:textColor="@color/green_text" />
+
+                </LinearLayout>
 
 
         </LinearLayout>
 
 
-        <!-- Discount -->
-        <TextView
-            android:id="@+id/discount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/offer_content"
-            android:layout_toRightOf="@+id/thumbnail"
-            android:text="@string/discount"
-            style="@style/GreenMedText" />
 
-
-        <!-- Expires -->
-        <TextView
-            android:id="@+id/expires"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/discount"
-            android:layout_toRightOf="@+id/thumbnail"
-            android:text="@string/expires"
-            style="@style/SmallText" />
 
 
     </RelativeLayout>
 
 
 </com.daimajia.swipe.SwipeLayout>
-

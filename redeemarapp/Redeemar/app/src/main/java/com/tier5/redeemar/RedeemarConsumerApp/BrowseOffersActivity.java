@@ -24,7 +24,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -52,7 +51,6 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 
 public class BrowseOffersActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -95,6 +93,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private ArrayList<Category> categories;
     private String redirectTo="", redeemarId = "", campaignId = "", jsonCatText = "";
     private final int NavGroupId = 1001;
+    SharedPreferences.Editor editor;
 
 
     /**
@@ -111,6 +110,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+
+        editor = sharedpref.edit();
 
         // Get Data from Intent
         Bundle extras = getIntent().getExtras();
@@ -183,7 +184,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     getSupportActionBar().setTitle(R.string.my_banked);
 
                     Fragment fr = new MyOfferFragment();
-                    fr.setArguments(args);
+                    //fr.setArguments(args);
                     FragmentManager fm = getFragmentManager();
                     FragmentTransaction fragmentTransaction = fm.beginTransaction();
                     fragmentTransaction.replace(R.id.container_body, fr);
@@ -232,8 +233,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                         args1.putString(getString(R.string.ext_redir_to), "CampaignOffers");
                         args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
                         args1.putString(getString(R.string.ext_campaign_id), campaignId);
-
                     }
+
                     fr.setArguments(args1);
                     FragmentManager fm = getFragmentManager();
                     FragmentTransaction fragmentTransaction = fm.beginTransaction();
@@ -242,13 +243,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 }
                 else if (menuItemId == R.id.bottom_daily_deals) {
-
-
                     //getSupportActionBar().setTitle(R.string.logout);
                     Intent i = new Intent(getApplicationContext(), LogoutActivity.class);
                     startActivity(i);
-
-
                 }
 
             }
@@ -263,9 +260,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 } else if (menuItemId == R.id.bottom_my_offers) {
 
-                    getSupportActionBar().setTitle(R.string.my_banked);
-
-                    //Toast.makeText(getApplicationContext(), "You are already here", Toast.LENGTH_SHORT).show();
                     getSupportActionBar().setTitle(R.string.my_banked);
 
                     Fragment fr = new MyOfferFragment();
@@ -286,10 +280,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     getSupportActionBar().setTitle(R.string.browse_offers);
 
                 } else if (menuItemId == R.id.bottom_daily_deals) {
+                    //Toast.makeText(getApplicationContext(), "You have logged out.", Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(getApplicationContext(), LogoutActivity.class);
+                    startActivity(i);
 
 
-
-                    Toast.makeText(getApplicationContext(), "You have logged out.", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -299,6 +294,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
 
     private void initNavigationDrawer() {
+
+        Log.d(LOGTAG, "Inside left navigation menu init");
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -417,10 +414,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 //mBottomBar.setDefaultTabPosition(3);
                                 //mBottomBar.selectTabAtPosition(3, false);
 
-
-
                                 String catName = Utils.stringToArray(jsonCatText, Category[].class).get(itemInd).getCatName();
-
 
                                 Fragment browseOfferFragment = new BrowseOfferFragment();
                                 getSupportActionBar().setTitle(catName);
@@ -428,7 +422,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
                                 args1.putString(getString(R.string.ext_category_id), String.valueOf(menuItem.getItemId()));
                                 browseOfferFragment.setArguments(args1);
-
 
                                 FragmentManager browseOfferFm = getFragmentManager();
                                 FragmentTransaction browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
@@ -558,10 +551,40 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
             case R.id.action_view_list:
                 Toast.makeText(getApplicationContext(), "List view option selected", Toast.LENGTH_SHORT).show();
+                Fragment browseOfferListFragment = new BrowseOfferFragment();
+                getSupportActionBar().setTitle(getString(R.string.browse_offers));
+
+                /*Bundle args1 = new Bundle();
+                args1.putString(getString(R.string.ext_redir_to), "BrowseOffers");
+                args1.putString(getString(R.string.ext_view_type), "thumb");
+
+                browseOfferListFragment.setArguments(args1);*/
+
+                editor.putString(getString(R.string.spf_view_type), "list"); // Storing User Id
+                editor.commit(); // commit changes
+
+
+                FragmentManager browseOfferFm = getFragmentManager();
+                FragmentTransaction browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
+                browseOfferFragmentTransaction.replace(R.id.container_body, browseOfferListFragment);
+                browseOfferFragmentTransaction.commit();
                 return true;
 
             case R.id.action_view_thumb:
                 Toast.makeText(getApplicationContext(), "Thumbnail view option selected", Toast.LENGTH_SHORT).show();
+
+                Fragment browseOfferThumbFragment = new BrowseOfferFragment();
+                getSupportActionBar().setTitle(getString(R.string.browse_offers));
+
+
+                editor.putString(getString(R.string.spf_view_type), "thumb"); // Storing User Id
+                editor.commit(); // commit changes
+
+                browseOfferFm = getFragmentManager();
+                browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
+                browseOfferFragmentTransaction.replace(R.id.container_body, browseOfferThumbFragment);
+                browseOfferFragmentTransaction.commit();
+
                 return true;
 
 

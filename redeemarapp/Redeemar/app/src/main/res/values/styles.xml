@@ -112,6 +112,11 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="MidLargeNoldText">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
     <style name="MedText">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/black</item>

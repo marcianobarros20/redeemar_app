@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    swipe:leftEdgeSwipeOffset="0dp"
+    swipe:rightEdgeSwipeOffset="0dp">
+
+
+
+    <!--Bottom View For Right to Left-->
+
+    <LinearLayout
+        android:id="@+id/bottom_wrapper"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="@drawable/green_bar"
+        android:weightSum="2">
+
+
+        <ImageButton
+            android:id="@+id/bank_offer_im"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.45"
+            android:background="@null"
+            android:gravity="center"
+            android:src="@drawable/bank" />
+
+        <TextView
+            android:id="@+id/bank_offer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="@string/bank_it"
+            style="@style/WhiteLargeText"  />
+
+
+    </LinearLayout>
+
+
+    <!-- Another Bottom View For Left to Right -->
+
+    <LinearLayout
+        android:id="@+id/bottom_wrapper1"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="@drawable/red_bar"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/pass_offer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="@string/pass_it"
+            style="@style/WhiteLargeText" />
+
+        <ImageButton
+            android:id="@+id/pass_offer_im"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@null"
+            android:gravity="center"
+            android:src="@drawable/passed"/>
+
+
+    </LinearLayout>
+
+    <!-- Top View,  Row itemView of RecyclerView -->
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/list_row_selector"
+        android:padding="4dp">
+        <!-- Thumbnail Image -->
+
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="fill_parent"
+            android:layout_height="140dp"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/icon_watermark"/>
+
+
+        <LinearLayout
+            android:id="@+id/middleLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/thumbnail">
+
+            <LinearLayout
+                android:id="@+id/middleInnerLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.7"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:layout_marginRight="1dp"
+                android:layout_below="@+id/topLayout">
+
+
+
+                <TextView
+                    android:id="@+id/offer_description"
+                    android:layout_marginRight="1dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/offer_title"
+                    android:gravity="left"
+                    android:paddingBottom="8dp"
+                    android:textSize="@dimen/menu_title_med"
+                    android:textStyle="bold"
+                    android:textColor="@color/gray" />
+
+                <LinearLayout
+                    android:id="@+id/middleInnerSubLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left"
+                    android:padding="8dp"
+                    android:layout_below="@+id/topLayout">
+
+                    <ImageView
+                        android:id="@+id/map_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_marker"
+                        />
+
+                    <TextView
+                        android:id="@+id/distance"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.7"
+                        android:text=""
+                        android:layout_gravity="left|center_vertical"/>
+
+                    <TextView
+                        android:id="@+id/discount"
+                        android:layout_marginRight="1dp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.3"
+                        android:text="Discount"
+                        android:layout_gravity="right|center_vertical"
+                        style="@style/GreenMedText"/>
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/middleInnerLayout2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:layout_marginRight="1dp"
+                android:layout_below="@+id/topLayout">
+
+
+                <TextView
+                    android:id="@+id/retail_value"
+                    android:layout_marginRight="1dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="$750"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="5dp"
+                    android:textSize="@dimen/menu_title_med"
+                    android:textColor="@color/gray" />
+
+
+                <TextView
+                    android:id="@+id/pay_value"
+                    android:layout_marginRight="1dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="$550"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="4dp"
+                    android:textStyle="bold"
+                    style="@style/GreenXLargeText"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
+
+</com.daimajia.swipe.SwipeLayout>
+

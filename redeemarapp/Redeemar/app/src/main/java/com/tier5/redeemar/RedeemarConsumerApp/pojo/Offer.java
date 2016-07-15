@@ -7,7 +7,7 @@ public class Offer implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl;
+    private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl, distance;
     Date startDate, endDate;
     double price, payValue, retailvalue, discount;
     int valueCalculate, expiredInDays;
@@ -66,6 +66,14 @@ public class Offer implements Serializable {
 
     public void setMoreInformation(String moreInformation) {
         this.moreInformation = moreInformation;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 
     public String getSettingsVal() {

@@ -34,6 +34,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CampaignOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CategoryOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 
@@ -60,25 +61,50 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private String user_id = "0";
     double latitude = 0.0, longitude = 0.0;
     private FragmentActivity listener;
-
+    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list";
 
 
     public BrowseOfferFragment() {
         // Required empty public constructor
     }
 
+    public static BrowseOfferFragment newInstance(String param1) {
+        BrowseOfferFragment fragment = new BrowseOfferFragment();
+        fragment.setRetainInstance(true);
+        Bundle b = new Bundle();
+        b.putSerializable("offers", param1);
+        fragment.setArguments(b);
+        return fragment;
+    }
+
+
     // TODO: Rename and change types and number of parameters
-    public static BrowseOfferFragment newInstance(String param1, String param2) {
+    /*public static BrowseOfferFragment newInstance(String param1, String param2) {
         BrowseOfferFragment fragment = new BrowseOfferFragment();
         Bundle args = new Bundle();
         //put any extra arguments that you may want to supply to this fragment
         fragment.setArguments(args);
         return fragment;
-    }
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+        Bundle args1 = getArguments();
+
+
+        if(args1 != null && args1.size() > 0) {
+
+            redirectTo = args1.getString(getString(R.string.ext_redir_to), "");
+            redeemarId = args1.getString(getString(R.string.ext_redeemar_id), "");
+            campaignId = args1.getString(getString(R.string.ext_campaign_id), "");
+            categoryId = args1.getString(getString(R.string.ext_category_id), "");
+            viewType = args1.getString(getString(R.string.ext_view_type), "");
+
+        }
+
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_offers, container, false);
 
@@ -86,9 +112,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.my_recycler_view);
 
+
+
+
         //tvEmptyView.setText("Loading...");
 
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        /*ViewGroup.LayoutParams params=mRecyclerOffers.getLayoutParams();
+        params.height=100;
+        mRecyclerOffers.setLayoutParams(params);*/
 
         // Check if the Android version code is greater than or equal to Lollipop
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -102,8 +135,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         mListOffers = new ArrayList<>();
 
 
-
         mAdapter = new BrowseOffersViewAdapter(getActivity(), "BrowseOffers");
+
         mRecyclerOffers.setAdapter(mAdapter);
 
         if (savedInstanceState != null) {
@@ -116,22 +149,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
             //if the database is empty, trigger an AsycnTask to download movie list from the web
             if (mListOffers.isEmpty()) {
-                Log.d(LOGTAG, "FragmentBoxOffice: executing task from fragment");
-
-
-
-                Bundle args1 = getArguments();
-                String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "";
-
-                if(args1 != null && args1.size() > 0) {
-
-                    redirectTo = args1.getString(getString(R.string.ext_redir_to), "");
-                    redeemarId = args1.getString(getString(R.string.ext_redeemar_id), "");
-                    campaignId = args1.getString(getString(R.string.ext_campaign_id), "");
-                    categoryId = args1.getString(getString(R.string.ext_category_id), "");
-
-
-                }
 
                 Log.d(LOGTAG, "Redirect to 102: " + redirectTo);
                 Log.d(LOGTAG, "Redeemar id 102: " + redeemarId);
@@ -171,8 +188,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         res = getResources();
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
@@ -183,9 +198,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         }
 
         Log.d(LOGTAG, "Browse Offer User Id: "+user_id);
-
-
-
 
         // create class object
         GPSTracker gps = new GPSTracker(getActivity());
@@ -201,9 +213,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 gps.showSettingsAlert();
 
             }
-
-            // \n is for new line
-            Toast.makeText(getActivity().getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
 
         } else {
             // can't get location
