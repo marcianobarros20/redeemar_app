@@ -1160,7 +1160,14 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
                                 if(!json2.isNull("action_id") && !json2.isNull("reedemer_id")) {
                                     Log.d(LOGTAG, "Inside action id 4");
-                                    showInitializationErrorMessage(getString(R.string.error_validation_wrong_place));
+                                    //showInitializationErrorMessage(getString(R.string.error_validation_wrong_place));
+
+                                    Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                                    intent.putExtra(getString(R.string.ext_scan_err), "R02005");
+                                    startActivity(intent);
+                                    finish();
+
+
                                 }
 
                             }
@@ -1174,7 +1181,13 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
 
 
-                                    Toast.makeText(getApplicationContext(), "This will display a CGI animation.", Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(getApplicationContext(), "This will display a CGI animation.", Toast.LENGTH_LONG).show();
+
+                                    Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                                    intent.putExtra(getString(R.string.ext_scan_err), "R02010");
+                                    startActivity(intent);
+                                    finish();
+
 
                                 }
 
@@ -1341,28 +1354,53 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                         Log.d(LOGTAG, "Offer validated successfully");
                         //Toast.makeText(CloudReco.this, "You have successfully validated the offer", Toast.LENGTH_SHORT).show();
 
-                        showInitializationErrorMessage(getString(R.string.error_validation_success));
+                        //showInitializationErrorMessage(getString(R.string.error_validation_success));
+
+                        Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        intent.putExtra(getString(R.string.ext_scan_err), "R02001");
+                        startActivity(intent);
+                        finish();
+
+
 
                     }
 
                     else if (reader.getString("messageCode").equals("R01002")) {
 
                         //Toast.makeText(CloudReco.this, R.string.error_offer_expired, Toast.LENGTH_SHORT).show();
-                        showInitializationErrorMessage(getString(R.string.error_offer_expired));
+                        //showInitializationErrorMessage(getString(R.string.error_offer_expired));
+
+                        Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        intent.putExtra(getString(R.string.ext_scan_err), "R02002");
+                        startActivity(intent);
+                        finish();
+
 
                     }
 
                     else if (reader.getString("messageCode").equals("R01003")) {
 
                         //Toast.makeText(CloudReco.this, R.string.error_wrong_target, Toast.LENGTH_SHORT).show();
-                        showInitializationErrorMessage(getString(R.string.error_wrong_target));
+                        //showInitializationErrorMessage(getString(R.string.error_wrong_target));
+
+                        Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        intent.putExtra(getString(R.string.ext_scan_err), "R02003");
+                        startActivity(intent);
+                        finish();
+
 
                     }
 
                     else if (reader.getString("messageCode").equals("R01004")) {
 
                         //Toast.makeText(CloudReco.this, R.string.error_wrong_target, Toast.LENGTH_SHORT).show();
-                        showInitializationErrorMessage(getString(R.string.error_duplicate_validation));
+                        //showInitializationErrorMessage(getString(R.string.error_duplicate_validation));
+
+                        Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        intent.putExtra(getString(R.string.ext_scan_err), "R02004");
+                        startActivity(intent);
+                        finish();
+
 
                     }
 

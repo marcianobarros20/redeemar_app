@@ -15,14 +15,17 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,12 +48,14 @@ import com.tier5.redeemar.RedeemarConsumerApp.fragments.HomeFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.MyOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.RateUsFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class BrowseOffersActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -91,9 +96,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ArrayList<Category> categories;
-    private String redirectTo="", redeemarId = "", campaignId = "", jsonCatText = "";
+    private String redirectTo="", redeemarId = "", campaignId = "", jsonCatText = "", firstName = "", email = "";
     private final int NavGroupId = 1001;
     SharedPreferences.Editor editor;
+    private TextView navWelcome, navEmail;
+
+
 
 
     /**
@@ -108,8 +116,22 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.offers_recycler);
 
+
+
         res = getResources();
-        sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+        sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0);
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_first_name), null) != null) {
+            firstName = sharedpref.getString(res.getString(R.string.spf_first_name), "");
+
+        }
+
+        if(sharedpref.getString(res.getString(R.string.spf_email), null) != null) {
+            email = sharedpref.getString(res.getString(R.string.spf_email), "");
+            ;
+        }
+
 
         editor = sharedpref.edit();
 
@@ -126,7 +148,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
             Log.d(LOGTAG, "Redirect to 100: " + redirectTo);
             Log.d(LOGTAG, "Redeemar id 100: " + redeemarId);
-
         }
 
 
@@ -179,7 +200,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     Intent intent = new Intent(BrowseOffersActivity.this, CloudReco.class);
                     startActivity(intent);
 
-                } else if (menuItemId == R.id.bottom_my_offers) {
+                } else if (menuItemId == R.id.bottom_my_offers || menuItemId == R.id.nav_my_offers) {
 
                     getSupportActionBar().setTitle(R.string.my_banked);
 
@@ -258,7 +279,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     startActivity(intent);
 
 
-                } else if (menuItemId == R.id.bottom_my_offers) {
+                } else if (menuItemId == R.id.bottom_my_offers || menuItemId == R.id.nav_my_offers) {
 
                     getSupportActionBar().setTitle(R.string.my_banked);
 
@@ -277,7 +298,15 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 } else if (menuItemId == R.id.bottom_browse_offers) {
 
+                    // Open BrowseOffer
                     getSupportActionBar().setTitle(R.string.browse_offers);
+
+                    Fragment fr = new BrowseOfferFragment();
+                    FragmentManager fm = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                    fragmentTransaction.replace(R.id.container_body, fr);
+                    fragmentTransaction.commit();
+
 
                 } else if (menuItemId == R.id.bottom_daily_deals) {
                     //Toast.makeText(getApplicationContext(), "You have logged out.", Toast.LENGTH_SHORT).show();
@@ -299,6 +328,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        //navWelcome = (TextView) findViewById(R.id.nav_welcome);
+
+
+
 
         setupActionBarDrawerToogle();
         if (mNavigationView != null) {
@@ -430,15 +464,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                                 break;
 
-
-
-
-
-
                         }
-
-
-
 
                         mDrawerLayout.closeDrawers();
                         return true;
@@ -472,20 +498,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             String parentId = Utils.stringToArray(jsonCatText, Category[].class).get(i).getParentId();
             String catId = Utils.stringToArray(jsonCatText, Category[].class).get(i).getId();
 
-            //Random rand = new Random();
-
-            //int ind = rand.nextInt(100);
-
-            // add(int groupId, int itemId, int order, CharSequence title)
-
 
             if(Integer.parseInt(parentId) == 0 && !tempCatName.equalsIgnoreCase(catName)) {
-
-                //menu.add(NavGroupId, Integer.parseInt(catId), k, catName).setIcon(R.drawable.ic_about);
                 menu.add(NavGroupId, Integer.parseInt(catId), i, catName);
-
                 tempCatName = catName;
-
             }
 
         }
@@ -496,12 +512,36 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             subMenu.add("SubMenu Item " + i);
         }*/
 
+
+        View headerView = navigationView.getHeaderView(0);
+
+        navWelcome = (TextView) headerView.findViewById(R.id.nav_welcome);
+        //navWelcome.setText("Welcome");
+
+        if(!firstName.equalsIgnoreCase("")) {
+            String welcomeText = "Hi " + firstName;
+            navWelcome.setText(welcomeText);
+        }
+
+
+
+        navEmail = (TextView) headerView.findViewById(R.id.nav_user_email);
+
+        if(!email.equalsIgnoreCase("")) {
+            navEmail.setText(email);
+        }
+
+
+
+
         // refreshing navigation drawer adapter
         for (int i = 0, count = mNavigationView.getChildCount(); i < count; i++) {
             final View child = mNavigationView.getChildAt(i);
             if (child != null && child instanceof ListView) {
                 final ListView menuView = (ListView) child;
                 final HeaderViewListAdapter adapter = (HeaderViewListAdapter) menuView.getAdapter();
+
+
                 final BaseAdapter wrapped = (BaseAdapter) adapter.getWrappedAdapter();
                 wrapped.notifyDataSetChanged();
             }
@@ -538,15 +578,18 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         int id = item.getItemId();
 
+
+
         switch (id) {
 
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
 
-            case R.id.action_search:
-                Toast.makeText(getApplicationContext(), "Search option selected", Toast.LENGTH_SHORT).show();
-                return true;
+            /*case R.id.action_search:
+                //Toast.makeText(getApplicationContext(), "Search option selected", Toast.LENGTH_SHORT).show();
+                Log.d(LOGTAG, "Inside BrowseOfferActivity");
+                return true;*/
 
 
             case R.id.action_view_list:
@@ -615,4 +658,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     public interface RemiMap {
         public void getMapData();
     }
+
+
 }

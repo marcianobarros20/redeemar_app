@@ -23,18 +23,14 @@ public class BrandOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offe
 
     private static final String LOGTAG = "BrandOffersAsync";
     private OffersLoadedListener myComponent;
-    private VolleySingleton volleySingleton;
+    //private VolleySingleton volleySingleton;
     private RequestQueue requestQueue;
-    private ProgressDialog mProgress;
+    //private ProgressDialog mProgress;
     private Context context;
 
     public BrandOffersAsyncTask(OffersLoadedListener myComponent) {
         this.myComponent = myComponent;
         Log.d(LOGTAG, "Inside BrandOffersAsync constructor: "+myComponent);
-
-        //this.context = ctx;
-
-
     }
 
     @Override

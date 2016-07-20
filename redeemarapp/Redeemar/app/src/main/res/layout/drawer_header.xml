@@ -35,9 +35,10 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/nav_welcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hi Peter"
+            android:text="Welcome"
             android:gravity="right"
             android:textColor="@android:color/white"
             style="@style/TextAppearance.AppCompat.Large" />
@@ -48,9 +49,10 @@
             android:background="@color/primary" />
 
         <TextView
+            android:id="@+id/nav_user_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="hello@tier5.com"
+            android:text=""
             android:textColor="@android:color/white"
             android:gravity="right"
             style="@style/TextAppearance.AppCompat.Small" />

@@ -32,6 +32,29 @@ public class DisplayFailureActivity extends Activity {
 
             else if(scan_err.equalsIgnoreCase("R01003"))
                 tvSuccessMessage.setText(getString(R.string.brand_video_not_found));
+
+            else if(scan_err.equalsIgnoreCase("R02001"))
+                tvSuccessMessage.setText(getString(R.string.error_validation_success));
+
+            else if(scan_err.equalsIgnoreCase("R02002"))
+                tvSuccessMessage.setText(getString(R.string.error_offer_expired));
+
+            else if(scan_err.equalsIgnoreCase("R02003"))
+                tvSuccessMessage.setText(getString(R.string.error_wrong_target));
+
+            else if(scan_err.equalsIgnoreCase("R02004"))
+                tvSuccessMessage.setText(getString(R.string.error_duplicate_validation));
+
+            else if(scan_err.equalsIgnoreCase("R02005"))
+                tvSuccessMessage.setText(getString(R.string.error_validation_wrong_place));
+
+
+            else if(scan_err.equalsIgnoreCase("R02010"))
+                tvSuccessMessage.setText(getString(R.string.error_cgi_animation));
+
+            else
+                tvSuccessMessage.setText(scan_err);
+
         }
     }
 

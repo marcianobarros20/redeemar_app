@@ -477,4 +477,32 @@ public class Parser {
         return listMenus;
     }
 
+
+
+    public static String parseSendFeedbackJSON(JSONObject response) {
+
+        Log.d(LOGTAG, "Inside parseSendFeedbackJSON");
+
+        String msgCode = "";
+
+
+        if (response != null && response.length() > 0) {
+            try {
+                //JSONObject json= (JSONObject) new JSONTokener(result).nextValue();
+
+                if(!response.isNull("messageCode")) {
+
+                    Log.d(LOGTAG, "Message Code: " + response.getString("messageCode"));
+                    msgCode = response.getString("messageCode");
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+            }
+
+        }
+        return msgCode;
+    }
 }

@@ -2,6 +2,7 @@ package com.tier5.redeemar.RedeemarConsumerApp.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.tier5.redeemar.RedeemarConsumerApp.DisplayFailureActivity;
@@ -40,6 +41,14 @@ public class Utils {
     public static <T> List<T> stringToArray(String s, Class<T[]> clazz) {
         T[] arr = new Gson().fromJson(s, clazz);
         return Arrays.asList(arr); //or return Arrays.asList(new Gson().fromJson(s, clazz)); for a one-liner
+    }
+
+    public final static boolean isValidEmail(CharSequence target) {
+        if (TextUtils.isEmpty(target)) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
     }
 
 

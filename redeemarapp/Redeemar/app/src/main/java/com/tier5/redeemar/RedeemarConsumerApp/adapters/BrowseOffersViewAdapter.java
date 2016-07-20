@@ -141,8 +141,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         String offer_desc = item.getOfferDescription();
 
-        if(offer_desc.length() > 100)
-            viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 100)+"...");
+        if(offer_desc.length() > 50)
+            viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 50)+"...");
         else
             viewHolder.tvOfferDescription.setText(offer_desc);
 
@@ -158,10 +158,14 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         Log.d(LOGTAG, "Distance: "+item.getDistance());
 
-        if(item.getDistance().equals(""))
-            viewHolder.mapIcon.setVisibility(View.GONE);
-        else
-            viewHolder.mapIcon.setVisibility(View.VISIBLE);
+        if(item.getDistance().equals("")) {
+            viewHolder.distanceLayout.setVisibility(View.GONE);
+        }
+        else {
+            viewHolder.distanceLayout.setVisibility(View.VISIBLE);
+        }
+
+
 
 
         viewHolder.tvOfferDescription.setTypeface(myFont);
@@ -172,11 +176,20 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         viewHolder.tvRetailValue.setPaintFlags(viewHolder.tvRetailValue.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-        //viewHolder.vi
+        Log.d(LOGTAG, "Distance: "+item.getDistance());
+        Log.d(LOGTAG, "Discount: "+item.getDiscount());
 
         int valCalc = item.getValueCalculate();
         Double discVal = item.getDiscount();
         String imageUrl = item.getImageUrl();
+
+        if(discVal > 0) {
+            viewHolder.discountLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            viewHolder.discountLayout.setVisibility(View.GONE);
+        }
+
 
 
 
@@ -233,7 +246,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                     R.drawable.icon_watermark, android.R.drawable
                             .ic_dialog_alert));
             viewHolder.thumbnail.setImageUrl(imageUrl, viewHolder.mImageLoader);
-            viewHolder.thumbnail.setAdjustViewBounds(true);
+            viewHolder.thumbnail.setAdjustViewBounds(false);
         }
 
 
@@ -553,7 +566,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvRetailValue, tvDiscount, tvPayValue, tvDistance;
         private NetworkImageView thumbnail;
         private ImageView mapIcon;
-        private ImageLoader mImageLoader;;
+        private ImageLoader mImageLoader;
+        private LinearLayout distanceLayout, discountLayout;
 
 
 
@@ -573,9 +587,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             thumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
 
-
-            //Image URL - This can point to any image file supported by Android
-
+            distanceLayout = (LinearLayout) itemView.findViewById(R.id.middleInnerSubLayout1);
+            discountLayout = (LinearLayout) itemView.findViewById(R.id.middleInnerSubLayout2);
 
 
 

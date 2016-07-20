@@ -1,0 +1,130 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="20dp">
+
+    <!-- Header aligned to top -->
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/logo_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/logo_no_text"
+            android:maxHeight="@dimen/medium_logo_height"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"></ImageView>
+
+
+
+    </RelativeLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:layout_below="@+id/header">
+
+        <TextView
+            android:id="@+id/share_feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:textSize="14sp"
+            android:text="@string/rate_app"
+            android:layout_below="@+id/brand_logo_image"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+
+        <!--  Rating Bar -->
+
+
+        <RatingBar
+            android:id="@+id/rating_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="1.0"
+            android:rating="0.0" />
+
+
+
+        <!--  Email Text -->
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:hint="@string/email_address"
+            android:background="@drawable/textfield_bg"
+            android:textSize="14sp"
+            android:gravity="left"
+            android:paddingLeft="@dimen/button_padding_med"
+            android:paddingRight="@dimen/button_padding_med"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="20dp"
+            android:layout_weight="1"/>
+
+
+        <!--  Feedback Text -->
+
+        <EditText
+            android:id="@+id/feedback"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:lines="5"
+            android:gravity="top|left"
+            android:hint="@string/enter_feedback"
+            android:background="@drawable/textarea_bg"
+            android:inputType="textMultiLine"
+            android:textSize="14sp"
+            android:paddingLeft="@dimen/button_padding_med"
+            android:paddingRight="@dimen/button_padding_med"
+            android:scrollHorizontally="false"
+            />
+
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="20dp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/btn_send_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:textSize="@dimen/button_title_large"
+            android:background="@drawable/button_green"
+            android:padding="@dimen/button_padding_med"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:text="@string/send_feedback"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

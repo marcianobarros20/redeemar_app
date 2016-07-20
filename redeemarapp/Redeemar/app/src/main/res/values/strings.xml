@@ -30,9 +30,9 @@
 
     <string name="nav_item_help">Help</string>
     <string name="nav_item_about">About</string>
-    <string name="nav_item_rate">Rate us on Play Store</string>
+    <string name="nav_item_rate">Rate Us</string>
     <string name="nav_item_contact">Contact</string>
-    <string name="nav_item_signout">Sign out</string>
+    <string name="nav_item_signout">Sign Out</string>
 
 
     <string name="title_home">Home</string>
@@ -91,6 +91,7 @@
     <string name="error_wrong_target">You are scannaing an image not associated with validation.</string>
     <string name="error_duplicate_validation">You have already validated this offer.</string>
     <string name="error_validation_success">You have successfully validated the offer.</string>
+    <string name="error_cgi_animation">You have successfully validated the offer.</string>
 
 
 
@@ -198,13 +199,9 @@
     <string name="ext_category_id">CATEGORY_ID</string>
     <string name="ext_view_type">VIEW_TYPE</string>
 
-
-
-
     <string name="brand_not_found">Unable to find matching logo in our database</string>
     <string name="brand_not_associated">We are able to recognize the logo. However, this brand is not yet associated with Redeemar. We have sent email request.</string>
     <string name="brand_video_not_found">No video uploaded for this Brand</string>
-
 
     <string name="rating">Rating</string>
     <string name="price_range_id">$$$</string>
@@ -220,7 +217,9 @@
     <string name="save">Save</string>
     <string name="discount">Discount</string>
     <string name="offers_in">Offers</string>
-    <string name="no_records">We are unable to find any offers nearby your location.</string>
+    <string name="no_records">No record found.</string>
+
+
     <string name="bank_it">BANK</string>
     <string name="pass_it">PASS</string>
     <string name="scan_offer">Scan</string>
@@ -276,30 +275,36 @@
     <string name="search">Search</string>
     <string name="list_view">List View</string>
     <string name="thumb_view">Thumbnail View</string>
-
-
-
-
+    <string name="rate_app">Please rate your experience with the app</string>
+    <string name="enter_feedback">Enter your feedback</string>
+    <string name="send_feedback">Send Feedback</string>
+    <string name="msg_feedback_sent">Your feedback has been sent to our support desk. We value your feedback.</string>
+    <string name="msg_feedback_not_sent">Unable to send feedback.</string>
+    <string name="enter_rating_feedback">Please enter feedback and rating</string>
 
     <!-- Login -->
     <string name="alert_title">Alert!</string>
+    <string name="alert_thanks">Thank you!</string>
+
     <string name="enter_email">Please enter email</string>
     <string name="enter_password">Please enter email</string>
     <string name="enter_valid_email">Please enter a valid email</string>
     <string name="enter_valid_phone">Please enter a valid mobile</string>
     <string name="enter_password_email">Please enter email and password</string>
     <string name="password_mismatch">Password and confirm password mismatch</string>
+    <string name="sending_data">Sending data...</string>
 
 
 
     <string name="logging_in">Logging in...</string>
+
     <string name="login_auth_denied">Invalid email and password combination</string>
     <string name="user_status_inactive">You account is inactive. Please contact redeemar support</string>
     <string name="invalid_user_pass">Invalid username and password</string>
     <string name="duplicate_email">User with this email id already exists in our records</string>
     <string name="unknown_reg_err">Unknown error occured. Please try again.</string>
 
-    <string name="validate">Validate</string>
+    <string name="validate">Validate Offer</string>
     <string name="validate_offer">Validate offer now!</string>
     <string name="offer_starts">Valid from</string>
     <string name="redeem_before">Redeem before</string>
@@ -307,7 +312,7 @@
 
     <string name="advertisement">Want to show your ads here?</string>
     <string name="advertisement2">Contact us at info@redeemar.com</string>
-    <string name="offer_details">Offer details</string>
+    <string name="offer_details">Offer Details</string>
     <string name="loading">Loading..</string>
 
     <string name="offers">offers</string>

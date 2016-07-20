@@ -111,7 +111,6 @@ public class ValidateOfferActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(R.string.validate);
             //getSupportActionBar().hide();
 
-            setSupportActionBar(toolbar);
             //Your toolbar is now an action bar and you can use it like you always do, for example:
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -193,8 +192,8 @@ public class ValidateOfferActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_main, menu);
+        //MenuInflater menuInflater = getMenuInflater();
+        //menuInflater.inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -211,7 +210,7 @@ public class ValidateOfferActivity extends AppCompatActivity {
             case R.id.action_search:
                 // Single menu item is selected do something
                 // Ex: launching new activity/screen or show alert message
-                Toast.makeText(ValidateOfferActivity.this, "Search is Selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ValidateOfferActivity.this, "Search coming soon", Toast.LENGTH_SHORT).show();
                 return true;
 
 

@@ -175,11 +175,6 @@ public class LoginActivity extends AppCompatActivity implements
                                             new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "");
                                         }
 
-
-
-
-
-
                                     }catch (Exception e){
                                         e.printStackTrace();
                                     }
@@ -478,13 +473,13 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(LOGTAG, "RC_SIGN_IN: "+String.valueOf(RC_SIGN_IN));
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        /*if (requestCode == RC_SIGN_IN) {
 
             Log.d(LOGTAG, "Returned result");
 
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-        }
+        }*/
 
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }

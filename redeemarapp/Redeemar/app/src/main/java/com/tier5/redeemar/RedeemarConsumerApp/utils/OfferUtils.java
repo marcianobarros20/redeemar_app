@@ -80,4 +80,11 @@ public class OfferUtils {
         Log.d(LOGTAG, "Inside loadNearByBrands :"+listBrands.size());
         return listBrands;
     }
-}
+
+    public static String loadSendFeedback(RequestQueue requestQueue, String email, String user_id, String feedback, String rating) {
+
+        JSONObject response = Requestor.requestSendFeedbackJSON(requestQueue, Endpoints.getRequestUrlSendFeedback(), email, user_id, feedback, rating);
+        String res = Parser.parseSendFeedbackJSON(response);
+        Log.d(LOGTAG, "Inside loadSendFeedback :"+res);
+        return res;
+    }}

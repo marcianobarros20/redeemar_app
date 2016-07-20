@@ -11,6 +11,7 @@ public class UrlEndpoints {
     public static final String URL_BRAND_DETAILS = "http://159.203.91.38/admin/public/index.php/bridge/checktarget";
     public static final String URL_BRAND_OFFERS = "http://159.203.91.38/admin/public/index.php/bridge/offerlist";
     public static final String URL_MENU_ITEMS = "http://159.203.91.38/admin/public/index.php/bridge/multicat";
+    public static final String URL_SEND_FEEDBACK = "http://159.203.91.38/admin/public/index.php/bridge/sendfeedback";
 
     public static final String basePathURL = "http://159.203.91.38/admin/uploads/original/";
     public static final String serverBaseUrl = "http://wwww.redeemar.com/";

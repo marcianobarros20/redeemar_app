@@ -2,7 +2,7 @@
 <resources>
 
     <color name="primary">#73bf21</color>
-    <color name="primaryDark">#327a32</color>
+    <color name="primaryDark">#006400</color>
     <color name="colorPrimary">#73bf21</color>
     <color name="colorPrimaryDark">#005a00</color>
     <color name="textColorPrimary">#CCCFFF</color>
@@ -12,6 +12,7 @@
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="darkGray">#333333</color>
     <color name="gray">#575757</color>
     <color name="midmgray1">#666666</color>
     <color name="midmgray2">#888888</color>

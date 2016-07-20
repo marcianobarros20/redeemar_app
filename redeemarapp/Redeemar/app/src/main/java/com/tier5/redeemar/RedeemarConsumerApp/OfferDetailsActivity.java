@@ -117,7 +117,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.offer_details);
 
-            setSupportActionBar(toolbar);
+            //setSupportActionBar(toolbar);
             //Your toolbar is now an action bar and you can use it like you always do, for example:
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -160,12 +160,6 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
                     Log.d(LOGTAG, "View Adapter Offer Id: "+offerId);
                     Log.d(LOGTAG, "View Adapter User Id: "+userId);
-
-                    // Context context, ArrayList<Offer> objects, String actName
-                    //BrowseOffersViewAdapter outer = new BrowseOffersViewAdapter(getApplicationContext());
-
-                    //new BrowseOffersViewAdapter().new SaveOfferAsyncTas
-                    // k().execute("bank", userId, offerId);
 
                     new SaveOfferAsyncTask().execute("bank", userId, offerId);
 
@@ -236,8 +230,8 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_main, menu);
+        //MenuInflater menuInflater = getMenuInflater();
+        //menuInflater.inflate(R.menu.menu_main, menu);
         return true;
     }
 
