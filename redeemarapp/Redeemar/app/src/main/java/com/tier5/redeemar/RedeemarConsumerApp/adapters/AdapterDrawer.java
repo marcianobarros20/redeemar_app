@@ -2,6 +2,7 @@ package com.tier5.redeemar.RedeemarConsumerApp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,9 @@ import java.util.List;
  * Created by Windows on 22-12-2014.
  */
 public class AdapterDrawer extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final String LOGTAG = "AdapterDrawer";
+
     List<Information> data= Collections.emptyList();
     private static final int TYPE_HEADER=0;
     private static final int TYPE_ITEM=1;
@@ -36,6 +40,7 @@ public class AdapterDrawer extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if(viewType==TYPE_HEADER){
+            Log.d(LOGTAG, "Inside onCreateViewHolder of AdapterDrawer");
             View view=inflater.inflate(R.layout.drawer_header, parent,false);
             HeaderHolder holder=new HeaderHolder(view);
             return holder;

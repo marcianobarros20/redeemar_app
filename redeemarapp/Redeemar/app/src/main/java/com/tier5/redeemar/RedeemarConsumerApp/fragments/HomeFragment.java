@@ -3,11 +3,10 @@ package com.tier5.redeemar.RedeemarConsumerApp.fragments;
 /**
  * Created by Dibs on 29/07/15.
  */
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +15,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 
+import android.os.SystemClock;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -23,8 +24,10 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.InflateException;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -42,7 +45,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.RecyclerItemClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.ResizeAnimation;
-import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByBrandsAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
@@ -55,7 +58,7 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapReadyCallback {
 
     private String LOGTAG = "HomeFragment";
-    private double latitude, longitude;
+    private double latitude = 0.0, longitude = 0.0;
     private View rootView;
     GoogleMap mMap;
     MapView mMapView;
@@ -70,6 +73,12 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
     private float dpHeight = 0, bHeight = 0, nHeight = 0, dpWidth= 0;
     private int pxHeight, pxHeightRev, pxWidth;
+    private static final LatLng SYDNEY = new LatLng(-33.85704, 151.21522);
+    private Resources res;
+    private SharedPreferences sharedpref;
+    SharedPreferences.Editor editor;
+    //private Double last_lat = 0.0, last_lon = 0.0;
+    boolean isLocationSensetive = false;
 
 
     private boolean mMapViewExpanded = false;
@@ -88,11 +97,35 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        res = getResources();
+        sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+
+
+        editor = sharedpref.edit();
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
+            latitude = Double.parseDouble(sharedpref.getString(res.getString(R.string.spf_last_lat), "0"));
+            isLocationSensetive = true;
+            Log.d(LOGTAG, "Last Lat: "+latitude);
+        }
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_last_lon), null) != null) {
+            longitude = Double.parseDouble(sharedpref.getString(res.getString(R.string.spf_last_lon), "0"));
+            Log.d(LOGTAG, "Last Lon: "+longitude);
+        }
+
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.nearby_brands);
 
 
         try {
@@ -101,8 +134,6 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
             mMapView = (MapView) rootView.findViewById(R.id.map);
             mMapView.onCreate(savedInstanceState);
             mMapView.getMapAsync(this);
-
-
 
             brandList = new ArrayList<>();
             dispBrandList = new ArrayList<>();
@@ -126,33 +157,38 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
             }
 
 
+            if(!isLocationSensetive) {
+                // create class object
+                GPSTracker gps = new GPSTracker(getActivity());
+
+                // check if GPS enabled
+                if(gps.canGetLocation()) {
+
+                    latitude = gps.getLatitude();
+                    longitude = gps.getLongitude();
 
 
 
-            // create class object
-            GPSTracker gps = new GPSTracker(getActivity());
+                    if(latitude == 0 && longitude == 0) {
 
-            // check if GPS enabled
-            if(gps.canGetLocation()){
+                        gps.showSettingsAlert();
 
-                latitude = gps.getLatitude();
-                longitude = gps.getLongitude();
+                    }
 
-                if(latitude == 0 && longitude == 0) {
+                    // \n is for new line
 
+                } else {
+                    // can't get location
+                    // GPS or Network is not enabled
+                    // Ask user to enable GPS/network in settings
                     gps.showSettingsAlert();
-
                 }
-
-                // \n is for new line
-                //Toast.makeText(getActivity().getApplicationContext(), "My Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-
-            } else {
-                // can't get location
-                // GPS or Network is not enabled
-                // Ask user to enable GPS/network in settings
-                gps.showSettingsAlert();
             }
+
+            //Toast.makeText(getActivity().getApplicationContext(), "Your last known location as per browsing the map is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity().getApplicationContext(), "Your last known location as per browsing the map is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+
 
 
             DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
@@ -187,14 +223,14 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                 //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
                 //if the database is empty, trigger an AsycnTask to download movie list from the web
                 //if (mListOffers.isEmpty()) {
-                    Log.d(LOGTAG, "FragmentBoxOffice: executing task from fragment");
-                    new GetNearByOffersAsyncTask(this).execute(String.valueOf(latitude), String.valueOf(longitude));
+                    Log.d(LOGTAG, "HomeFragment: executing task from fragment");
+                    new GetNearByBrandsAsyncTask(this).execute(String.valueOf(latitude), String.valueOf(longitude));
                 //}
             }
 
         }
         catch (InflateException e){
-            Log.e("Dibs", "Inflate exception");
+            Log.e(LOGTAG, "Inflate exception occured");
         }
         return rootView;
     }
@@ -249,20 +285,28 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        Toast.makeText(getActivity().getApplicationContext(), "My Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity().getApplicationContext(), "My Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+        Log.d(LOGTAG, "Inside onmayReady");
+
 
         mClusterManager = new ClusterManager(getActivity(), googleMap);
 
-        googleMap.moveCamera(CameraUpdateFactory.zoomTo(13.2f));
-        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
+        //googleMap.setMyLocationEnabled(true);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.setOnCameraChangeListener(mClusterManager);
+        googleMap.getUiSettings().setZoomGesturesEnabled(true);
+        //Log.d(LOGTAG, "Max zoom is: "+googleMap.getMaxZoomLevel());
+
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10));
         mClusterManager = new ClusterManager(getActivity(), googleMap);
         googleMap.setOnCameraChangeListener(mClusterManager);
         googleMap.setOnInfoWindowClickListener(mClusterManager);
         googleMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
         googleMap.setOnMarkerClickListener(mClusterManager);
-        mClusterManager.cluster();
+        //mClusterManager.cluster();
 
+        googleMap.moveCamera(CameraUpdateFactory.zoomTo(6.2f));
 
 
 
@@ -272,6 +316,15 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
             public void onMapClick(LatLng arg0) {
                 // TODO Auto-generated method stub
                 Log.d(LOGTAG, "OnMap Clicked "+arg0.latitude + "-" + arg0.longitude);
+
+
+                editor.putString(getString(R.string.spf_last_lat), String.valueOf(arg0.latitude)); // Storing Lat
+                editor.putString(getString(R.string.spf_last_lon), String.valueOf(arg0.longitude)); // Storing Lon
+
+
+                editor.commit(); // commit changes
+
+
                 mMapViewExpanded = true;
 
                 animateMapView();
@@ -318,13 +371,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
                     String ind = itm.getTitle();
 
-                    //Log.d(LOGTAG, "Cluster clicked 1: "+ind);
-
                     User br = (User) brandList.get(Integer.parseInt(ind));
-
-                    //Log.d(LOGTAG, "User Company : "+br.getCompanyName());
-                    //Log.d(LOGTAG, "User Address : "+br.getAddress());
-                    //Log.d(LOGTAG, "User Logo : "+br.getLogoName());
 
                     br.setLogoName(br.getLogoName());
                     br.setTargetId(br.getTargetId());
@@ -344,6 +391,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                 Log.d(LOGTAG, "Brand List: "+dispBrandList.size());
 
                 //innerContainerLayout.setVisibility(View.VISIBLE);
+                mMapViewExpanded = false;
                 animateMapView();
 
                 mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity().getApplicationContext(), mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -387,8 +435,6 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
                 String ind = item.getTitle();
 
-                //Log.d(LOGTAG, "Cluster clicked 1: "+ind);
-
                 User br = (User) brandList.get(Integer.parseInt(ind));
                 //Log.d(LOGTAG, "User Company : "+br.getCompanyName());
                 //Log.d(LOGTAG, "User Address : "+br.getAddress());
@@ -429,6 +475,12 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                         Log.d(LOGTAG, "Long clicked");
                     }
                 }));
+                if(!getMapViewStatus())
+                    animateMapView();
+
+                Log.d(LOGTAG, "Map View: "+getMapViewStatus());
+
+
                 Log.d(LOGTAG, "Cluster item clicked "+item.getTitle());
                 return false;
             }
@@ -468,9 +520,17 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                     .icon(icon);
             MarkerItem markerItem = new MarkerItem(markerOptions);
 
+
+
             mClusterManager.addItem(markerItem);
 
         }
+
+        mClusterManager.cluster();
+
+
+        //Log.d(LOGTAG, "Just after brands getting loaded");
+
 
 
         //mAdapter = new BrandViewAdapter(getActivity().getApplicationContext(), brandList, "BrandList");

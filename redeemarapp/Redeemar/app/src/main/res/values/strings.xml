@@ -121,9 +121,7 @@
     <string name="menu_button_blue">Blue</string>
     <string name="menu_button_yellow">Yellow</string>
     <string name="menu_button_green">Green</string>
-
     <string name="splash_screen_description">Redeemar Splash</string>
-
     <string name="success">Success!</string>
     <string name="error">Oops!</string>
     <string name="looking_for_offers">Looking for some offers for this brand...</string>
@@ -135,21 +133,14 @@
     <string name="brand_name">Loading brand information...</string>
     <string name="brand">Brand</string>
     <string name="shop_offers">Shop Offers</string>
-
-
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="crash_toast_text">App Crashed !!! Report has been sent to developer</string>
-
     <string name="crash_dialog_title">Alert</string>
     <string name="crash_dialog_text">OOPS!!!An unexpected error</string>
     <string name="crash_dialog_comment_prompt">Comments</string>
     <string name="crash_dialog_ok_toast">Thank you!</string>
     <string name="crash_user_email_label"></string>
     <integer name="photo_list_preview_columns">2</integer>
-
-
-
     <string name="nav_drawer_recently_added">Recently Added</string>
     <string name="toast_saved">Wallpapaer saved to #</string>
     <string name="toast_saved_failed">Sorry! Failed to save wallpaper</string>
@@ -167,7 +158,6 @@
     <string name="lbl_no_grid_columns">Number of grid columns</string>
     <string name="lbl_gallery_name">Gallery directory name</string>
     <string name="lbl_btn_save">Save</string>
-
     <string name="spf_key">RedeemerSharedPref</string>
     <string name="spf_redeemer_id">spf_redeemer_id</string>
     <string name="spf_redir_action">spf_redir_action</string>
@@ -180,8 +170,8 @@
     <string name="spf_google_id">spf_google_id</string>
     <string name="spf_categories">spf_category_list</string>
     <string name="spf_view_type">spf_view_type</string>
-
-
+    <string name="spf_last_lat">spf_last_lat</string>
+    <string name="spf_last_lon">spf_last_lon</string>
 
     <string name="ext_redeemar_id">REDEEMAR_ID</string>
     <string name="ext_offer_id">OFFER_ID</string>
@@ -218,14 +208,14 @@
     <string name="discount">Discount</string>
     <string name="offers_in">Offers</string>
     <string name="no_records">No record found.</string>
+    <string name="unable_to_get_records">Unable to get record found.</string>
+
 
 
     <string name="bank_it">BANK</string>
     <string name="pass_it">PASS</string>
     <string name="scan_offer">Scan</string>
     <string name="no_rec">No Records</string>
-
-
 
     <string name="my_offers">Banked</string>
     <string name="nearby">Nearby</string>
@@ -294,6 +284,17 @@
     <string name="password_mismatch">Password and confirm password mismatch</string>
     <string name="sending_data">Sending data...</string>
 
+
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="phone">Phone</string>
+    <string name="update_profile">Update Profile</string>
+
+    <string name="enter_valid_first_name">Please enter a valid first name</string>
+    <string name="enter_valid_last_name">Please enter a valid last name</string>
+    <string name="msg_profile_updated">Thank you for updating your profile information</string>
+    <string name="msg_profile_not_updated">Unable to update profile</string>
 
 
     <string name="logging_in">Logging in...</string>

@@ -32,7 +32,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
  */
 public class RateUsFragment extends Fragment implements TaskCompleted {
 
-    private static final String LOGTAG = "Login";
+    private static final String LOGTAG = "RateUsFragment";
 
     private EditText txtEmail, txtFeedback;
     private Button btnSendFeedback;
@@ -190,8 +190,6 @@ public class RateUsFragment extends Fragment implements TaskCompleted {
     @Override
     public void onTaskComplete(String result) {
 
-        Log.d(LOGTAG, "Hello: "+result);
-
         if(result.equalsIgnoreCase("R01001")) {
 
             pd.dismiss();
@@ -223,6 +221,8 @@ public class RateUsFragment extends Fragment implements TaskCompleted {
 
         }
         else {
+
+            pd.dismiss();
 
             builder = new AlertDialog.Builder(getActivity());//Context parameter
             builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {

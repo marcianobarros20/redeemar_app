@@ -470,9 +470,6 @@ public class Requestor {
     }
 
 
-
-
-
     public static JSONObject requestSendFeedbackJSON(RequestQueue requestQueue, String url, String email, String userId, String feedback, String rating) {
 
 
@@ -543,6 +540,75 @@ public class Requestor {
         return reader;
     }
 
+    public static JSONObject requestUpdateProfileJSON(RequestQueue requestQueue, String url, String userId, String firstName, String lastName, String email, String phone) {
+
+
+        URL myUrl = null;
+        HttpURLConnection conn = null;
+        String response = "";
+        JSONObject reader = null;
+
+
+
+        try {
+            myUrl = new URL(url);
+            conn = (HttpURLConnection) myUrl.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+
+            JSONObject data = new JSONObject();
+
+            data.put("webservice_name", "updateprofile");
+            data.put("user_id", userId);
+            data.put("first_name", firstName);
+            data.put("last_name", lastName);
+            data.put("email", email);
+            data.put("phone", phone);
+
+
+            OutputStream os = conn.getOutputStream();
+
+            Log.d(LOGTAG, "Request: " + data.toString());
+
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            bufferedWriter.write("data="+data.toString());
+            bufferedWriter.flush();
+            bufferedWriter.close();
+
+
+            InputStream inputStream = conn.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                response += line;
+            }
+
+            //Log.d(LOGTAG, "Do In background: " + response);
+            bufferedReader.close();
+            inputStream.close();
+            conn.disconnect();
+            os.close();
+            reader = new JSONObject(response);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+        return reader;
+    }
 
 
 }

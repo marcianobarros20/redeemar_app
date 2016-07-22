@@ -24,6 +24,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -127,6 +128,7 @@ public class LoginActivity extends AppCompatActivity implements
         btnFBLogin.setReadPermissions("public_profile", "email");
 
         btnGoogleSignIn = (SignInButton) findViewById(R.id.btn_sign_in_google);
+
         // If using in a fragment
         //loginButton.setFragment(this);
         // Other app specific specialization
@@ -138,29 +140,26 @@ public class LoginActivity extends AppCompatActivity implements
         try {
 
 
+            LoginManager.getInstance().registerCallback(callbackManager,
+                    new FacebookCallback<LoginResult>() {
+                        @Override
+                        public void onSuccess(LoginResult loginResult) {
+                            // App code
 
-            btnFBLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                            Log.d("Dibs", loginResult.toString());
 
+                            // App code
+                            GraphRequest request = GraphRequest.newMeRequest(
+                                    loginResult.getAccessToken(),
+                                    new GraphRequest.GraphJSONObjectCallback() {
+                                        @Override
+                                        public void onCompleted(
+                                                JSONObject object,
+                                                GraphResponse response) {
 
-                @Override
-                public void onSuccess(LoginResult loginResult) {
-                    // App code
-                    Log.d(LOGTAG, "Facebook login successful: "+loginResult);
-
-                    btnFBLogin.setText(getString(R.string.signing_in));
-
-                    // App code
-                    GraphRequest request = GraphRequest.newMeRequest(
-                            loginResult.getAccessToken(),
-                            new GraphRequest.GraphJSONObjectCallback() {
-                                @Override
-                                public void onCompleted(
-                                        JSONObject object,
-                                        GraphResponse response) {
-
-                                    Log.d(LOGTAG, "Response from graph: " + response);
-                                    String user_full_name = "";
-                                    try {
+                                            Log.d(LOGTAG, "Response from graph: " + response);
+                                            String user_full_name = "";
+                                            try {
                                         /*user = new User();
                                         user.facebookID = object.getString("id").toString();
                                         user.email = object.getString("email").toString();
@@ -168,52 +167,56 @@ public class LoginActivity extends AppCompatActivity implements
                                         user.gender = object.getString("gender").toString();
                                         PrefUtils.setCurrentUser(user,LoginActivity.this);*/
 
-                                        if (object.getString("email") != null) {
-                                            String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
-                                            Log.d(LOGTAG, "Android Id is: "+androidId);
-                                            // Email, Device Token, facebook Id, Google Id, where 0 implies no value
-                                            new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "");
+                                                if (object.getString("email") != null) {
+                                                    String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
+                                                    Log.d(LOGTAG, "Android Id is: "+androidId);
+                                                    // Email, Device Token, facebook Id, Google Id, where 0 implies no value
+                                                    new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "");
+                                                }
+
+                                            }catch (Exception e){
+                                                e.printStackTrace();
+                                            }
+                                            //Toast.makeText(LoginActivity.this,"Welcome "+user_full_name, Toast.LENGTH_LONG).show();
+                                            Toast.makeText(LoginActivity.this,"Loggin in...", Toast.LENGTH_LONG).show();
+                                            //Intent intent=new Intent(LoginActivity.this, BrowseOffersActivity.class);
+                                            //startActivity(intent);
+                                            //finish();
+
                                         }
 
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
-                                    //Toast.makeText(LoginActivity.this,"Welcome "+user_full_name, Toast.LENGTH_LONG).show();
-                                    Toast.makeText(LoginActivity.this,"Loggin in...", Toast.LENGTH_LONG).show();
-                                    //Intent intent=new Intent(LoginActivity.this, BrowseOffersActivity.class);
-                                    //startActivity(intent);
-                                    //finish();
+                                    });
 
-                                }
+                            Bundle parameters = new Bundle();
+                            //parameters.putString("fields", "id,name,email,gender, birthday");
+                            parameters.putString("fields", "id,name,email");
+                            request.setParameters(parameters);
+                            request.executeAsync();
 
-                            });
 
-                    Bundle parameters = new Bundle();
-                    //parameters.putString("fields", "id,name,email,gender, birthday");
-                    parameters.putString("fields", "id,name,email");
-                    request.setParameters(parameters);
-                    request.executeAsync();
 
-                }
+                        }
 
-                @Override
-                public void onCancel() {
-                    // App code
-                    Log.d(LOGTAG, "Facebook login cancelled");
-                    Toast.makeText(getApplicationContext(), "Facebook login has been cancelled", Toast.LENGTH_LONG).show();
+                        @Override
+                        public void onCancel() {
+                            // App code
+                        }
 
-                }
+                        @Override
+                        public void onError(FacebookException exception) {
+                            // App code
+                        }
+                    });
 
-                @Override
-                public void onError(FacebookException exception) {
-                    // App code
-                    Log.d(LOGTAG, "Facebook login error");
-                    Toast.makeText(getApplicationContext(), "Error occured in facebook login", Toast.LENGTH_LONG).show();
 
-                }
-            });
+        } catch(Exception e) { Log.d(LOGTAG, "facebook login exception: "+e.toString()); }
 
-        } catch(Exception e) { Log.d(LOGTAG, "facebook login exception"); }
+
+
+
+
+
+
 
 
         btnGoogleSignIn.setOnClickListener(new View.OnClickListener() {
@@ -307,26 +310,6 @@ public class LoginActivity extends AppCompatActivity implements
     public void onStart() {
         super.onStart();
 
-        /*OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-        if (opr.isDone()) {
-            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-            // and the GoogleSignInResult will be available instantly.
-            Log.d(LOGTAG, "Got cached sign-in");
-            GoogleSignInResult result = opr.get();
-            handleSignInResult(result);
-        } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-            showProgressDialog();
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    hideProgressDialog();
-                    handleSignInResult(googleSignInResult);
-                }
-            });
-        }*/
     }
 
 
@@ -595,10 +578,10 @@ public class LoginActivity extends AppCompatActivity implements
 
                         SharedPreferences.Editor editor = sharedpref.edit();
                         editor.putString(getString(R.string.spf_user_id), jsonObject.getString("user_id")); // Storing User Id
+                        editor.putString(getString(R.string.spf_first_name), jsonObject.getString("first_name")); // Storing First name
+                        editor.putString(getString(R.string.spf_last_name), jsonObject.getString("last_name")); // Storing Last Name
                         editor.putString(getString(R.string.spf_email), jsonObject.getString("email")); // Storing Email
-                        //editor.putString(getString(R.string.spf_mobile), jsonObject.getString("mobile")); // Storing Mobile
-                        //editor.putString(getString(R.string.spf_first_name), jsonObject.getString("first_name")); // Storing First name
-                        //editor.putString(getString(R.string.spf_last_name), jsonObject.getString("last_name")); // Storing Last Name
+                        editor.putString(getString(R.string.spf_mobile), jsonObject.getString("phone")); // Storing Mobile
                         editor.commit(); // commit changes
 
                         Log.d(LOGTAG, "Login success");
@@ -867,6 +850,11 @@ public class LoginActivity extends AppCompatActivity implements
 
                             else if(lastActivity.equalsIgnoreCase("MyOffers")) {
                                 intent = new Intent(LoginActivity.this, OfferDetailsActivity.class);
+                                intent.putExtra(res.getString(R.string.ext_activity), extras.getString(res.getString(R.string.ext_offer_id))); // Settings the activty name where it will be redirected to
+                            }
+
+                            else if(lastActivity.equalsIgnoreCase("EditProfile")) {
+                                intent = new Intent(LoginActivity.this, BrowseOffersActivity.class);
                                 intent.putExtra(res.getString(R.string.ext_activity), extras.getString(res.getString(R.string.ext_offer_id))); // Settings the activty name where it will be redirected to
                             }
 

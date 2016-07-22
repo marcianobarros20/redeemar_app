@@ -87,4 +87,14 @@ public class OfferUtils {
         String res = Parser.parseSendFeedbackJSON(response);
         Log.d(LOGTAG, "Inside loadSendFeedback :"+res);
         return res;
-    }}
+    }
+
+    public static String loadUpdateProfile(RequestQueue requestQueue, String user_id, String first_name, String last_name, String email, String phone) {
+
+        JSONObject response = Requestor.requestUpdateProfileJSON(requestQueue, Endpoints.getRequestUrlUpdateProfile(), user_id, first_name, last_name, email, phone);
+        String res = Parser.parseUpdateProfileJSON(response);
+        Log.d(LOGTAG, "Inside loadUpdateProfile :"+res);
+        return res;
+    }
+
+}

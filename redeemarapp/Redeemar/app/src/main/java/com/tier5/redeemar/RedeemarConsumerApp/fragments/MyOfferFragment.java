@@ -151,8 +151,7 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
             Log.d(LOGTAG, "No user id found, redirecting to login");
 
-            Intent i = new Intent(getActivity().getApplicationContext(),
-                    LoginActivity.class);
+            Intent i = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
             startActivity(i);
 
         }

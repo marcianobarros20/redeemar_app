@@ -42,6 +42,7 @@ import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.AboutFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.BrowseOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.ContactFragment;
+import com.tier5.redeemar.RedeemarConsumerApp.fragments.EditProfileFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.FragmentDrawer;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.HelpFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.HomeFragment;
@@ -99,9 +100,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private String redirectTo="", redeemarId = "", campaignId = "", jsonCatText = "", firstName = "", email = "";
     private final int NavGroupId = 1001;
     SharedPreferences.Editor editor;
-    private TextView navWelcome, navEmail;
-
-
+    private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
 
 
     /**
@@ -200,7 +199,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     Intent intent = new Intent(BrowseOffersActivity.this, CloudReco.class);
                     startActivity(intent);
 
-                } else if (menuItemId == R.id.bottom_my_offers || menuItemId == R.id.nav_my_offers) {
+                } else if (menuItemId == R.id.bottom_my_offers) {
 
                     getSupportActionBar().setTitle(R.string.my_banked);
 
@@ -241,26 +240,39 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     Log.d(LOGTAG, "Redeemar id 101: " + redeemarId);
                     Log.d(LOGTAG, "Campaign id 101: " + campaignId);
 
-                    Fragment fr = new BrowseOfferFragment();
-                    Bundle args1 = new Bundle();
-                    if(redirectTo.equalsIgnoreCase("BrandOffers")) {
-                        getSupportActionBar().setTitle(R.string.offers_by_brand);
-                        args1.putString(getString(R.string.ext_redir_to), "BrandOffers");
-                        args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
+                    if(redirectTo.equalsIgnoreCase("EditProfile")) {
+
+                        getSupportActionBar().setTitle(R.string.nav_item_help);
+                        Fragment editProfileFragment = new EditProfileFragment();
+                        FragmentManager editProfileFm = getFragmentManager();
+                        FragmentTransaction editProfileFragmentTransaction = editProfileFm.beginTransaction();
+                        editProfileFragmentTransaction.replace(R.id.container_body, editProfileFragment);
+                        editProfileFragmentTransaction.commit();
+
+                    }
+                    else {
+                        Fragment fr = new BrowseOfferFragment();
+                        Bundle args1 = new Bundle();
+                        if(redirectTo.equalsIgnoreCase("BrandOffers")) {
+                            getSupportActionBar().setTitle(R.string.offers_by_brand);
+                            args1.putString(getString(R.string.ext_redir_to), "BrandOffers");
+                            args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
+                        }
+
+                        else if(redirectTo.equalsIgnoreCase("CampaignOffers")) {
+                            getSupportActionBar().setTitle(R.string.offers_by_campaign);
+                            args1.putString(getString(R.string.ext_redir_to), "CampaignOffers");
+                            args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
+                            args1.putString(getString(R.string.ext_campaign_id), campaignId);
+                        }
+
+                        fr.setArguments(args1);
+                        FragmentManager fm = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                        fragmentTransaction.replace(R.id.container_body, fr);
+                        fragmentTransaction.commit();
                     }
 
-                    else if(redirectTo.equalsIgnoreCase("CampaignOffers")) {
-                        getSupportActionBar().setTitle(R.string.offers_by_campaign);
-                        args1.putString(getString(R.string.ext_redir_to), "CampaignOffers");
-                        args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
-                        args1.putString(getString(R.string.ext_campaign_id), campaignId);
-                    }
-
-                    fr.setArguments(args1);
-                    FragmentManager fm = getFragmentManager();
-                    FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                    fragmentTransaction.replace(R.id.container_body, fr);
-                    fragmentTransaction.commit();
 
                 }
                 else if (menuItemId == R.id.bottom_daily_deals) {
@@ -274,12 +286,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             @Override
             public void onMenuTabReSelected(@IdRes int menuItemId) {
                 if (menuItemId == R.id.bottom_scan_offer) {
-
                     Intent intent = new Intent(BrowseOffersActivity.this, CloudReco.class);
                     startActivity(intent);
-
-
-                } else if (menuItemId == R.id.bottom_my_offers || menuItemId == R.id.nav_my_offers) {
+                } else if (menuItemId == R.id.bottom_my_offers) {
 
                     getSupportActionBar().setTitle(R.string.my_banked);
 
@@ -295,6 +304,19 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 } else if (menuItemId == R.id.bottom_nearby) {
 
                     getSupportActionBar().setTitle(R.string.nearby_brands);
+
+
+                    Fragment fr = new HomeFragment();
+                    args = new Bundle();
+                    args.putString(getString(R.string.ext_user_id), user_id);
+                    args.putString(getString(R.string.ext_lat), String.valueOf(latitude));
+                    args.putString(getString(R.string.ext_lng), String.valueOf(longitude));
+
+                    fr.setArguments(args);
+                    FragmentManager fm = getFragmentManager();
+                    FragmentTransaction transaction = fm.beginTransaction();
+                    transaction.replace(R.id.container_body, fr);
+                    transaction.commit();
 
                 } else if (menuItemId == R.id.bottom_browse_offers) {
 
@@ -388,6 +410,25 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
 
                         switch (menuItem.getItemId()) {
+
+                            case R.id.nav_my_offers:
+                                getSupportActionBar().setTitle(R.string.nav_item_help);
+                                Fragment myOfferFragment = new MyOfferFragment();
+                                FragmentManager myOfferFm = getFragmentManager();
+                                FragmentTransaction myOfferFragmentTransaction = myOfferFm.beginTransaction();
+                                myOfferFragmentTransaction.replace(R.id.container_body, myOfferFragment);
+                                myOfferFragmentTransaction.commit();
+                                break;
+
+
+                            case R.id.nav_edit_profile:
+                                getSupportActionBar().setTitle(R.string.nav_item_edit_profile);
+                                Fragment editProfileFragment = new EditProfileFragment();
+                                FragmentManager editProfileFm = getFragmentManager();
+                                FragmentTransaction editProfileFragmentTransaction = editProfileFm.beginTransaction();
+                                editProfileFragmentTransaction.replace(R.id.container_body, editProfileFragment);
+                                editProfileFragmentTransaction.commit();
+                                break;
 
                             case R.id.nav_help:
                                 getSupportActionBar().setTitle(R.string.nav_item_help);
@@ -531,7 +572,56 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             navEmail.setText(email);
         }
 
+        navMyOffers = (TextView) headerView.findViewById(R.id.nav_my_offers);
+        navMyCredits = (TextView) headerView.findViewById(R.id.nav_my_credits);
+        navEditProfile = (TextView) headerView.findViewById(R.id.nav_edit_profile);
 
+
+        navMyOffers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                closeNavDrawer();
+
+                getSupportActionBar().setTitle(R.string.nav_item_my_offers);
+                Fragment myOfferFragment = new MyOfferFragment();
+                FragmentManager myOfferFm = getFragmentManager();
+                FragmentTransaction myOfferFragmentTransaction = myOfferFm.beginTransaction();
+                myOfferFragmentTransaction.replace(R.id.container_body, myOfferFragment);
+                myOfferFragmentTransaction.commit();
+
+            }
+
+        });
+
+        navMyCredits.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                closeNavDrawer();
+
+                Toast.makeText(getApplicationContext(), "Coming soon", Toast.LENGTH_SHORT).show();
+
+            }
+
+        });
+
+        navEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                closeNavDrawer();
+
+                getSupportActionBar().setTitle(R.string.nav_item_edit_profile);
+                Fragment editProfileFragment = new EditProfileFragment();
+                FragmentManager editProfileFm = getFragmentManager();
+                FragmentTransaction editProfileFragmentTransaction = editProfileFm.beginTransaction();
+                editProfileFragmentTransaction.replace(R.id.container_body, editProfileFragment);
+                editProfileFragmentTransaction.commit();
+
+            }
+
+        });
 
 
         // refreshing navigation drawer adapter

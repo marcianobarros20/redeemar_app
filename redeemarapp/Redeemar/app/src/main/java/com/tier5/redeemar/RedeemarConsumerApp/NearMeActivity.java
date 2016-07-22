@@ -164,7 +164,7 @@ public class NearMeActivity extends BaseMapActivity implements ActivityCompat.On
        getMap().setInfoWindowAdapter(mClusterManager.getMarkerManager());
        getMap().setOnMarkerClickListener(mClusterManager);
 
-       //new GetNearByOffersAsyncTask(NearMeActivity.this).execute(String.valueOf(latitude), String.valueOf(longitude));
+       //new GetNearByBrandsAsyncTask(NearMeActivity.this).execute(String.valueOf(latitude), String.valueOf(longitude));
 
 
         /*mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);

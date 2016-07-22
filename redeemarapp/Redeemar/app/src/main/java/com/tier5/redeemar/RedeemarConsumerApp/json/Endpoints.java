@@ -61,11 +61,15 @@ public class Endpoints {
                 + UrlEndpoints.URL_CHAR_QUESTION;
     }
 
-
-
     public static String getRequestUrlSendFeedback() {
 
         return UrlEndpoints.URL_SEND_FEEDBACK
+                + UrlEndpoints.URL_CHAR_QUESTION;
+    }
+
+    public static String getRequestUrlUpdateProfile() {
+
+        return UrlEndpoints.URL_UPDATE_PROFILE
                 + UrlEndpoints.URL_CHAR_QUESTION;
     }
 

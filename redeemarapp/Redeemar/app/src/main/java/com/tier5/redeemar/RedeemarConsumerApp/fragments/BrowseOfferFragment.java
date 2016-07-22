@@ -4,6 +4,7 @@ package com.tier5.redeemar.RedeemarConsumerApp.fragments;
  * Created by tier5 on 22/6/16.
  */
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -63,11 +65,12 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private SharedPreferences sharedpref;
     private String user_id = "0";
     double latitude = 0.0, longitude = 0.0;
-    private FragmentActivity listener;
+    //private FragmentActivity listener;
     private List<Offer> mModels;
     private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list";
     private static final int VERTICAL_ITEM_SPACE = 48;
     //private SearchView searchView;
+    Activity activity;
 
 
 
@@ -98,8 +101,11 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        //Log.d(LOGTAG, "Setting title");
+        //getActivity().setTitle(R.string.browse_offers);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.browse_offers);
 
-        getActivity().setTitle(R.string.browse_offers);
+        activity = getActivity();
 
         setHasOptionsMenu(true);
         Bundle args1 = getArguments();
@@ -117,13 +123,12 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_offers, container, false);
 
+        Log.d(LOGTAG, "Inside browse offer fragment");
+
 
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.my_recycler_view);
-        //searchView = (SearchView) layout.findViewById(R.id.searchView);
-        //searchView.setOnQueryTextListener(textlistener); // call the QuerytextListner.
 
-        //tvEmptyView.setText("Loading...");
 
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -260,8 +265,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public void onResume() {
         super.onResume();
 
+        activity = getActivity();
         getActivity().setTitle(R.string.browse_offers);
-
     }
 
 
@@ -280,9 +285,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         searchView.setOnQueryTextListener(this);
 
     }
-
-
-
 
 
 
@@ -348,24 +350,21 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         int p=0;
 
         final List<Offer> filteredModelList = new ArrayList<>();
-        for (Offer model : models) {
+        if(models != null) {
+            for (Offer model : models) {
 
+                final String offerDesc = model.getOfferDescription().toLowerCase();
 
-            final String offerDesc = model.getOfferDescription().toLowerCase();
+                if (offerDesc.contains(query)) {
+                    filteredModelList.add(model);
+                    Log.d(LOGTAG, "Description is "+offerDesc);
+                    p++;
 
-
-
-
-            if (offerDesc.contains(query)) {
-                filteredModelList.add(model);
-                Log.d(LOGTAG, "Description is "+offerDesc);
-                p++;
+                }
 
             }
-
-
-
         }
+
 
         Log.d(LOGTAG, "No. of match found is "+p);
         return filteredModelList;
@@ -378,15 +377,22 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
         Log.d(LOGTAG, "Inside callback onOffersLoaded: "+listOffers.size());
-        if(listOffers.size() > 0 && mAdapter != null) {
-            mModels = listOffers;
-            mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), listOffers, "BrowseOffers");
-            mRecyclerOffers.setAdapter(mAdapter);
-            mRecyclerOffers.setVisibility(View.VISIBLE);
-            tvEmptyView.setVisibility(View.GONE);
+
+        if (isAdded() && activity != null) {
+            if (listOffers.size() > 0 && mAdapter != null) {
+                mModels = listOffers;
+                mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), listOffers, "BrowseOffers");
+                mRecyclerOffers.setAdapter(mAdapter);
+                mRecyclerOffers.setVisibility(View.VISIBLE);
+                tvEmptyView.setVisibility(View.GONE);
+            } else {
+                tvEmptyView.setText(getString(R.string.no_records));
+            }
+
         }
         else
-            tvEmptyView.setText(getString(R.string.no_records));
+            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.unable_to_get_records), Toast.LENGTH_SHORT).show();
+
 
 
     }
