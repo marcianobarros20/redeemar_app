@@ -1,6 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single" android:id="@+id/NavGroup">
+
+        <item
+            android:id="@+id/nav_offers"
+            android:icon="@drawable/ic_price_tag"
+            android:title="@string/nav_item_offers"
+            android:visible="true" />
+
         <item
             android:id="@+id/nav_help"
             android:icon="@drawable/ic_help"
@@ -21,10 +28,18 @@
             android:id="@+id/nav_rate"
             android:icon="@drawable/ic_rate"
             android:title="@string/nav_item_rate" />
+
+        <item
+            android:id="@+id/nav_login"
+            android:icon="@drawable/ic_logout"
+            android:title="@string/nav_item_signin"
+            android:visible="false" />
+
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
-            android:title="@string/nav_item_signout" />
+            android:title="@string/nav_item_signout"
+            android:visible="true" />
 
     </group>
 </menu>

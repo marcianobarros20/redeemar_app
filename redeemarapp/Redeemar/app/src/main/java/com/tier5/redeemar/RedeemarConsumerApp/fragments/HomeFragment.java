@@ -15,7 +15,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,10 +23,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.InflateException;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -40,11 +37,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
-import com.tier5.redeemar.RedeemarConsumerApp.BrandViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.RecyclerItemClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.ResizeAnimation;
+import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrandViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByBrandsAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
@@ -103,6 +100,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
 
         editor = sharedpref.edit();
+
 
 
         if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
@@ -573,6 +571,12 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
     }
 
     public void openFragment(String redeemarId) {
+
+        editor.putString(getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
+        editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
+        editor.commit(); // commit changes
+
+
         Bundle args = new Bundle();
         args.putString(getString(R.string.ext_redir_to), "BrandOffers");
         args.putString(getString(R.string.ext_redeemar_id), redeemarId);

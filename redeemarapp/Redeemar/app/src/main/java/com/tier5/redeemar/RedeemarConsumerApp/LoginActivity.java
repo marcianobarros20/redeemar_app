@@ -2,14 +2,17 @@ package com.tier5.redeemar.RedeemarConsumerApp;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -32,10 +35,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 
@@ -55,8 +63,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String LOGTAG = "Login";
 
@@ -71,16 +78,29 @@ public class LoginActivity extends AppCompatActivity implements
     private AlertDialog.Builder builder;
     private Resources res;
     private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
     private User user;
-    CallbackManager callbackManager;
-    GoogleSignInOptions gso;
-    GoogleApiClient mGoogleApiClient;
-    Intent intent;
-    Typeface myFont;
+    private CallbackManager callbackManager;
+    private GoogleSignInOptions gso;
+    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiAvailability googleApiAvailability;
+
+    private Intent intent;
+    private Typeface myFont;
+
+    // For Google Plus
+    private boolean mIntentInProgress;
+    private boolean mSignInClicked;
+    private ConnectionResult mConnectionResult;
+    private int mRequestCode;
 
     private static final int RC_SIGN_IN = 9001;
-
     private ProgressDialog mProgressDialog;
+
+    private String loginMethod = "", offerId = "", androidId = "", noAutoLogin = "";
+
+
+
 
 
 
@@ -90,6 +110,12 @@ public class LoginActivity extends AppCompatActivity implements
 
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+        editor = sharedpref.edit();
+
+        if(sharedpref.getString(res.getString(R.string.spf_no_auto_login), null) != null) {
+            noAutoLogin = sharedpref.getString(res.getString(R.string.spf_no_auto_login), "");
+        }
+
 
         // For Facebook
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -98,36 +124,34 @@ public class LoginActivity extends AppCompatActivity implements
         // For Google Sign In
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+
+
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
 
+        buildGoogleApiClient();
+
+
         setContentView(R.layout.login);
+
+        androidId = Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
+        Log.d(LOGTAG, "Android Id is: "+androidId);
+
+
 
         myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
 
-        txtEmail = (EditText) findViewById(R.id.email);
-        txtPassword = (EditText) findViewById(R.id.password);
-        btnLogin = (Button) findViewById(R.id.btn_login);
 
-        tvRegister = (TextView) findViewById(R.id.tv_register);
-        tvForgotPass = (TextView) findViewById(R.id.tv_forgot_password);
-
-        tvRegister.setTypeface(myFont);
-        tvForgotPass.setTypeface(myFont);
 
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+
+        initRegularSignIn();
+        initFBSignIn();
+        initGoogleSignIn();
 
 
-        btnFBLogin = (LoginButton) findViewById(R.id.btn_login_fb);
-        btnFBLogin.setReadPermissions("public_profile", "email");
-
-        btnGoogleSignIn = (SignInButton) findViewById(R.id.btn_sign_in_google);
 
         // If using in a fragment
         //loginButton.setFragment(this);
@@ -139,84 +163,11 @@ public class LoginActivity extends AppCompatActivity implements
 
         try {
 
+            procFBSignIn();
 
-            LoginManager.getInstance().registerCallback(callbackManager,
-                    new FacebookCallback<LoginResult>() {
-                        @Override
-                        public void onSuccess(LoginResult loginResult) {
-                            // App code
+            //Thread.sleep(4000);
 
-                            Log.d("Dibs", loginResult.toString());
-
-                            // App code
-                            GraphRequest request = GraphRequest.newMeRequest(
-                                    loginResult.getAccessToken(),
-                                    new GraphRequest.GraphJSONObjectCallback() {
-                                        @Override
-                                        public void onCompleted(
-                                                JSONObject object,
-                                                GraphResponse response) {
-
-                                            Log.d(LOGTAG, "Response from graph: " + response);
-                                            String user_full_name = "";
-                                            try {
-                                        /*user = new User();
-                                        user.facebookID = object.getString("id").toString();
-                                        user.email = object.getString("email").toString();
-                                        user.name = object.getString("name").toString();
-                                        user.gender = object.getString("gender").toString();
-                                        PrefUtils.setCurrentUser(user,LoginActivity.this);*/
-
-                                                if (object.getString("email") != null) {
-                                                    String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
-                                                    Log.d(LOGTAG, "Android Id is: "+androidId);
-                                                    // Email, Device Token, facebook Id, Google Id, where 0 implies no value
-                                                    new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "");
-                                                }
-
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-                                            //Toast.makeText(LoginActivity.this,"Welcome "+user_full_name, Toast.LENGTH_LONG).show();
-                                            Toast.makeText(LoginActivity.this,"Loggin in...", Toast.LENGTH_LONG).show();
-                                            //Intent intent=new Intent(LoginActivity.this, BrowseOffersActivity.class);
-                                            //startActivity(intent);
-                                            //finish();
-
-                                        }
-
-                                    });
-
-                            Bundle parameters = new Bundle();
-                            //parameters.putString("fields", "id,name,email,gender, birthday");
-                            parameters.putString("fields", "id,name,email");
-                            request.setParameters(parameters);
-                            request.executeAsync();
-
-
-
-                        }
-
-                        @Override
-                        public void onCancel() {
-                            // App code
-                        }
-
-                        @Override
-                        public void onError(FacebookException exception) {
-                            // App code
-                        }
-                    });
-
-
-        } catch(Exception e) { Log.d(LOGTAG, "facebook login exception: "+e.toString()); }
-
-
-
-
-
-
-
+        } catch(Exception e) { Log.d(LOGTAG, "Login exception: "+e.toString()); }
 
 
         btnGoogleSignIn.setOnClickListener(new View.OnClickListener() {
@@ -224,11 +175,28 @@ public class LoginActivity extends AppCompatActivity implements
             public void onClick(View view) {
 
                 Log.d(LOGTAG, "Before Google sign in");
-
-                signIn();
+                editor.putString(res.getString(R.string.spf_login_method), "google"); // Storing action
+                editor.commit();
+                //showProgressDialog();
+                googleSignIn();
 
             }
         });
+
+
+        btnFBLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.d(LOGTAG, "FB Login clicked");
+                editor.putString(res.getString(R.string.spf_login_method), "facebook"); // Storing action
+                editor.commit();
+
+                //showProgressDialog();;
+
+            }
+        });
+
 
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -263,14 +231,12 @@ public class LoginActivity extends AppCompatActivity implements
 
 
 
-                    String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
+                    //String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
                     Log.d(LOGTAG, "Android Id is: "+androidId);
 
-                    new LoginAsyncTask().execute(txtEmail.getText().toString(), txtPassword.getText().toString(), androidId);
+                    new LoginAsyncTask().execute(txtEmail.getText().toString(), txtPassword.getText().toString(), offerId);
 
-                    pd = new ProgressDialog(LoginActivity.this);
-                    pd.setMessage(getString(R.string.logging_in));
-                    pd.show();
+                    showProgressDialog();
 
                 }
 
@@ -298,119 +264,446 @@ public class LoginActivity extends AppCompatActivity implements
             }
         });
 
+    }
 
 
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(LOGTAG, "Request Code: "+String.valueOf(requestCode));
+        Log.d(LOGTAG, "Result Code: "+String.valueOf(resultCode));
+        Log.d(LOGTAG, "Data: "+String.valueOf(data));
+        Log.d(LOGTAG, "RC_SIGN_IN: "+String.valueOf(RC_SIGN_IN));
+
+        if(sharedpref.getString(res.getString(R.string.spf_login_method), null) != null) {
+            loginMethod = sharedpref.getString(res.getString(R.string.spf_login_method), "");
+        }
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
+            offerId = sharedpref.getString(res.getString(R.string.spf_last_offer_id), "");
+        }
+
+
+        Log.d(LOGTAG, "Login Method: "+loginMethod);
+
+
+        if(loginMethod.equalsIgnoreCase("facebook")) {
+            Log.d(LOGTAG, "Successfully logged in from Facebook");
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+
+        else if(loginMethod.equalsIgnoreCase("google")) {
+
+            // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+            if (requestCode == RC_SIGN_IN) {
+
+
+                /*
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                Log.d(LOGTAG, "Google Login Result: "+result.toString());
+                Log.d(LOGTAG, "Google Login Sign In Account: "+result.getSignInAccount());
+                Log.d(LOGTAG, "Google Login Status: "+result.getStatus());
+                Log.d(LOGTAG, "Google Login is Success: "+result.isSuccess());
+
+                handleSignInResult(result);*/
+
+
+                // Check which request we're responding to
+
+                mRequestCode = requestCode;
+
+                if (resultCode != RESULT_OK) {
+                    mSignInClicked = false;
+                    hideProgressDialog();
+
+                }
+
+
+                mIntentInProgress = false;
+
+                if (!mGoogleApiClient.isConnecting()) {
+                    mGoogleApiClient.connect();
+                }
+
+            }
+        }
+
+    }
+
+
+
+
+    public void initRegularSignIn() {
+
+        txtEmail = (EditText) findViewById(R.id.email);
+        txtPassword = (EditText) findViewById(R.id.password);
+        btnLogin = (Button) findViewById(R.id.btn_login);
+
+        tvRegister = (TextView) findViewById(R.id.tv_register);
+        tvForgotPass = (TextView) findViewById(R.id.tv_forgot_password);
+
+        tvRegister.setTypeface(myFont);
+        tvForgotPass.setTypeface(myFont);
 
 
     }
+
+    public void initFBSignIn() {
+
+        btnFBLogin = (LoginButton) findViewById(R.id.btn_login_fb);
+        btnFBLogin.setReadPermissions("public_profile", "email");
+    }
+
+
+    private void initGoogleSignIn(){
+
+        btnGoogleSignIn = (SignInButton) findViewById(R.id.btn_sign_in_google);
+        btnGoogleSignIn.setSize(SignInButton.SIZE_STANDARD);
+        btnGoogleSignIn.setScopes(new Scope[]{Plus.SCOPE_PLUS_LOGIN});
+
+    }
+
+
+    protected synchronized void buildGoogleApiClient() {
+
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Plus.API,Plus.PlusOptions.builder().build())
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .build();
+
+        Log.d(LOGTAG, "Finished building API Client");
+
+    }
+
+    ////////////////////////////////////////////////////////////// FOR FACEBOOK LOGIN //////////////////////////////////////////////////////////////
+
+    public void procFBSignIn() {
+
+        LoginManager.getInstance().registerCallback(callbackManager,
+            new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    // App code
+
+                    Log.d("Dibs", loginResult.toString());
+
+                    // App code
+                    GraphRequest request = GraphRequest.newMeRequest(
+                            loginResult.getAccessToken(),
+                            new GraphRequest.GraphJSONObjectCallback() {
+                                @Override
+                                public void onCompleted(
+                                        JSONObject object,
+                                        GraphResponse response) {
+
+                                    Log.d(LOGTAG, "Response from graph: " + response);
+                                    String user_full_name = "";
+                                    try {
+                                    /*user = new User();
+                                    user.facebookID = object.getString("id").toString();
+                                    user.email = object.getString("email").toString();
+                                    user.name = object.getString("name").toString();
+                                    user.gender = object.getString("gender").toString();
+                                    PrefUtils.setCurrentUser(user,LoginActivity.this);*/
+
+                                        if (object.getString("email") != null) {
+                                            //String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
+                                            Log.d(LOGTAG, "Android Id is: "+androidId);
+                                            // Email, Device Token, facebook Id, Google Id, where 0 implies no value
+                                            new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "");
+                                        }
+
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                    //Toast.makeText(LoginActivity.this,"Welcome "+user_full_name, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(LoginActivity.this,"Loggin in...", Toast.LENGTH_LONG).show();
+                                    //Intent intent=new Intent(LoginActivity.this, BrowseOffersActivity.class);
+                                    //startActivity(intent);
+                                    //finish();
+
+                                    hideProgressDialog();
+
+                                }
+
+                            });
+
+                    Bundle parameters = new Bundle();
+                    //parameters.putString("fields", "id,name,email,gender, birthday");
+                    parameters.putString("fields", "id,name,email");
+                    request.setParameters(parameters);
+                    request.executeAsync();
+
+
+
+                }
+
+                @Override
+                public void onCancel() {
+                    // App code
+                }
+
+                @Override
+                public void onError(FacebookException exception) {
+                    // App code
+                }
+            });
+
+    }
+
+
+
+    ////////////////////////////////////////////////////////////// FOR GOOGLE PLUS LOGIN //////////////////////////////////////////////////////////////
+
+
 
     @Override
     public void onStart() {
         super.onStart();
 
-    }
+        Log.d(LOGTAG, "No auto login: "+noAutoLogin);
+
+        if(noAutoLogin.equalsIgnoreCase("1")) {
+
+            Log.d(LOGTAG, "Inside revoke access");
+            gPlusRevokeAccess();
+            gPlusSignOut();
 
 
-
-    // [START handleSignInResult]
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(LOGTAG, "Google SignIn Result:" + result.isSuccess());
-        Log.d(LOGTAG, "Google SignIn Account:" + result.getSignInAccount());
-        Log.d(LOGTAG, "Google SignIn Status:" + result.getStatus());
-        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            Log.d(LOGTAG, "Google Display Name: "+acct.getDisplayName());
-            Log.d(LOGTAG, "Google Family Name: "+acct.getFamilyName());
-            Log.d(LOGTAG, "Google Given Name: "+acct.getGivenName());
-            Log.d(LOGTAG, "Google Email: "+acct.getEmail());
-            Log.d(LOGTAG, "Google Id: "+acct.getId());
-            Log.d(LOGTAG, "Google Id Token: "+acct.getIdToken());
-
-
-            String androidId = Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
-            Log.d(LOGTAG, "Android Id is: "+androidId);
-
-
-
-            if (acct.getEmail() != null) {
-                // Email, Device Token, facebook Id, Google Id
-                new RegisterSocialAsyncTask().execute(acct.getEmail(), androidId, "", acct.getId());
-            }
-
-
-        } else {
-            // Signed out, show unauthenticated UI.
-
-
-            builder = new AlertDialog.Builder(LoginActivity.this);//Context parameter
-            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //do stuff
-                }
-            });
-            builder.setMessage(getString(R.string.error_signing_in));
-            alertDialog = builder.create();
-
-            alertDialog.setTitle(getString(R.string.alert_title));
-            alertDialog.setIcon(R.drawable.icon_cross);
-
-
-            alertDialog.show();
-
+            //mGoogleApiClient.disconnect();
+            //mGoogleApiClient.connect();
 
 
         }
+        else
+            mGoogleApiClient.connect();
+
     }
-    // [END handleSignInResult]
 
-    // [START signIn]
-    private void signIn() {
 
-        Log.d(LOGTAG, "Inside Google sign in");
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+
     }
-    // [END signIn]
 
-    // [START signOut]
-    private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        // [START_EXCLUDE]
+    @Override
+    public void onResume() {
+        super.onResume();
 
-                        // [END_EXCLUDE]
-                    }
-                });
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
+
     }
-    // [END signOut]
 
-    // [START revokeAccess]
-    private void revokeAccess() {
-        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        // [START_EXCLUDE]
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
-                        // [END_EXCLUDE]
-                    }
-                });
     }
-    // [END revokeAccess]
+
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not be available.
+        Log.d(LOGTAG, "Inside onConnectionFailed");
+
+        if (!connectionResult.hasResolution()) {
+            googleApiAvailability.getErrorDialog(this, connectionResult.getErrorCode(),mRequestCode).show();
+            return;
+        }
+
+        if (!mIntentInProgress) {
+
+            mConnectionResult = connectionResult;
+
+            if (mSignInClicked) {
+                resolveSignInError();
+            }
+        }
+
         Log.d(LOGTAG, "onConnectionFailed:" + connectionResult);
     }
+
+
+    /*
+    Sign-out from Google+ account
+    */
+
+    private void gPlusSignOut() {
+        if (mGoogleApiClient.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            mGoogleApiClient.disconnect();
+            mGoogleApiClient.connect();
+
+        }
+    }
+
+    /*
+     Revoking access from Google+ account
+     */
+
+    private void gPlusRevokeAccess() {
+        if (mGoogleApiClient.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status arg0) {
+                            Log.d(LOGTAG, "User access revoked!");
+                            buildGoogleApiClient();
+                            mGoogleApiClient.connect();
+
+                        }
+
+                    });
+        }
+    }
+
+    /*
+    Sign-in into the Google + account
+    */
+    // [START signIn]
+    private void googleSignIn() {
+
+        if (!mGoogleApiClient.isConnecting()) {
+            Log.d(LOGTAG, "gPlusSignIn not connected");
+
+
+
+            editor.putString(res.getString(R.string.spf_login_method), "google"); // Storing login method
+            editor.commit();
+
+            mGoogleApiClient.connect();
+
+            mSignInClicked = true;
+            //showProgressDialog();
+            resolveSignInError();
+
+        }
+
+        //Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        //startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+    // [END signIn]
+
+
+    // Google Sign In onConnected
+    @Override
+    public void onConnected(Bundle arg0) {
+        mSignInClicked = false;
+        // Get user's information and set it into the layout
+        getProfileInfo();
+        // Update the UI after signin
+        //changeUI(true);
+
+    }
+
+    // Google Sign In onConnected
+    @Override
+    public void onConnectionSuspended(int arg0) {
+        mGoogleApiClient.connect();
+        //changeUI(false);
+    }
+
+
+
+    /*
+    * Google Plus: get user's information name, email, profile pic,Date of birth,tag line and about me
+    */
+
+    private void getProfileInfo() {
+
+        try {
+
+
+            if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+                Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+                setPersonalInfo(currentPerson);
+
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "Unable to fetch personal information", Toast.LENGTH_LONG).show();
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /*
+    * Google Plus: get user's information name, email, profile pic,Date of birth,tag line and about me
+    */
+    private void setPersonalInfo(Person currentPerson){
+        String googleId = currentPerson.getId();
+        String personName = currentPerson.getDisplayName();
+        String personPhotoUrl = currentPerson.getImage().getUrl();
+        String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+
+
+        // Email, Device Token, facebook Id, Google Id, where 0 implies no value
+        new RegisterSocialAsyncTask().execute(email, androidId, "", googleId);
+
+
+        //setProfilePic(personPhotoUrl);
+        hideProgressDialog();
+        Log.d(LOGTAG, "Person Name: "+personName);
+        Log.d(LOGTAG, "Person Photo: "+personPhotoUrl);
+        Log.d(LOGTAG, "Person Email: "+email);
+
+
+
+        //Toast.makeText(this, "Person information is shown!", Toast.LENGTH_LONG).show();
+    }
+
+
+    /**
+    * Google Plus: Method to resolve any signin errors
+    * */
+    private void resolveSignInError() {
+
+        Log.d(LOGTAG, "Inside resolveSignInError");
+
+        if(mConnectionResult != null) {
+
+            Log.d(LOGTAG, "mConnectionResult is not null");
+
+            if (mConnectionResult.hasResolution()) {
+                try {
+                    mIntentInProgress = true;
+                    mConnectionResult.startResolutionForResult(this, RC_SIGN_IN);
+                } catch (IntentSender.SendIntentException e) {
+                    mIntentInProgress = false;
+                    mGoogleApiClient.connect();
+                    Log.d(LOGTAG, "Trying to connect");
+                }
+            }
+        }
+
+        else {
+
+            Log.d(LOGTAG, "mConnectionResult is null");
+        }
+
+
+
+    }
+
+
 
     private void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -427,50 +720,6 @@ public class LoginActivity extends AppCompatActivity implements
             mProgressDialog.hide();
         }
     }
-
-
-    @Override
-    public void onClick(View v) {
-        /*switch (v.getId()) {
-            case R.id.btn_sign_in_google:
-                signIn();
-                break;
-            case R.id.btn_login_fb:
-                signOut();
-                break;
-            case R.id.btn_login:
-                revokeAccess();
-                break;
-        }*/
-    }
-
-
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(LOGTAG, "Request Code: "+String.valueOf(requestCode));
-        Log.d(LOGTAG, "Result Code: "+String.valueOf(resultCode));
-        Log.d(LOGTAG, "Data: "+String.valueOf(data));
-        Log.d(LOGTAG, "RC_SIGN_IN: "+String.valueOf(RC_SIGN_IN));
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        /*if (requestCode == RC_SIGN_IN) {
-
-            Log.d(LOGTAG, "Returned result");
-
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
-        }*/
-
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
-
-
-
-
 
 
 
@@ -495,7 +744,8 @@ public class LoginActivity extends AppCompatActivity implements
             String response = "";
             String email = params[0];
             String password = params[1];
-            String android_id = params[2];
+            String offer_id = params[2];
+
 
             try {
                 myUrl = new URL(url);
@@ -513,6 +763,11 @@ public class LoginActivity extends AppCompatActivity implements
                 data.put("webservice_name","userlogin");
                 data.put("email", email);
                 data.put("password", password);
+
+                if(!offer_id.equalsIgnoreCase(""))
+                    data.put("offer_id", offer_id);
+
+
 
                 OutputStream os = conn.getOutputStream();
 
@@ -734,6 +989,7 @@ public class LoginActivity extends AppCompatActivity implements
                 }
 
 
+
                 OutputStream os = conn.getOutputStream();
 
                 Log.d(LOGTAG, "Request: " + data.toString());
@@ -835,6 +1091,8 @@ public class LoginActivity extends AppCompatActivity implements
                             String lastActivity = extras.getString(res.getString(R.string.ext_activity));
                             //String offerId = extras.getString(res.getString(R.string.ext_offer_id));
 
+
+
                             Log.d(LOGTAG, "Last Activity: "+lastActivity);
 
                             if(lastActivity.equalsIgnoreCase("BrowseOffers"))
@@ -896,17 +1154,11 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
 
-
-    /*
     @Override
     public void onBackPressed()
     {
         // TODO Auto-generated method stub
-        //super.onBackPressed();
-        Log.d("RDM", "Inside back button pressed in display success");
-        Intent intent = new Intent(DisplaySuccessActivity.this, AboutScreen.class);
-        startActivity(intent);
-        finish();
-    }*/
+        hideProgressDialog();
+    }
 
 }

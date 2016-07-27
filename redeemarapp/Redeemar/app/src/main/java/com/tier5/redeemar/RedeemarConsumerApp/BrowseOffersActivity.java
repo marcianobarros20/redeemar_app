@@ -39,6 +39,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.gson.Gson;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.AboutFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.BrowseOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.ContactFragment;
@@ -59,7 +60,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BrowseOffersActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class BrowseOffersActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ActivityCommunicator {
 
     /**
      * RecyclerView: The new recycler view replaces the list view. Its more modular and therefore we
@@ -83,7 +84,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     double latitude = 0.0, longitude = 0.0;
     private Resources res;
     private SharedPreferences sharedpref;
-    String user_id = "0";
+    private String user_id = "0", curFragment="";
     private int REQUEST_COARSE_LOCATION = 0;
     private int REQUEST_FINE_LOCATION = 0;
     private View mLayout;
@@ -97,7 +98,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ArrayList<Category> categories;
-    private String redirectTo="", redeemarId = "", campaignId = "", jsonCatText = "", firstName = "", email = "";
+    private String redirectTo="", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "";
     private final int NavGroupId = 1001;
     SharedPreferences.Editor editor;
     private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
@@ -128,14 +129,47 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         if(sharedpref.getString(res.getString(R.string.spf_email), null) != null) {
             email = sharedpref.getString(res.getString(R.string.spf_email), "");
-            ;
+
+
+        }
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
+            redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
+
+        }
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_redeemer_id), null) != null) {
+            redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
+
+        }
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_campaign_id), null) != null) {
+            campaignId = sharedpref.getString(res.getString(R.string.spf_campaign_id), "");
+
+        }
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
+            categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
+
         }
 
 
         editor = sharedpref.edit();
 
+        Log.d(LOGTAG, "Redeemar id: "+redeemarId);
+        Log.d(LOGTAG, "Campaign id: "+campaignId);
+        Log.d(LOGTAG, "Category id: "+categoryId);
+
+
         // Get Data from Intent
         Bundle extras = getIntent().getExtras();
+
+
+        // Need to comment out
 
         if (extras != null) {
             redirectTo = extras.getString(getString(R.string.ext_redir_to));
@@ -145,11 +179,14 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 campaignId = extras.getString(getString(R.string.ext_campaign_id));
             }
 
+            if(redirectTo.equalsIgnoreCase("CategoryOffers")) {
+                categoryId = extras.getString(getString(R.string.ext_category_id));
+            }
             Log.d(LOGTAG, "Redirect to 100: " + redirectTo);
             Log.d(LOGTAG, "Redeemar id 100: " + redeemarId);
+            Log.d(LOGTAG, "Category id 100: " + campaignId);
+            Log.d(LOGTAG, "Category id 100: " + categoryId);
         }
-
-
 
 
 
@@ -242,7 +279,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                     if(redirectTo.equalsIgnoreCase("EditProfile")) {
 
-                        getSupportActionBar().setTitle(R.string.nav_item_help);
+                        getSupportActionBar().setTitle(R.string.nav_item_edit_profile);
                         Fragment editProfileFragment = new EditProfileFragment();
                         FragmentManager editProfileFm = getFragmentManager();
                         FragmentTransaction editProfileFragmentTransaction = editProfileFm.beginTransaction();
@@ -253,18 +290,43 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     else {
                         Fragment fr = new BrowseOfferFragment();
                         Bundle args1 = new Bundle();
+
                         if(redirectTo.equalsIgnoreCase("BrandOffers")) {
+
+
                             getSupportActionBar().setTitle(R.string.offers_by_brand);
                             args1.putString(getString(R.string.ext_redir_to), "BrandOffers");
                             args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
                         }
 
                         else if(redirectTo.equalsIgnoreCase("CampaignOffers")) {
+
+                            editor.putString(getString(R.string.spf_redir_action), "CampaignOffers"); // Storing Last Activity
+                            editor.putString(getString(R.string.spf_campaign_id), campaignId); // Storing Redeemar Id
+                            editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
+                            editor.commit(); // commit changes
+
+
                             getSupportActionBar().setTitle(R.string.offers_by_campaign);
                             args1.putString(getString(R.string.ext_redir_to), "CampaignOffers");
                             args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
                             args1.putString(getString(R.string.ext_campaign_id), campaignId);
+
                         }
+
+
+
+
+                        //editor.putString(getString(R.string.spf_redir_action), ""); // Storing Redirect Action
+                        //editor.putString(getString(R.string.spf_redeemer_id), ""); // Storing Redeemar id
+                        //editor.putString(getString(R.string.spf_campaign_id), ""); // Storing Campaign Id
+                        //editor.putString(getString(R.string.spf_category_id), ""); // Storing category Id
+
+
+                        //editor.commit(); // commit changes
+
+
+
 
                         fr.setArguments(args1);
                         FragmentManager fm = getFragmentManager();
@@ -276,9 +338,28 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 }
                 else if (menuItemId == R.id.bottom_daily_deals) {
+
+                    editor.putString(getString(R.string.spf_redir_action), "OnDemand"); // Storing Redirect Action
+
+                    getSupportActionBar().setTitle(R.string.offers_on_demand);
+                    Fragment fr = new BrowseOfferFragment();
+                    Bundle args1 = new Bundle();
+                    args1.putString(getString(R.string.ext_redir_to), "OnDemand");
+
+                    fr.setArguments(args1);
+                    FragmentManager fm = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                    fragmentTransaction.replace(R.id.container_body, fr);
+                    fragmentTransaction.commit();
+
+
+
+
                     //getSupportActionBar().setTitle(R.string.logout);
-                    Intent i = new Intent(getApplicationContext(), LogoutActivity.class);
-                    startActivity(i);
+                    //Intent i = new Intent(getApplicationContext(), LogoutActivity.class);
+                    //startActivity(i);
+
+
                 }
 
             }
@@ -412,7 +493,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                         switch (menuItem.getItemId()) {
 
                             case R.id.nav_my_offers:
-                                getSupportActionBar().setTitle(R.string.nav_item_help);
+                                getSupportActionBar().setTitle(R.string.nav_item_my_offers);
                                 Fragment myOfferFragment = new MyOfferFragment();
                                 FragmentManager myOfferFm = getFragmentManager();
                                 FragmentTransaction myOfferFragmentTransaction = myOfferFm.beginTransaction();
@@ -429,6 +510,25 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 editProfileFragmentTransaction.replace(R.id.container_body, editProfileFragment);
                                 editProfileFragmentTransaction.commit();
                                 break;
+
+                            case R.id.nav_offers:
+
+
+                                editor.putString(getString(R.string.spf_redir_action), ""); // Storing Redirect Action
+                                editor.putString(getString(R.string.spf_redeemer_id), ""); // Storing Redeemar id
+                                editor.putString(getString(R.string.spf_campaign_id), ""); // Storing Campaign Id
+                                editor.putString(getString(R.string.spf_category_id), ""); // Storing category Id
+                                editor.commit(); // commit changes
+
+
+                                getSupportActionBar().setTitle(R.string.nav_item_offers);
+                                Fragment browseOfferFragment = new BrowseOfferFragment();
+                                FragmentManager browseOfferFm = getFragmentManager();
+                                FragmentTransaction browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
+                                browseOfferFragmentTransaction.replace(R.id.container_body, browseOfferFragment);
+                                browseOfferFragmentTransaction.commit();
+                                break;
+
 
                             case R.id.nav_help:
                                 getSupportActionBar().setTitle(R.string.nav_item_help);
@@ -491,17 +591,17 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                                 String catName = Utils.stringToArray(jsonCatText, Category[].class).get(itemInd).getCatName();
 
-                                Fragment browseOfferFragment = new BrowseOfferFragment();
+                                Fragment browseOfferFragment1 = new BrowseOfferFragment();
                                 getSupportActionBar().setTitle(catName);
                                 Bundle args1 = new Bundle();
                                 args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
                                 args1.putString(getString(R.string.ext_category_id), String.valueOf(menuItem.getItemId()));
-                                browseOfferFragment.setArguments(args1);
+                                browseOfferFragment1.setArguments(args1);
 
-                                FragmentManager browseOfferFm = getFragmentManager();
-                                FragmentTransaction browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
-                                browseOfferFragmentTransaction.replace(R.id.container_body, browseOfferFragment);
-                                browseOfferFragmentTransaction.commit();
+                                FragmentManager browseOfferFm1 = getFragmentManager();
+                                FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
+                                browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
+                                browseOfferFragmentTransaction1.commit();
 
                                 break;
 
@@ -693,6 +793,14 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 browseOfferListFragment.setArguments(args1);*/
 
+
+
+                Log.d(LOGTAG, "Redirect to 102: " + redirectTo);
+                Log.d(LOGTAG, "Redeemar id 102: " + redeemarId);
+                Log.d(LOGTAG, "Campaign id 102: " + campaignId);
+                Log.d(LOGTAG, "Category id 102: " + categoryId);
+
+
                 editor.putString(getString(R.string.spf_view_type), "list"); // Storing User Id
                 editor.commit(); // commit changes
 
@@ -706,17 +814,49 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             case R.id.action_view_thumb:
                 Toast.makeText(getApplicationContext(), "Thumbnail view option selected", Toast.LENGTH_SHORT).show();
 
-                Fragment browseOfferThumbFragment = new BrowseOfferFragment();
-                getSupportActionBar().setTitle(getString(R.string.browse_offers));
+                //Fragment browseOfferThumbFragment = new BrowseOfferFragment();
+                //getSupportActionBar().setTitle(getString(R.string.browse_offers));
 
+
+                Log.d(LOGTAG, "Redirect to 102: " + redirectTo);
+                Log.d(LOGTAG, "Redeemar id 102: " + redeemarId);
+                Log.d(LOGTAG, "Campaign id 102: " + campaignId);
+                Log.d(LOGTAG, "Category id 102: " + categoryId);
+
+                /*Bundle args1 = new Bundle();
+                args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
+                args1.putString(getString(R.string.ext_category_id), String.valueOf(menuItem.getItemId()));
+                browseOfferFragment.setArguments(args1);*/
+
+
+                /*if(redirectTo.equalsIgnoreCase("BrandOffers")) {
+                    getSupportActionBar().setTitle(R.string.offers_by_brand);
+                    args1.putString(getString(R.string.ext_redir_to), "BrandOffers");
+                    args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
+                }
+
+                else if(redirectTo.equalsIgnoreCase("CampaignOffers")) {
+                    getSupportActionBar().setTitle(R.string.offers_by_campaign);
+                    args1.putString(getString(R.string.ext_redir_to), "CampaignOffers");
+                    args1.putString(getString(R.string.ext_campaign_id), campaignId);
+                }
+
+                else if(redirectTo.equalsIgnoreCase("CategoryOffers")) {
+                    getSupportActionBar().setTitle(R.string.offers_by_category);
+                    args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
+                    args1.putString(getString(R.string.ext_category_id), categoryId);
+                }*/
 
                 editor.putString(getString(R.string.spf_view_type), "thumb"); // Storing User Id
                 editor.commit(); // commit changes
 
-                browseOfferFm = getFragmentManager();
-                browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
-                browseOfferFragmentTransaction.replace(R.id.container_body, browseOfferThumbFragment);
-                browseOfferFragmentTransaction.commit();
+                Fragment fr = new BrowseOfferFragment();
+                //Bundle args1 = new Bundle();
+                //fr.setArguments(args1);
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fr);
+                fragmentTransaction.commit();
 
                 return true;
 
@@ -742,7 +882,19 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         //setUpMap();
     }
 
+    @Override
+    public void passDataToActivity(String currentFragment) {
+        Log.d(LOGTAG, "Data passed from fragment to activity: "+currentFragment);
+        this.curFragment = currentFragment;
 
+        Log.d(LOGTAG, "BottomBar is: "+this.mBottomBar);
+
+
+
+        //if(mBottomBar != null)
+        //    mBottomBar.selectTabAtPosition(3, false);
+
+    }
 
 
     public interface RemiMap {

@@ -29,6 +29,8 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
+import com.tier5.redeemar.RedeemarConsumerApp.GooglePlusActivity;
+import com.tier5.redeemar.RedeemarConsumerApp.GoogleSignInActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.LoginActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
@@ -152,6 +154,8 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
             Log.d(LOGTAG, "No user id found, redirecting to login");
 
             Intent i = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+            //Intent i = new Intent(getActivity().getApplicationContext(), GoogleSignInActivity.class);
+            //Intent i = new Intent(getActivity().getApplicationContext(), GooglePlusActivity.class);
             startActivity(i);
 
         }

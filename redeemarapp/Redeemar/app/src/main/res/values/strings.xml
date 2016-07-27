@@ -28,10 +28,12 @@
     </string-array>
 
 
+    <string name="nav_item_offers">All Offers</string>
     <string name="nav_item_help">Help</string>
     <string name="nav_item_about">About</string>
     <string name="nav_item_rate">Rate Us</string>
     <string name="nav_item_contact">Contact</string>
+    <string name="nav_item_signin">Sign In</string>
     <string name="nav_item_signout">Sign Out</string>
 
 
@@ -160,6 +162,8 @@
     <string name="lbl_btn_save">Save</string>
     <string name="spf_key">RedeemerSharedPref</string>
     <string name="spf_redeemer_id">spf_redeemer_id</string>
+    <string name="spf_category_id">spf_category_id</string>
+    <string name="spf_campaign_id">spf_campaign_id</string>
     <string name="spf_redir_action">spf_redir_action</string>
     <string name="spf_user_id">spf_user_id</string>
     <string name="spf_email">spf_email</string>
@@ -172,6 +176,11 @@
     <string name="spf_view_type">spf_view_type</string>
     <string name="spf_last_lat">spf_last_lat</string>
     <string name="spf_last_lon">spf_last_lon</string>
+    <string name="spf_login_method">spf_login_method</string>
+    <string name="spf_last_offer_id">spf_last_offer_id</string>
+    <string name="spf_no_auto_login">spf_no_auto_login</string>
+
+
 
     <string name="ext_redeemar_id">REDEEMAR_ID</string>
     <string name="ext_offer_id">OFFER_ID</string>
@@ -230,6 +239,7 @@
     <string name="offers_by_brand">Offers by brand</string>
     <string name="offers_by_campaign">Offers by campaign</string>
     <string name="offers_by_category">Offers by category</string>
+    <string name="offers_on_demand">On-Demand Offers</string>
 
 
     <string name="offer_title">Loading offer details...</string>
@@ -318,7 +328,7 @@
 
     <string name="offers">offers</string>
 
-    ext_view_type
+
 
     <string name="error_timeout">Request timed out</string>
     <string name="error_auth_failure">Authentication failed</string>
@@ -333,6 +343,12 @@
     <string name="nav_item_my_credit">My Credits</string>
     <string name="nav_item_my_offers">My Offers</string>
     <string name="nav_item_edit_profile">Edit Profile</string>
+
+    <string name="btn_logout_from_google">Logout from Google</string>
+    <string name="btn_revoke_access">Revoke Access</string>
+
+
+
 
 
 

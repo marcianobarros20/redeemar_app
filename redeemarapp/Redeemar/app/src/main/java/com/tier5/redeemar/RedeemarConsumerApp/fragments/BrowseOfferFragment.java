@@ -38,6 +38,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.async.BrandOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CampaignOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CategoryOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
@@ -63,6 +64,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private JSONArray offersArray;
     private Resources res;
     private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
     private String user_id = "0";
     double latitude = 0.0, longitude = 0.0;
     //private FragmentActivity listener;
@@ -71,6 +73,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private static final int VERTICAL_ITEM_SPACE = 48;
     //private SearchView searchView;
     Activity activity;
+    private ActivityCommunicator activityCommunicator;
 
 
 
@@ -97,15 +100,18 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         return fragment;
     }*/
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //Log.d(LOGTAG, "Setting title");
+        Log.d(LOGTAG, "Inside onCreateView");
         //getActivity().setTitle(R.string.browse_offers);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.browse_offers);
 
         activity = getActivity();
+
+        activityCommunicator =(ActivityCommunicator) activity;
 
         setHasOptionsMenu(true);
         Bundle args1 = getArguments();
@@ -123,7 +129,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_offers, container, false);
 
-        Log.d(LOGTAG, "Inside browse offer fragment");
+        //Log.d(LOGTAG, "Inside browse offer fragment");
 
 
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
@@ -152,6 +158,17 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         mRecyclerOffers.setAdapter(mAdapter);
 
+        //update your Adapter to containg the retrieved movies
+        mAdapter.setOffers(mListOffers);
+        return layout;
+    }
+
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+
+
         if (savedInstanceState != null) {
             //if this fragment starts after a rotation or configuration change, load the existing movies from a parcelable
             //mListOffers = savedInstanceState.getParcelableArrayList(STATE_OFFERS);
@@ -168,6 +185,26 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 Log.d(LOGTAG, "Campaign id 102: " + campaignId);
                 Log.d(LOGTAG, "Category id 102: " + categoryId);
 
+                if(sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
+                    redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
+                }
+
+
+                if(sharedpref.getString(res.getString(R.string.spf_redeemer_id), null) != null) {
+                    redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
+                }
+
+
+                if(sharedpref.getString(res.getString(R.string.spf_campaign_id), null) != null) {
+                    campaignId = sharedpref.getString(res.getString(R.string.spf_campaign_id), "");
+                }
+
+
+                if(sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
+                    categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
+                }
+
+
                 if(redirectTo.equals("BrandOffers") && !redeemarId.equals(""))
                     new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude));
                 else if(redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
@@ -178,11 +215,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude));
 
             }
+
+            activityCommunicator.passDataToActivity(redirectTo);
+
         }
-        //update your Adapter to containg the retrieved movies
-        mAdapter.setOffers(mListOffers);
-        return layout;
+
+
     }
+
+
+
 
 
     @Override
@@ -203,8 +245,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         res = getResources();
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-
-        SharedPreferences.Editor editor = sharedpref.edit();
+        editor = sharedpref.edit();
 
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
             user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
@@ -272,13 +313,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        /*inflater.inflate(R.menu.menu_main, menu);
 
-        final MenuItem item = menu.findItem(R.id.action_search);
-        //final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-        //searchView.setOnQueryTextListener(this);*/
-
-        Log.d(LOGTAG, "Consider this again");
 
         MenuItem myActionMenuItem = menu.findItem( R.id.action_search);
         SearchView searchView = (SearchView) myActionMenuItem.getActionView();
@@ -372,6 +407,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
+
+
     @Override
     public void onOffersLoaded(ArrayList<Offer> listOffers) {
 
@@ -382,6 +419,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             if (listOffers.size() > 0 && mAdapter != null) {
                 mModels = listOffers;
                 mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), listOffers, "BrowseOffers");
+
                 mRecyclerOffers.setAdapter(mAdapter);
                 mRecyclerOffers.setVisibility(View.VISIBLE);
                 tvEmptyView.setVisibility(View.GONE);
@@ -390,10 +428,12 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             }
 
         }
-        else
-            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.unable_to_get_records), Toast.LENGTH_SHORT).show();
+        //else
+        //    Toast.makeText(getActivity().getApplicationContext(), getString(R.string.unable_to_get_records), Toast.LENGTH_SHORT).show();
 
 
 
     }
+
+
 }

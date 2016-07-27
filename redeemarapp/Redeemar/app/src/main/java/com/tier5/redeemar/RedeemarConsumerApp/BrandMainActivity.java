@@ -3,6 +3,7 @@ package com.tier5.redeemar.RedeemarConsumerApp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -75,6 +76,10 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
     public static final String API_KEY = "AIzaSyA4cndO4t85r0NZ-Ux9N8MzBJx06k4iNPA";
     public static final String VIDEO_ID = "o7VVHhK9zf0";
 
+    private Resources res;
+    private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
+
 
 
     @Override
@@ -94,6 +99,12 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
         context = this;
 
         basePath = UrlEndpoints.basePathURL;
+
+
+
+        res = getResources();
+        sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+        editor = sharedpref.edit();
 
 
         Bundle extras = getIntent().getExtras();
@@ -305,6 +316,13 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
             @Override
             public void onClick(View arg0) {
+
+
+                editor.putString(getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
+                editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
+                editor.commit(); // commit changes
+
+
                 Bundle args = new Bundle();
 
                 Intent intent = new Intent(getApplicationContext(), BrowseOffersActivity.class);

@@ -287,11 +287,13 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                 if(viewHolder.swipeLayout.getDragEdge() == SwipeLayout.DragEdge.Right) {
 
                     Log.d(LOGTAG, "Inside Bank");
+                    offerId = String.valueOf(item.getOfferId());
 
                     //Resources res = viewHolder.getResources();
 
                     SharedPreferences.Editor editor = sharedpref.edit();
                     editor.putString(res.getString(R.string.spf_redir_action), "BANK_OFFER"); // Storing action
+                    editor.putString(res.getString(R.string.spf_last_offer_id), offerId); // Storing Last Offer Id
 
                     Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
@@ -339,6 +341,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
                     SharedPreferences.Editor editor = sharedpref.edit();
                     editor.putString(res.getString(R.string.spf_redir_action), "PASS_OFFER"); // Storing action
+                    offerId = String.valueOf(item.getOfferId());
 
                     Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
@@ -354,7 +357,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                     }
                     else {
 
-                        offerId = String.valueOf(item.getOfferId());
+
                         userId = sharedpref.getString(res.getString(R.string.spf_user_id), null);
 
                         //Log.d(LOGTAG, "View Adapter Offer Id: "+offerId);

@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.roughike.bottombar.BottomBar;
+import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrandViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;

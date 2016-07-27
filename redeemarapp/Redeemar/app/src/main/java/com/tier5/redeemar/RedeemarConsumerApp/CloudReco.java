@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -152,6 +153,10 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
     private AlertDialog alertDialog;
 
+    private Resources res;
+    private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
+
 
 
     // Called when the activity first starts or needs to be recreated after
@@ -177,6 +182,12 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
             "droid");
+
+
+        res = getResources();
+        sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+        editor = sharedpref.edit();
+
 
 
 
@@ -1113,9 +1124,13 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                                     Log.d(LOGTAG, "Inside action id 2: "+campaign_id);
 
 
+                                    editor.putString(getString(R.string.spf_redir_action), "CampaignOffers"); // Storing Last Activity
+                                    editor.putString(getString(R.string.spf_redeemer_id), campaign_id); // Storing Redeemar Id
+                                    editor.commit(); // commit changes
+
+
 
                                     Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
-                                    //sIntent.putExtra(getString(R.string.ext_redeemar_id), "R01002");
                                     sIntent.putExtra(getString(R.string.ext_redir_to), "CampaignOffers");
                                     sIntent.putExtra(getString(R.string.ext_redeemar_id), reedemar_id);
                                     sIntent.putExtra(getString(R.string.ext_campaign_id), campaign_id);

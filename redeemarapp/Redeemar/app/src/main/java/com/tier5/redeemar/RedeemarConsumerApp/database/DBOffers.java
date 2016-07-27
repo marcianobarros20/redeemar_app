@@ -45,15 +45,15 @@ public class DBOffers {
         //create a sql prepared statement
         String sql = "";
 
-        switch(table) {
+        switch (table) {
 
             case ALL_OFFERS:
-                sql = "INSERT INTO " + OffersHelper.TABLE_OFFERS  + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                sql = "INSERT INTO " + OffersHelper.TABLE_OFFERS + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
             case MY_OFFERS:
-                sql = "INSERT INTO " + OffersHelper.TABLE_MY_OFFERS  + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                sql = "INSERT INTO " + OffersHelper.TABLE_MY_OFFERS + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
-
-        };
+        }
+        ;
 
 
         //compile the statement and start a transaction
@@ -83,7 +83,7 @@ public class DBOffers {
             statement.execute();
         }
         //set the transaction as successful and end the transaction
-        Log.d(LOGTAG, "inserting entries " + listOffers.size() + new Date(System.currentTimeMillis()));
+        Log.d(LOGTAG, "Inserting entries " + listOffers.size() + new Date(System.currentTimeMillis()));
         mDatabase.setTransactionSuccessful();
         mDatabase.endTransaction();
     }
@@ -95,7 +95,6 @@ public class DBOffers {
         //get a list of columns to be retrieved, we need all of them
         String[] columns = {OffersHelper.COLUMN_ID,
                 OffersHelper.COLUMN_CAMPAIGN_ID,
-                OffersHelper.COLUMN_USER_ID,
                 OffersHelper.COLUMN_CAT_ID,
                 OffersHelper.COLUMN_SUBCAT_ID,
                 OffersHelper.COLUMN_OFFER_DESCRIPTION,
@@ -111,12 +110,18 @@ public class DBOffers {
                 OffersHelper.COLUMN_RETAIL_VALUE,
                 OffersHelper.COLUMN_DISCOUNT,
                 OffersHelper.COLUMN_VALUE_CALCULATE,
-                OffersHelper.COLUMN_EXP_IN_DAYS
+                OffersHelper.COLUMN_EXP_IN_DAYS,
+                OffersHelper.COLUMN_START_DATE,
+                OffersHelper.COLUMN_END_DATE,
+                OffersHelper.COLUMN_CREATED_BY,
+                OffersHelper.COLUMN_USER_ACTION,
+                OffersHelper.COLUMN_ON_DEMAND,
+                OffersHelper.COLUMN_STATUS
         };
 
         Cursor cursor;
 
-        switch(table)  {
+        switch (table) {
             case MY_OFFERS:
                 cursor = mDatabase.query(OffersHelper.TABLE_MY_OFFERS, columns, null, null, null, null, null);
             default:
@@ -129,27 +134,36 @@ public class DBOffers {
             do {
 
                 //create a new Offer object and retrieve the data from the cursor to be stored in this Offer object
-                Offer Offer = new Offer();
+                Offer offer = new Offer();
                 //each step is a 2 part process, find the index of the column first, find the data of that column using
                 //that index and finally set our blank Offer object to contain our data
 
+                offer.setOfferId(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_ID)));
+                offer.setCampaignId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_CAMPAIGN_ID))));
+                offer.setCatId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_CAT_ID))));
+                offer.setSubCatId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_SUBCAT_ID))));
+                offer.setOfferDescription(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_OFFER_DESCRIPTION)));
+                offer.setWhatYouGet(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_WHAT_YOU_GET)));
+                offer.setMoreInformation(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_MORE_INFO)));
+                offer.setSettingsVal(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_SETTINGS_VAL)));
+                offer.setPriceRangeId(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_PRICE_RANGE_ID)));
+                offer.setImageName(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_IMAGE_NAME)));
+                offer.setImageUrl(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_IMAGE_URL)));
+                offer.setWhatYouGet(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_WHAT_YOU_GET)));
+                offer.setAddress(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_ADDRESS)));
+                offer.setPrice(Double.parseDouble(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_PRICE))));
+                offer.setPayValue(Double.parseDouble(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_WHAT_YOU_GET))));
+                offer.setRetailvalue(Double.parseDouble(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_WHAT_YOU_GET))));
+                offer.setDiscount(Double.parseDouble(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_WHAT_YOU_GET))));
+                offer.setValueCalculate(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_WHAT_YOU_GET))));
+                offer.setExpiredInDays(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_EXP_IN_DAYS))));
+                offer.setUserAction(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_USER_ACTION))));
+                offer.setCreatedBy(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_CREATED_BY))));
 
-                /*Offer.setTitle(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_TITLE)));
-                long releaseDateMilliseconds = cursor.getLong(cursor.getColumnIndex(OffersHelper.COLUMN_RELEASE_DATE));
-                Offer.setReleaseDateTheater(releaseDateMilliseconds != -1 ? new Date(releaseDateMilliseconds) : null);
-                Offer.setAudienceScore(cursor.getInt(cursor.getColumnIndex(OffersHelper.COLUMN_AUDIENCE_SCORE)));
-                Offer.setSynopsis(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_SYNOPSIS)));
-                Offer.setUrlThumbnail(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_URL_THUMBNAIL)));
-                Offer.setUrlSelf(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_URL_SELF)));
-                Offer.setUrlCast(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_URL_CAST)));
-                Offer.setUrlReviews(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_URL_REVIEWS)));
-                Offer.setUrlSimilar(cursor.getString(cursor.getColumnIndex(OffersHelper.COLUMN_URL_SIMILAR)));
                 //add the Offer to the list of Offer objects which we plan to return*/
 
 
-
-
-                listOffers.add(Offer);
+                listOffers.add(offer);
             }
             while (cursor.moveToNext());
         }
@@ -159,7 +173,7 @@ public class DBOffers {
     public void deleteOffers(int table) {
         //mDatabase.delete((table == ALL_OFFERS ? OffersHelper.TABLE_OFFERS : OffersHelper.TABLE_UPCOMING), null, null);
 
-        switch(table)  {
+        switch (table) {
             case MY_OFFERS:
                 mDatabase.delete(OffersHelper.TABLE_MY_OFFERS, null, null);
             default:
@@ -193,6 +207,14 @@ public class DBOffers {
         public static final String COLUMN_DISCOUNT = "discount";
         public static final String COLUMN_VALUE_CALCULATE = "value_calculate";
         public static final String COLUMN_EXP_IN_DAYS = "expired_in_days";
+        public static final String COLUMN_VALIDATE_AFTER = "validate_after";
+        public static final String COLUMN_VALIDATE_WITHIN = "validate_within";
+        public static final String COLUMN_USER_ACTION = "user_action";
+        public static final String COLUMN_STATUS = "status";
+        public static final String COLUMN_ON_DEMAND = "on_demand";
+        public static final String COLUMN_CREATED_BY = "created_by";
+        public static final String COLUMN_START_DATE = "start_date";
+        public static final String COLUMN_END_DATE = "end_date";
 
 
         private static final String CREATE_TABLE_OFFERS = "CREATE TABLE " + TABLE_OFFERS + " (" +
@@ -214,7 +236,12 @@ public class DBOffers {
                 COLUMN_RETAIL_VALUE + " TEXT" +
                 COLUMN_DISCOUNT + " TEXT," +
                 COLUMN_VALUE_CALCULATE + " TEXT," +
-                COLUMN_EXP_IN_DAYS + " TEXT" +
+                COLUMN_EXP_IN_DAYS + " INTEGER," +
+                COLUMN_VALIDATE_AFTER + " INTEGER," +
+                COLUMN_VALUE_CALCULATE + " INTEGER," +
+                COLUMN_USER_ACTION + " INTEGER," +
+                COLUMN_STATUS + " INTEGER," +
+                COLUMN_ON_DEMAND + " INTEGER" +
                 ");";
 
 
@@ -251,4 +278,3 @@ public class DBOffers {
         }
     }
 }
-

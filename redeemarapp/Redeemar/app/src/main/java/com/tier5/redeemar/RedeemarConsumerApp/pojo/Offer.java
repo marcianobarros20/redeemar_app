@@ -10,10 +10,50 @@ public class Offer implements Serializable {
     private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl, distance;
     Date startDate, endDate;
     double price, payValue, retailvalue, discount;
-    int valueCalculate, expiredInDays;
+    int valueCalculate, expiredInDays, campaignId, catId, subCatId, userAction, createdBy;
 
     public Offer() {
 
+    }
+
+    public int getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(int createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public int getCampaignId() {
+        return campaignId;
+    }
+
+    public void setCampaignId(int campaignId) {
+        this.campaignId = campaignId;
+    }
+
+    public int getCatId() {
+        return catId;
+    }
+
+    public void setCatId(int catId) {
+        this.catId = catId;
+    }
+
+    public int getSubCatId() {
+        return subCatId;
+    }
+
+    public void setSubCatId(int subCatId) {
+        this.subCatId = subCatId;
+    }
+
+    public int getUserAction() {
+        return userAction;
+    }
+
+    public void setUserAction(int userAction) {
+        this.userAction = userAction;
     }
 
     public String getAddress() {

@@ -39,9 +39,9 @@ public class LogoutActivity extends Activity implements
         editor.remove(getString(R.string.spf_email));
         editor.remove(getString(R.string.spf_facebook_id));
         editor.remove(getString(R.string.spf_google_id));
+
+        editor.putString(res.getString(R.string.spf_no_auto_login), "1"); // Storing login method
         editor.commit();
-
-
 
 
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -59,7 +59,7 @@ public class LogoutActivity extends Activity implements
         if (mGoogleApiClient.isConnected()) {
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
             mGoogleApiClient.disconnect();
-            mGoogleApiClient.connect();
+            //mGoogleApiClient.connect();
 
             // updateUI(false);
             Log.d(LOGTAG, "Successfully logged out from google account");
