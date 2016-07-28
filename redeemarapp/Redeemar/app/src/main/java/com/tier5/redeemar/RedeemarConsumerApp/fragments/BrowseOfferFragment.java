@@ -38,6 +38,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.async.BrandOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CampaignOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CategoryOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.OnDemandOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
@@ -145,10 +146,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         // Check if the Android version code is greater than or equal to Lollipop
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //return resources.getDrawable(id, context.getTheme());
-            mRecyclerOffers.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider, getActivity().getApplicationContext().getTheme())));
+            //mRecyclerOffers.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider, getActivity().getApplicationContext().getTheme())));
         } else {
             //return resources.getDrawable(id);
-            mRecyclerOffers.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider)));
+            //mRecyclerOffers.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider)));
         }
 
         mListOffers = new ArrayList<>();
@@ -204,6 +205,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
                 }
 
+                Log.d(LOGTAG, "Redirect to 103: " + redirectTo);
+                Log.d(LOGTAG, "Redeemar id 103: " + redeemarId);
+                Log.d(LOGTAG, "Campaign id 103: " + campaignId);
+                Log.d(LOGTAG, "Category id 103: " + categoryId);
 
                 if(redirectTo.equals("BrandOffers") && !redeemarId.equals(""))
                     new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude));
@@ -211,6 +216,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude));
                 else if(redirectTo.equals("CategoryOffers") && !categoryId.equals(""))
                     new CategoryOffersAsyncTask(this).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude));
+                else if(redirectTo.equals("OnDemand")) {
+                    Log.d(LOGTAG, "Condition OnDemand");
+                    new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude));
+                }
                 else
                     new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude));
 

@@ -253,6 +253,12 @@ public class Parser {
                             //Log.d(LOGTAG, "offer_image_path: "+jsonObject.getString("offer_image_path").toString());
                         }
 
+                        if(!jsonObject.isNull("on_demand") && jsonObject.getString("on_demand").toString() != "") {
+                            offer.setOnDemand(Integer.parseInt(jsonObject.getString("on_demand")));
+                            Log.d(LOGTAG, "On Demand: "+jsonObject.getString("on_demand").toString());
+                        }
+
+
                         JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));
 
 

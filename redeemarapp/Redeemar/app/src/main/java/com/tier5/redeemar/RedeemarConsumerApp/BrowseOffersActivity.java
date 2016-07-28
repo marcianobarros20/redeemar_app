@@ -100,7 +100,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private ArrayList<Category> categories;
     private String redirectTo="", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "";
     private final int NavGroupId = 1001;
-    SharedPreferences.Editor editor;
+    private SharedPreferences.Editor editor;
     private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
 
 
@@ -269,6 +269,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 } else if (menuItemId == R.id.bottom_browse_offers) {
 
+
+                    Log.d(LOGTAG, "Inside Browse Offer Menu");
                     //Toast.makeText(getApplicationContext(), "Browse offers selected", Toast.LENGTH_SHORT).show();
 
                     getSupportActionBar().setTitle(R.string.browse_offers);
@@ -292,8 +294,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                         Bundle args1 = new Bundle();
 
                         if(redirectTo.equalsIgnoreCase("BrandOffers")) {
-
-
                             getSupportActionBar().setTitle(R.string.offers_by_brand);
                             args1.putString(getString(R.string.ext_redir_to), "BrandOffers");
                             args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
@@ -314,17 +314,16 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                         }
 
+                        else if(redirectTo.equalsIgnoreCase("OnDemand")) {
+
+                            Log.d(LOGTAG, "Inside OnDemand");
+
+                            args1.putString(getString(R.string.ext_redir_to), "");
+                            editor.putString(getString(R.string.spf_redir_action), ""); // Storing Last Activity
+                            editor.commit(); // commit changes
 
 
-
-                        //editor.putString(getString(R.string.spf_redir_action), ""); // Storing Redirect Action
-                        //editor.putString(getString(R.string.spf_redeemer_id), ""); // Storing Redeemar id
-                        //editor.putString(getString(R.string.spf_campaign_id), ""); // Storing Campaign Id
-                        //editor.putString(getString(R.string.spf_category_id), ""); // Storing category Id
-
-
-                        //editor.commit(); // commit changes
-
+                        }
 
 
 
@@ -340,24 +339,18 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 else if (menuItemId == R.id.bottom_daily_deals) {
 
                     editor.putString(getString(R.string.spf_redir_action), "OnDemand"); // Storing Redirect Action
+                    editor.commit(); // commit changes
 
                     getSupportActionBar().setTitle(R.string.offers_on_demand);
                     Fragment fr = new BrowseOfferFragment();
                     Bundle args1 = new Bundle();
                     args1.putString(getString(R.string.ext_redir_to), "OnDemand");
-
                     fr.setArguments(args1);
                     FragmentManager fm = getFragmentManager();
                     FragmentTransaction fragmentTransaction = fm.beginTransaction();
                     fragmentTransaction.replace(R.id.container_body, fr);
                     fragmentTransaction.commit();
 
-
-
-
-                    //getSupportActionBar().setTitle(R.string.logout);
-                    //Intent i = new Intent(getApplicationContext(), LogoutActivity.class);
-                    //startActivity(i);
 
 
                 }
@@ -413,8 +406,20 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 } else if (menuItemId == R.id.bottom_daily_deals) {
                     //Toast.makeText(getApplicationContext(), "You have logged out.", Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(getApplicationContext(), LogoutActivity.class);
-                    startActivity(i);
+                    //Intent i = new Intent(getApplicationContext(), LogoutActivity.class);
+                    //startActivity(i);
+                    editor.putString(getString(R.string.spf_redir_action), "OnDemand"); // Storing Redirect Action
+                    editor.commit(); // commit changes
+
+                    getSupportActionBar().setTitle(R.string.offers_on_demand);
+                    Fragment fr = new BrowseOfferFragment();
+                    Bundle args1 = new Bundle();
+                    args1.putString(getString(R.string.ext_redir_to), "OnDemand");
+                    fr.setArguments(args1);
+                    FragmentManager fm = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                    fragmentTransaction.replace(R.id.container_body, fr);
+                    fragmentTransaction.commit();
 
 
                 }

@@ -325,17 +325,12 @@
     <string name="advertisement2">Contact us at info@redeemar.com</string>
     <string name="offer_details">Offer Details</string>
     <string name="loading">Loading..</string>
-
     <string name="offers">offers</string>
-
-
-
+    <string name="on_demand">On Demand</string>
     <string name="error_timeout">Request timed out</string>
     <string name="error_auth_failure">Authentication failed</string>
     <string name="error_network">Network failure</string>
     <string name="error_parser">Parse error</string>
-
-
 
     <string name="drawer_item_home">Home</string>
     <string name="drawer_item_settings">Settings</string>
@@ -346,10 +341,5 @@
 
     <string name="btn_logout_from_google">Logout from Google</string>
     <string name="btn_revoke_access">Revoke Access</string>
-
-
-
-
-
 
 </resources>

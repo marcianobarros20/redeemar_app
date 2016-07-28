@@ -64,6 +64,16 @@ public class OfferUtils {
         return listOffers;
     }
 
+
+    public static ArrayList<Offer> loadOnDemandOffers(RequestQueue requestQueue, String userId, String lat, String lng) {
+
+        JSONObject response = Requestor.requestOffersJSON(requestQueue, 4, Endpoints.getRequestUrlBrandOffers(30), userId, "0", "0", lat, lng);
+        ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
+        Log.d(LOGTAG, "Inside loadOnDemandOffers :"+listOffers.size());
+        return listOffers;
+    }
+
+
     public static ArrayList<Offer> loadMyOffers(RequestQueue requestQueue, String userId) {
 
         JSONObject response = Requestor.requestMyOffersJSON(requestQueue, Endpoints.getRequestUrlMyOffers(30), userId);
@@ -71,7 +81,6 @@ public class OfferUtils {
         Log.d(LOGTAG, "Inside loadMyOffers :"+listOffers.size());
         return listOffers;
     }
-
 
     public static ArrayList<User> loadNearByBrands(RequestQueue requestQueue, String lat, String lon) {
 

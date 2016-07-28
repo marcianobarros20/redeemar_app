@@ -46,6 +46,7 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
 
     private Resources res;
     private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
 
 
     @Override
@@ -61,6 +62,7 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         super.onCreate(savedInstanceState);
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+        editor = sharedpref.edit();
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -73,8 +75,16 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         addContentView(layout, new LayoutParams(LayoutParams.MATCH_PARENT,
             LayoutParams.MATCH_PARENT));
 
+        // Clear all saved preferences
+        editor.putString(getString(R.string.spf_redir_action), ""); // Storing Redirect Action
+        editor.putString(getString(R.string.spf_redeemer_id), ""); // Storing Redeemar id
+        editor.putString(getString(R.string.spf_campaign_id), ""); // Storing Campaign Id
+        editor.putString(getString(R.string.spf_category_id), ""); // Storing category Id
+        editor.commit();
+
         // Get the menun items from server
         new MenuItemsAsyncTask(this).execute("0");
+
 
 
         final Handler handler = new Handler();
@@ -88,6 +98,8 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
             }
             
         }, SPLASH_MILLIS);
+
+
     }
 
     @Override

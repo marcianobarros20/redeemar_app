@@ -1158,7 +1158,11 @@ public class LoginActivity extends AppCompatActivity implements
     public void onBackPressed()
     {
         // TODO Auto-generated method stub
-        hideProgressDialog();
+        //hideProgressDialog();
+
+        super.onBackPressed();
+
+
     }
 
 }

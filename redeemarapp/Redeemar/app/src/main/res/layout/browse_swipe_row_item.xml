@@ -1,231 +1,256 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:swipe="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swipe"
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_books"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="wrap_content">
 
-    swipe:leftEdgeSwipeOffset="0dp"
-    swipe:rightEdgeSwipeOffset="0dp">
-
-
-
-    <!--Bottom View For Right to Left-->
-
-    <LinearLayout
-        android:id="@+id/bottom_wrapper"
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:background="@color/green_header"
-        android:weightSum="2">
-
-
-        <ImageButton
-            android:id="@+id/bank_offer_im"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.45"
-            android:background="@null"
-            android:gravity="center"
-            android:src="@drawable/bank" />
-
-        <TextView
-            android:id="@+id/bank_offer"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:gravity="center"
-            android:text="@string/bank_it"
-            style="@style/WhiteLargeText"  />
-
-
-    </LinearLayout>
-
-
-    <!-- Another Bottom View For Left to Right -->
-
-    <LinearLayout
-        android:id="@+id/bottom_wrapper1"
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:background="@color/accent"
-        android:weightSum="2">
-
-        <TextView
-            android:id="@+id/pass_offer"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:gravity="center"
-            android:text="@string/pass_it"
-            style="@style/WhiteLargeText" />
-
-        <ImageButton
-            android:id="@+id/pass_offer_im"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:background="@null"
-            android:gravity="center"
-            android:src="@drawable/passed"/>
-
-
-    </LinearLayout>
-
-    <!-- Top View,  Row itemView of RecyclerView -->
-    <RelativeLayout
-        android:layout_width="fill_parent"
+    <com.daimajia.swipe.SwipeLayout
+        xmlns:swipe="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/list_row_selector"
-        android:padding="4dp">
-        <!-- Thumbnail Image -->
+        swipe:leftEdgeSwipeOffset="0dp"
+        swipe:rightEdgeSwipeOffset="0dp">
 
 
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/thumbnail"
-            android:layout_width="140dp"
-            android:layout_height="100dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:layout_marginRight="6dp"
-            android:src="@drawable/icon_watermark"/>
 
-        <!-- Offer Title -->
-        <TextView
-            android:id="@+id/offer_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/thumbnail"
-            android:layout_toRightOf="@+id/thumbnail"
-            android:text="@string/offer_title"
-            android:paddingBottom="12dp"
-            style="@style/MainTitle" />
+        <!--Bottom View For Right to Left-->
 
         <LinearLayout
-            android:id="@+id/offer_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/thumbnail"
-            android:layout_below="@id/offer_description"
-            android:paddingBottom="10dp"
-            android:orientation="horizontal" >
+            android:id="@+id/bottom_wrapper"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@color/green_header"
+            android:weightSum="2">
 
 
+            <ImageButton
+                android:id="@+id/bank_offer_im"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.45"
+                android:background="@null"
+                android:gravity="center"
+                android:src="@drawable/bank" />
 
-                <LinearLayout
-                    android:id="@+id/middleInnerLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
-                    android:orientation="vertical"
-                    android:layout_marginRight="1dp"
-                    android:layout_below="@+id/offer_content">
-
-
-                    <LinearLayout
-                        android:id="@+id/middleInnerSubLayout2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_gravity="left"
-                        android:padding="0dp"
-                        android:gravity="left">
-
-
-                        <TextView
-                            android:id="@+id/discount"
-                            android:layout_marginRight="1dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="$30 OFF"
-                            android:paddingBottom="@dimen/menu_entries_title"
-                            android:layout_gravity="left|center_vertical"
-                            style="@style/GreenMedText"/>
-                    </LinearLayout>
-
-
-
-
-                    <LinearLayout
-                        android:id="@+id/middleInnerSubLayout1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_gravity="left"
-                        android:padding="0dp"
-                        android:layout_below="@+id/middleInnerSubLayout2"
-                        android:gravity="left">
-
-                        <ImageView
-                            android:id="@+id/map_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_marker"
-                            />
-
-                        <TextView
-                            android:id="@+id/distance"
-                            android:layout_marginRight="10dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="x km"
-                            style="@style/MedText"
-                            android:layout_gravity="left|center_vertical"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/middleInnerLayout2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
-                    android:orientation="vertical"
-                    android:padding="8dp"
-                    android:layout_marginRight="1dp"
-                    android:layout_below="@+id/topLayout">
-
-
-                    <TextView
-                        android:id="@+id/retail_value"
-                        android:layout_marginRight="1dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="$750"
-                        android:gravity="center_horizontal"
-                        android:paddingBottom="0dp"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/gray" />
-
-
-                    <TextView
-                        android:id="@+id/pay_value"
-                        android:layout_marginRight="1dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="$550"
-                        android:gravity="center_horizontal"
-                        android:paddingBottom="4dp"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:textColor="@color/green_text" />
-
-                </LinearLayout>
+            <TextView
+                android:id="@+id/bank_offer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="@string/bank_it"
+                style="@style/WhiteLargeText"  />
 
 
         </LinearLayout>
 
 
+        <!-- Another Bottom View For Left to Right -->
+
+        <LinearLayout
+            android:id="@+id/bottom_wrapper1"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@color/accent"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/pass_offer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="@string/pass_it"
+                style="@style/WhiteLargeText" />
+
+            <ImageButton
+                android:id="@+id/pass_offer_im"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:background="@null"
+                android:gravity="center"
+                android:src="@drawable/passed"/>
+
+
+        </LinearLayout>
+
+        <!-- Top View,  Row itemView of RecyclerView -->
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/list_row_selector"
+            android:padding="4dp">
+            <!-- Thumbnail Image -->
+
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="140dp"
+                android:layout_height="100dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:layout_marginRight="6dp"
+                android:src="@drawable/icon_watermark"/>
 
 
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/on_demand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="20dp"
+                android:background="@color/md_purple_500"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:text="@string/on_demand"
+                android:visibility="gone"/>
+
+            <!-- Offer Title -->
+            <TextView
+                android:id="@+id/offer_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/thumbnail"
+                android:layout_toRightOf="@+id/thumbnail"
+                android:text="@string/offer_title"
+                android:paddingBottom="12dp"
+                style="@style/MainTitle" />
+
+            <LinearLayout
+                android:id="@+id/offer_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/thumbnail"
+                android:layout_below="@id/offer_description"
+                android:paddingBottom="10dp"
+                android:orientation="horizontal" >
 
 
-</com.daimajia.swipe.SwipeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/middleInnerLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:orientation="vertical"
+                        android:layout_marginRight="1dp"
+                        android:layout_below="@+id/offer_content">
+
+
+                        <LinearLayout
+                            android:id="@+id/middleInnerSubLayout2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_gravity="left"
+                            android:padding="0dp"
+                            android:gravity="left">
+
+
+                            <TextView
+                                android:id="@+id/discount"
+                                android:layout_marginRight="1dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="$30 OFF"
+                                android:paddingBottom="@dimen/menu_entries_title"
+                                android:layout_gravity="left|center_vertical"
+                                style="@style/GreenMedText"/>
+                        </LinearLayout>
+
+
+
+
+                        <LinearLayout
+                            android:id="@+id/middleInnerSubLayout1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_gravity="left"
+                            android:padding="0dp"
+                            android:layout_below="@+id/middleInnerSubLayout2"
+                            android:gravity="left">
+
+                            <ImageView
+                                android:id="@+id/map_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_marker"
+                                />
+
+                            <TextView
+                                android:id="@+id/distance"
+                                android:layout_marginRight="10dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="x km"
+                                style="@style/MedText"
+                                android:layout_gravity="left|center_vertical"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/middleInnerLayout2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:orientation="vertical"
+                        android:padding="8dp"
+                        android:layout_marginRight="1dp"
+                        android:layout_below="@+id/topLayout">
+
+
+                        <TextView
+                            android:id="@+id/retail_value"
+                            android:layout_marginRight="1dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="$750"
+                            android:gravity="center_horizontal"
+                            android:paddingBottom="0dp"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/gray" />
+
+
+                        <TextView
+                            android:id="@+id/pay_value"
+                            android:layout_marginRight="1dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="$550"
+                            android:gravity="center_horizontal"
+                            android:paddingBottom="4dp"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:textColor="@color/green_text" />
+
+                    </LinearLayout>
+
+
+            </LinearLayout>
+
+
+
+
+
+        </RelativeLayout>
+
+
+    </com.daimajia.swipe.SwipeLayout>
+
+</android.support.v7.widget.CardView>

@@ -10,7 +10,7 @@ public class Offer implements Serializable {
     private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl, distance;
     Date startDate, endDate;
     double price, payValue, retailvalue, discount;
-    int valueCalculate, expiredInDays, campaignId, catId, subCatId, userAction, createdBy;
+    int valueCalculate, expiredInDays, campaignId, catId, subCatId, userAction, createdBy, onDemand;
 
     public Offer() {
 
@@ -204,5 +204,13 @@ public class Offer implements Serializable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public int getOnDemand() {
+        return onDemand;
+    }
+
+    public void setOnDemand(int onDemand) {
+        this.onDemand = onDemand;
     }
 }

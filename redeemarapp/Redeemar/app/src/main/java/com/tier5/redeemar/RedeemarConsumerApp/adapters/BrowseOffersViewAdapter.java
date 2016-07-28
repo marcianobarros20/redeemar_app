@@ -156,7 +156,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         if(!item.getDistance().equals(""))
             viewHolder.tvDistance.setText(String.valueOf(item.getDistance())+" "+distance_unit);
 
-        Log.d(LOGTAG, "Distance: "+item.getDistance());
 
         if(item.getDistance().equals("")) {
             viewHolder.distanceLayout.setVisibility(View.GONE);
@@ -165,6 +164,12 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             viewHolder.distanceLayout.setVisibility(View.VISIBLE);
         }
 
+        if(item.getOnDemand() == 1) {
+            viewHolder.tVOnDemand.setVisibility(View.VISIBLE);
+        }
+        else {
+            viewHolder.tVOnDemand.setVisibility(View.GONE);
+        }
 
 
 
@@ -175,9 +180,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         viewHolder.tvDiscount.setTypeface(myFont);
 
         viewHolder.tvRetailValue.setPaintFlags(viewHolder.tvRetailValue.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
-        Log.d(LOGTAG, "Distance: "+item.getDistance());
-        Log.d(LOGTAG, "Discount: "+item.getDiscount());
 
         int valCalc = item.getValueCalculate();
         Double discVal = item.getDiscount();
@@ -566,7 +568,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
         private SwipeLayout swipeLayout;
         //private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvPriceRangeId, tvDiscount, tvExpires;
-        private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvRetailValue, tvDiscount, tvPayValue, tvDistance;
+        private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvRetailValue, tvDiscount, tvPayValue, tvDistance, tVOnDemand;
         private NetworkImageView thumbnail;
         private ImageView mapIcon;
         private ImageLoader mImageLoader;
@@ -587,6 +589,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             tvPayValue = (TextView) itemView.findViewById(R.id.pay_value);
             tvDistance = (TextView) itemView.findViewById(R.id.distance);
             mapIcon = (ImageView) itemView.findViewById(R.id.map_icon);
+
+            tVOnDemand = (TextView) itemView.findViewById(R.id.on_demand);
 
             thumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
 
