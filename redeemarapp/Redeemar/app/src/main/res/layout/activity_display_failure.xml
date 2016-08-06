@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true"
         android:fontFamily="sans-serif"
         android:textStyle="bold"
-        android:text="@string/error"
+        android:text="@string/app_name"
         android:padding="@dimen/menu_title_padding"
         android:textSize="@dimen/menu_title" />
 

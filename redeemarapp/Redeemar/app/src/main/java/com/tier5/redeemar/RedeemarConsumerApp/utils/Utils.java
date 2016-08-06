@@ -2,15 +2,28 @@ package com.tier5.redeemar.RedeemarConsumerApp.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.tier5.redeemar.RedeemarConsumerApp.DisplayFailureActivity;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Utils {
 
@@ -50,6 +63,127 @@ public class Utils {
             return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
         }
     }
+
+
+    public static String extractLogToFileAndWeb(){
+        //set a file
+        Date datum = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String fullName = df.format(datum)+"appLog.log";
+        File file = new File (Environment.getExternalStorageDirectory(), fullName);
+        String logText = "";
+
+
+        //clears a file
+        if(file.exists()){
+            file.delete();
+        }
+
+
+        //write log to file
+        int pid = android.os.Process.myPid();
+        try {
+            String command = String.format("logcat -d -v threadtime *:*");
+            Process process = Runtime.getRuntime().exec(command);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder result = new StringBuilder();
+            String currentLine = null;
+
+            while ((currentLine = reader.readLine()) != null) {
+                if (currentLine != null && currentLine.contains(String.valueOf(pid))) {
+                    result.append(currentLine);
+                    result.append("\n\r");
+                }
+            }
+
+            logText = result.toString();
+
+
+
+            //Runtime.getRuntime().exec("logcat -d -v time -f "+file.getAbsolutePath());
+        } catch (IOException e) {
+
+            Log.d(LOGTAG, "Exception occured in exporting ");
+
+        }
+
+
+        //clear the log
+        try {
+            Runtime.getRuntime().exec("logcat -c");
+        } catch (IOException e) {
+
+            Log.d(LOGTAG, "Runtime Exception occured in exporting ");
+
+        }
+
+        return logText;
+    }
+
+
+
+    /*
+
+
+
+    public static File extractLogToFileAndWeb(){
+        //set a file
+        Date datum = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String fullName = df.format(datum)+"appLog.log";
+        File file = new File (Environment.getExternalStorageDirectory(), fullName);
+
+        //clears a file
+        if(file.exists()){
+            file.delete();
+        }
+
+
+        //write log to file
+        int pid = android.os.Process.myPid();
+        try {
+            String command = String.format("logcat -d -v threadtime *:*");
+            Process process = Runtime.getRuntime().exec(command);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder result = new StringBuilder();
+            String currentLine = null;
+
+            while ((currentLine = reader.readLine()) != null) {
+                if (currentLine != null && currentLine.contains(String.valueOf(pid))) {
+                    result.append(currentLine);
+                    result.append("\n");
+                }
+            }
+
+            FileWriter out = new FileWriter(file);
+            out.write(result.toString());
+            out.close();
+
+            //Runtime.getRuntime().exec("logcat -d -v time -f "+file.getAbsolutePath());
+        } catch (IOException e) {
+
+            Log.d(LOGTAG, "Exception occured in exporting ");
+
+        }
+
+
+        //clear the log
+        try {
+            Runtime.getRuntime().exec("logcat -c");
+        } catch (IOException e) {
+
+            Log.d(LOGTAG, "Runtime Exception occured in exporting ");
+
+        }
+
+        return file;
+    }
+
+    */
+
+
 
 
 }

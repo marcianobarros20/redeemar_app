@@ -197,9 +197,9 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
                     String logoImagePath = basePath +  brand.getLogoName();
 
+                    Log.d(LOGTAG, "Logo path new: "+logoImagePath);
+
                     new DownloadImageTask(imBrandLogo).execute(logoImagePath);
-
-
 
 
 

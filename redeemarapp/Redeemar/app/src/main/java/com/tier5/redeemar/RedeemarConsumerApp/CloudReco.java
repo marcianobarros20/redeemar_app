@@ -753,6 +753,10 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                         String user_id = extras.getString(getString(R.string.ext_user_id));
                         String offer_id = extras.getString(getString(R.string.ext_offer_id));
 
+                        Log.d(LOGTAG, "After Recognition Activity Name: "+activityName);
+                        Log.d(LOGTAG, "After Recognition Offer Id: "+user_id);
+                        Log.d(LOGTAG, "After Recognition Offer Id: "+offer_id);
+
 
 
 
@@ -1428,6 +1432,17 @@ public class CloudReco extends Activity implements SampleApplicationControl,
             }
         }
 
+
+    }
+
+
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(CloudReco.this, BrowseOffersActivity.class);
+        startActivity(intent);
+        finish();
 
     }
 

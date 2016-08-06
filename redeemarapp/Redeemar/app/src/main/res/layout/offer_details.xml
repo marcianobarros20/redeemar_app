@@ -44,8 +44,10 @@
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:padding="@dimen/baseline_padding"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:padding="0dp"
             android:layout_alignParentTop="true" />
 
         <TextView
@@ -67,8 +69,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/address"
             android:text="@string/offer_title"
-            android:layout_marginLeft="@dimen/content_padding"
-            android:layout_marginRight="@dimen/content_padding"
+            android:layout_marginLeft="@dimen/content_padding_small"
+            android:layout_marginRight="@dimen/content_padding_small"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:gravity="center"
             style="@style/GreenLargerText" />
@@ -263,6 +265,8 @@
                 android:background="@color/deep_red"
                 android:layout_marginRight="@dimen/activity_vertical_margin"
                 android:padding="@dimen/button_padding_med"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:text="@string/pass"
                 android:textColor="@color/white"
                 android:visibility="visible" />
@@ -279,6 +283,8 @@
                 android:layout_marginRight="@dimen/activity_vertical_margin"
                 android:text="@string/bank"
                 android:padding="@dimen/button_padding_med"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:textColor="@color/white"
                 android:visibility="visible" />
 

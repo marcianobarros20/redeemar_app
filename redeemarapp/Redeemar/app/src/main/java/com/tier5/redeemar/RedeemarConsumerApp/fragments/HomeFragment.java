@@ -507,20 +507,26 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
         for (int i = 0; i < brandList.size(); i++) {
             User brnd = brandList.get(i);
-            MyItem offsetItem = new MyItem(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon()));
-            //mClusterManager.addItem(offsetItem);
+
+            if(brnd.getLat() != null && !brnd.getLat().equalsIgnoreCase("") && brnd.getLon() != null && !brnd.getLon().equalsIgnoreCase("")) {
+
+                MyItem offsetItem = new MyItem(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon()));
+                //mClusterManager.addItem(offsetItem);
 
 
 
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(new LatLng(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon())))
-                    .title(String.valueOf(i))
-                    .icon(icon);
-            MarkerItem markerItem = new MarkerItem(markerOptions);
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon())))
+                        .title(String.valueOf(i))
+                        .icon(icon);
+                MarkerItem markerItem = new MarkerItem(markerOptions);
 
 
 
-            mClusterManager.addItem(markerItem);
+                mClusterManager.addItem(markerItem);
+
+            }
+
 
         }
 

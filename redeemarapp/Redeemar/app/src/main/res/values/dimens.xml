@@ -10,6 +10,7 @@
     <dimen name="menu_title">22sp</dimen>
     <dimen name="menu_title_med">18sp</dimen>
     <dimen name="menu_title_small">12sp</dimen>
+    <dimen name="menu_title_smaller">11sp</dimen>
 
 
     <dimen name="menu_entries_title">16sp</dimen>

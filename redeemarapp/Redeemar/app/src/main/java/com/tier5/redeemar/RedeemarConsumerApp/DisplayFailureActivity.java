@@ -35,7 +35,7 @@ public class DisplayFailureActivity extends Activity {
 
             else if(scan_err.equalsIgnoreCase("R02001")) {
                 tvSuccessMessage.setText(getString(R.string.error_validation_success));
-                getActionBar().setTitle(R.string.success);
+                //getActionBar().setTitle(R.string.success);
             }
 
             else if(scan_err.equalsIgnoreCase("R02002"))

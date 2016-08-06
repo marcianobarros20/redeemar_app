@@ -318,7 +318,7 @@ public class ValidateOfferActivity extends AppCompatActivity {
 
                         JSONArray offerArray = new JSONArray(reader.getString("data"));
 
-                        Log.d(LOGTAG, "Length: " + offerArray.length());
+                        //Log.d(LOGTAG, "Length: " + offerArray.length());
 
                         if(offerArray.length() == 1) {
 
@@ -326,10 +326,13 @@ public class ValidateOfferActivity extends AppCompatActivity {
 
 
 
+
+
                             if(jsonObject.optString("offer_description").toString() != null) {
                                 tvOfferTitle.setText(jsonObject.optString("offer_description").toString());
                                 Log.d(LOGTAG, "offer_description: "+jsonObject.optString("offer_description").toString());
                             }
+
 
 
 
@@ -373,69 +376,58 @@ public class ValidateOfferActivity extends AppCompatActivity {
                                 //Log.d(LOGTAG, "discount: "+jsonObject.getString("discount").toString());
                             }
 
+                            if(!jsonObject.isNull("myoffer_details") && jsonObject.getString("myoffer_details").trim() != "") {
 
 
 
-                            JSONArray jsonValidityArray = new JSONArray(jsonObject.getString("myoffer_details"));
+                                JSONArray jsonMyOfferArray = new JSONArray(jsonObject.getString("myoffer_details"));
 
 
+                                Log.d(LOGTAG, "My Offer Length: "+jsonMyOfferArray.length());
+
+                                if(jsonMyOfferArray.length() == 1) {
+
+                                    JSONObject jsonMyOfferObject = jsonMyOfferArray.getJSONObject(0);
+
+                                    try {
 
 
-
-                            Log.d(LOGTAG, "Offer Details Length: "+jsonValidityArray.length());
-
-                            if(jsonValidityArray.length() > 0) {
-
-                                JSONObject jsonValidityObject = jsonValidityArray.getJSONObject(0);
-
-                                try {
+                                        GregorianCalendar calendar = new GregorianCalendar();
 
 
-                                    GregorianCalendar calendar = new GregorianCalendar();
+                                        if (!jsonMyOfferObject.isNull("validate_within")  && jsonMyOfferObject.getString("validate_within").toString().trim() != "") {
+                                            Log.d(LOGTAG, "Validate Within: " + jsonMyOfferObject.getString("validate_within").toString());
+                                            String validate_within = jsonMyOfferObject.getString("validate_within");
 
-                                    System.out.println(calendar.getTime());
+                                            Date date1 = fromDateFormat.parse(validate_within);
+                                            tvValidateWithin.setText(toDateFormat.format(date1));
 
 
-                                    if (jsonValidityObject.getString("validate_within") != null && jsonValidityObject.getString("validate_within").toString() != "") {
-                                        Log.d(LOGTAG, "Validate Within: " + jsonValidityObject.getString("validate_within").toString());
-                                        String validate_within = jsonValidityObject.getString("validate_within");
+                                        }
 
-                                        //validate_within = "0000-00-00 00:00:00";
-                                        //Date date = dateFormat.parse(validate_within); // mysql datetime format
-                                        //calendar.setTime(dateFormat.parse(validate_within));
-                                        // Date date1 = dt.parse(validate_within);
 
-                                        Date date1 = fromDateFormat.parse(validate_within);
+                                        if (!jsonMyOfferObject.isNull("validate_after")  && jsonMyOfferObject.getString("validate_after").toString().trim() != "") {
+                                            Log.d(LOGTAG, "Validate After: " + jsonMyOfferObject.getString("validate_after").toString());
+                                            String validate_after = jsonMyOfferObject.getString("validate_after");
 
-                                        tvValidateWithin.setText(toDateFormat.format(date1));
+                                            //calendar.setTime(fromDateFormat.parse(validate_after));
+
+                                            Date date2 = fromDateFormat.parse(validate_after);
+
+                                            tvValidateAfter.setText(toDateFormat.format(date2));
+
+                                        }
+
+
+                                    } catch (ParseException ex) {
+
+                                        Log.d(LOGTAG, "Exception in parsing date: "+ex.toString());
 
 
                                     }
-
-
-                                    if (jsonValidityObject.getString("validate_after") != null && jsonValidityObject.getString("validate_after").toString() != "") {
-                                        Log.d(LOGTAG, "Validate After: " + jsonValidityObject.getString("validate_after").toString());
-                                        String validate_after = jsonValidityObject.getString("validate_after");
-
-                                        //calendar.setTime(fromDateFormat.parse(validate_after));
-
-                                        Date date2 = fromDateFormat.parse(validate_after);
-
-                                        tvValidateAfter.setText(toDateFormat.format(date2));
-
-                                    }
-
-
-                                } catch (ParseException ex) {
-
-                                    Log.d(LOGTAG, "Exception in parsing date: "+ex.toString());
 
 
                                 }
-
-
-
-
 
 
 
@@ -444,10 +436,12 @@ public class ValidateOfferActivity extends AppCompatActivity {
 
 
 
-                            if(jsonObject.getString("offer_image_path") != null && jsonObject.getString("offer_image_path").toString() != "") {
+                            if(!jsonObject.isNull("offer_large_image_path") && jsonObject.getString("offer_large_image_path").toString() != "") {
 
 
-                                String imageUrl = jsonObject.getString("offer_image_path");
+                                String imageUrl = jsonObject.getString("offer_large_image_path");
+
+                                imageUrl = UrlEndpoints.serverBaseUrl  + imageUrl;
 
                                 Log.d(LOGTAG, "offer_image_path: "+imageUrl);
 
@@ -473,7 +467,7 @@ public class ValidateOfferActivity extends AppCompatActivity {
                                 JSONObject jsonCompanyObject = jsonCompanyArray.getJSONObject(0);
 
 
-                                if (jsonCompanyObject.getString("address") != null && jsonCompanyObject.getString("address").toString() != "") {
+                                if (!jsonCompanyObject.isNull("address")  && jsonCompanyObject.getString("address").toString() != "") {
                                     Log.d(LOGTAG, "address: " + jsonCompanyObject.getString("address").toString());
                                     address = jsonCompanyObject.getString("address");
                                     tvAddress.setText(address);
@@ -489,7 +483,7 @@ public class ValidateOfferActivity extends AppCompatActivity {
                             JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));
 
 
-                            if(json_partner_settings.getString("price_range_id") != null && json_partner_settings.getString("price_range_id").toString() != "") {
+                            if(!json_partner_settings.isNull("price_range_id") && json_partner_settings.getString("price_range_id").toString() != "") {
                                 tvPriceRangeId.setText(json_partner_settings.getString("price_range_id"));
                                 Log.d(LOGTAG, "price_range_id: "+json_partner_settings.getString("price_range_id").toString());
 

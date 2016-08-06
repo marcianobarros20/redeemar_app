@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -99,25 +101,10 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
 
 
-
-        final Offer item = offerList.get(position);
-        viewHolder.tvOfferDescription.setText(item.getOfferDescription());
-        viewHolder.tvPriceRangeId.setText(item.getPriceRangeId());
-
-        viewHolder.tvOfferDescription.setTypeface(myFont);
-        viewHolder.tvPriceRangeId.setTypeface(myFont);
-        viewHolder.tvDiscount.setTypeface(myFont);
-        viewHolder.tvValidateOffer.setTypeface(myFont);
-
-
-
-        int valCalc = item.getValueCalculate();
-        Double discVal = item.getDiscount();
-        String imageUrl = item.getImageUrl();
-
         String discDesc = "";
         StringBuilder sb = new StringBuilder(14);
         StringBuilder esb = new StringBuilder(14);
+        String address_distance = "";
 
         String perc_sym = mContext.getResources().getString(R.string.percentage_symbol);
         String off = mContext.getResources().getString(R.string.off);
@@ -126,6 +113,72 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
         String save = mContext.getResources().getString(R.string.save);
         String expires_in = mContext.getResources().getString(R.string.expires_in);
         String days = mContext.getResources().getString(R.string.days);
+
+        String distance_unit = mContext.getResources().getString(R.string.distance_unit);
+
+
+        final Offer item = offerList.get(position);
+
+        String offer_desc = item.getOfferDescription();
+
+        address_distance = item.getLocation()+" "+item.getDistance();
+
+        if(offer_desc.length() > 50)
+            viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 50)+"...");
+        else
+            viewHolder.tvOfferDescription.setText(offer_desc);
+
+
+        if(item.getRetailvalue() > 0)
+            viewHolder.tvRetailValue.setText(cur_sym+String.valueOf(item.getRetailvalue()));
+
+        if(item.getPayValue() > 0)
+            viewHolder.tvPayValue.setText(cur_sym+(String.valueOf(item.getPayValue())));
+
+        //if(!item.getDistance().equals(""))
+        //    viewHolder.tvDistance.setText(String.valueOf(item.getDistance())+" "+distance_unit);
+
+
+        if(item.getLocation() != null && !item.getLocation().equalsIgnoreCase(""))
+            address_distance = item.getLocation()+" ";
+
+        if(item.getLocation() != null && !item.getDistance().equalsIgnoreCase(""))
+            address_distance = address_distance + item.getDistance();
+
+        if(address_distance.equalsIgnoreCase("")) {
+            viewHolder.distanceLayout.setVisibility(View.INVISIBLE);
+        }
+        else {
+
+            viewHolder.tvDistance.setText(address_distance);
+            viewHolder.distanceLayout.setVisibility(View.VISIBLE);
+        }
+
+        if(item.getOnDemand() == 1) {
+            viewHolder.tVOnDemand.setVisibility(View.VISIBLE);
+        }
+        else {
+            viewHolder.tVOnDemand.setVisibility(View.GONE);
+        }
+
+        viewHolder.tvOfferDescription.setTypeface(myFont);
+        viewHolder.tvRetailValue.setTypeface(myFont);
+        viewHolder.tvPayValue.setTypeface(myFont);
+        viewHolder.tvDistance.setTypeface(myFont);
+        viewHolder.tvDiscount.setTypeface(myFont);
+
+        viewHolder.tvRetailValue.setPaintFlags(viewHolder.tvRetailValue.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+        int valCalc = item.getValueCalculate();
+        Double discVal = item.getDiscount();
+        String imageUrl = item.getImageUrl();
+
+        if(discVal > 0) {
+            viewHolder.discountLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            viewHolder.discountLayout.setVisibility(View.INVISIBLE);
+        }
 
 
         switch(valCalc)
@@ -152,32 +205,21 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
                 sb.append(cur_sym).append(discVal).append(" ").append(off);
         }
 
-        viewHolder.tvDiscount.setText(sb);
 
-        if(item.getExpiredInDays() > 0) {
-            DecimalFormat format = new DecimalFormat("#");
-            format.setDecimalSeparatorAlwaysShown(false);
-            //Log.d(LOGTAG, "Decimal: "+format.format(item.getExpiredInDays()));
-
-            esb.append(expires_in).append(" ").append(format.format(item.getExpiredInDays())).append(" ").append(days);
-
-            //esb.append(expires_in).append(" ").append(Math.floor(item.getExpiredInDays())).append(" ").append(days);
-            viewHolder.tvExpires.setText(esb);
+        if(discVal > 0) {
+            viewHolder.tvDiscount.setText(sb);
+            viewHolder.tvDiscount.setVisibility(View.VISIBLE);
         }
-
-        //Log.d("RecycleViewer", "Image URL: "+imageUrl);
-
-        //if(imageUrl != "")
-        //    imgLoader.DisplayImage(imageUrl, viewHolder.thumbnail);
-
-
-        //new DownloadImageTask(viewHolder.thumbnail).execute(imageUrl);
+        else {
+            viewHolder.tvDiscount.setVisibility(View.GONE);
+        }
 
         viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
 
         // Instantiate the RequestQueue.
 
         if(imageUrl != "") {
+            imageUrl = UrlEndpoints.serverBaseUrl + imageUrl;
             viewHolder.mImageLoader.get(imageUrl, ImageLoader.getImageListener(viewHolder.thumbnail,
                     R.drawable.icon_watermark, android.R.drawable
                             .ic_dialog_alert));
@@ -317,24 +359,30 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
 
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
         private SwipeLayout swipeLayout;
-        private TextView tvValidateOffer, tvOfferDescription, tvPriceRangeId, tvDiscount, tvExpires;
+        private TextView tvValidateOffer, tvOfferDescription, tvRetailValue, tvDiscount, tvPayValue, tvDistance, tVOnDemand;
         private NetworkImageView thumbnail;
+        private ImageView mapIcon;
         private ImageLoader mImageLoader;
+        private LinearLayout distanceLayout, discountLayout;
 
-        LinearLayout rating;
 
         public SimpleViewHolder(View itemView) {
             super(itemView);
 
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
             tvValidateOffer = (TextView) itemView.findViewById(R.id.validate_offer);
-            //tvPassOffer = (TextView) itemView.findViewById(R.id.pass_offer);
             tvOfferDescription = (TextView) itemView.findViewById(R.id.offer_description);
-            tvPriceRangeId = (TextView) itemView.findViewById(R.id.price_range_id);
+            tvRetailValue = (TextView) itemView.findViewById(R.id.retail_value);
             tvDiscount = (TextView) itemView.findViewById(R.id.discount);
-            tvExpires = (TextView) itemView.findViewById(R.id.expires);
-
+            tvPayValue = (TextView) itemView.findViewById(R.id.pay_value);
+            tvDistance = (TextView) itemView.findViewById(R.id.distance);
+            mapIcon = (ImageView) itemView.findViewById(R.id.map_icon);
+            tVOnDemand = (TextView) itemView.findViewById(R.id.on_demand);
             thumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
+
+
+            distanceLayout = (LinearLayout) itemView.findViewById(R.id.distance_layout);
+            discountLayout = (LinearLayout) itemView.findViewById(R.id.discount_layout);
 
             //Image URL - This can point to any image file supported by Android
 

@@ -36,9 +36,13 @@ public class LogoutActivity extends Activity implements
         SharedPreferences.Editor editor = sharedpref.edit();
 
         editor.remove(getString(R.string.spf_user_id));
+        editor.remove(getString(R.string.spf_first_name));
+        editor.remove(getString(R.string.spf_last_name));
         editor.remove(getString(R.string.spf_email));
+        editor.remove(getString(R.string.spf_mobile));
         editor.remove(getString(R.string.spf_facebook_id));
         editor.remove(getString(R.string.spf_google_id));
+
 
         editor.putString(res.getString(R.string.spf_no_auto_login), "1"); // Storing login method
         editor.commit();
@@ -47,6 +51,7 @@ public class LogoutActivity extends Activity implements
         FacebookSdk.sdkInitialize(getApplicationContext());
         //callbackManager = CallbackManager.Factory.create();
         // We can logout from facebook by calling following method
+        //LoginManager.getInstance().logOut();
         LoginManager.getInstance().logOut();
 
         // Logout from Google
@@ -110,6 +115,8 @@ public class LogoutActivity extends Activity implements
 
     protected void onStart() {
         super.onStart();
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        LoginManager.getInstance().logOut();
         mGoogleApiClient.connect();
     }
 

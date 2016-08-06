@@ -48,9 +48,9 @@ public class DBOffers {
         switch (table) {
 
             case ALL_OFFERS:
-                sql = "INSERT INTO " + OffersHelper.TABLE_OFFERS + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                sql = "INSERT INTO " + OffersHelper.TABLE_OFFERS + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
             case MY_OFFERS:
-                sql = "INSERT INTO " + OffersHelper.TABLE_MY_OFFERS + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                sql = "INSERT INTO " + OffersHelper.TABLE_MY_OFFERS + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
         }
         ;
@@ -105,6 +105,10 @@ public class DBOffers {
                 OffersHelper.COLUMN_IMAGE_NAME,
                 OffersHelper.COLUMN_IMAGE_URL,
                 OffersHelper.COLUMN_ADDRESS,
+                OffersHelper.COLUMN_ZIPCODE,
+                OffersHelper.COLUMN_LAT,
+                OffersHelper.COLUMN_LON,
+                OffersHelper.COLUMN_LOCATION,
                 OffersHelper.COLUMN_PRICE,
                 OffersHelper.COLUMN_PAY_VALUE,
                 OffersHelper.COLUMN_RETAIL_VALUE,
@@ -162,7 +166,6 @@ public class DBOffers {
 
                 //add the Offer to the list of Offer objects which we plan to return*/
 
-
                 listOffers.add(offer);
             }
             while (cursor.moveToNext());
@@ -201,6 +204,10 @@ public class DBOffers {
         public static final String COLUMN_IMAGE_NAME = "inmage_name";
         public static final String COLUMN_IMAGE_URL = "image_url";
         public static final String COLUMN_ADDRESS = "address";
+        public static final String COLUMN_ZIPCODE = "address";
+        public static final String COLUMN_LAT = "address";
+        public static final String COLUMN_LON = "address";
+        public static final String COLUMN_LOCATION = "address";
         public static final String COLUMN_PRICE = "price";
         public static final String COLUMN_PAY_VALUE = "pay_value";
         public static final String COLUMN_RETAIL_VALUE = "retail_value";
@@ -231,6 +238,10 @@ public class DBOffers {
                 COLUMN_IMAGE_NAME + " TEXT," +
                 COLUMN_IMAGE_URL + " TEXT," +
                 COLUMN_ADDRESS + " TEXT," +
+                COLUMN_ZIPCODE + " TEXT," +
+                COLUMN_LAT + " TEXT," +
+                COLUMN_LON + " TEXT," +
+                COLUMN_LOCATION + " TEXT," +
                 COLUMN_PRICE + " TEXT," +
                 COLUMN_PAY_VALUE + " TEXT," +
                 COLUMN_RETAIL_VALUE + " TEXT" +

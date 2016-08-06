@@ -242,7 +242,7 @@
     <string name="offers_on_demand">On-Demand Offers</string>
 
 
-    <string name="offer_title">Loading offer details...</string>
+    <string name="offer_title">Lorem ipsum dolor sit amet, consectetur adipiscing.</string>
     <string name="offer_title_new">Loading new offer details...</string>
 
     <string name="what_you_get"></string>
@@ -338,6 +338,8 @@
     <string name="nav_item_my_credit">My Credits</string>
     <string name="nav_item_my_offers">My Offers</string>
     <string name="nav_item_edit_profile">Edit Profile</string>
+    <string name="nav_item_export_log">Export Log</string>
+
 
     <string name="btn_logout_from_google">Logout from Google</string>
     <string name="btn_revoke_access">Revoke Access</string>

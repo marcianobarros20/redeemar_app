@@ -126,6 +126,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         StringBuilder sb = new StringBuilder(14);
         StringBuilder esb = new StringBuilder(14);
+        String address_distance = "";
 
         String perc_sym = mContext.getResources().getString(R.string.percentage_symbol);
         String off = mContext.getResources().getString(R.string.off);
@@ -140,6 +141,19 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         final Offer item = offerList.get(position);
 
         String offer_desc = item.getOfferDescription();
+
+        if(item.getLocation() != null && !item.getLocation().equalsIgnoreCase("")) {
+            address_distance = item.getLocation()+" ";
+            Log.d(LOGTAG, "Browse Location: "+address_distance);
+        }
+
+
+        if(!item.getDistance().equalsIgnoreCase("")) {
+            Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
+        }
+        address_distance = address_distance + item.getDistance();
+
+        //address_distance = item.getLocation()+" "+item.getDistance();
 
         if(offer_desc.length() > 50)
             viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 50)+"...");
@@ -157,10 +171,12 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             viewHolder.tvDistance.setText(String.valueOf(item.getDistance())+" "+distance_unit);
 
 
-        if(item.getDistance().equals("")) {
-            viewHolder.distanceLayout.setVisibility(View.GONE);
+        if(address_distance.equalsIgnoreCase("")) {
+            viewHolder.distanceLayout.setVisibility(View.INVISIBLE);
         }
         else {
+
+            viewHolder.tvDistance.setText(address_distance);
             viewHolder.distanceLayout.setVisibility(View.VISIBLE);
         }
 
@@ -170,8 +186,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         else {
             viewHolder.tVOnDemand.setVisibility(View.GONE);
         }
-
-
 
         viewHolder.tvOfferDescription.setTypeface(myFont);
         viewHolder.tvRetailValue.setTypeface(myFont);
@@ -183,16 +197,20 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         int valCalc = item.getValueCalculate();
         Double discVal = item.getDiscount();
-        String imageUrl = item.getImageUrl();
+
+        String imageUrl = "";
+
+        if(mViewType.equalsIgnoreCase("thumb"))
+            imageUrl = item.getLargeImageUrl();
+        else
+            imageUrl = item.getImageUrl();
 
         if(discVal > 0) {
             viewHolder.discountLayout.setVisibility(View.VISIBLE);
         }
         else {
-            viewHolder.discountLayout.setVisibility(View.GONE);
+            viewHolder.discountLayout.setVisibility(View.INVISIBLE);
         }
-
-
 
 
         switch(valCalc)
@@ -228,7 +246,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             viewHolder.tvDiscount.setVisibility(View.GONE);
         }
 
-        if(item.getExpiredInDays() > 0) {
+        /*if(item.getExpiredInDays() > 0) {
             DecimalFormat format = new DecimalFormat("#");
             format.setDecimalSeparatorAlwaysShown(false);
             //Image URLLog.d(LOGTAG, "Decimal: "+format.format(item.getExpiredInDays()));
@@ -237,13 +255,15 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             //esb.append(expires_in).append(" ").append(Math.floor(item.getExpiredInDays())).append(" ").append(days);
             //viewHolder.tvPayValue.setText(esb);
-        }
+        }*/
 
 
         viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
 
         // Instantiate the RequestQueue.
         if(imageUrl != "") {
+
+            imageUrl = UrlEndpoints.serverBaseUrl + imageUrl;
             viewHolder.mImageLoader.get(imageUrl, ImageLoader.getImageListener(viewHolder.thumbnail,
                     R.drawable.icon_watermark, android.R.drawable
                             .ic_dialog_alert));
@@ -296,6 +316,9 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                     SharedPreferences.Editor editor = sharedpref.edit();
                     editor.putString(res.getString(R.string.spf_redir_action), "BANK_OFFER"); // Storing action
                     editor.putString(res.getString(R.string.spf_last_offer_id), offerId); // Storing Last Offer Id
+                    editor.commit();
+
+                    Log.d(LOGTAG, "Last Offer Id: "+offerId);
 
                     Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
@@ -589,16 +612,11 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             tvPayValue = (TextView) itemView.findViewById(R.id.pay_value);
             tvDistance = (TextView) itemView.findViewById(R.id.distance);
             mapIcon = (ImageView) itemView.findViewById(R.id.map_icon);
-
             tVOnDemand = (TextView) itemView.findViewById(R.id.on_demand);
-
             thumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
 
-            distanceLayout = (LinearLayout) itemView.findViewById(R.id.middleInnerSubLayout1);
-            discountLayout = (LinearLayout) itemView.findViewById(R.id.middleInnerSubLayout2);
-
-
-
+            distanceLayout = (LinearLayout) itemView.findViewById(R.id.distance_layout);
+            discountLayout = (LinearLayout) itemView.findViewById(R.id.discount_layout);
 
         }
     }

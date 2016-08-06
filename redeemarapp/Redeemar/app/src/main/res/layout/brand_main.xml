@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/bg02"
+    android:gravity="center_vertical"
     android:padding="@dimen/baseline_padding">
 
     <!-- Header aligned to top -->
@@ -24,6 +25,7 @@
             android:maxHeight="@dimen/medium_logo_height"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
+            android:paddingBottom="10dp"
             android:contentDescription="@string/splash_screen_description"></ImageView>
 
     </RelativeLayout>
@@ -34,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:gravity="center" >
+        android:paddingBottom="40dp">
 
 
         <Button
@@ -44,9 +46,13 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:textSize="@dimen/menu_title_med"
-            android:padding="@dimen/button_padding_med"
+            android:paddingTop="@dimen/button_padding_med"
+            android:paddingBottom="@dimen/button_padding_med"
+            android:paddingLeft="@dimen/button_padding"
+            android:paddingRight="@dimen/button_padding"
             android:layout_marginTop="@dimen/activity_vertical_margin_small"
-            android:background="@color/green_header"
+            android:background="@drawable/button_green"
+            android:textColor="@color/white"
             android:text="@string/shop_offers" />
 
 
@@ -76,14 +82,13 @@
                 android:maxHeight="@dimen/medium_brand_logo_height"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:paddingBottom="5dp"
-                android:contentDescription="@string/splash_screen_description"
-                />
+                android:paddingBottom="15dp"
+                android:contentDescription="@string/splash_screen_description" />
 
             <com.google.android.youtube.player.YouTubePlayerView
                 android:id="@+id/youtubeplayerview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="250dp"
                 android:visibility="visible"/>
 
 
@@ -100,10 +105,6 @@
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true" />
 
-
-
-
-
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
@@ -116,9 +117,8 @@
                         android:layout_centerInParent="true"
                         android:layout_centerHorizontal="true"
                         android:padding="@dimen/baseline_padding"
-                        android:orientation="horizontal">
-
-
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                     </LinearLayout>
                 </HorizontalScrollView>

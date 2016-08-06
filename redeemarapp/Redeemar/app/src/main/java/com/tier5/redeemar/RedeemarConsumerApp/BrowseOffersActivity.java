@@ -8,7 +8,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -40,6 +42,7 @@ import com.google.gson.Gson;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
+import com.tier5.redeemar.RedeemarConsumerApp.exception.ActivityExceptionDemo;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.AboutFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.BrowseOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.ContactFragment;
@@ -122,6 +125,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0);
 
 
+        if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
+            String userId = sharedpref.getString(res.getString(R.string.spf_user_id), "");
+            Log.d(LOGTAG, "User Id is: "+userId);
+
+        }
+
         if(sharedpref.getString(res.getString(R.string.spf_first_name), null) != null) {
             firstName = sharedpref.getString(res.getString(R.string.spf_first_name), "");
 
@@ -189,6 +198,23 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         }
 
 
+        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+        if(!provider.contains("gps")) { //if gps is disabled
+
+            Log.d(LOGTAG, "GPS is disabled");
+
+            /*final Intent poke = new Intent();
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3"));
+            sendBroadcast(poke);*/
+        }
+        else {
+            Log.d(LOGTAG, "GPS is emabled");
+
+        }
+
 
         setupToolbar();
 
@@ -196,6 +222,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         initNavigationDrawer();
         //setUpMap();
     }
+
+
 
 
     private void setupToolbar() {
@@ -210,7 +238,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         }
 
         if(getSupportActionBar() != null) {
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.list); // it's getSupportActionBar() if you're using AppCompatActivity, not getActionBar()
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu); // it's getSupportActionBar() if you're using AppCompatActivity, not getActionBar()
             getSupportActionBar().setDisplayHomeAsUpEnabled(true); // it's getSupportActionBar() if you're using AppCompatActivity, not getActionBar()
         }
 
@@ -222,7 +250,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
     private void setupBottombar(BottomBar mBottomBar, Bundle savedInstanceState) {
 
-        Log.d(LOGTAG, "Inside bottom bar logic");
 
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.setMaxFixedTabs(5);
@@ -270,7 +297,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 } else if (menuItemId == R.id.bottom_browse_offers) {
 
 
-                    Log.d(LOGTAG, "Inside Browse Offer Menu");
                     //Toast.makeText(getApplicationContext(), "Browse offers selected", Toast.LENGTH_SHORT).show();
 
                     getSupportActionBar().setTitle(R.string.browse_offers);
@@ -301,10 +327,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                         else if(redirectTo.equalsIgnoreCase("CampaignOffers")) {
 
-                            editor.putString(getString(R.string.spf_redir_action), "CampaignOffers"); // Storing Last Activity
+                            /*editor.putString(getString(R.string.spf_redir_action), "CampaignOffers"); // Storing Last Activity
                             editor.putString(getString(R.string.spf_campaign_id), campaignId); // Storing Redeemar Id
                             editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
-                            editor.commit(); // commit changes
+                            editor.commit(); // commit changes*/
 
 
                             getSupportActionBar().setTitle(R.string.offers_by_campaign);
@@ -318,14 +344,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                             Log.d(LOGTAG, "Inside OnDemand");
 
-                            args1.putString(getString(R.string.ext_redir_to), "");
-                            editor.putString(getString(R.string.spf_redir_action), ""); // Storing Last Activity
-                            editor.commit(); // commit changes
-
+                            args1.putString(getString(R.string.ext_redir_to), "onDemand");
+                            //editor.putString(getString(R.string.spf_redir_action), ""); // Storing Last Activity
+                            //editor.commit(); // commit changes
 
                         }
-
-
 
                         fr.setArguments(args1);
                         FragmentManager fm = getFragmentManager();
@@ -350,8 +373,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     FragmentTransaction fragmentTransaction = fm.beginTransaction();
                     fragmentTransaction.replace(R.id.container_body, fr);
                     fragmentTransaction.commit();
-
-
 
                 }
 
@@ -578,6 +599,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 startActivity(intent);
                                 break;
 
+
+                            case R.id.nav_export:
+
+                                String logText = Utils.extractLogToFileAndWeb();
+                                exportLog(logText);
+                                break;
 
 
                             default:
@@ -899,6 +926,29 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         //if(mBottomBar != null)
         //    mBottomBar.selectTabAtPosition(3, false);
 
+    }
+
+    public void exportLog(String logText) {
+        Log.i("Send email", "");
+        String[] TO = {""};
+        String[] CC = {""};
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+        emailIntent.putExtra(Intent.EXTRA_CC, CC);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Redeemar Log");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, logText);
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+            finish();
+            Log.d(LOGTAG, "Finished sending email...");
+        }
+        catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(BrowseOffersActivity.this, "There is no email client installed.", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

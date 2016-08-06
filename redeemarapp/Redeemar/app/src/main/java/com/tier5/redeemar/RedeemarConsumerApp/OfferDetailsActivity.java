@@ -430,12 +430,15 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                             }
 
 
-                            if(jsonObject.getString("offer_image_path") != null && jsonObject.getString("offer_image_path").toString() != "") {
+                            if(jsonObject.getString("offer_large_image_path") != null && jsonObject.getString("offer_large_image_path").toString() != "") {
 
 
-                                String imageUrl = jsonObject.getString("offer_image_path");
+                                String imageUrl = jsonObject.getString("offer_large_image_path");
 
-                                Log.d(LOGTAG, "offer_image_path: "+imageUrl);
+                                imageUrl = UrlEndpoints.serverBaseUrl  + imageUrl;
+
+                                Log.d(LOGTAG, "offer_large_image_path: "+imageUrl);
+
 
 
                                 mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
@@ -445,21 +448,29 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                                                 .ic_dialog_alert));
                                 thumbnail.setImageUrl(imageUrl, mImageLoader);
 
-
                             }
 
-                            if(jsonObject.getString("latitude") != null && jsonObject.getString("latitude").toString() != "") {
+                            if(!jsonObject.isNull("latitude") && jsonObject.getString("latitude").toString().trim() != "") {
 
                                 Log.d(LOGTAG, "latitude: "+jsonObject.getString("latitude").toString());
-
-                                lat = Double.parseDouble(jsonObject.getString("latitude").toString());
+                                try {
+                                    lat = Double.parseDouble(jsonObject.getString("latitude").toString());
+                                } catch (NumberFormatException e) {
+                                    lat = 0.0; // your default value
+                                }
                             }
 
-                            if(jsonObject.getString("longitude") != null && jsonObject.getString("longitude").toString() != "") {
+                            if(!jsonObject.isNull("longitude") && jsonObject.getString("longitude").toString().trim() != "") {
 
                                 Log.d(LOGTAG, "longitude: "+jsonObject.getString("longitude").toString());
 
-                                lon = Double.parseDouble(jsonObject.getString("longitude").toString());
+
+                                try {
+                                    lon = Double.parseDouble(jsonObject.getString("longitude").toString());
+                                } catch (NumberFormatException e) {
+                                    lon = 0.0; // your default value
+                                }
+
                             }
 
                             JSONArray jsonCompanyArray = new JSONArray(jsonObject.getString("company_detail"));
@@ -473,12 +484,10 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                                 JSONObject jsonCompanyObject = jsonCompanyArray.getJSONObject(0);
 
 
-                                if (jsonCompanyObject.getString("address") != null && jsonCompanyObject.getString("address").toString() != "") {
+                                if (!jsonCompanyObject.isNull("address") && jsonCompanyObject.getString("address").toString() != "") {
                                     Log.d(LOGTAG, "address: " + jsonCompanyObject.getString("address").toString());
                                     address = jsonCompanyObject.getString("address");
                                     tvAddress.setText(address);
-
-
                                 }
 
                             }
@@ -497,23 +506,16 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                             }
 
 
-
-
                             JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));
 
 
-                            if(json_partner_settings.getString("price_range_id") != null && json_partner_settings.getString("price_range_id").toString() != "") {
+                            if(!json_partner_settings.isNull("price_range_id") && json_partner_settings.getString("price_range_id").toString() != "") {
                                 tvPriceRangeId.setText(json_partner_settings.getString("price_range_id"));
                                 Log.d(LOGTAG, "price_range_id: "+json_partner_settings.getString("price_range_id").toString());
 
                             }
 
-
-
                         }
-
-
-
 
                     } // End of if
 

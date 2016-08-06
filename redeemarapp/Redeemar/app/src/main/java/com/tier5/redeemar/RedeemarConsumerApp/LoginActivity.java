@@ -117,6 +117,21 @@ public class LoginActivity extends AppCompatActivity implements
         }
 
 
+        if(sharedpref.getString(res.getString(R.string.spf_login_method), null) != null) {
+            loginMethod = sharedpref.getString(res.getString(R.string.spf_login_method), "");
+        }
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_last_offer_id), null) != null) {
+            offerId = sharedpref.getString(res.getString(R.string.spf_last_offer_id), "");
+            Log.d(LOGTAG, "Last Offer Id New: "+offerId);
+        }
+
+
+        Log.d(LOGTAG, "Login Method: "+loginMethod);
+
+
+
         // For Facebook
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
@@ -177,7 +192,7 @@ public class LoginActivity extends AppCompatActivity implements
                 Log.d(LOGTAG, "Before Google sign in");
                 editor.putString(res.getString(R.string.spf_login_method), "google"); // Storing action
                 editor.commit();
-                //showProgressDialog();
+                showProgressDialog();
                 googleSignIn();
 
             }
@@ -192,7 +207,7 @@ public class LoginActivity extends AppCompatActivity implements
                 editor.putString(res.getString(R.string.spf_login_method), "facebook"); // Storing action
                 editor.commit();
 
-                //showProgressDialog();;
+                //showProgressDialog();
 
             }
         });
@@ -230,13 +245,14 @@ public class LoginActivity extends AppCompatActivity implements
                 else {
 
 
-
+                    showProgressDialog();
                     //String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
                     Log.d(LOGTAG, "Android Id is: "+androidId);
+                    Log.d(LOGTAG, "Last Offer Id is: "+offerId);
 
                     new LoginAsyncTask().execute(txtEmail.getText().toString(), txtPassword.getText().toString(), offerId);
 
-                    showProgressDialog();
+
 
                 }
 
@@ -277,18 +293,6 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(LOGTAG, "Result Code: "+String.valueOf(resultCode));
         Log.d(LOGTAG, "Data: "+String.valueOf(data));
         Log.d(LOGTAG, "RC_SIGN_IN: "+String.valueOf(RC_SIGN_IN));
-
-        if(sharedpref.getString(res.getString(R.string.spf_login_method), null) != null) {
-            loginMethod = sharedpref.getString(res.getString(R.string.spf_login_method), "");
-        }
-
-
-        if(sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
-            offerId = sharedpref.getString(res.getString(R.string.spf_last_offer_id), "");
-        }
-
-
-        Log.d(LOGTAG, "Login Method: "+loginMethod);
 
 
         if(loginMethod.equalsIgnoreCase("facebook")) {
@@ -386,13 +390,19 @@ public class LoginActivity extends AppCompatActivity implements
 
     public void procFBSignIn() {
 
+        Log.d(LOGTAG, "Inside processing");
+
+
+
         LoginManager.getInstance().registerCallback(callbackManager,
             new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
                     // App code
 
-                    Log.d("Dibs", loginResult.toString());
+                    Log.d(LOGTAG, "Login Result: "+loginResult.toString());
+
+                    showProgressDialog();
 
                     // App code
                     GraphRequest request = GraphRequest.newMeRequest(
@@ -417,19 +427,24 @@ public class LoginActivity extends AppCompatActivity implements
                                             //String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
                                             Log.d(LOGTAG, "Android Id is: "+androidId);
                                             // Email, Device Token, facebook Id, Google Id, where 0 implies no value
-                                            new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "");
+                                            new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "", offerId);
+                                        }
+                                        else {
+                                            Toast.makeText(LoginActivity.this,"Unable to get your email", Toast.LENGTH_LONG).show();
                                         }
 
                                     }catch (Exception e){
                                         e.printStackTrace();
+                                        hideProgressDialog();
+
                                     }
                                     //Toast.makeText(LoginActivity.this,"Welcome "+user_full_name, Toast.LENGTH_LONG).show();
-                                    Toast.makeText(LoginActivity.this,"Loggin in...", Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(LoginActivity.this,"Loggin in...", Toast.LENGTH_LONG).show();
                                     //Intent intent=new Intent(LoginActivity.this, BrowseOffersActivity.class);
                                     //startActivity(intent);
                                     //finish();
 
-                                    hideProgressDialog();
+                                    //hideProgressDialog();
 
                                 }
 
@@ -437,9 +452,11 @@ public class LoginActivity extends AppCompatActivity implements
 
                     Bundle parameters = new Bundle();
                     //parameters.putString("fields", "id,name,email,gender, birthday");
-                    parameters.putString("fields", "id,name,email");
+                    parameters.putString("fields", "id,first_name,last_name,email");
                     request.setParameters(parameters);
                     request.executeAsync();
+
+                    hideProgressDialog();
 
 
 
@@ -470,7 +487,7 @@ public class LoginActivity extends AppCompatActivity implements
 
         Log.d(LOGTAG, "No auto login: "+noAutoLogin);
 
-        if(noAutoLogin.equalsIgnoreCase("1")) {
+        /*if(noAutoLogin.equalsIgnoreCase("1")) {
 
             Log.d(LOGTAG, "Inside revoke access");
             gPlusRevokeAccess();
@@ -483,7 +500,7 @@ public class LoginActivity extends AppCompatActivity implements
 
         }
         else
-            mGoogleApiClient.connect();
+            mGoogleApiClient.connect();*/
 
     }
 
@@ -656,7 +673,7 @@ public class LoginActivity extends AppCompatActivity implements
 
 
         // Email, Device Token, facebook Id, Google Id, where 0 implies no value
-        new RegisterSocialAsyncTask().execute(email, androidId, "", googleId);
+        new RegisterSocialAsyncTask().execute(email, androidId, "", googleId, offerId);
 
 
         //setProfilePic(personPhotoUrl);
@@ -708,11 +725,15 @@ public class LoginActivity extends AppCompatActivity implements
     private void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
-            mProgressDialog.setIndeterminate(true);
         }
 
-        mProgressDialog.show();
+        if (mProgressDialog != null && !mProgressDialog.isShowing()) {
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.show();
+
+        }
+
     }
 
     private void hideProgressDialog() {
@@ -730,6 +751,8 @@ public class LoginActivity extends AppCompatActivity implements
         String url = "", basePath = "";
 
         public LoginAsyncTask() {
+
+            //showProgressDialog();
 
             url = UrlEndpoints.loginURL;
             basePath = UrlEndpoints.basePathURL;
@@ -767,12 +790,9 @@ public class LoginActivity extends AppCompatActivity implements
                 if(!offer_id.equalsIgnoreCase(""))
                     data.put("offer_id", offer_id);
 
-
-
                 OutputStream os = conn.getOutputStream();
 
                 Log.d(LOGTAG, "Request: " + data.toString());
-
 
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 bufferedWriter.write("data="+data.toString());
@@ -819,9 +839,6 @@ public class LoginActivity extends AppCompatActivity implements
                     JSONObject reader = new JSONObject(resp);
 
                     Log.d(LOGTAG, "Response: " + reader.getString("data"));
-
-
-                    pd.dismiss();
 
 
                     // Login successful
@@ -874,21 +891,26 @@ public class LoginActivity extends AppCompatActivity implements
 
                             //intent = new Intent(LoginActivity.this, LoadingActivity.class);
 
+                            hideProgressDialog();
+
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                             finish();
                         }
                         else {
+
+                            hideProgressDialog();
+
                             Intent intent2 = new Intent(LoginActivity.this, BrowseOffersActivity.class);
                             startActivity(intent2);
                             finish();
                         }
 
-
-
                     }
                     // You are not allowed to login from mobile device, login from web.This is for admin user.
                     else if (reader.getString("messageCode").equals("R01002") || reader.getString("messageCode").equals("R01003") || reader.getString("messageCode").equals("R01004")) {
+
+                        hideProgressDialog();
 
                         builder = new AlertDialog.Builder(LoginActivity.this);//Context parameter
                         builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -921,6 +943,7 @@ public class LoginActivity extends AppCompatActivity implements
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    hideProgressDialog();
                 }
 
 
@@ -939,7 +962,7 @@ public class LoginActivity extends AppCompatActivity implements
     private class RegisterSocialAsyncTask extends AsyncTask<String, Void, String> {
 
 
-        String url = "", basePath = "", email = "", android_id = "", facebook_id = "", google_id = "";
+        String url = "", basePath = "", email = "", android_id = "", facebook_id = "", google_id = "", offer_id = "";
 
         public RegisterSocialAsyncTask() {
 
@@ -958,6 +981,7 @@ public class LoginActivity extends AppCompatActivity implements
             android_id = params[1];
             facebook_id = params[2];
             google_id = params[3];
+            offer_id = params[4];
 
 
             try {
@@ -971,14 +995,13 @@ public class LoginActivity extends AppCompatActivity implements
 
 
                 JSONObject data = new JSONObject();
-                //JSONObject auth=new JSONObject();
-                //JSONObject parent=new JSONObject();
                 data.put("webservice_name","socialsignup");
                 data.put("email", email);
                 data.put("device_token", android_id);
                 data.put("source", 2); // 2= Android
 
                 if(!facebook_id.equals("")) {
+                    data.put("first_name", facebook_id);
                     data.put("facebook_id", facebook_id);
                     data.put("social_type", "facebook");
                 }
@@ -989,10 +1012,19 @@ public class LoginActivity extends AppCompatActivity implements
                 }
 
 
+                if(!offer_id.equals("")) {
+                    data.put("offer_id", offer_id);
+
+                }
+
+
+
+                Log.d(LOGTAG, "Social Async Offer Id "+offer_id);
+
 
                 OutputStream os = conn.getOutputStream();
 
-                Log.d(LOGTAG, "Request: " + data.toString());
+                Log.d(LOGTAG, "Social Request: " + data.toString());
 
 
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
@@ -1043,9 +1075,6 @@ public class LoginActivity extends AppCompatActivity implements
                     Log.d(LOGTAG, "Social Message Code: " + reader.getString("messageCode"));
 
 
-                    //pd.dismiss();
-
-
                     // Login successful
                     if (reader.getString("messageCode").equals("R01001") || reader.getString("messageCode").equals("R01002")) {
 
@@ -1056,6 +1085,7 @@ public class LoginActivity extends AppCompatActivity implements
                         SharedPreferences.Editor editor = sharedpref.edit();
                         editor.putString(getString(R.string.spf_user_id), jsonObject.getString("id")); // Storing User Id
                         editor.putString(getString(R.string.spf_email), jsonObject.getString("email")); // Storing Email
+
                         if(!facebook_id.equals(""))
                             editor.putString(getString(R.string.spf_facebook_id), facebook_id); // Storing facebook Id
 
@@ -1064,23 +1094,9 @@ public class LoginActivity extends AppCompatActivity implements
 
                         editor.commit(); // commit changes
 
-                        Log.d(LOGTAG, "Login successful");
+                        //Log.d(LOGTAG, "Login successful");
+                        showProgressDialog();
 
-                        /*
-
-                                        SharedPreferences.Editor editor = sharedpref.edit();
-                                        // RIGHT NOW IT IS HARD-CODED, LATE ON THE VALUE WILL COME FROM WEB SERVICES CALL
-                                        editor.putString(getString(R.string.spf_user_id), "82"); // Storing User Id
-                                        editor.putString(getString(R.string.spf_email), object.getString("email").toString()); // Storing Email
-                                        editor.putString(getString(R.string.spf_facebook_id), object.getString("id").toString()); // Storing facebook Id
-
-                                        user_full_name = object.getString("name").toString();
-
-                                        Log.d(LOGTAG, "User Email: "+object.getString("email").toString());
-                                        Log.d(LOGTAG, "User FB Id: "+user_full_name);
-                                        Log.d(LOGTAG, "User Full Name: "+user_full_name);
-                                        editor.commit(); // commit changes
-                        */
 
                         // After successful login, redirect to the previous action
 
@@ -1093,7 +1109,7 @@ public class LoginActivity extends AppCompatActivity implements
 
 
 
-                            Log.d(LOGTAG, "Last Activity: "+lastActivity);
+                            //Log.d(LOGTAG, "Last Activity: "+lastActivity);
 
                             if(lastActivity.equalsIgnoreCase("BrowseOffers"))
                                 intent = new Intent(LoginActivity.this, BrowseOffersActivity.class);
@@ -1112,8 +1128,9 @@ public class LoginActivity extends AppCompatActivity implements
                             }
 
                             else if(lastActivity.equalsIgnoreCase("EditProfile")) {
+                                // Settings the activty name where it will be redirected to
                                 intent = new Intent(LoginActivity.this, BrowseOffersActivity.class);
-                                intent.putExtra(res.getString(R.string.ext_activity), extras.getString(res.getString(R.string.ext_offer_id))); // Settings the activty name where it will be redirected to
+                                intent.putExtra(res.getString(R.string.ext_activity), extras.getString(res.getString(R.string.ext_offer_id)));
                             }
 
                             else
@@ -1133,6 +1150,7 @@ public class LoginActivity extends AppCompatActivity implements
                         }
 
                     }
+
                     // In case the user already exists then set the information
                     else if (reader.getString("messageCode").equals("R01002")) {
 
@@ -1160,7 +1178,11 @@ public class LoginActivity extends AppCompatActivity implements
         // TODO Auto-generated method stub
         //hideProgressDialog();
 
-        super.onBackPressed();
+        //super.onBackPressed();
+        intent = new Intent(LoginActivity.this, BrowseOffersActivity.class);
+        startActivity(intent);
+        finish();
+
 
 
     }

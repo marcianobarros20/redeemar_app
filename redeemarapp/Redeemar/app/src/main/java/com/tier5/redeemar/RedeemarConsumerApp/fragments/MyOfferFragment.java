@@ -118,7 +118,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
             //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
             //if the database is empty, trigger an AsycnTask to download movie list from the web
             if (mListOffers.isEmpty()) {
-                Log.d(LOGTAG, "FragmentBoxOffice: executing task from fragment");
                 new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude));
             }
         }

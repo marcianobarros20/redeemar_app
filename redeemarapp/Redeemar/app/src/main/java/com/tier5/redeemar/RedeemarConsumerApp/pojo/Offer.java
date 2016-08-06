@@ -7,7 +7,7 @@ public class Offer implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl, distance;
+    private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl,  largeImageUrl, distance, location;
     Date startDate, endDate;
     double price, payValue, retailvalue, discount;
     int valueCalculate, expiredInDays, campaignId, catId, subCatId, userAction, createdBy, onDemand;
@@ -34,6 +34,14 @@ public class Offer implements Serializable {
 
     public int getCatId() {
         return catId;
+    }
+
+    public String getLargeImageUrl() {
+        return largeImageUrl;
+    }
+
+    public void setLargeImageUrl(String largeImageUrl) {
+        this.largeImageUrl = largeImageUrl;
     }
 
     public void setCatId(int catId) {
@@ -212,5 +220,13 @@ public class Offer implements Serializable {
 
     public void setOnDemand(int onDemand) {
         this.onDemand = onDemand;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

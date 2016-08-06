@@ -5,6 +5,7 @@ package com.tier5.redeemar.RedeemarConsumerApp.utils;
  */
 public class UrlEndpoints {
 
+
     public static final String URL_ALL_OFFERS = "http://159.203.91.38/admin/public/index.php/bridge/alloffers";
     public static final String URL_MY_OFFERS = "http://159.203.91.38/admin/public/index.php/bridge/myoffer";
     public static final String URL_NEARBY_BRANDS = "http://159.203.91.38/admin/public/index.php/bridge/mapalloffers";
@@ -15,7 +16,7 @@ public class UrlEndpoints {
     public static final String URL_UPDATE_PROFILE = "http://159.203.91.38/admin/public/index.php/bridge/updateprofile";
 
     public static final String basePathURL = "http://159.203.91.38/admin/uploads/original/";
-    public static final String serverBaseUrl = "http://wwww.redeemar.com/";
+    public static final String serverBaseUrl = "http://159.203.91.38/";
     public static final String validateLogoURL = "http://159.203.91.38/admin/public/index.php/bridge/checktarget?";
     public static final String getOfferListURL = "http://159.203.91.38/admin/public/index.php/bridge/offerlist?";
     public static final String getOfferDetailsURL = "http://159.203.91.38/admin/public/index.php/bridge/offerdetail?";

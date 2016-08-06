@@ -186,7 +186,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 Log.d(LOGTAG, "Campaign id 102: " + campaignId);
                 Log.d(LOGTAG, "Category id 102: " + categoryId);
 
-                if(sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
+                /*if(sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
                     redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
                 }
 
@@ -203,7 +203,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
                 if(sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
                     categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
-                }
+                }*/
 
                 Log.d(LOGTAG, "Redirect to 103: " + redirectTo);
                 Log.d(LOGTAG, "Redeemar id 103: " + redeemarId);
@@ -263,6 +263,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         Log.d(LOGTAG, "Browse Offer User Id: "+user_id);
 
+
+
         // create class object
         GPSTracker gps = new GPSTracker(getActivity());
 
@@ -275,6 +277,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             if(latitude == 0 && longitude == 0) {
 
                 gps.showSettingsAlert();
+
+
 
             }
 

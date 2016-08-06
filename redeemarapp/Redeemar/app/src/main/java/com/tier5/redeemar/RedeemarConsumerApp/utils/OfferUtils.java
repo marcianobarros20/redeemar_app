@@ -3,6 +3,8 @@ package com.tier5.redeemar.RedeemarConsumerApp.utils;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
+import com.tier5.redeemar.RedeemarConsumerApp.MyApplication;
+import com.tier5.redeemar.RedeemarConsumerApp.database.DBOffers;
 import com.tier5.redeemar.RedeemarConsumerApp.json.Endpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.json.Parser;
 import com.tier5.redeemar.RedeemarConsumerApp.json.Requestor;
@@ -33,6 +35,7 @@ public class OfferUtils {
 
         JSONObject response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "0", "0", lat, lng);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
+        //MyApplication.getWritableDatabase().insertOffers(DBOffers.ALL_OFFERS, listOffers, true);
         Log.d(LOGTAG, "Inside loadBrowseOffers :"+listOffers.size());
         return listOffers;
     }

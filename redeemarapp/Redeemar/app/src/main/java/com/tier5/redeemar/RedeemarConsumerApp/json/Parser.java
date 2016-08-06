@@ -193,12 +193,12 @@ public class Parser {
                             //Log.d(LOGTAG, "offer_id: "+jsonObject.optString("id").toString());
                         }
 
-                        if(!jsonObject.isNull("offer_description")) {
+                        if(!jsonObject.isNull("offer_description") && jsonObject.getString("offer_description").toString() != "") {
                             offer.setOfferDescription(jsonObject.optString("offer_description").toString());
                             //Log.d(LOGTAG, "Offer Description: "+jsonObject.optString("offer_description").toString());
                         }
 
-                        if(!jsonObject.isNull("retails_value")) {
+                        if(!jsonObject.isNull("retails_value") && jsonObject.getString("retails_value").toString() != "") {
                             offer.setRetailvalue(Double.parseDouble(jsonObject.getString("retails_value").toString()));
                             //Log.d(LOGTAG, "retails_value: "+jsonObject.getString("retails_value").toString());
                         }
@@ -207,7 +207,7 @@ public class Parser {
                         }
 
 
-                        if(!jsonObject.isNull("pay_value")) {
+                        if(!jsonObject.isNull("pay_value") && jsonObject.getString("pay_value").toString() != "") {
                             offer.setPayValue(Double.parseDouble(jsonObject.getString("pay_value").toString()));
                             //Log.d(LOGTAG, "pay_value: "+jsonObject.getString("pay_value").toString());
                         }
@@ -215,7 +215,7 @@ public class Parser {
                             offer.setPayValue(0);
                         }
 
-                        if(!jsonObject.isNull("discount")) {
+                        if(!jsonObject.isNull("discount") && jsonObject.getString("discount").toString() != "") {
 
                             offer.setDiscount(Double.parseDouble(jsonObject.getString("discount").toString()));
                             //Log.d(LOGTAG, "discount: "+jsonObject.getString("discount").toString());
@@ -225,7 +225,7 @@ public class Parser {
                         }
 
 
-                        if(!jsonObject.isNull("value_calculate")) {
+                        if(!jsonObject.isNull("value_calculate") && jsonObject.getString("value_calculate").toString() != "") {
                             offer.setValueCalculate(Integer.parseInt(jsonObject.getString("value_calculate").toString()));
                             //Log.d(LOGTAG, "value_calculate: "+jsonObject.getString("value_calculate").toString());
                         }
@@ -234,13 +234,21 @@ public class Parser {
                         }
 
 
-                        if(!jsonObject.isNull("expires")) {
+                        if(!jsonObject.isNull("expires") && jsonObject.getString("expires").toString() != "") {
                             offer.setExpiredInDays(Integer.parseInt(jsonObject.getString("expires")));
                             //Log.d(LOGTAG, "expires: "+jsonObject.getString("expires").toString());
                         }
 
 
-                        if(!jsonObject.isNull("distance")) {
+                        if(!jsonObject.isNull("location") && jsonObject.getString("location").toString() != "") {
+                            offer.setLocation(jsonObject.getString("location"));
+                            //Log.d(LOGTAG, "distance: "+jsonObject.getString("distance"));
+                        }
+                        else
+                            offer.setLocation("");
+
+
+                        if(!jsonObject.isNull("distance") && jsonObject.getString("distance").toString() != "") {
                             offer.setDistance(jsonObject.getString("distance"));
                             //Log.d(LOGTAG, "distance: "+jsonObject.getString("distance"));
                         }
@@ -253,9 +261,14 @@ public class Parser {
                             //Log.d(LOGTAG, "offer_image_path: "+jsonObject.getString("offer_image_path").toString());
                         }
 
+                        if(!jsonObject.isNull("offer_large_image_path") && jsonObject.getString("offer_large_image_path").toString() != "") {
+                            offer.setLargeImageUrl(jsonObject.getString("offer_large_image_path"));
+                            //Log.d(LOGTAG, "offer_image_path: "+jsonObject.getString("offer_image_path").toString());
+                        }
+
                         if(!jsonObject.isNull("on_demand") && jsonObject.getString("on_demand").toString() != "") {
                             offer.setOnDemand(Integer.parseInt(jsonObject.getString("on_demand")));
-                            Log.d(LOGTAG, "On Demand: "+jsonObject.getString("on_demand").toString());
+                            //Log.d(LOGTAG, "On Demand: "+jsonObject.getString("on_demand").toString());
                         }
 
 
@@ -324,62 +337,67 @@ public class Parser {
 
                         User brand = new User();
 
-
-                        if (jsonObject.optString("id") != null && jsonObject.optString("id") != "") {
-                            lat = Double.parseDouble(jsonObject.optString("id"));
-                            brand.setId(jsonObject.optString("id"));
-                            //Log.d(LOGTAG, "Cluster Id: "+jsonObject.optString("id"));
-                        }
-
-                        if (jsonObject.optString("company_name") != null && jsonObject.optString("company_name") != "") {
-                            brand.setCompanyName(jsonObject.optString("company_name"));
-                            Log.d(LOGTAG, "Cluster Company Name: "+jsonObject.optString("company_name"));
-                        }
-
-                        if (jsonObject.optString("address") != null && jsonObject.optString("address") != "") {
-                            brand.setAddress(jsonObject.optString("address"));
-                            //Log.d(LOGTAG, "Cluster Address: "+jsonObject.optString("address"));
-                        }
+                        if (!jsonObject.isNull("lat") && jsonObject.optString("lat").trim() != "" && !jsonObject.isNull("lng") && jsonObject.optString("lng").trim() != "") {
 
 
-                        if (jsonObject.optString("lat") != null && jsonObject.optString("lat") != "") {
-                            lat = Double.parseDouble(jsonObject.optString("lat"));
-                            brand.setLat(jsonObject.optString("lat"));
-                            //Log.d(LOGTAG, "Cluster Lat: "+jsonObject.optString("lat"));
-                        }
+                            if (!jsonObject.isNull("id") && jsonObject.optString("id").trim() != "") {
+                                lat = Double.parseDouble(jsonObject.optString("id"));
+                                brand.setId(jsonObject.optString("id"));
+                                //Log.d(LOGTAG, "Cluster Id: "+jsonObject.optString("id"));
+                            }
 
-                        if (jsonObject.optString("lng") != null && jsonObject.optString("lng") != "") {
-                            lng = Double.parseDouble(jsonObject.optString("lng"));
-                            brand.setLon(jsonObject.optString("lng"));
-                            //Log.d(LOGTAG, "Cluster Lon: "+jsonObject.optString("lng"));
-                        }
+                            if (!jsonObject.isNull("company_name") && jsonObject.optString("company_name").trim() != "") {
+                                brand.setCompanyName(jsonObject.optString("company_name"));
+                                Log.d(LOGTAG, "Cluster Company Name: "+jsonObject.optString("company_name"));
+                            }
+
+                            if (!jsonObject.isNull("address") && jsonObject.optString("address") != "") {
+                                brand.setAddress(jsonObject.optString("address"));
+                                //Log.d(LOGTAG, "Cluster Address: "+jsonObject.optString("address"));
+                            }
 
 
-                        //if (jsonObject.optString("profile") != null && jsonObject.optString("profile") != "") {
-                        if (!jsonObject.isNull("profile")) {
+                            if (!jsonObject.isNull("lat") && jsonObject.optString("lat").trim() != "") {
+                                lat = Double.parseDouble(jsonObject.optString("lat"));
+                                brand.setLat(jsonObject.optString("lat"));
+                                //Log.d(LOGTAG, "Cluster Lat: "+jsonObject.optString("lat"));
+                            }
+
+                            if (!jsonObject.isNull("lng") && jsonObject.optString("lng").trim() != "") {
+                                lng = Double.parseDouble(jsonObject.optString("lng"));
+                                brand.setLon(jsonObject.optString("lng"));
+                                //Log.d(LOGTAG, "Cluster Lon: "+jsonObject.optString("lng"));
+                            }
 
 
-                            JSONObject profileObject = new JSONObject(jsonObject.getString("profile"));
+                            //if (jsonObject.optString("profile") != null && jsonObject.optString("profile") != "") {
+                            if (!jsonObject.isNull("profile")) {
 
-                            if (profileObject.getString("logo_name") != null && profileObject.getString("logo_name") != "") {
 
-                                brand.setLogoName(UrlEndpoints.basePathURL + "" + profileObject.getString("logo_name"));
-                                //Log.d(LOGTAG, "Cluster Logo: " + profileObject.getString("logo_name"));
+                                JSONObject profileObject = new JSONObject(jsonObject.getString("profile"));
+
+                                if (!profileObject.isNull("logo_name") && profileObject.getString("logo_name").trim() != "") {
+
+                                    brand.setLogoName(UrlEndpoints.basePathURL + "" + profileObject.getString("logo_name"));
+                                    //Log.d(LOGTAG, "Cluster Logo: " + profileObject.getString("logo_name"));
+
+                                }
+
+
+                                if (!profileObject.isNull("target_id") && profileObject.getString("target_id").trim() != "") {
+
+                                    brand.setTargetId(profileObject.getString("target_id"));
+                                    //Log.d(LOGTAG, "Cluster Traget Id: " + profileObject.getString("target_id"));
+
+                                }
 
                             }
 
 
-                            if (profileObject.getString("target_id") != null && profileObject.getString("target_id") != "") {
+                            listBrands.add(brand);
 
-                                brand.setTargetId(profileObject.getString("target_id"));
-                                //Log.d(LOGTAG, "Cluster Traget Id: " + profileObject.getString("target_id"));
-
-                            }
 
                         }
-
-
-                        listBrands.add(brand);
 
 
 
@@ -431,11 +449,6 @@ public class Parser {
 
                         Category category = new Category();
 
-                        Log.d(LOGTAG, "Category Name: " + jsonObject.optString("cat_name").toString());
-                        Log.d(LOGTAG, "Parent Id: " + jsonObject.optString("parent_id").toString());
-
-
-
                         category.setId(jsonObject.optString("id").toString());
                         category.setParentId(jsonObject.optString("parent_id").toString());
                         category.setCatName(jsonObject.optString("cat_name").toString());
@@ -452,9 +465,6 @@ public class Parser {
 
 
                             Category subcategory = new Category();
-
-                            Log.d(LOGTAG, "-- Sub Category Name: " + jsonObject2.optString("cat_name").toString());
-                            Log.d(LOGTAG, "-- Parent Id: " + jsonObject2.optString("parent_id").toString());
 
 
 
