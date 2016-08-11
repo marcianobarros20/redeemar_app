@@ -66,8 +66,21 @@
         android:layout_marginRight="@dimen/content_padding_small"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:gravity="center"
-        style="@style/MedText" />
+        style="@style/LargeText" />
 
+
+
+    <TextView
+        android:id="@+id/what_you_get"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/offer_title"
+        android:text="@string/what_you_get"
+        android:layout_marginLeft="@dimen/content_padding_small"
+        android:layout_marginRight="@dimen/content_padding_small"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        style="@style/MedText" />
 
     <LinearLayout
         android:id="@+id/offer_ratings"

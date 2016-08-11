@@ -94,18 +94,13 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
         btnShopOffers = (Button) findViewById(R.id.shop_offers);
         tvBrandName = (TextView) findViewById(R.id.brand_name);
         imBrandLogo = (ImageView) findViewById(R.id.brand_logo_image);
-        hwTextView = (TextView) findViewById(R.id.tvUniqueTargetId);
-
         context = this;
 
         basePath = UrlEndpoints.basePathURL;
 
-
-
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
-
 
         Bundle extras = getIntent().getExtras();
 
@@ -116,12 +111,7 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
             Log.d(LOGTAG, "Brand Main Last Activity: " + lastActivity);
             //new ValidateLogoAsyncTask().execute(uniqueTargetId);
 
-
         }
-
-
-
-
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -203,10 +193,17 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
 
 
+                    if(youTubePlayer != null) {
+                        youTubePlayer.cueVideo(Constants.defaultYoutubeVideoId);
+
+                    }
+
 
                 } else {
 
                     brandVideo = (BrandVideo) brandInfo.get(i);
+
+
 
                     String videoThumb = brandVideo.getVideothumb();
 

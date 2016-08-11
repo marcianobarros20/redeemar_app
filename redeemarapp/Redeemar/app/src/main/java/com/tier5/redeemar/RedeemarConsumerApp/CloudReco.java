@@ -121,11 +121,10 @@ public class CloudReco extends Activity implements SampleApplicationControl,
     // The textures we will use for rendering:
     private Vector<Texture> mTextures;
 
-    //private static final String kAccessKey = "869a299f9911cd84f189d69fe8d5f79f35304372";
-    //private static final String kSecretKey = "ad4a7110ad50100b22474f166d7ef4f5b3887a30";
+    private static String vuforiaAccessKey = "";
+    private static String vuforiaSecretKey = "";
 
-    private static final String kAccessKey = "714f4ae9df46063b7f16cf7ba20601514888b76b";
-    private static final String kSecretKey = "469943ef7070eaad5da6179e0cd0698263860fb4";
+
 
     // View overlays to be displayed in the Augmented View
     private RelativeLayout mUILayout;
@@ -594,9 +593,22 @@ public class CloudReco extends Activity implements SampleApplicationControl,
         
         // Initialize target finder:
         TargetFinder targetFinder = objectTracker.getTargetFinder();
+
+
+        if(MyApplication.getAppEnvironment() == "beta") {
+            vuforiaAccessKey = Constants.kAccessKeyBeta;
+            vuforiaSecretKey = Constants.kSecretKeyBeta;
+        }
+        else {
+
+            vuforiaAccessKey = Constants.kAccessKeyDev;
+            vuforiaSecretKey = Constants.kSecretKeyDev;
+        }
+
+        Log.d(LOGTAG, "App Environment: "+MyApplication.getAppEnvironment());
         
         // Start initialization:
-        if (targetFinder.startInit(kAccessKey, kSecretKey))
+        if (targetFinder.startInit(vuforiaAccessKey, vuforiaSecretKey))
         {
             targetFinder.waitUntilInitFinished();
         }
@@ -758,9 +770,8 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                         Log.d(LOGTAG, "After Recognition Offer Id: "+offer_id);
 
 
-
-
                         if(activityName.equals("Validation") && user_id != "" && offer_id != "") {
+                            Toast.makeText(getApplicationContext(), "Successfully validated the target, processing...", Toast.LENGTH_LONG).show();
                             new ValidateOfferAsyncTask().execute(offer_id, user_id, uniqueTargetId);
                         }
                         else {
@@ -1088,16 +1099,6 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                         Log.d(LOGTAG, "Message Data: " + reader.getString("data"));
 
 
-
-                        /*Display display = getWindowManager().getDefaultDisplay();
-                        Point size = new Point();
-                        display.getSize(size);
-                        int width = size.x;
-                        int height = size.y;*/
-
-
-                        //JSONObject json2 = reader.getJSONObject(reader.getString("data"));
-
                         JSONObject json2 = new JSONObject(reader.getString("data"));
 
                         String action_id = "";
@@ -1106,8 +1107,9 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
                         if(!json2.isNull("action_id") && !json2.isNull("reedemer_id")) {
 
-                            action_id = (String) json2.get("action_id");
-                            reedemar_id = (String) json2.get("reedemer_id");
+                            action_id = String.valueOf(json2.get("action_id"));
+                            reedemar_id = String.valueOf(json2.get("reedemer_id"));
+
 
                             Log.d(LOGTAG, "Action Id: "+action_id);
                             Log.d(LOGTAG, "Redeemar Id: "+reedemar_id);
@@ -1115,31 +1117,23 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
                             // Redirect the user to appropriate activity based on the action id
 
-
-
                             // If 2 = Show list of offers for a particular campaign
                             if (action_id.equals("2")) {
 
                                 if(!json2.isNull("campaign_id")) {
 
-
-
                                     String campaign_id = (String) json2.get("campaign_id");
                                     Log.d(LOGTAG, "Inside action id 2: "+campaign_id);
-
 
                                     editor.putString(getString(R.string.spf_redir_action), "CampaignOffers"); // Storing Last Activity
                                     editor.putString(getString(R.string.spf_redeemer_id), campaign_id); // Storing Redeemar Id
                                     editor.commit(); // commit changes
-
-
 
                                     Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
                                     sIntent.putExtra(getString(R.string.ext_redir_to), "CampaignOffers");
                                     sIntent.putExtra(getString(R.string.ext_redeemar_id), reedemar_id);
                                     sIntent.putExtra(getString(R.string.ext_campaign_id), campaign_id);
                                     startActivity(sIntent);
-
 
                                 }
 
@@ -1160,13 +1154,6 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                                     sIntent.putExtra(getString(R.string.ext_offer_id), offerId);
                                     startActivity(sIntent);
                                     finish();
-
-                                    /*Intent intent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
-                                    intent.putExtra(getString(R.string.ext_redir_to), "BrandOffers");
-                                    intent.putExtra(getString(R.string.ext_redeemar_id), redeemarId);
-
-                                    startActivity(intent);
-                                    finish();*/
 
 
                                 }
@@ -1258,19 +1245,6 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                     Intent errIntent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
                     startActivity(errIntent);
                 }
-
-                /*btnShopOffers.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View arg0) {
-                        Intent dispOffers = new Intent(getApplicationContext(), OfferListActivity.class);
-                        Log.d(LOGTAG, "Brand Main Redeemar Id: "+redeemerId);
-                        dispOffers.putExtra(getString(R.string.ext_redeemar_id), redeemerId);
-                        startActivity(dispOffers);
-                        finish();
-
-                    }
-                });*/
 
 
             }
@@ -1370,10 +1344,6 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
                     if (reader.getString("messageCode").equals("R01001")) {
 
-                        Log.d(LOGTAG, "Offer validated successfully");
-                        //Toast.makeText(CloudReco.this, "You have successfully validated the offer", Toast.LENGTH_SHORT).show();
-
-                        //showInitializationErrorMessage(getString(R.string.error_validation_success));
 
                         Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
                         intent.putExtra(getString(R.string.ext_scan_err), "R02001");
@@ -1422,6 +1392,18 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
 
                     }
+                    else if (reader.getString("messageCode").equals("R01005")) {
+
+                        //Toast.makeText(CloudReco.this, R.string.error_wrong_target, Toast.LENGTH_SHORT).show();
+                        //showInitializationErrorMessage(getString(R.string.error_duplicate_validation));
+
+                        Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        intent.putExtra(getString(R.string.ext_scan_err), "R02006");
+                        startActivity(intent);
+                        finish();
+
+
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -1440,8 +1422,8 @@ public class CloudReco extends Activity implements SampleApplicationControl,
     @Override
     public void onBackPressed()
     {
-        Intent intent = new Intent(CloudReco.this, BrowseOffersActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(CloudReco.this, BrowseOffersActivity.class);
+        //startActivity(intent);
         finish();
 
     }

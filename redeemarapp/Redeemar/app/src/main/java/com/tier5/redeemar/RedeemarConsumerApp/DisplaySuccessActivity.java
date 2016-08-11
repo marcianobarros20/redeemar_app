@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
 public class DisplaySuccessActivity extends Activity {
 
-    TextView tvSuccessMessage, tvUniqueTargetId;
+    TextView tvSuccessMessage;
+    Button btnContinue;
     Typeface myFont;
 
     @Override
@@ -18,21 +21,24 @@ public class DisplaySuccessActivity extends Activity {
         setContentView(R.layout.activity_display_success);
 
         tvSuccessMessage = (TextView) findViewById(R.id.tvSuccessMessage);
-        tvUniqueTargetId = (TextView) findViewById(R.id.tvUniqueTargetId);
+        btnContinue = (Button)  findViewById(R.id.btnContinue);
 
         myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
-
         tvSuccessMessage.setTypeface(myFont);
-        tvUniqueTargetId.setTypeface(myFont);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String uniqueTargetId = extras.getString("unique_target_id");
-            TextView hwTextView = (TextView)findViewById(R.id.tvUniqueTargetId);
-            //hwTextView.setText("Unique Id: " + String.valueOf(uniqueTargetId));
-            //new ValidateLogoAsyncTask().execute(uniqueTargetId);
-        }
 
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+
+                Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
+                startActivity(sIntent);
+                finish();
+
+            }
+        });
 
 
 

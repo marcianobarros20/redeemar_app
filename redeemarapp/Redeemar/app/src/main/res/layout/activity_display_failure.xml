@@ -1,37 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg01">
+    android:background="@drawable/bg02"
+    android:gravity="center_vertical"
+    android:padding="@dimen/baseline_padding">
 
-    <TextView
-        android:id="@+id/about_text_title"
+    <!-- Header aligned to top -->
+    <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/header_bgcolor"
-        android:gravity="center"
         android:layout_alignParentTop="true"
-        android:fontFamily="sans-serif"
-        android:textStyle="bold"
-        android:text="@string/app_name"
-        android:padding="@dimen/menu_title_padding"
-        android:textSize="@dimen/menu_title" />
+        android:gravity="center" >
 
-    <TextView
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/logo_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/logo_no_text"
+            android:maxHeight="@dimen/medium_logo_height"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:paddingBottom="10dp"
+            android:contentDescription="@string/splash_screen_description"></ImageView>
+
+    </RelativeLayout>
+
+    <!-- Footer aligned to bottom -->
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="20dp">
+
+
+        <Button
+            android:id="@+id/btnContinue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:textSize="@dimen/menu_title_med"
+            android:paddingTop="@dimen/button_padding_med"
+            android:paddingBottom="@dimen/button_padding_med"
+            android:paddingLeft="@dimen/button_padding"
+            android:paddingRight="@dimen/button_padding"
+            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+            android:background="@drawable/button_green"
+            android:textColor="@color/white"
+            android:text="@string/continue_to_browse" />
+
+
+    </RelativeLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:layout_gravity="center"
         android:gravity="center"
-        android:layout_centerInParent="true"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/invalid_logo_scanned"
-        android:id="@+id/tvSuccessMessage"
-        style="@style/SuccessMsg"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:orientation="vertical">
 
 
+        <TextView
+            android:id="@+id/tvSuccessMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingBottom="10dp"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/loading"
+            android:textColor="@color/deep_red"
+            android:layout_below="@+id/brand_logo_image"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+
+        <ImageView
+            android:id="@+id/failed"
+            android:src="@drawable/ic_failed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:paddingBottom="15dp"
+            android:contentDescription="@string/splash_screen_description" />
+
+
+
+    </LinearLayout>
 
 
 </RelativeLayout>

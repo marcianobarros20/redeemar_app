@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/action_search"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_search_white"
         app:showAsAction="always|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView"
         android:title="Search"/>
@@ -19,8 +19,8 @@
 
     <item
         android:id="@+id/action_view_thumb"
-        android:title="@string/list_view"
-        android:orderInCategory="101"
+        android:title="@string/thumb_view"
+        android:orderInCategory="102"
         android:icon="@drawable/ic_thumb_white"
         app:showAsAction="ifRoom" />
 

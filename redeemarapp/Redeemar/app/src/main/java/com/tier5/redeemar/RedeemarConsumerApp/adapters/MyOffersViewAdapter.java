@@ -121,7 +121,20 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
 
         String offer_desc = item.getOfferDescription();
 
-        address_distance = item.getLocation()+" "+item.getDistance();
+        if(item.getLocation() != null && !item.getLocation().equalsIgnoreCase("null")) {
+            address_distance = item.getLocation() + " ";
+            Log.d(LOGTAG, "Browse Location: "+address_distance);
+        }
+        else {
+            address_distance = item.getAddress() + " ";
+        }
+
+        if(!item.getDistance().equalsIgnoreCase("")) {
+            Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
+            address_distance = address_distance + item.getDistance() + " miles";
+        }
+
+
 
         if(offer_desc.length() > 50)
             viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 50)+"...");
@@ -135,15 +148,7 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
         if(item.getPayValue() > 0)
             viewHolder.tvPayValue.setText(cur_sym+(String.valueOf(item.getPayValue())));
 
-        //if(!item.getDistance().equals(""))
-        //    viewHolder.tvDistance.setText(String.valueOf(item.getDistance())+" "+distance_unit);
 
-
-        if(item.getLocation() != null && !item.getLocation().equalsIgnoreCase(""))
-            address_distance = item.getLocation()+" ";
-
-        if(item.getLocation() != null && !item.getDistance().equalsIgnoreCase(""))
-            address_distance = address_distance + item.getDistance();
 
         if(address_distance.equalsIgnoreCase("")) {
             viewHolder.distanceLayout.setVisibility(View.INVISIBLE);

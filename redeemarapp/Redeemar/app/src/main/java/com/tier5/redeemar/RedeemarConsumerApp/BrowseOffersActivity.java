@@ -198,24 +198,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         }
 
 
-        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-
-        if(!provider.contains("gps")) { //if gps is disabled
-
-            Log.d(LOGTAG, "GPS is disabled");
-
-            /*final Intent poke = new Intent();
-            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-            poke.setData(Uri.parse("3"));
-            sendBroadcast(poke);*/
-        }
-        else {
-            Log.d(LOGTAG, "GPS is emabled");
-
-        }
-
-
         setupToolbar();
 
         setupBottombar(mBottomBar, savedInstanceState);
@@ -254,6 +236,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.setMaxFixedTabs(5);
         mBottomBar.setDefaultTabPosition(3);
+
         mBottomBar.setItemsFromMenu(R.menu.bottombar_menu, new OnMenuTabClickListener() {
             @Override
             public void onMenuTabSelected(@IdRes int menuItemId) {
@@ -297,7 +280,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 } else if (menuItemId == R.id.bottom_browse_offers) {
 
 
-                    //Toast.makeText(getApplicationContext(), "Browse offers selected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Browse offers selected", Toast.LENGTH_SHORT).show();
+
 
                     getSupportActionBar().setTitle(R.string.browse_offers);
 
@@ -447,6 +431,13 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
             }
         });
+
+        mBottomBar.mapColorForTab(0, R.color.green_header);
+        mBottomBar.mapColorForTab(1, R.color.green_header);
+        mBottomBar.mapColorForTab(2, R.color.green_header);
+        mBottomBar.mapColorForTab(3, R.color.green_header);
+        mBottomBar.mapColorForTab(4, R.color.green_header);
+
     }
 
 

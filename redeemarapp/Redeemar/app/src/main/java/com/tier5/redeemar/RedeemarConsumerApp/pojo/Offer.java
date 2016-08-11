@@ -7,7 +7,7 @@ public class Offer implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl,  largeImageUrl, distance, location;
+    private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl,  largeImageUrl, distance, location, zipcode;
     Date startDate, endDate;
     double price, payValue, retailvalue, discount;
     int valueCalculate, expiredInDays, campaignId, catId, subCatId, userAction, createdBy, onDemand;
@@ -22,6 +22,14 @@ public class Offer implements Serializable {
 
     public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getZipcode() {
+        return zipcode;
+    }
+
+    public void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
     }
 
     public int getCampaignId() {

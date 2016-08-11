@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.tier5.redeemar.RedeemarConsumerApp.database.DBOffers;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 
 
 /**
@@ -62,5 +63,18 @@ public class MyApplication extends Application {
     public static boolean readFromPreferences(Context context, String preferenceName, boolean defaultValue) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         return sharedPreferences.getBoolean(preferenceName, defaultValue);
+    }
+
+    public static String getAppEnvironment() {
+
+        String word = "beta";
+        String severBase = UrlEndpoints.serverBaseUrl;
+        String environ = "";
+
+        if(severBase.contains(word))
+            return environ;
+        else
+            return "dev";
+
     }
 }

@@ -123,65 +123,8 @@ public class Utils {
 
 
 
-    /*
 
 
-
-    public static File extractLogToFileAndWeb(){
-        //set a file
-        Date datum = new Date();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        String fullName = df.format(datum)+"appLog.log";
-        File file = new File (Environment.getExternalStorageDirectory(), fullName);
-
-        //clears a file
-        if(file.exists()){
-            file.delete();
-        }
-
-
-        //write log to file
-        int pid = android.os.Process.myPid();
-        try {
-            String command = String.format("logcat -d -v threadtime *:*");
-            Process process = Runtime.getRuntime().exec(command);
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            StringBuilder result = new StringBuilder();
-            String currentLine = null;
-
-            while ((currentLine = reader.readLine()) != null) {
-                if (currentLine != null && currentLine.contains(String.valueOf(pid))) {
-                    result.append(currentLine);
-                    result.append("\n");
-                }
-            }
-
-            FileWriter out = new FileWriter(file);
-            out.write(result.toString());
-            out.close();
-
-            //Runtime.getRuntime().exec("logcat -d -v time -f "+file.getAbsolutePath());
-        } catch (IOException e) {
-
-            Log.d(LOGTAG, "Exception occured in exporting ");
-
-        }
-
-
-        //clear the log
-        try {
-            Runtime.getRuntime().exec("logcat -c");
-        } catch (IOException e) {
-
-            Log.d(LOGTAG, "Runtime Exception occured in exporting ");
-
-        }
-
-        return file;
-    }
-
-    */
 
 
 

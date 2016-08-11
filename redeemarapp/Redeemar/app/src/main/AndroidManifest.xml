@@ -130,15 +130,16 @@
             android:launchMode="singleTask">
         </activity>
 
-
         <activity android:name="com.tier5.redeemar.RedeemarConsumerApp.DisplaySuccessActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
             android:theme="@style/SampleAppsTheme"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask" />
 
         <activity android:name="com.tier5.redeemar.RedeemarConsumerApp.DisplayFailureActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
             android:theme="@style/SampleAppsTheme"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask" />
 
         <activity android:name="com.tier5.redeemar.RedeemarConsumerApp.BrandMainActivity"

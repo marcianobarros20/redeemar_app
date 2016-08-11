@@ -250,7 +250,6 @@ public class Parser {
 
                         if(!jsonObject.isNull("distance") && jsonObject.getString("distance").toString() != "") {
                             offer.setDistance(jsonObject.getString("distance"));
-                            //Log.d(LOGTAG, "distance: "+jsonObject.getString("distance"));
                         }
                         else {
                             offer.setDistance("");
@@ -272,8 +271,7 @@ public class Parser {
                         }
 
 
-                        JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));
-
+                        /*JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));
 
                         if(!json_partner_settings.isNull("price_range_id")) {
                             offer.setPriceRangeId(json_partner_settings.getString("price_range_id").toString());
@@ -281,10 +279,24 @@ public class Parser {
 
                         }
                         else
-                            offer.setPriceRangeId("");
+                            offer.setPriceRangeId("");*/
 
 
+                        JSONObject company_detail = new JSONObject(jsonObject.getString("company_detail"));
 
+                        if(!company_detail.isNull("address")) {
+                            offer.setAddress(company_detail.getString("address").toString());
+                            //Log.d(LOGTAG, "price_range_id: "+json_partner_settings.getString("price_range_id").toString());
+                        }
+                        else
+                            offer.setAddress("");
+
+                        if(!company_detail.isNull("zipcode")) {
+                            offer.setZipcode(company_detail.getString("zipcode").toString());
+                            //Log.d(LOGTAG, "price_range_id: "+json_partner_settings.getString("price_range_id").toString());
+                        }
+                        else
+                            offer.setZipcode("");
 
                         listOffers.add(offer);
 

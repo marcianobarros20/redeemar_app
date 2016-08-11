@@ -4,11 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.BrandVideo;
 
 public class DisplayFailureActivity extends Activity {
 
     TextView tvSuccessMessage;
+    Button btnContinue;
     Typeface myFont;
 
 
@@ -18,6 +24,7 @@ public class DisplayFailureActivity extends Activity {
         setContentView(R.layout.activity_display_failure);
 
         tvSuccessMessage = (TextView) findViewById(R.id.tvSuccessMessage);
+        btnContinue = (Button)  findViewById(R.id.btnContinue);
         myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
         tvSuccessMessage.setTypeface(myFont);
 
@@ -31,11 +38,14 @@ public class DisplayFailureActivity extends Activity {
                 tvSuccessMessage.setText(getString(R.string.brand_not_associated));
 
             else if(scan_err.equalsIgnoreCase("R01003"))
+                tvSuccessMessage.setText(getString(R.string.no_target_found));
+
+
+            else if(scan_err.equalsIgnoreCase("R01004"))
                 tvSuccessMessage.setText(getString(R.string.brand_video_not_found));
 
             else if(scan_err.equalsIgnoreCase("R02001")) {
                 tvSuccessMessage.setText(getString(R.string.error_validation_success));
-                //getActionBar().setTitle(R.string.success);
             }
 
             else if(scan_err.equalsIgnoreCase("R02002"))
@@ -50,6 +60,9 @@ public class DisplayFailureActivity extends Activity {
             else if(scan_err.equalsIgnoreCase("R02005"))
                 tvSuccessMessage.setText(getString(R.string.error_validation_wrong_place));
 
+            else if(scan_err.equalsIgnoreCase("R02006"))
+                tvSuccessMessage.setText(getString(R.string.error_validation_wrong_redeemar));
+
 
             else if(scan_err.equalsIgnoreCase("R02010")) {
 
@@ -60,6 +73,19 @@ public class DisplayFailureActivity extends Activity {
                 tvSuccessMessage.setText(scan_err);
 
         }
+
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+
+                Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
+                startActivity(sIntent);
+                finish();
+
+            }
+        });
     }
 
 
@@ -74,5 +100,6 @@ public class DisplayFailureActivity extends Activity {
 
         Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
         startActivity(sIntent);
+        finish();
     }
 }

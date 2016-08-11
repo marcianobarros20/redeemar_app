@@ -142,16 +142,18 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         String offer_desc = item.getOfferDescription();
 
-        if(item.getLocation() != null && !item.getLocation().equalsIgnoreCase("")) {
-            address_distance = item.getLocation()+" ";
+        if(item.getLocation() != null && !item.getLocation().equalsIgnoreCase("null")) {
+            address_distance = item.getLocation() + " ";
             Log.d(LOGTAG, "Browse Location: "+address_distance);
         }
-
+        else {
+            address_distance = item.getAddress() + " ";
+        }
 
         if(!item.getDistance().equalsIgnoreCase("")) {
             Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
+            address_distance = address_distance + item.getDistance() + " miles";
         }
-        address_distance = address_distance + item.getDistance();
 
         //address_distance = item.getLocation()+" "+item.getDistance();
 
@@ -159,7 +161,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 50)+"...");
         else
             viewHolder.tvOfferDescription.setText(offer_desc);
-
 
         if(item.getRetailvalue() > 0)
             viewHolder.tvRetailValue.setText(cur_sym+String.valueOf(item.getRetailvalue()));
@@ -275,7 +276,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         viewHolder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
 
         // Drag From Left
-        viewHolder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left, viewHolder.swipeLayout.findViewById(R.id.bottom_wrapper1));
+        //viewHolder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left, viewHolder.swipeLayout.findViewById(R.id.bottom_wrapper1));
 
         // Drag From Right
         viewHolder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, viewHolder.swipeLayout.findViewById(R.id.bottom_wrapper));
@@ -291,6 +292,88 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             @Override
             public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
                 //you are swiping.
+
+                Log.d(LOGTAG, "Swipe Top: "+topOffset);
+
+
+                if(leftOffset <= -600) {
+
+                    Log.d(LOGTAG, "Swipe Full: "+leftOffset);
+                    //viewHolder.swipeLayout.close(false);
+
+                    if(viewHolder.swipeLayout.getDragEdge() == SwipeLayout.DragEdge.Right) {
+
+                        Log.d(LOGTAG, "Inside Bank");
+                        offerId = String.valueOf(item.getOfferId());
+
+                        //Resources res = viewHolder.getResources();
+
+                        SharedPreferences.Editor editor = sharedpref.edit();
+                        editor.putString(res.getString(R.string.spf_redir_action), "BANK_OFFER"); // Storing action
+                        editor.putString(res.getString(R.string.spf_last_offer_id), offerId); // Storing Last Offer Id
+                        editor.commit();
+
+                        Log.d(LOGTAG, "Last Offer Id: "+offerId);
+
+                        Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
+
+                        Log.d(LOGTAG, "No. of Items: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
+
+                        if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {
+
+                            Intent intent = new Intent(mContext, LoginActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra(res.getString(R.string.ext_activity), activityName); // Settings the activty name where it will be redirected to
+                            mContext.startActivity(intent);
+                        }
+                        else {
+
+                            offerId = String.valueOf(item.getOfferId());
+                            userId = sharedpref.getString(res.getString(R.string.spf_user_id), null);
+
+                            //Log.d(LOGTAG, "View Adapter Offer Id: "+offerId);
+                            //Log.d(LOGTAG, "View Adapter User Id: "+userId);
+
+
+                            //new SaveOfferAsyncTask().execute("bank", userId, offerId);
+
+
+                            if(position < offerList.size()) {
+                                //mItemManger.removeShownLayouts(viewHolder.swipeLayout);
+                                //offerList.remove(position);
+                                //notifyItemRemoved(position);
+                                //notifyItemRangeChanged(position, offerList.size());
+                            }
+                            //mItemManger.closeAllItems();
+
+
+                            //Toast.makeText(mContext, "Offer successfully banked!", Toast.LENGTH_SHORT).show();
+                            //viewHolder.swipeLayout.close(true);
+                            //viewHolder.swipeLayout.performClick();
+
+                            Log.d(LOGTAG, "Drag Distance: "+viewHolder.swipeLayout.getDragDistance());
+
+
+                        }
+                    }
+
+
+                }
+                /*else if(leftOffset >= -600 && leftOffset < -250) {
+
+                    Log.d(LOGTAG, "Swipe Leave Open: "+leftOffset);
+                    //viewHolder.swipeLayout.close(false);
+
+
+                }
+                else {
+
+                    Log.d(LOGTAG, "Swipe Close: "+leftOffset);
+                    viewHolder.swipeLayout.close(true);
+
+                }*/
+
+
             }
 
             @Override
@@ -306,63 +389,9 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                 Log.d(LOGTAG, "Drag Edge: "+viewHolder.swipeLayout.getDragEdge());
                 Log.d(LOGTAG, "Open Status: "+viewHolder.swipeLayout.getOpenStatus());
 
-                if(viewHolder.swipeLayout.getDragEdge() == SwipeLayout.DragEdge.Right) {
-
-                    Log.d(LOGTAG, "Inside Bank");
-                    offerId = String.valueOf(item.getOfferId());
-
-                    //Resources res = viewHolder.getResources();
-
-                    SharedPreferences.Editor editor = sharedpref.edit();
-                    editor.putString(res.getString(R.string.spf_redir_action), "BANK_OFFER"); // Storing action
-                    editor.putString(res.getString(R.string.spf_last_offer_id), offerId); // Storing Last Offer Id
-                    editor.commit();
-
-                    Log.d(LOGTAG, "Last Offer Id: "+offerId);
-
-                    Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
-
-                    Log.d(LOGTAG, "No. of Items: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
-
-                    if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {
-
-                        Intent intent = new Intent(mContext, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(res.getString(R.string.ext_activity), activityName); // Settings the activty name where it will be redirected to
-                        mContext.startActivity(intent);
-                    }
-                    else {
-
-                        offerId = String.valueOf(item.getOfferId());
-                        userId = sharedpref.getString(res.getString(R.string.spf_user_id), null);
-
-                        //Log.d(LOGTAG, "View Adapter Offer Id: "+offerId);
-                        //Log.d(LOGTAG, "View Adapter User Id: "+userId);
-
-
-                        new SaveOfferAsyncTask().execute("bank", userId, offerId);
-
-
-                        if(position < offerList.size()) {
-                            mItemManger.removeShownLayouts(viewHolder.swipeLayout);
-                            offerList.remove(position);
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(position, offerList.size());
-                        }
-                        mItemManger.closeAllItems();
-
-
-                        Toast.makeText(mContext, "Offer successfully banked!", Toast.LENGTH_SHORT).show();
-                        viewHolder.swipeLayout.close(true);
-                        viewHolder.swipeLayout.performClick();
-                        Log.d(LOGTAG, "Click to close "+viewHolder.swipeLayout.isClickToClose());
-
-
-                    }
-                }
-
                 if(viewHolder.swipeLayout.getDragEdge() == SwipeLayout.DragEdge.Left) {
 
+                    /*
 
                     SharedPreferences.Editor editor = sharedpref.edit();
                     editor.putString(res.getString(R.string.spf_redir_action), "PASS_OFFER"); // Storing action
@@ -405,6 +434,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
                     }
 
+                    */
+
 
 
 
@@ -422,6 +453,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                 //when user's hand released.
 
             }
+
+
         });
 
         /*viewHolder.swipeLayout.setOnClickListener(new View.OnClickListener() {

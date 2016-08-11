@@ -11,17 +11,6 @@ public class ForgotPasswordActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_success);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String uniqueTargetId = extras.getString("unique_target_id");
-            TextView hwTextView = (TextView)findViewById(R.id.tvUniqueTargetId);
-            //hwTextView.setText("Unique Id: " + String.valueOf(uniqueTargetId));
-            //new ValidateLogoAsyncTask().execute(uniqueTargetId);
-        }
-
-
-
-
     }
 
     /*

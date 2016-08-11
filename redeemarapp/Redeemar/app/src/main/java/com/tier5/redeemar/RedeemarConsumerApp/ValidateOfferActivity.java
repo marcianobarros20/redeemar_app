@@ -47,7 +47,7 @@ public class ValidateOfferActivity extends AppCompatActivity {
     private static final String LOGTAG = "ValidateOffer";
 
     SupportMapFragment mapFragment;
-    private TextView tvAddress, tvOfferTitle, tvPriceRangeId, tvDiscount, tvValidateAfter, tvValidateWithin;
+    private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvDiscount, tvValidateAfter, tvValidateWithin;
     private NetworkImageView thumbnail;
     private ImageLoader mImageLoader;
     private Button btnRedeem;
@@ -76,7 +76,7 @@ public class ValidateOfferActivity extends AppCompatActivity {
 
         tvAddress = (TextView) findViewById(R.id.address);
         tvOfferTitle = (TextView) findViewById(R.id.offer_title);
-        //tvWhatYouGet = (TextView) findViewById(R.id.what_you_get);
+        tvWhatYouGet = (TextView) findViewById(R.id.what_you_get);
         tvPriceRangeId = (TextView) findViewById(R.id.price_range_id);
         //tvPayValue = (TextView) findViewById(R.id.pay_value);
         tvDiscount = (TextView) findViewById(R.id.discount);
@@ -90,6 +90,7 @@ public class ValidateOfferActivity extends AppCompatActivity {
 
         tvAddress.setTypeface(myFont);
         tvOfferTitle.setTypeface(myFont);
+        tvWhatYouGet.setTypeface(myFont);
         tvPriceRangeId.setTypeface(myFont);
         tvDiscount.setTypeface(myFont);
         tvValidateWithin.setTypeface(myFont);
@@ -314,190 +315,160 @@ public class ValidateOfferActivity extends AppCompatActivity {
 
                         //Log.d(LOGTAG, "Message Data: " + reader.getString("data"));
 
-                        //JSONObject jsonObject = new JSONObject(reader.getString("data"));
+                        JSONObject jsonObject = new JSONObject(reader.getString("data"));
 
-                        JSONArray offerArray = new JSONArray(reader.getString("data"));
+                        if(!jsonObject.isNull("offer_description") && !jsonObject.optString("offer_description").toString().equalsIgnoreCase("")) {
+                            tvOfferTitle.setText(jsonObject.optString("offer_description").toString());
+                            Log.d(LOGTAG, "Offer description: "+jsonObject.optString("offer_description").toString());
+                        }
 
-                        //Log.d(LOGTAG, "Length: " + offerArray.length());
+                        if(!jsonObject.isNull("what_you_get") && !jsonObject.optString("what_you_get").toString().equalsIgnoreCase("")) {
+                            tvWhatYouGet.setText(jsonObject.optString("what_you_get").toString());
+                            Log.d(LOGTAG, "What you get: "+jsonObject.optString("what_you_get").toString());
+                        }
 
-                        if(offerArray.length() == 1) {
-
-                            JSONObject jsonObject = offerArray.getJSONObject(0);
-
-
-
+                        if(!jsonObject.isNull("discount") && jsonObject.getString("discount").toString() != "") {
 
 
-                            if(jsonObject.optString("offer_description").toString() != null) {
-                                tvOfferTitle.setText(jsonObject.optString("offer_description").toString());
-                                Log.d(LOGTAG, "offer_description: "+jsonObject.optString("offer_description").toString());
+                           String discVal = jsonObject.getString("discount");
+
+                           StringBuilder sb = new StringBuilder(14);
+
+
+
+                            switch(valCalc)
+                            {
+                                case 1 :
+                                    sb.append(cur_sym).append(discVal).append(" ").append(off);
+                                    break;
+                                case 2 :
+                                    sb.append(discVal).append(perc_sym).append(" ").append(off);
+                                    break;
+                                case 3 :
+                                    sb.append(cur_sym).append(discVal).append(" ").append(disc);
+                                    break;
+                                case 4 :
+                                    sb.append(discVal).append(perc_sym).append(" ").append(disc);
+                                    break;
+                                case 5 :
+                                    sb.append(save).append(" ").append(cur_sym).append(discVal);
+                                    break;
+                                case 6 :
+                                    sb.append(save).append(" ").append(discVal).append(perc_sym);
+                                    break;
+                                default :
+                                    sb.append(cur_sym).append(discVal).append(" ").append(off);
                             }
 
+                            tvDiscount.setText(sb);
+
+
+                            //Log.d(LOGTAG, "discount: "+jsonObject.getString("discount").toString());
+                        }
+
+                        if(!jsonObject.isNull("myoffer_details") && jsonObject.getString("myoffer_details").trim() != "") {
 
 
 
+                            //JSONArray jsonMyOfferArray = new JSONArray(jsonObject.getString("myoffer_details"));
 
-                            if(jsonObject.getString("discount") != null && jsonObject.getString("discount").toString() != "") {
-
-
-                               String discVal = jsonObject.getString("discount");
-
-                               StringBuilder sb = new StringBuilder(14);
+                            JSONObject jsonMyOfferObject = new JSONObject(jsonObject.getString("myoffer_details"));
 
 
-
-                                switch(valCalc)
-                                {
-                                    case 1 :
-                                        sb.append(cur_sym).append(discVal).append(" ").append(off);
-                                        break;
-                                    case 2 :
-                                        sb.append(discVal).append(perc_sym).append(" ").append(off);
-                                        break;
-                                    case 3 :
-                                        sb.append(cur_sym).append(discVal).append(" ").append(disc);
-                                        break;
-                                    case 4 :
-                                        sb.append(discVal).append(perc_sym).append(" ").append(disc);
-                                        break;
-                                    case 5 :
-                                        sb.append(save).append(" ").append(cur_sym).append(discVal);
-                                        break;
-                                    case 6 :
-                                        sb.append(save).append(" ").append(discVal).append(perc_sym);
-                                        break;
-                                    default :
-                                        sb.append(cur_sym).append(discVal).append(" ").append(off);
-                                }
-
-                                tvDiscount.setText(sb);
+                                try {
 
 
-                                //Log.d(LOGTAG, "discount: "+jsonObject.getString("discount").toString());
-                            }
-
-                            if(!jsonObject.isNull("myoffer_details") && jsonObject.getString("myoffer_details").trim() != "") {
+                                    GregorianCalendar calendar = new GregorianCalendar();
 
 
+                                    if (!jsonMyOfferObject.isNull("validate_within")  && jsonMyOfferObject.getString("validate_within").toString().trim() != "") {
+                                        Log.d(LOGTAG, "Validate Within: " + jsonMyOfferObject.getString("validate_within").toString());
+                                        String validate_within = jsonMyOfferObject.getString("validate_within");
 
-                                JSONArray jsonMyOfferArray = new JSONArray(jsonObject.getString("myoffer_details"));
-
-
-                                Log.d(LOGTAG, "My Offer Length: "+jsonMyOfferArray.length());
-
-                                if(jsonMyOfferArray.length() == 1) {
-
-                                    JSONObject jsonMyOfferObject = jsonMyOfferArray.getJSONObject(0);
-
-                                    try {
-
-
-                                        GregorianCalendar calendar = new GregorianCalendar();
-
-
-                                        if (!jsonMyOfferObject.isNull("validate_within")  && jsonMyOfferObject.getString("validate_within").toString().trim() != "") {
-                                            Log.d(LOGTAG, "Validate Within: " + jsonMyOfferObject.getString("validate_within").toString());
-                                            String validate_within = jsonMyOfferObject.getString("validate_within");
-
-                                            Date date1 = fromDateFormat.parse(validate_within);
-                                            tvValidateWithin.setText(toDateFormat.format(date1));
-
-
-                                        }
-
-
-                                        if (!jsonMyOfferObject.isNull("validate_after")  && jsonMyOfferObject.getString("validate_after").toString().trim() != "") {
-                                            Log.d(LOGTAG, "Validate After: " + jsonMyOfferObject.getString("validate_after").toString());
-                                            String validate_after = jsonMyOfferObject.getString("validate_after");
-
-                                            //calendar.setTime(fromDateFormat.parse(validate_after));
-
-                                            Date date2 = fromDateFormat.parse(validate_after);
-
-                                            tvValidateAfter.setText(toDateFormat.format(date2));
-
-                                        }
-
-
-                                    } catch (ParseException ex) {
-
-                                        Log.d(LOGTAG, "Exception in parsing date: "+ex.toString());
+                                        Date date1 = fromDateFormat.parse(validate_within);
+                                        tvValidateWithin.setText(toDateFormat.format(date1));
 
 
                                     }
 
 
-                                }
+                                    if (!jsonMyOfferObject.isNull("validate_after")  && jsonMyOfferObject.getString("validate_after").toString().trim() != "") {
+                                        Log.d(LOGTAG, "Validate After: " + jsonMyOfferObject.getString("validate_after").toString());
+                                        String validate_after = jsonMyOfferObject.getString("validate_after");
+
+                                        //calendar.setTime(fromDateFormat.parse(validate_after));
+
+                                        Date date2 = fromDateFormat.parse(validate_after);
+
+                                        tvValidateAfter.setText(toDateFormat.format(date2));
+
+                                    }
 
 
+                                } catch (ParseException ex) {
 
-                            }
-
-
-
-
-                            if(!jsonObject.isNull("offer_large_image_path") && jsonObject.getString("offer_large_image_path").toString() != "") {
-
-
-                                String imageUrl = jsonObject.getString("offer_large_image_path");
-
-                                imageUrl = UrlEndpoints.serverBaseUrl  + imageUrl;
-
-                                Log.d(LOGTAG, "offer_image_path: "+imageUrl);
-
-
-                                mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
-
-                                mImageLoader.get(imageUrl, ImageLoader.getImageListener(thumbnail,
-                                        R.drawable.icon_watermark, android.R.drawable
-                                                .ic_dialog_alert));
-                                thumbnail.setImageUrl(imageUrl, mImageLoader);
-
-
-                            }
-
-                            JSONArray jsonCompanyArray = new JSONArray(jsonObject.getString("company_detail"));
-
-                            String address = "";
-
-                            Log.d(LOGTAG, "Company Length: "+jsonCompanyArray.length());
-
-                            if(jsonCompanyArray.length() == 1) {
-
-                                JSONObject jsonCompanyObject = jsonCompanyArray.getJSONObject(0);
-
-
-                                if (!jsonCompanyObject.isNull("address")  && jsonCompanyObject.getString("address").toString() != "") {
-                                    Log.d(LOGTAG, "address: " + jsonCompanyObject.getString("address").toString());
-                                    address = jsonCompanyObject.getString("address");
-                                    tvAddress.setText(address);
-
+                                    Log.d(LOGTAG, "Exception in parsing date: "+ex.toString());
 
                                 }
-
-                            }
-
-
-
-
-                            JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));
-
-
-                            if(!json_partner_settings.isNull("price_range_id") && json_partner_settings.getString("price_range_id").toString() != "") {
-                                tvPriceRangeId.setText(json_partner_settings.getString("price_range_id"));
-                                Log.d(LOGTAG, "price_range_id: "+json_partner_settings.getString("price_range_id").toString());
-
-                            }
-
-
 
                         }
 
 
 
 
-                    } // End of if
+                        if(!jsonObject.isNull("offer_large_image_path") && jsonObject.getString("offer_large_image_path").toString() != "") {
 
+
+                            String imageUrl = jsonObject.getString("offer_large_image_path");
+
+                            imageUrl = UrlEndpoints.serverBaseUrl  + imageUrl;
+
+                            Log.d(LOGTAG, "offer_image_path: "+imageUrl);
+
+
+                            mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
+
+                            mImageLoader.get(imageUrl, ImageLoader.getImageListener(thumbnail,
+                                    R.drawable.icon_watermark, android.R.drawable
+                                            .ic_dialog_alert));
+                            thumbnail.setImageUrl(imageUrl, mImageLoader);
+
+
+                        }
+
+                        JSONArray jsonCompanyArray = new JSONArray(jsonObject.getString("company_detail"));
+
+                        String address = "";
+
+                        Log.d(LOGTAG, "Company Length: "+jsonCompanyArray.length());
+
+                        if(jsonCompanyArray.length() == 1) {
+
+                            JSONObject jsonCompanyObject = jsonCompanyArray.getJSONObject(0);
+
+
+                            if (!jsonCompanyObject.isNull("address")  && jsonCompanyObject.getString("address").toString() != "") {
+                                Log.d(LOGTAG, "address: " + jsonCompanyObject.getString("address").toString());
+                                address = jsonCompanyObject.getString("address");
+                                tvAddress.setText(address);
+
+                            }
+
+                        }
+
+
+                        JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));
+
+
+                        if(!json_partner_settings.isNull("price_range_id") && json_partner_settings.getString("price_range_id").toString() != "") {
+                            tvPriceRangeId.setText(json_partner_settings.getString("price_range_id"));
+                            Log.d(LOGTAG, "price_range_id: "+json_partner_settings.getString("price_range_id").toString());
+
+                        }
+
+
+
+                    }
 
 
 

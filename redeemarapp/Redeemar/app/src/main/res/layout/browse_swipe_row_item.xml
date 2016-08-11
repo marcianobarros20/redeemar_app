@@ -22,61 +22,74 @@
             android:layout_width="240dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:background="@color/green_header"
-            android:weightSum="2">
+            android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/bank_offer_im"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.45"
-                android:background="@null"
-                android:gravity="center"
-                android:src="@drawable/bank" />
 
-            <TextView
-                android:id="@+id/bank_offer"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/passLayout"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="@string/bank_it"
-                style="@style/WhiteLargeText"  />
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="@color/md_red_400">
+
+                <ImageButton
+                    android:id="@+id/pass_offer_im"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:background="@null"
+                    android:gravity="right|center_vertical"
+                    android:src="@drawable/ic_pass"/>
+
+                <TextView
+                    android:id="@+id/pass_offer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="left|center_vertical"
+                    android:text="@string/pass_it"
+                    style="@style/WhiteLargeText" />
+
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:id="@+id/bankLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="@color/green_header">
+
+                <ImageButton
+                        android:id="@+id/bank_offer_im"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:background="@null"
+                    android:gravity="right|center_vertical"
+                        android:src="@drawable/ic_bank" />
+
+                <TextView
+                    android:id="@+id/bank_offer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="left|center_vertical"
+                    android:text="@string/bank_it"
+                    style="@style/WhiteLargeText"  />
+
+            </LinearLayout>
 
 
         </LinearLayout>
 
 
-        <!-- Another Bottom View For Left to Right -->
-
-        <LinearLayout
-            android:id="@+id/bottom_wrapper1"
-            android:layout_width="240dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:background="@color/accent"
-            android:weightSum="2">
-
-            <TextView
-                android:id="@+id/pass_offer"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:text="@string/pass_it"
-                style="@style/WhiteLargeText" />
-
-            <ImageButton
-                android:id="@+id/pass_offer_im"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5"
-                android:background="@null"
-                android:gravity="center"
-                android:src="@drawable/passed"/>
-
-
-        </LinearLayout>
 
         <!-- Top View,  Row itemView of RecyclerView -->
         <RelativeLayout
@@ -86,8 +99,6 @@
             android:padding="0dp">
 
             <!-- Thumbnail Image -->
-
-
             <com.android.volley.toolbox.NetworkImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="160dp"
@@ -112,7 +123,7 @@
                 android:paddingBottom="2dp"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:text="@string/on_demand"
                 android:visibility="gone"/>
 
@@ -185,7 +196,6 @@
                                 android:textStyle="bold"
                                 android:textColor="@color/gray" />
 
-
                             <TextView
                                 android:id="@+id/pay_value"
                                 android:layout_marginRight="1dp"
@@ -198,15 +208,10 @@
                                 android:textSize="@dimen/button_title_larger"
                                 android:textColor="@color/green_text" />
 
-
-
                         </LinearLayout>
 
 
                     </LinearLayout>
-
-
-
 
                     <LinearLayout
                         android:id="@+id/distance_layout"
@@ -218,8 +223,7 @@
                             android:id="@+id/map_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_marker"
-                            />
+                            android:src="@drawable/ic_marker" />
 
                         <TextView
                             android:id="@+id/distance"
@@ -233,15 +237,7 @@
 
                     </LinearLayout>
 
-
-
                 </LinearLayout>
-
-
-
-
-
-
 
         </RelativeLayout>
 
