@@ -95,6 +95,7 @@
     <string name="error_validation_success">You have successfully validated the offer.</string>
     <string name="error_cgi_animation">You have successfully validated the offer.</string>
     <string name="error_validation_wrong_redeemar">Unable to get redeemer details.</string>
+    <string name="failed">Failed to complete this process.</string>
 
 
 

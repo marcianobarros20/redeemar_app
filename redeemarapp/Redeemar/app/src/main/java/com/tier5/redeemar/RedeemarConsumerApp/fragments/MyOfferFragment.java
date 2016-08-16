@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.android.volley.ParseError;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.innodroid.expandablerecycler.ExpandableRecyclerAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.GooglePlusActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.GoogleSignInActivity;
@@ -35,6 +37,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.LoginActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.MyOffersViewAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.adapters.PeopleAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.MyOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
@@ -53,6 +56,9 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
     private static final String STATE_OFFERS = "state_offers";
     private ArrayList<Offer> mListOffers;
     private MyOffersViewAdapter mAdapter;
+
+
+    private PeopleAdapter adapter;
 
     private TextView tvEmptyView;
     private RecyclerView mRecyclerOffers;
@@ -84,11 +90,22 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View layout = inflater.inflate(R.layout.fragment_offers, container, false);
+        View layout = inflater.inflate(R.layout.fragment_banked, container, false);
+
+
+        Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
+
+        mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.main_recycler);
+
+        adapter = new PeopleAdapter(getActivity());
+        adapter.setMode(ExpandableRecyclerAdapter.MODE_ACCORDION);
+        //adapter.setMode(ExpandableRecyclerAdapter.MODE_ACCORDION);
+        mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerOffers.setAdapter(adapter);
 
 
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
-        mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.my_recycler_view);
+        //mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.my_recycler_view);
 
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -105,8 +122,8 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
 
 
-        mAdapter = new MyOffersViewAdapter(getActivity(), "MyOffers");
-        mRecyclerOffers.setAdapter(mAdapter);
+        //mAdapter = new MyOffersViewAdapter(getActivity(), "MyOffers");
+        //mRecyclerOffers.setAdapter(mAdapter);
 
         if (savedInstanceState != null) {
             //if this fragment starts after a rotation or configuration change, load the existing movies from a parcelable
@@ -122,7 +139,7 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
             }
         }
         //update your Adapter to containg the retrieved movies
-        mAdapter.setOffers(mListOffers);
+        //mAdapter.setOffers(mListOffers);
         return layout;
     }
 
@@ -153,8 +170,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
             Log.d(LOGTAG, "No user id found, redirecting to login");
 
             Intent i = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
-            //Intent i = new Intent(getActivity().getApplicationContext(), GoogleSignInActivity.class);
-            //Intent i = new Intent(getActivity().getApplicationContext(), GooglePlusActivity.class);
             startActivity(i);
 
         }
@@ -204,8 +219,15 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
         if(listOffers.size() > 0 && mAdapter != null) {
             Log.d(LOGTAG, "Inside calback onOffersLoaded: " + listOffers.size());
-            mAdapter = new MyOffersViewAdapter(getActivity(), listOffers, "MyOffers");
-            mRecyclerOffers.setAdapter(mAdapter);
+            //mAdapter = new MyOffersViewAdapter(getActivity(), listOffers, "MyOffers");
+            //mAdapter.setMode(ExpandableRecyclerAdapter.MODE_ACCORDION);
+            //mRecyclerOffers.setAdapter(mAdapter);
+            //mRecyclerOffers.setAdapter(mAdapter);
+
+
+
+            adapter.setOffers(listOffers);
+            mRecyclerOffers.setAdapter(adapter);
             mRecyclerOffers.setVisibility(View.VISIBLE);
             tvEmptyView.setVisibility(View.GONE);
 

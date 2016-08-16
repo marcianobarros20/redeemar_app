@@ -401,11 +401,18 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         if(models != null) {
             for (Offer model : models) {
 
+                // Search by either offer description or what you get or more infomation or company (brand) name or address or zip code
                 final String offerDesc = model.getOfferDescription().toLowerCase();
+                final String whatYouGet = model.getWhatYouGet().toLowerCase();
+                final String moreInfo = model.getMoreInformation().toLowerCase();
+                final String compName = model.getCompanyName().toLowerCase();
+                final String compAddr = model.getAddress().toLowerCase();
+                final String compZip = model.getZipcode().toLowerCase();
 
-                if (offerDesc.contains(query)) {
+                if (offerDesc.contains(query) || whatYouGet.contains(query) || moreInfo.contains(query) || compName.contains(query)
+                        || compAddr.contains(query) || compZip.contains(query)) {
                     filteredModelList.add(model);
-                    Log.d(LOGTAG, "Description is "+offerDesc);
+                    Log.d(LOGTAG, "Search result is "+offerDesc);
                     p++;
 
                 }

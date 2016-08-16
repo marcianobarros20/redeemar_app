@@ -236,6 +236,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.setMaxFixedTabs(5);
         mBottomBar.setDefaultTabPosition(3);
+        mBottomBar.useFixedMode();
+        //mBottomBar.setActiveTabColor(null);
+
 
         mBottomBar.setItemsFromMenu(R.menu.bottombar_menu, new OnMenuTabClickListener() {
             @Override
@@ -432,11 +435,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             }
         });
 
-        mBottomBar.mapColorForTab(0, R.color.green_header);
+        /*mBottomBar.mapColorForTab(0, R.color.green_header);
         mBottomBar.mapColorForTab(1, R.color.green_header);
         mBottomBar.mapColorForTab(2, R.color.green_header);
         mBottomBar.mapColorForTab(3, R.color.green_header);
-        mBottomBar.mapColorForTab(4, R.color.green_header);
+        mBottomBar.mapColorForTab(4, R.color.green_header);*/
+
 
     }
 

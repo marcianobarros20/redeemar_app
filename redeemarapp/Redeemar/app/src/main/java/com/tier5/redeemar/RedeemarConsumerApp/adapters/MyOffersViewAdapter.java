@@ -55,7 +55,6 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
     private String activityName;
     private Resources res;
     private String offerId, userId;
-
     Typeface myFont;
 
 
@@ -311,7 +310,7 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
 
 
 
-        viewHolder.swipeLayout.getSurfaceView().setOnClickListener(new View.OnClickListener() {
+        /*viewHolder.swipeLayout.getSurfaceView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -323,7 +322,7 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
                 v.getContext().startActivity(intent);
 
             }
-        });
+        });*/
 
 
 
@@ -394,122 +393,5 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
         }
     }
 
-    // Either pass or bank offers using this service
-    private class SaveOfferAsyncTask extends AsyncTask<String, Void, String> {
-
-
-        String bankUrl = "", passUrl = "";
-        //private ArrayList<Offer> mDataSet;
-
-        public SaveOfferAsyncTask() {
-
-            bankUrl = UrlEndpoints.bankOffersURL;
-            passUrl = UrlEndpoints.passOffersURL;
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            URL myUrl = null;
-            HttpURLConnection conn = null;
-            String response = "";
-
-            String action = params[0];
-            String user_id = params[1];
-            String offer_id = params[2];
-
-
-
-            try {
-                if(action.equalsIgnoreCase("pass"))
-                    myUrl = new URL(passUrl);
-                else
-                    myUrl = new URL(bankUrl);
-
-                conn = (HttpURLConnection) myUrl.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                JSONObject data = new JSONObject();
-                //JSONObject auth=new JSONObject();
-                //JSONObject parent=new JSONObject();
-                data.put("webservice_name","bankoffer");
-                data.put("user_id", user_id);
-                data.put("offer_id", offer_id);
-
-                OutputStream os = conn.getOutputStream();
-
-                Log.d(LOGTAG, "Request: " + data.toString());
-
-
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                bufferedWriter.write("data="+data.toString());
-                bufferedWriter.flush();
-                bufferedWriter.close();
-
-
-                InputStream inputStream = conn.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                String line = "";
-                while ((line = bufferedReader.readLine()) != null) {
-                    response += line;
-                }
-
-                //Log.d(LOGTAG, "Do In background: " + response);
-                bufferedReader.close();
-                inputStream.close();
-                conn.disconnect();
-                os.close();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(String resp) {
-            //do what ever you want with the response
-
-            if (resp != null) {
-
-
-                try {
-                    //JSONObject json= (JSONObject) new JSONTokener(result).nextValue();
-
-
-                    JSONObject reader = new JSONObject(resp);
-
-
-                    if (reader.getString("messageCode").equals("R01001")) {
-
-                        // TODO: Return value
-                        mItemManger.closeAllItems();
-
-
-                    } // End of if
-
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-
-            }
-        }
-
-
-    }
 
 }

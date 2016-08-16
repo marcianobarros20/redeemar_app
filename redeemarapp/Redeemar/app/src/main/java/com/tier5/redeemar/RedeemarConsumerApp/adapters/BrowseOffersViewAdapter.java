@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -142,7 +143,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         String offer_desc = item.getOfferDescription();
 
-        if(item.getLocation() != null && !item.getLocation().equalsIgnoreCase("null")) {
+        if(item.getLocation() != null && !item.getLocation().equalsIgnoreCase("") && !item.getLocation().equalsIgnoreCase("null")) {
             address_distance = item.getLocation() + " ";
             Log.d(LOGTAG, "Browse Location: "+address_distance);
         }
@@ -150,9 +151,20 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             address_distance = item.getAddress() + " ";
         }
 
+        if(address_distance.equalsIgnoreCase("")) {
+            Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
+            address_distance = item.getZipcode() + " ";
+        }
+
+
         if(!item.getDistance().equalsIgnoreCase("")) {
             Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
-            address_distance = address_distance + item.getDistance() + " miles";
+            if(address_distance.equalsIgnoreCase("")) {
+                address_distance = address_distance + item.getDistance() + " miles";
+            }
+            else {
+                address_distance = address_distance + " ("+ item.getDistance() + " miles)";
+            }
         }
 
         //address_distance = item.getLocation()+" "+item.getDistance();
@@ -262,7 +274,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
 
         // Instantiate the RequestQueue.
-        if(imageUrl != "") {
+        if(!imageUrl.equalsIgnoreCase("")) {
 
             imageUrl = UrlEndpoints.serverBaseUrl + imageUrl;
             viewHolder.mImageLoader.get(imageUrl, ImageLoader.getImageListener(viewHolder.thumbnail,
@@ -271,6 +283,11 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             viewHolder.thumbnail.setImageUrl(imageUrl, viewHolder.mImageLoader);
             viewHolder.thumbnail.setAdjustViewBounds(false);
         }
+        else {
+            viewHolder.thumbnail.setDefaultImageResId(R.drawable.icon_watermark);
+            viewHolder.thumbnail.setErrorImageResId(R.drawable.icon_watermark);
+        }
+
 
 
         viewHolder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
@@ -319,59 +336,12 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
                         Log.d(LOGTAG, "No. of Items: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
-                        if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {
 
-                            Intent intent = new Intent(mContext, LoginActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra(res.getString(R.string.ext_activity), activityName); // Settings the activty name where it will be redirected to
-                            mContext.startActivity(intent);
-                        }
-                        else {
-
-                            offerId = String.valueOf(item.getOfferId());
-                            userId = sharedpref.getString(res.getString(R.string.spf_user_id), null);
-
-                            //Log.d(LOGTAG, "View Adapter Offer Id: "+offerId);
-                            //Log.d(LOGTAG, "View Adapter User Id: "+userId);
-
-
-                            //new SaveOfferAsyncTask().execute("bank", userId, offerId);
-
-
-                            if(position < offerList.size()) {
-                                //mItemManger.removeShownLayouts(viewHolder.swipeLayout);
-                                //offerList.remove(position);
-                                //notifyItemRemoved(position);
-                                //notifyItemRangeChanged(position, offerList.size());
-                            }
-                            //mItemManger.closeAllItems();
-
-
-                            //Toast.makeText(mContext, "Offer successfully banked!", Toast.LENGTH_SHORT).show();
-                            //viewHolder.swipeLayout.close(true);
-                            //viewHolder.swipeLayout.performClick();
-
-                            Log.d(LOGTAG, "Drag Distance: "+viewHolder.swipeLayout.getDragDistance());
-
-
-                        }
                     }
 
 
                 }
-                /*else if(leftOffset >= -600 && leftOffset < -250) {
 
-                    Log.d(LOGTAG, "Swipe Leave Open: "+leftOffset);
-                    //viewHolder.swipeLayout.close(false);
-
-
-                }
-                else {
-
-                    Log.d(LOGTAG, "Swipe Close: "+leftOffset);
-                    viewHolder.swipeLayout.close(true);
-
-                }*/
 
 
             }
@@ -391,50 +361,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
                 if(viewHolder.swipeLayout.getDragEdge() == SwipeLayout.DragEdge.Left) {
 
-                    /*
 
-                    SharedPreferences.Editor editor = sharedpref.edit();
-                    editor.putString(res.getString(R.string.spf_redir_action), "PASS_OFFER"); // Storing action
-                    offerId = String.valueOf(item.getOfferId());
-
-                    Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
-
-                    if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {
-
-                        Intent intent = new Intent(mContext, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(res.getString(R.string.ext_activity), activityName); // Settings the activty name where it will be redirected to
-
-                        mContext.startActivity(intent);
-
-
-                    }
-                    else {
-
-
-                        userId = sharedpref.getString(res.getString(R.string.spf_user_id), null);
-
-                        //Log.d(LOGTAG, "View Adapter Offer Id: "+offerId);
-                        //Log.d(LOGTAG, "View Adapter User Id: "+userId);
-
-
-                        new SaveOfferAsyncTask().execute("pass", userId, offerId);
-
-                        if(position < offerList.size()) {
-                            mItemManger.removeShownLayouts(viewHolder.swipeLayout);
-                            offerList.remove(position);
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(position, offerList.size());
-                        }
-                        mItemManger.closeAllItems();
-
-
-                        Toast.makeText(mContext, "Offer successfully passed!", Toast.LENGTH_SHORT).show();
-                        viewHolder.swipeLayout.close(true);
-
-                    }
-
-                    */
 
 
 
@@ -456,23 +383,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
 
         });
-
-        /*viewHolder.swipeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                if ((((SwipeLayout) v).getOpenStatus() == SwipeLayout.Status.Close)) {
-                    //Start your activity
-
-                    Toast.makeText(mContext, " onClick : " + item.getName() + " \n" + item.getEmailId(), Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });*/
-
-
-
 
 
         viewHolder.swipeLayout.getSurfaceView().setOnClickListener(new View.OnClickListener() {

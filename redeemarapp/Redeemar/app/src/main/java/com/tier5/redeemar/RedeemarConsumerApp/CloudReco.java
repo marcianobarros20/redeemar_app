@@ -595,7 +595,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
         TargetFinder targetFinder = objectTracker.getTargetFinder();
 
 
-        if(MyApplication.getAppEnvironment() == "beta") {
+        if(MyApplication.getAppEnvironment().equalsIgnoreCase("beta")) {
             vuforiaAccessKey = Constants.kAccessKeyBeta;
             vuforiaSecretKey = Constants.kSecretKeyBeta;
         }
@@ -606,6 +606,8 @@ public class CloudReco extends Activity implements SampleApplicationControl,
         }
 
         Log.d(LOGTAG, "App Environment: "+MyApplication.getAppEnvironment());
+        Log.d(LOGTAG, "Access Key: "+vuforiaAccessKey);
+        Log.d(LOGTAG, "Secret Key: "+vuforiaSecretKey);
         
         // Start initialization:
         if (targetFinder.startInit(vuforiaAccessKey, vuforiaSecretKey))

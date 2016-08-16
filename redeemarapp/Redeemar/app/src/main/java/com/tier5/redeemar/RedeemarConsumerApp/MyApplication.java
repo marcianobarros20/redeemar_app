@@ -69,10 +69,9 @@ public class MyApplication extends Application {
 
         String word = "beta";
         String severBase = UrlEndpoints.serverBaseUrl;
-        String environ = "";
 
         if(severBase.contains(word))
-            return environ;
+            return "beta";
         else
             return "dev";
 

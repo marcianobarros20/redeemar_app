@@ -16,6 +16,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:background="@drawable/green_bar"
+        android:orientation="vertical"
         android:weightSum="2">
 
         <LinearLayout

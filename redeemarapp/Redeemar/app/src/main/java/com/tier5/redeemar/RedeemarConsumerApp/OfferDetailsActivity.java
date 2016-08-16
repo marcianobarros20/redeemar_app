@@ -140,10 +140,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                 Resources res = view.getResources();
                 sharedpref = view.getContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
-
-
                 Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
-
                 if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {
 
                     SharedPreferences.Editor editor = sharedpref.edit();
@@ -157,14 +154,9 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                 else {
 
                     String userId = sharedpref.getString(res.getString(R.string.spf_user_id), null);
-
                     Log.d(LOGTAG, "View Adapter Offer Id: "+offerId);
                     Log.d(LOGTAG, "View Adapter User Id: "+userId);
-
                     new SaveOfferAsyncTask().execute("bank", userId, offerId);
-
-
-
                 }
             }
         });

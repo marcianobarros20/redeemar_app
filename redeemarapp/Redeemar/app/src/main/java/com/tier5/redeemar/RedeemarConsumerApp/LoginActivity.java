@@ -307,16 +307,6 @@ public class LoginActivity extends AppCompatActivity implements
             if (requestCode == RC_SIGN_IN) {
 
 
-                /*
-                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-                Log.d(LOGTAG, "Google Login Result: "+result.toString());
-                Log.d(LOGTAG, "Google Login Sign In Account: "+result.getSignInAccount());
-                Log.d(LOGTAG, "Google Login Status: "+result.getStatus());
-                Log.d(LOGTAG, "Google Login is Success: "+result.isSuccess());
-
-                handleSignInResult(result);*/
-
-
                 // Check which request we're responding to
 
                 mRequestCode = requestCode;
@@ -439,13 +429,7 @@ public class LoginActivity extends AppCompatActivity implements
                                         hideProgressDialog();
 
                                     }
-                                    //Toast.makeText(LoginActivity.this,"Welcome "+user_full_name, Toast.LENGTH_LONG).show();
-                                    //Toast.makeText(LoginActivity.this,"Loggin in...", Toast.LENGTH_LONG).show();
-                                    //Intent intent=new Intent(LoginActivity.this, BrowseOffersActivity.class);
-                                    //startActivity(intent);
-                                    //finish();
 
-                                    //hideProgressDialog();
 
                                 }
 
@@ -739,7 +723,7 @@ public class LoginActivity extends AppCompatActivity implements
 
     private void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
+            mProgressDialog.dismiss();
         }
     }
 
