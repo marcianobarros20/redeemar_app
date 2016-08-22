@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId "com.tier5.redeemar.RedeemarConsumerApp"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 22
         versionCode 100
         versionName "1.0"
@@ -61,9 +61,10 @@ dependencies {
     compile('com.mikepenz:materialdrawer:5.3.2@aar') {
         transitive = true
     }
-
-
     compile 'com.google.code.gson:gson:2.3.1'
+
+
+    compile project(':lib')
 
     //compile 'com.google.firebase:firebase-auth:9.0.0'
 

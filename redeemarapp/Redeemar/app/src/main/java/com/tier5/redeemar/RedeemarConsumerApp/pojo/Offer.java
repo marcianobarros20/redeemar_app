@@ -7,21 +7,55 @@ public class Offer implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl,  largeImageUrl, distance, companyName,  location, zipcode, catName, subcatName;
+    private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl,  largeImageUrl, distance, companyName,
+            location, zipcode, catName, subcatName, brandLogo, brandInfo;
     Date startDate, endDate;
     double price, payValue, retailvalue, discount;
-    int valueCalculate, expiredInDays, campaignId, catId, subCatId, userAction, createdBy, onDemand;
+    int valueCalculate, expiredInDays, campaignId, catId, subCatId, userAction, createdBy, onDemand, offersCount, dealsCount;
 
     public Offer() {
 
+    }
+
+    public String getBrandInfo() {
+        return brandInfo;
+    }
+
+    public void setBrandInfo(String brandInfo) {
+        this.brandInfo = brandInfo;
+    }
+
+    public int getOffersCount() {
+        return offersCount;
+    }
+
+    public void setOffersCount(int offersCount) {
+        this.offersCount = offersCount;
+    }
+
+    public int getDealsCount() {
+        return dealsCount;
+    }
+
+    public void setDealsCount(int dealsCount) {
+        this.dealsCount = dealsCount;
     }
 
     public int getCreatedBy() {
         return createdBy;
     }
 
+
     public String getCatName() {
         return catName;
+    }
+
+    public String getBrandLogo() {
+        return brandLogo;
+    }
+
+    public void setBrandLogo(String brandLogo) {
+        this.brandLogo = brandLogo;
     }
 
     public void setCatName(String catName) {

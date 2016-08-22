@@ -2,7 +2,7 @@ package com.tier5.redeemar.RedeemarConsumerApp.utils;
 
 /**
  * Created by Tier5 on 10-02-2015.
- */
+ * */
 public class UrlEndpoints {
 
 

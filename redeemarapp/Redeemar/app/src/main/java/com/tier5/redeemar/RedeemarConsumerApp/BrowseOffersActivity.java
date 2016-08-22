@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.HeaderViewListAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -105,6 +106,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private final int NavGroupId = 1001;
     private SharedPreferences.Editor editor;
     private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
+    private ImageView imListView, imMapView, imThumbView;
+
 
 
     /**
@@ -128,42 +131,34 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
             String userId = sharedpref.getString(res.getString(R.string.spf_user_id), "");
             Log.d(LOGTAG, "User Id is: "+userId);
-
         }
 
         if(sharedpref.getString(res.getString(R.string.spf_first_name), null) != null) {
             firstName = sharedpref.getString(res.getString(R.string.spf_first_name), "");
-
         }
 
         if(sharedpref.getString(res.getString(R.string.spf_email), null) != null) {
             email = sharedpref.getString(res.getString(R.string.spf_email), "");
-
-
         }
 
 
         if(sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
             redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
-
         }
 
 
         if(sharedpref.getString(res.getString(R.string.spf_redeemer_id), null) != null) {
             redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
-
         }
 
 
         if(sharedpref.getString(res.getString(R.string.spf_campaign_id), null) != null) {
             campaignId = sharedpref.getString(res.getString(R.string.spf_campaign_id), "");
-
         }
 
 
         if(sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
             categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
-
         }
 
 
@@ -203,6 +198,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         setupBottombar(mBottomBar, savedInstanceState);
         initNavigationDrawer();
         //setUpMap();
+
+
     }
 
 
@@ -266,7 +263,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     //Toast.makeText(getApplicationContext(), "Neaby offers selected", Toast.LENGTH_SHORT).show();
 
                     getSupportActionBar().setTitle(R.string.nearby_brands);
-
 
                     Fragment fr = new HomeFragment();
                     args = new Bundle();

@@ -28,6 +28,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +61,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
     private TextView tvEmptyView;
     private RecyclerView mRecyclerOffers;
+
     //the arraylist containing our list of box office his
     //private String redeemerId = "";
     private JSONArray offersArray;
@@ -67,7 +69,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private SharedPreferences sharedpref;
     private SharedPreferences.Editor editor;
     private String user_id = "0";
-    double latitude = 0.0, longitude = 0.0;
+    private double latitude = 0.0, longitude = 0.0;
     //private FragmentActivity listener;
     private List<Offer> mModels;
     private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list";
@@ -75,6 +77,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     //private SearchView searchView;
     Activity activity;
     private ActivityCommunicator activityCommunicator;
+    private ImageView imListView, imMapView, imThumbView;
 
 
 
@@ -129,9 +132,64 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_offers, container, false);
-
         //Log.d(LOGTAG, "Inside browse offer fragment");
 
+
+        imListView = (ImageView) layout.findViewById(R.id.menu_list_view);
+        imMapView = (ImageView) layout.findViewById(R.id.menu_map_view);
+        imThumbView = (ImageView) layout.findViewById(R.id.menu_thumb_view);
+
+        editor = sharedpref.edit();
+
+        imListView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                editor.putString(res.getString(R.string.spf_view_type), "list"); // Set view type to list
+                editor.commit();
+
+                BrowseOfferFragment fragment2 = new BrowseOfferFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment2);
+                fragmentTransaction.commit();
+
+                Log.d(LOGTAG, "List view clicked");
+            }
+        });
+
+
+        imMapView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to map
+                editor.commit();
+
+                MapViewFragment fragment2 = new MapViewFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment2);
+                fragmentTransaction.commit();
+                Log.d(LOGTAG, "Map view clicked");
+            }
+        });
+
+
+        imThumbView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Set view type to thumb
+                editor.commit();
+
+                BrowseOfferFragment fragment2 = new BrowseOfferFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment2);
+                fragmentTransaction.commit();
+
+                Log.d(LOGTAG, "Thumb view clicked");
+            }
+        });
 
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.my_recycler_view);
@@ -275,11 +333,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             longitude = gps.getLongitude();
 
             if(latitude == 0 && longitude == 0) {
-
                 gps.showSettingsAlert();
-
-
-
             }
 
         } else {
@@ -326,12 +380,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-
         MenuItem myActionMenuItem = menu.findItem( R.id.action_search);
         SearchView searchView = (SearchView) myActionMenuItem.getActionView();
         searchView.setOnQueryTextListener(this);
-
     }
 
 
@@ -433,11 +484,14 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public void onOffersLoaded(ArrayList<Offer> listOffers) {
 
 
-        Log.d(LOGTAG, "Inside callback onOffersLoaded: "+listOffers.size());
+        //Log.d(LOGTAG, "Inside callback onOffersLoaded: "+listOffers.size()+" Is Added: "+isAdded()+" Activity: "+activity);
+
+
 
         if (isAdded() && activity != null) {
             if (listOffers.size() > 0 && mAdapter != null) {
                 mModels = listOffers;
+                //Log.d(LOGTAG, "Inside Adapter: "+mAdapter);
                 mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), listOffers, "BrowseOffers");
 
                 mRecyclerOffers.setAdapter(mAdapter);

@@ -203,11 +203,7 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
                     brandVideo = (BrandVideo) brandInfo.get(i);
 
-
-
                     String videoThumb = brandVideo.getVideothumb();
-
-
 
                     if (brandVideo.getVideoProvider().equals("1")) {
 
@@ -226,8 +222,6 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
                                 }
                             }
-
-
 
                         }
 

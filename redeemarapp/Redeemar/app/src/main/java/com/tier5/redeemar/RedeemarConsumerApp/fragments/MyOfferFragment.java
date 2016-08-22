@@ -110,13 +110,13 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // Check if the Android version code is greater than or equal to Lollipop
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //return resources.getDrawable(id, context.getTheme());
             mRecyclerOffers.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider, getActivity().getApplicationContext().getTheme())));
         } else {
             //return resources.getDrawable(id);
             mRecyclerOffers.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider)));
-        }
+        }*/
 
         mListOffers = new ArrayList<>();
 
@@ -217,8 +217,8 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
     @Override
     public void onOffersLoaded(ArrayList<Offer> listOffers) {
 
-        if(listOffers.size() > 0 && mAdapter != null) {
-            Log.d(LOGTAG, "Inside calback onOffersLoaded: " + listOffers.size());
+        if(listOffers.size() > 0 && adapter != null) {
+            Log.d(LOGTAG, "Inside callback onMyOffersLoaded: " + listOffers.size());
             //mAdapter = new MyOffersViewAdapter(getActivity(), listOffers, "MyOffers");
             //mAdapter.setMode(ExpandableRecyclerAdapter.MODE_ACCORDION);
             //mRecyclerOffers.setAdapter(mAdapter);

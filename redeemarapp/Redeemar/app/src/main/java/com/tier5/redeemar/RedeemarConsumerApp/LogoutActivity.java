@@ -7,10 +7,12 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.plus.Plus;
 
 public class LogoutActivity extends Activity implements
@@ -52,7 +54,11 @@ public class LogoutActivity extends Activity implements
         //callbackManager = CallbackManager.Factory.create();
         // We can logout from facebook by calling following method
         //LoginManager.getInstance().logOut();
-        LoginManager.getInstance().logOut();
+
+        //if(isLoggedIn()) {
+            LoginManager.getInstance().logOut();
+            Log.d(LOGTAG, "Successfully logged out from facebook account");
+        //}
 
         // Logout from Google
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -125,6 +131,16 @@ public class LogoutActivity extends Activity implements
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+    }
+
+    private void logout(){
+
+    }
+
+    public boolean isLoggedIn() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        Log.d(LOGTAG, "Access Token: "+accessToken);
+        return accessToken != null;
     }
 
 

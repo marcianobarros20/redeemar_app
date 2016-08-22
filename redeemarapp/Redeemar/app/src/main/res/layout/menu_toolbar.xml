@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+        android:id="@+id/insideToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:layout_above="@id/my_recycler_view"
+        android:background="@color/darkGray"
+        android:orientation="horizontal">
+
+
+
+        <TextView
+            android:id="@+id/tvToolHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:gravity="left"
+            android:text="@string/showing_all"
+            android:textColor="@color/white"
+            android:visibility="visible"
+            android:layout_weight="1" />
+
+
+        <ImageView
+            android:id="@+id/menu_list_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:src="@drawable/ic_thumb_green"
+            android:layout_gravity="center_vertical|right" />
+
+        <ImageView
+            android:id="@+id/menu_map_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:src="@drawable/ic_map_view"
+            android:layout_gravity="center_vertical|right" />
+
+        <ImageView
+            android:id="@+id/menu_thumb_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/ic_list_green"
+            android:layout_gravity="center_vertical|right" />
+
+    </LinearLayout>
+
+</LinearLayout>

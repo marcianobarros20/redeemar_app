@@ -77,7 +77,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         this.mContext = context;
         this.offerList = objects;
         this.activityName = actName;
-
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
@@ -85,6 +84,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
     public void setOffers(ArrayList<Offer> listOffers) {
         this.offerList = listOffers;
+
+        Log.d(LOGTAG, "Offers count: "+listOffers.size());
         //update the adapter to reflect the new set of Offers
         notifyDataSetChanged();
     }
@@ -169,8 +170,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         //address_distance = item.getLocation()+" "+item.getDistance();
 
-        if(offer_desc.length() > 50)
-            viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 50)+"...");
+        if(offer_desc.length() > 75)
+            viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 75)+"...");
         else
             viewHolder.tvOfferDescription.setText(offer_desc);
 
@@ -277,9 +278,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         if(!imageUrl.equalsIgnoreCase("")) {
 
             imageUrl = UrlEndpoints.serverBaseUrl + imageUrl;
-            viewHolder.mImageLoader.get(imageUrl, ImageLoader.getImageListener(viewHolder.thumbnail,
-                    R.drawable.icon_watermark, android.R.drawable
-                            .ic_dialog_alert));
+            viewHolder.mImageLoader.get(imageUrl, ImageLoader.getImageListener(viewHolder.thumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
             viewHolder.thumbnail.setImageUrl(imageUrl, viewHolder.mImageLoader);
             viewHolder.thumbnail.setAdjustViewBounds(false);
         }
@@ -355,18 +354,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             public void onOpen(SwipeLayout layout) {
                 //when the BottomView totally show.
 
-                Log.d(LOGTAG, "Drag Distance: "+viewHolder.swipeLayout.getDragDistance());
-                Log.d(LOGTAG, "Drag Edge: "+viewHolder.swipeLayout.getDragEdge());
-                Log.d(LOGTAG, "Open Status: "+viewHolder.swipeLayout.getOpenStatus());
-
-                if(viewHolder.swipeLayout.getDragEdge() == SwipeLayout.DragEdge.Left) {
-
-
-
-
-
-
-                }
 
             }
 

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_books"
@@ -38,11 +37,9 @@
         </LinearLayout>
 
 
-
-
         <!-- Top View,  Row itemView of RecyclerView -->
         <RelativeLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/list_row_selector"
             android:padding="0dp">
@@ -51,14 +48,14 @@
 
             <com.android.volley.toolbox.NetworkImageView
                 android:id="@+id/thumbnail"
-                android:layout_width="160dp"
-                android:layout_height="120dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:layout_marginRight="6dp"
-                android:src="@drawable/icon_watermark"/>
+                android:src="@drawable/icon_watermark" />
 
 
 
@@ -88,8 +85,7 @@
                 android:lines="2"
                 android:paddingBottom="12dp"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/darkGray"/>
+                android:textColor="@color/green_text"/>
 
             <LinearLayout
                 android:id="@+id/offer_content"
@@ -102,96 +98,134 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/price_top"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:weightSum="2"
                     android:orientation="horizontal">
+
+
+                    <LinearLayout
+                        android:id="@+id/price_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_marginRight="1dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="PAY"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black" />
+
+
+                        <TextView
+                            android:id="@+id/pay_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:text="$20.95"
+                            android:gravity="start"
+                            android:textSize="@dimen/button_title_larger"
+                            android:textStyle="bold"
+                            android:textColor="@color/green_text" />
+
+                    </LinearLayout>
+
+
 
                     <LinearLayout
                         android:id="@+id/discount_layout"
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:layout_gravity="center_vertical"
-                        android:orientation="vertical">
+                        android:layout_gravity="left"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SAVE"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black" />
 
                         <TextView
                             android:id="@+id/discount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="left"
-                            android:text="Discount"
-                            style="@style/GreenMedText" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/price_layout"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:layout_gravity="center_horizontal"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/retail_value"
-                            android:layout_marginRight="1dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Retail value"
-                            android:gravity="center_horizontal"
-                            android:textSize="@dimen/text_title_med"
-                            android:textStyle="bold"
-                            android:textColor="@color/gray" />
-
-
-                        <TextView
-                            android:id="@+id/pay_value"
-                            android:layout_marginRight="1dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Pay Value"
-                            android:gravity="center_horizontal"
-                            android:paddingBottom="4dp"
-                            android:textStyle="bold"
+                            android:text="$20.95"
+                            android:paddingLeft="5dp"
+                            android:gravity="start"
                             android:textSize="@dimen/button_title_larger"
+                            android:textStyle="bold"
                             android:textColor="@color/green_text" />
-
-
 
                     </LinearLayout>
 
 
                 </LinearLayout>
-
-
 
 
                 <LinearLayout
-                    android:id="@+id/distance_layout"
+                    android:id="@+id/price_bottom"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:weightSum="2"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/map_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_marker"
-                        />
 
-                    <TextView
-                        android:id="@+id/distance"
-                        android:layout_marginRight="10dp"
+                    <LinearLayout
+                        android:id="@+id/retail_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Location"
-                        android:textSize="@dimen/menu_title_small"
-                        android:textColor="@color/gray"
-                        android:layout_gravity="left|center_vertical"/>
+                        android:layout_gravity="left"
+                        android:layout_weight="1"
+                        android:paddingRight="5dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/retail_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="$50.99 Value"
+                            android:gravity="left"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black" />
+
+                    </LinearLayout>
+
+
+
+                    <LinearLayout
+                        android:id="@+id/validity_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/expires"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="* Expires in 9 days"
+                            android:gravity="left"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black" />
+
+                    </LinearLayout>
+
 
                 </LinearLayout>
-
 
 
             </LinearLayout>

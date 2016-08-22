@@ -503,7 +503,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
         mRecyclerOffers.setVisibility(View.VISIBLE);
         tvEmptyView.setVisibility(View.GONE);*/
 
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.marker);
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
 
         for (int i = 0; i < brandList.size(); i++) {
             User brnd = brandList.get(i);
@@ -515,9 +515,11 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
 
 
+
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon())))
-                        .title(String.valueOf(i))
+                        .title(brnd.getCompanyName())
+                        .snippet(brnd.getAddress())
                         .icon(icon);
                 MarkerItem markerItem = new MarkerItem(markerOptions);
 

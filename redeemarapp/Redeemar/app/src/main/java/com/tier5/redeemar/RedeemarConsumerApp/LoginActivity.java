@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,12 +22,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -46,6 +51,7 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements
     private Button btnLogin;
     private LoginButton btnFBLogin;
     private SignInButton btnGoogleSignIn;
-    private String email, password;
+    private String email="", password="", firstName = "", lastName = "";;
     private ProgressDialog pd;
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
@@ -96,12 +102,47 @@ public class LoginActivity extends AppCompatActivity implements
 
     private static final int RC_SIGN_IN = 9001;
     private ProgressDialog mProgressDialog;
-
+    private ProfileTracker tracker;
     private String loginMethod = "", offerId = "", androidId = "", noAutoLogin = "";
 
 
 
 
+    private FacebookCallback<LoginResult> mCallback = new FacebookCallback<LoginResult>() {
+
+        @Override
+        public void onSuccess(LoginResult loginResult) {
+
+            Log.d(LOGTAG, "Login success");
+            AccessToken accessToken = loginResult.getAccessToken();
+
+            Log.d(LOGTAG, "Login Result: "+loginResult.toString());
+
+            tracker = new ProfileTracker() {
+                @Override
+                protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
+
+                    if(currentProfile != null)
+                        Log.d(LOGTAG, "My First: "+currentProfile.getFirstName());
+
+                }
+            };
+
+            tracker.startTracking();
+            facebookGraphAccess(loginResult);
+
+        }
+
+        @Override
+        public void onCancel() {
+            Log.d(LOGTAG, "Login cancelled");
+        }
+
+        @Override
+        public void onError(FacebookException error) {
+            Log.d(LOGTAG, "Login error: "+error.toString());
+        }
+    };
 
 
     @Override
@@ -162,8 +203,20 @@ public class LoginActivity extends AppCompatActivity implements
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
 
+        btnFBLogin = (LoginButton) findViewById(R.id.btn_login_fb);
+        btnFBLogin.setReadPermissions("public_profile", "email");
+
+        btnFBLogin.registerCallback(callbackManager, mCallback);
+
+        btnFBLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(LOGTAG, "FB Login clicked");
+            }
+        });
+
         initRegularSignIn();
-        initFBSignIn();
+        //initFBSignIn();
         initGoogleSignIn();
 
 
@@ -178,7 +231,7 @@ public class LoginActivity extends AppCompatActivity implements
 
         try {
 
-            procFBSignIn();
+            //procFBSignIn();
 
             //Thread.sleep(4000);
 
@@ -347,13 +400,6 @@ public class LoginActivity extends AppCompatActivity implements
 
     }
 
-    public void initFBSignIn() {
-
-        btnFBLogin = (LoginButton) findViewById(R.id.btn_login_fb);
-        btnFBLogin.setReadPermissions("public_profile", "email");
-    }
-
-
     private void initGoogleSignIn(){
 
         btnGoogleSignIn = (SignInButton) findViewById(R.id.btn_sign_in_google);
@@ -376,90 +422,6 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(LOGTAG, "Finished building API Client");
 
     }
-
-    ////////////////////////////////////////////////////////////// FOR FACEBOOK LOGIN //////////////////////////////////////////////////////////////
-
-    public void procFBSignIn() {
-
-        Log.d(LOGTAG, "Inside processing");
-
-
-
-        LoginManager.getInstance().registerCallback(callbackManager,
-            new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(LoginResult loginResult) {
-                    // App code
-
-                    Log.d(LOGTAG, "Login Result: "+loginResult.toString());
-
-                    showProgressDialog();
-
-                    // App code
-                    GraphRequest request = GraphRequest.newMeRequest(
-                            loginResult.getAccessToken(),
-                            new GraphRequest.GraphJSONObjectCallback() {
-                                @Override
-                                public void onCompleted(
-                                        JSONObject object,
-                                        GraphResponse response) {
-
-                                    Log.d(LOGTAG, "Response from graph: " + response);
-                                    String user_full_name = "";
-                                    try {
-                                    /*user = new User();
-                                    user.facebookID = object.getString("id").toString();
-                                    user.email = object.getString("email").toString();
-                                    user.name = object.getString("name").toString();
-                                    user.gender = object.getString("gender").toString();
-                                    PrefUtils.setCurrentUser(user,LoginActivity.this);*/
-
-                                        if (object.getString("email") != null) {
-                                            //String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
-                                            Log.d(LOGTAG, "Android Id is: "+androidId);
-                                            // Email, Device Token, facebook Id, Google Id, where 0 implies no value
-                                            new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "", offerId);
-                                        }
-                                        else {
-                                            Toast.makeText(LoginActivity.this,"Unable to get your email", Toast.LENGTH_LONG).show();
-                                        }
-
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                        hideProgressDialog();
-
-                                    }
-
-
-                                }
-
-                            });
-
-                    Bundle parameters = new Bundle();
-                    //parameters.putString("fields", "id,name,email,gender, birthday");
-                    parameters.putString("fields", "id,first_name,last_name,email");
-                    request.setParameters(parameters);
-                    request.executeAsync();
-
-                    hideProgressDialog();
-
-
-
-                }
-
-                @Override
-                public void onCancel() {
-                    // App code
-                }
-
-                @Override
-                public void onError(FacebookException exception) {
-                    // App code
-                }
-            });
-
-    }
-
 
 
     ////////////////////////////////////////////////////////////// FOR GOOGLE PLUS LOGIN //////////////////////////////////////////////////////////////
@@ -729,6 +691,133 @@ public class LoginActivity extends AppCompatActivity implements
 
 
 
+    private void facebookGraphAccess(LoginResult mLoginResult) {
+
+        // App code
+        GraphRequest request = GraphRequest.newMeRequest(
+                mLoginResult.getAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+
+
+                    boolean isFBLoginSuccess = false;
+
+
+                    @Override
+                    public void onCompleted(
+                            JSONObject object,
+                            GraphResponse response) {
+
+                        Log.d(LOGTAG, "Response from graph: " + response);
+
+                        try {
+
+                            if (!object.isNull("email")) {
+                                //String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
+                                Log.d(LOGTAG, "Email is: "+object.getString("email"));
+                                 email = object.getString("email");
+                                isFBLoginSuccess = true;
+                            }
+
+                            if (!object.isNull("first_name")) {
+                                //String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
+                                firstName = object.getString("first_name");
+                                Log.d(LOGTAG, "First Name is: "+object.getString("first_name"));
+
+                            }
+
+
+                            if (!object.isNull("last_name")) {
+                                //String androidId=Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
+                                lastName = object.getString("last_name");
+                                Log.d(LOGTAG, "Last Name is: "+object.getString("last_name"));
+                                // Email, Device Token, facebook Id, Google Id, where 0 implies no value
+                                //new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "", offerId);
+                            }
+
+                            if (!object.isNull("id")) {
+
+
+
+
+
+                                String facebookUserId = object.getString("id");
+                                Log.d(LOGTAG, "Profile Id: "+facebookUserId);
+
+                                if(facebookUserId != "") {
+
+                                    Bitmap bitmap = Utils.getFacebookProfilePicture(facebookUserId);
+
+                                    if(bitmap != null) {
+                                        String profilePicPath = Utils.saveToInternalStorage(getApplicationContext(), bitmap);
+                                        Log.d(LOGTAG, "Profile Image Path: "+profilePicPath);
+
+                                    }
+
+
+                                    /*
+
+                                        String profileURL = "/" + facebookUserId + "/picture";
+                                        new GraphRequest(
+                                                AccessToken.getCurrentAccessToken(),
+                                                profileURL,
+                                                null,
+                                                HttpMethod.GET,
+                                                new GraphRequest.Callback() {
+                                                    public void onCompleted(GraphResponse response) {
+                                                        JSONObject picObj = response.getJSONObject();
+                                                        try {
+
+                                                        String b = picObj.getString("FACEBOOK_NON_JSON_RESULT");
+
+                                                        } catch (Exception ex) {
+                                                            Log.d(LOGTAG, "Profile Picture Exception: " + ex.toString());
+                                                        }
+
+                                                        Log.d(LOGTAG, "Profile Picture: " + response.toString());
+                                                    }
+                                                }
+                                        ).executeAsync();*/
+
+
+                                }
+
+
+                            }
+
+                            Log.d(LOGTAG, firstName);
+                            Log.d(LOGTAG, lastName);
+
+                            //showProgressDialog();
+
+                            if(isFBLoginSuccess) {
+                                new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "", offerId);
+                            }
+
+                            //tvWelcome.setText("Welcome "+firstName+" "+lastName);
+
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            hideProgressDialog();
+
+                        }
+
+
+                    }
+
+                });
+
+        Bundle parameters = new Bundle();
+        //parameters.putString("fields", "id,name,email,gender, birthday");
+        parameters.putString("fields", "id,first_name,last_name,email");
+        request.setParameters(parameters);
+        request.executeAsync();
+
+    }
+
+
+
+
+
 
     private class LoginAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -742,7 +831,6 @@ public class LoginActivity extends AppCompatActivity implements
             url = UrlEndpoints.loginURL;
             basePath = UrlEndpoints.basePathURL;
 
-
         }
 
         @Override
@@ -753,7 +841,6 @@ public class LoginActivity extends AppCompatActivity implements
             String email = params[0];
             String password = params[1];
             String offer_id = params[2];
-
 
             try {
                 myUrl = new URL(url);
@@ -1080,7 +1167,7 @@ public class LoginActivity extends AppCompatActivity implements
                         editor.commit(); // commit changes
 
                         //Log.d(LOGTAG, "Login successful");
-                        showProgressDialog();
+                        //showProgressDialog();
 
 
                         // After successful login, redirect to the previous action

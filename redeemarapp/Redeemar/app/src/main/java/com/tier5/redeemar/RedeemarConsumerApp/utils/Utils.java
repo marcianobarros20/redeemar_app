@@ -1,7 +1,10 @@
 package com.tier5.redeemar.RedeemarConsumerApp.utils;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.Settings;
@@ -14,11 +17,13 @@ import com.tier5.redeemar.RedeemarConsumerApp.DisplayFailureActivity;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -121,11 +126,43 @@ public class Utils {
         return logText;
     }
 
+    public static Bitmap getFacebookProfilePicture(String userID){
+
+        try {
+            String fbPicUrl = "https://graph.facebook.com/" + userID + "/picture?type=small";
+            URL imageURL = new URL(fbPicUrl);
+            Bitmap bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
+
+            return bitmap;
+        } catch(Exception ex){
+            Log.e(LOGTAG, "Error in getting profile pic: "+ex.toString());
+        }
+
+        return null;
+
+    }
 
 
+    public static String saveToInternalStorage(Context context, Bitmap bitmapImage){
+        ContextWrapper cw = new ContextWrapper(context);
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory,"profile.jpg");
 
-
-
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            //fos.close();
+        }
+        return directory.getAbsolutePath();
+    }
 
 
 

@@ -195,7 +195,12 @@ public class Parser {
 
                         if(!jsonObject.isNull("id") && jsonObject.optString("id").toString() != "") {
                             offer.setOfferId(jsonObject.optString("id").toString());
-                            Log.d(LOGTAG, "offer_id: "+jsonObject.optString("id").toString());
+                            Log.d(LOGTAG, "Id: "+jsonObject.optString("id").toString());
+                        }
+
+                        if(!jsonObject.isNull("created_by") && jsonObject.optString("created_by").toString() != "") {
+                            offer.setCreatedBy(jsonObject.getInt("created_by"));
+                            Log.d(LOGTAG, "Created By: "+jsonObject.getInt("created_by"));
                         }
 
                         if(!jsonObject.isNull("offer_description") && jsonObject.getString("offer_description").toString() != "") {
@@ -296,15 +301,47 @@ public class Parser {
                         }
 
 
-                        /*JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));
+                        JSONObject jsonPartnerSettings = new JSONObject(jsonObject.getString("partner_settings"));
 
-                        if(!json_partner_settings.isNull("price_range_id")) {
-                            offer.setPriceRangeId(json_partner_settings.getString("price_range_id").toString());
-                            //Log.d(LOGTAG, "price_range_id: "+json_partner_settings.getString("price_range_id").toString());
-
+                        if(!jsonPartnerSettings.isNull("price_range_id")) {
+                            offer.setPriceRangeId(jsonPartnerSettings.getString("price_range_id").toString());
                         }
                         else
-                            offer.setPriceRangeId("");*/
+                            offer.setPriceRangeId("");
+
+
+                        if(!jsonObject.isNull("logo_details") && !jsonObject.getString("logo_details").equalsIgnoreCase("")) {
+
+                            JSONObject jsonLogoSettings = new JSONObject(jsonObject.getString("logo_details"));
+
+                            if(!jsonLogoSettings.isNull("logo_name")) {
+                                offer.setBrandLogo(jsonLogoSettings.getString("logo_name").toString());
+                            }
+                            else
+                                offer.setBrandLogo("");
+
+                        }
+
+
+                        if(!jsonObject.isNull("counters") && !jsonObject.getString("counters").equalsIgnoreCase("")) {
+
+                            JSONObject jsonCounters = new JSONObject(jsonObject.getString("counters"));
+
+                            if(!jsonCounters.isNull("offers_count")) {
+                                offer.setOffersCount(jsonCounters.getInt("offers_count"));
+                            }
+                            else
+                                offer.setOffersCount(0);
+
+                            if(!jsonCounters.isNull("deals_count")) {
+                                offer.setDealsCount(jsonCounters.getInt("deals_count"));
+                            }
+                            else
+                                offer.setDealsCount(0);
+
+                        }
+
+
 
                         JSONArray companyArray = new JSONArray(jsonObject.getString("company_detail"));
 
@@ -330,6 +367,8 @@ public class Parser {
                         }
                         else
                             offer.setZipcode("");
+
+
 
                         listOffers.add(offer);
 

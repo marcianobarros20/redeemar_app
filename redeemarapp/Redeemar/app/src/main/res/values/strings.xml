@@ -215,7 +215,7 @@
     <string name="days">days</string>
     <string name="currency_symbol">$</string>
     <string name="distance_unit">Km.</string>
-    <string name="miles">miles</string>
+    <string name="miles">Miles</string>
     <string name="percentage_symbol">%</string>
     <string name="off">OFF</string>
     <string name="save">Save</string>
@@ -223,6 +223,7 @@
     <string name="offers_in">Offers</string>
     <string name="no_records">No record found.</string>
     <string name="unable_to_get_records">Unable to get record found.</string>
+    <string name="active">Active</string>
 
 
 
@@ -230,15 +231,19 @@
     <string name="pass_it">PASS</string>
     <string name="scan_offer">Scan</string>
     <string name="no_rec">No Records</string>
+    <string name="showing_all">All Offers</string>
+
 
     <string name="my_offers">Banked</string>
     <string name="nearby">Nearby</string>
+    <string name="map_view">Nearby</string>
     <string name="browse_offers">Browse</string>
     <string name="offer_list">Offers</string>
     <string name="daily_deals">Deals</string>
     <string name="open_drawer">Open</string>
     <string name="close_drawer">Close</string>
     <string name="my_banked">Banked Offers</string>
+
 
     <string name="nearby_brands">Brands Nearby</string>
     <string name="offers_by_brand">Offers by brand</string>
@@ -330,8 +335,8 @@
     <string name="advertisement2">Contact us at info@redeemar.com</string>
     <string name="offer_details">Offer Details</string>
     <string name="loading">Loading..</string>
-    <string name="offers">offers</string>
-    <string name="on_demand">On Demand</string>
+    <string name="offers">Offers</string>
+    <string name="on_demand">On-Demand</string>
     <string name="error_timeout">Request timed out</string>
     <string name="error_auth_failure">Authentication failed</string>
     <string name="error_network">Network failure</string>
