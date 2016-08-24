@@ -13,8 +13,8 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.BrandVideo;
 
 public class DisplayFailureActivity extends Activity {
 
-    TextView tvSuccessMessage;
-    Button btnContinue;
+    TextView tvSuccessMessage, tvErrorCode;
+    Button btnContinue, btnScan;
     Typeface myFont;
 
 
@@ -24,7 +24,11 @@ public class DisplayFailureActivity extends Activity {
         setContentView(R.layout.activity_display_failure);
 
         tvSuccessMessage = (TextView) findViewById(R.id.tvSuccessMessage);
+        tvErrorCode = (TextView) findViewById(R.id.tvErrorCode);
+
         btnContinue = (Button)  findViewById(R.id.btnContinue);
+        btnScan = (Button)  findViewById(R.id.btnScan);
+
         myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
         tvSuccessMessage.setTypeface(myFont);
 
@@ -63,14 +67,15 @@ public class DisplayFailureActivity extends Activity {
             else if(scan_err.equalsIgnoreCase("R02006"))
                 tvSuccessMessage.setText(getString(R.string.error_validation_wrong_redeemar));
 
-
-            else if(scan_err.equalsIgnoreCase("R02010")) {
-
+            else if(scan_err.equalsIgnoreCase("R02010"))
                 tvSuccessMessage.setText(getString(R.string.error_cgi_animation));
-            }
 
-            else
-                tvSuccessMessage.setText(scan_err);
+            //else
+            //    tvSuccessMessage.setText(scan_err);
+
+            //tvErrorCode.setVisibility(View.VISIBLE);
+
+            tvErrorCode.setText("Error Code: "+scan_err);
 
         }
 
@@ -78,12 +83,19 @@ public class DisplayFailureActivity extends Activity {
 
             @Override
             public void onClick(View arg0) {
+            Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
+            startActivity(sIntent);
+            finish();
+            }
+        });
 
+        btnScan.setOnClickListener(new View.OnClickListener() {
 
-                Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
+            @Override
+            public void onClick(View arg0) {
+                Intent sIntent = new Intent(getApplicationContext(), CloudReco.class);
                 startActivity(sIntent);
                 finish();
-
             }
         });
     }

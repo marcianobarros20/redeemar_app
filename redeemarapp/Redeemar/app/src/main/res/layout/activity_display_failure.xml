@@ -56,6 +56,22 @@
             android:text="@string/continue_to_browse" />
 
 
+        <Button
+            android:id="@+id/btnScan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:textSize="@dimen/menu_title_med"
+            android:paddingTop="@dimen/button_padding_med"
+            android:paddingBottom="@dimen/button_padding_med"
+            android:paddingLeft="@dimen/button_padding"
+            android:paddingRight="@dimen/button_padding"
+            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+            android:background="@drawable/button_green"
+            android:textColor="@color/white"
+            android:text="@string/continue_to_browse" />
+
     </RelativeLayout>
 
 
@@ -73,14 +89,29 @@
             android:id="@+id/tvSuccessMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:paddingBottom="10dp"
+            android:layout_margin="2dp"
             android:gravity="center"
             android:layout_centerInParent="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/failed"
             android:textColor="@color/deep_red"
             android:layout_below="@+id/brand_logo_image"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/tvErrorCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:paddingBottom="10dp"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/INIT_ERROR"
+            android:textColor="@color/deep_red"
+            android:textSize="12sp"
+            android:layout_below="@+id/tvSuccessMessage"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
 
@@ -91,6 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_below="@+id/tvErrorCode"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:paddingBottom="15dp"

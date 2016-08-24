@@ -10,13 +10,45 @@ import com.google.android.gms.maps.model.LatLng;
 public class Address implements Serializable {
     private String street;
     private String town;
+    private String city;
+    private String state;
+    private String zip;
     private LatLng coordinates;
+
+    public Address() {
+        super();
+    }
+
 
     public Address(String street, String town, LatLng coordinates) {
         super();
         this.street = street;
         this.town = town;
         this.coordinates = coordinates;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 
     public String getStreet() {

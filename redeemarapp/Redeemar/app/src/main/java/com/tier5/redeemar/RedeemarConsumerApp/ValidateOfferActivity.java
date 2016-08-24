@@ -1,5 +1,10 @@
 package com.tier5.redeemar.RedeemarConsumerApp;
 
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -10,16 +15,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
+import com.tier5.redeemar.RedeemarConsumerApp.async.ValidatePassCodeAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.fragments.BrowseOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 
 import org.json.JSONArray;
@@ -42,7 +50,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class ValidateOfferActivity extends AppCompatActivity {
+public class ValidateOfferActivity extends AppCompatActivity implements TaskCompleted {
 
     private static final String LOGTAG = "ValidateOffer";
 
@@ -50,7 +58,12 @@ public class ValidateOfferActivity extends AppCompatActivity {
     private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvDiscount, tvValidateAfter, tvValidateWithin;
     private NetworkImageView thumbnail;
     private ImageLoader mImageLoader;
-    private Button btnRedeem;
+    private EditText etRedeemCode;
+    private Button btnRedeemScan, btnRedeemPassCode;
+
+    private AlertDialog alertDialog;
+    private AlertDialog.Builder builder;
+
     private Resources res;
     private SharedPreferences sharedpref;
     private SimpleDateFormat fromDateFormat;
@@ -84,8 +97,8 @@ public class ValidateOfferActivity extends AppCompatActivity {
         tvValidateWithin = (TextView) findViewById(R.id.validate_within);
         tvValidateAfter = (TextView) findViewById(R.id.validate_after);
         //btnBank = (Button) findViewById(R.id.btn_bank_offer);
-        //btnPass = (Button) findViewById(R.id.btn_pass_offer);
-        btnRedeem = (Button) findViewById(R.id.btn_redeem_offer);
+        btnRedeemPassCode = (Button) findViewById(R.id.btn_redeem_by_passcode);
+        btnRedeemScan = (Button) findViewById(R.id.btn_redeem_by_scan);
 
 
         tvAddress.setTypeface(myFont);
@@ -165,19 +178,48 @@ public class ValidateOfferActivity extends AppCompatActivity {
             }
 
 
-            btnRedeem.setOnClickListener(new View.OnClickListener() {
+            btnRedeemPassCode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(LOGTAG, "Starting validation by passcode...");
+
+                    etRedeemCode = (EditText) findViewById(R.id.redeem_code);
+                    String redemption_code = etRedeemCode.getText().toString();
+
+                    if(redemption_code.equals("")) {
+
+                        builder = new AlertDialog.Builder(ValidateOfferActivity.this);//Context parameter
+                        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //do stuff
+                            }
+                        });
+
+                        builder.setMessage(getString(R.string.enter_redemption_code));
+                        alertDialog = builder.create();
+
+                        alertDialog.setTitle(getString(R.string.alert_title));
+                        alertDialog.setIcon(R.drawable.icon_cross);
+
+                        alertDialog.show();
+
+                    }
+                    else
+                        new ValidatePassCodeAsyncTask().execute(user_id, offerId, redemption_code);
+                }
+            });
+
+            btnRedeemScan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    Log.d(LOGTAG, "Starting validation...");
+                    Log.d(LOGTAG, "Starting validation by scanning...");
                     Intent intent = new Intent(ValidateOfferActivity.this, CloudReco.class);
                     intent.putExtra(getString(R.string.ext_activity), "Validation");
                     intent.putExtra(getString(R.string.ext_user_id), user_id);
                     intent.putExtra(getString(R.string.ext_offer_id), offerId);
                     startActivity(intent);
-
-                    //intent.putExtra("ACTIVITY_TO_LAUNCH", "app.CloudRecognition.CloudReco");
-                    //intent.putExtra("ABOUT_TEXT", "CloudReco/CR_about.html");
                 }
             });
 
@@ -483,6 +525,52 @@ public class ValidateOfferActivity extends AppCompatActivity {
 
 
     }
+
+
+
+    @Override
+    public void onTaskComplete(String result) {
+
+        Log.d(LOGTAG, "OnTaskCompleted inside EditProfile: "+result);
+
+        if(result.equalsIgnoreCase("R01001")) {
+
+            builder.setMessage(getString(R.string.error_validation_success));
+
+            alertDialog = builder.create();
+            alertDialog.setTitle(getString(R.string.alert_title));
+            alertDialog.setIcon(R.drawable.icon_tick);
+            alertDialog.show();
+
+        }
+        else {
+
+            if(result.equalsIgnoreCase("R01002"))
+                builder.setMessage(getString(R.string.offer_not_found));
+
+            else if(result.equalsIgnoreCase("R01003"))
+                builder.setMessage(getString(R.string.error_offer_expired));
+
+            else if(result.equalsIgnoreCase("R01004"))
+                builder.setMessage(getString(R.string.error_duplicate_validation));
+
+            else if(result.equalsIgnoreCase("R01005"))
+                builder.setMessage(getString(R.string.redemption_code_mismatch));
+
+            else
+                builder.setMessage(getString(R.string.offer_not_found));
+
+
+
+            alertDialog = builder.create();
+            alertDialog.setTitle(getString(R.string.alert_title));
+            alertDialog.setIcon(R.drawable.icon_cross);
+            alertDialog.show();
+
+        }
+
+    }
+
 
 
 

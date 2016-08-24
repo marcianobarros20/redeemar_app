@@ -8,9 +8,12 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
@@ -18,6 +21,8 @@ import com.google.android.gms.maps.MapsInitializer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -25,8 +30,10 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -34,20 +41,24 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
 import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.RecyclerItemClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.ResizeAnimation;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrandViewAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadImageTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByBrandsAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.MarkerItem;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 
 import java.util.ArrayList;
 
@@ -70,7 +81,6 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
     private float dpHeight = 0, bHeight = 0, nHeight = 0, dpWidth= 0;
     private int pxHeight, pxHeightRev, pxWidth;
-    private static final LatLng SYDNEY = new LatLng(-33.85704, 151.21522);
     private Resources res;
     private SharedPreferences sharedpref;
     SharedPreferences.Editor editor;
@@ -79,6 +89,8 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
 
     private boolean mMapViewExpanded = false;
+
+    String clickIndex = "", companyName="", companyLocation="";
 
 
     public HomeFragment() {
@@ -184,7 +196,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
             }
 
             //Toast.makeText(getActivity().getApplicationContext(), "Your last known location as per browsing the map is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-            Toast.makeText(getActivity().getApplicationContext(), "Your last known location as per browsing the map is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity().getApplicationContext(), "Your last known location as per browsing the map is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
 
 
 
@@ -280,6 +292,8 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
     public void onDestroyView() {
         super.onDestroyView();
     }
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -301,6 +315,8 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
         googleMap.setOnCameraChangeListener(mClusterManager);
         googleMap.setOnInfoWindowClickListener(mClusterManager);
         googleMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+
+        googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
         googleMap.setOnMarkerClickListener(mClusterManager);
         //mClusterManager.cluster();
 
@@ -314,37 +330,11 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
             public void onMapClick(LatLng arg0) {
                 // TODO Auto-generated method stub
                 Log.d(LOGTAG, "OnMap Clicked "+arg0.latitude + "-" + arg0.longitude);
-
-
                 editor.putString(getString(R.string.spf_last_lat), String.valueOf(arg0.latitude)); // Storing Lat
                 editor.putString(getString(R.string.spf_last_lon), String.valueOf(arg0.longitude)); // Storing Lon
-
-
                 editor.commit(); // commit changes
-
-
                 mMapViewExpanded = true;
-
                 animateMapView();
-
-                /*if(innerContainerLayout.getVisibility()==View.GONE)
-                {
-                    innerContainerLayout.setVisibility(View.VISIBLE);
-                    Log.d(LOGTAG, "Set Visible "+getMapViewStatus());
-                }
-                else
-                {
-                    innerContainerLayout.setVisibility(View.GONE);
-                    //animateMapView();
-
-                    //mMapView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.MATCH_PARENT));
-
-
-                    Log.d(LOGTAG, "Set Gone "+getMapViewStatus());
-                }*/
-
-
-
             }
 
 
@@ -396,19 +386,10 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                     @Override
                     public void onItemClick(View view, int position) {
 
-
                         User br = (User)dispBrandList.get(position);
 
                         if(br.getTargetId() != null) {
-
-                            /*Intent intent = new Intent(getActivity().getApplicationContext(), BrandMainActivity.class);
-                            intent.putExtra("unique_target_id", br.getTargetId());
-                            intent.putExtra(getString(R.string.ext_activity), "NearMeActivity");
-                            startActivity(intent);
-                            //finish();*/
-
                             Log.d(LOGTAG, "Group Recycler Item has been clicked. Brand User Id is "+br.getId());
-
                             openFragment(br.getId());
                         }
                     }
@@ -432,13 +413,16 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                     dispBrandList.clear();
 
                 String ind = item.getTitle();
+                clickIndex = ind;
 
                 User br = (User) brandList.get(Integer.parseInt(ind));
-                //Log.d(LOGTAG, "User Company : "+br.getCompanyName());
-                //Log.d(LOGTAG, "User Address : "+br.getAddress());
-                //Log.d(LOGTAG, "User Logo : "+br.getLogoName());
 
                 br.setLogoName(br.getLogoName());
+
+
+                companyName = br.getCompanyName();
+                companyLocation = br.getLocation();
+
 
                 dispBrandList.add(br);
 
@@ -456,13 +440,6 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                         User br = (User)dispBrandList.get(position);
 
                         if(br.getTargetId() != null) {
-
-                            /*Intent intent = new Intent(getActivity().getApplicationContext(), BrandMainActivity.class);
-                            intent.putExtra("unique_target_id", br.getTargetId());
-                            intent.putExtra(getString(R.string.ext_activity), "NearMeActivity");
-                            startActivity(intent);
-                            //finish();*/
-
                             Log.d(LOGTAG, "Single Recycler Item has been clicked. Brand User Id is "+br.getId());
                             openFragment(br.getId());
                         }
@@ -491,9 +468,77 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
 
 
+    /** Demonstrates customizing the info window and/or its contents. */
+    class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+
+        // These a both viewgroups containing an ImageView with id "badge" and two TextViews with id
+        // "title" and "snippet".
+        private final View mWindow;
+        private final View mContents;
+
+
+        private TextView tvInfoTitle, tvInfoSnippet;
+        private ImageView imStoreFrontPic;
+
+        CustomInfoWindowAdapter() {
+            mWindow = getActivity().getLayoutInflater().inflate(R.layout.custom_info_window, null);
+            mContents = getActivity().getLayoutInflater().inflate(R.layout.custom_info_contents, null);
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+//            if (mOptions.getCheckedRadioButtonId() != R.id.custom_info_window) {
+//                // This means that getInfoContents will be called.
+//                return null;
+//            }
+            render(marker, mWindow);
+            return mWindow;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+//            if (mOptions.getCheckedRadioButtonId() != R.id.custom_info_contents) {
+//                // This means that the default info contents will be used.
+//                return null;
+//            }
+            render(marker, mContents);
+            return mContents;
+        }
+
+        private void render(Marker marker, View view) {
+
+
+            //((ImageView) view.findViewById(R.id.badge)).setImageResource(badge);
+            //imStoreFrontPic = ((ImageView) view.findViewById(R.id.badge));
+
+            tvInfoTitle = (TextView) view.findViewById(R.id.title);
+            tvInfoSnippet = (TextView) view.findViewById(R.id.snippet);
+
+            imStoreFrontPic = (ImageView) view.findViewById(R.id.badge);
+
+            //String ind = marker.getTitle();
+            Log.d(LOGTAG, "Map title index: "+clickIndex);
+
+            if(clickIndex != null && !clickIndex.equals("")) {
+                User br = (User) brandList.get(Integer.parseInt(clickIndex));
+                String imageUrl = br.getStoreFrontImage();
+                Log.d(LOGTAG, "Map Image URL: "+imageUrl);
+                new DownloadImageTask(imStoreFrontPic).execute(imageUrl);
+                tvInfoTitle.setText(companyName);
+                tvInfoSnippet.setText(companyLocation);
+
+            }
+
+
+
+        }
+    }
+
+
+
+
     @Override
     public void onUsersLoaded(ArrayList<User> listBrands) {
-
 
         brandList = listBrands;
 
@@ -511,19 +556,13 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
             if(brnd.getLat() != null && !brnd.getLat().equalsIgnoreCase("") && brnd.getLon() != null && !brnd.getLon().equalsIgnoreCase("")) {
 
                 MyItem offsetItem = new MyItem(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon()));
-                //mClusterManager.addItem(offsetItem);
-
-
-
 
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon())))
-                        .title(brnd.getCompanyName())
-                        .snippet(brnd.getAddress())
+                        .title(String.valueOf(i))
+                        .snippet(brnd.getCompanyName())
                         .icon(icon);
                 MarkerItem markerItem = new MarkerItem(markerOptions);
-
-
 
                 mClusterManager.addItem(markerItem);
 

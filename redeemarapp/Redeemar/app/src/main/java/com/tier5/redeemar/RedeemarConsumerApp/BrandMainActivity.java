@@ -28,29 +28,12 @@ import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.tier5.redeemar.RedeemarConsumerApp.async.BrandDetailsAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadImageTask;
-import com.tier5.redeemar.RedeemarConsumerApp.async.MyOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.BrandLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.BrandVideo;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 

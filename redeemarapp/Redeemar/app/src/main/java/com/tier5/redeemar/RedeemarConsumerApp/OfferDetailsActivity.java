@@ -85,8 +85,6 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
         tvExpires = (TextView) findViewById(R.id.expires);
         btnBank = (Button) findViewById(R.id.btn_bank_offer);
         btnPass = (Button) findViewById(R.id.btn_pass_offer);
-        btnRedeem = (Button) findViewById(R.id.btn_redeem_offer);
-
 
         tvAddress.setTypeface(myFont);
         tvOfferTitle.setTypeface(myFont);

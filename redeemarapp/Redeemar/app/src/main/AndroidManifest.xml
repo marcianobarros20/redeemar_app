@@ -99,7 +99,6 @@
             android:name=".SplashScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Transparent"
             android:noHistory="false"
             >
             <intent-filter>

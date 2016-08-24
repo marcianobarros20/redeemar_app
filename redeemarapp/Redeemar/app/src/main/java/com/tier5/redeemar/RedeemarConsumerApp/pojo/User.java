@@ -6,12 +6,43 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String id, firstName, lastName, address, city, state, zipcode, lat, lon, email, facebookId, web_addres, mobile, companyName, logoName, targetId;
+    private String id, firstName, lastName, address, city, state, zipcode, location, lat, lon, email, facebookId, web_addres, mobile, companyName, logoName, storeFrontImage, storeBrandPic, targetId;
 
      // id	company_name	first_name	last_name	address	city	state	zipcode	lat	lng	email	mobile	web_address	password	cat_id	subcat_id	image_id	owner	offer_permission	create_offer_permission	status	approve	type	facebook_token	googleplus_token	remember_token	device_token	source	membership_level	created_at	updated_at
 
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getStoreFrontImage() {
+        return storeFrontImage;
+    }
+
+    public void setStoreFrontImage(String storeFrontImage) {
+        this.storeFrontImage = storeFrontImage;
+    }
+
+    public String getStoreBrandPic() {
+        return storeBrandPic;
+    }
+
+    public void setStoreBrandPic(String storeBrandPic) {
+        this.storeBrandPic = storeBrandPic;
+    }
+
+    public String getLocation() {
+
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public User() {
+
+
 
     }
 

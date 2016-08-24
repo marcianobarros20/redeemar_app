@@ -605,10 +605,77 @@ public class Requestor {
             e.printStackTrace();
         }
 
-
-
         return reader;
     }
 
 
+
+
+    public static JSONObject requestValidatePassCodeJSON(RequestQueue requestQueue, String url, String userId, String offerId, String passcode) {
+
+
+        URL myUrl = null;
+        HttpURLConnection conn = null;
+        String response = "";
+        JSONObject reader = null;
+
+
+
+        try {
+            myUrl = new URL(url);
+            conn = (HttpURLConnection) myUrl.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+
+            JSONObject data = new JSONObject();
+
+            data.put("webservice_name", "validatepasscode");
+            data.put("user_id", userId);
+            data.put("offer_id", offerId);
+            data.put("redemption_code", passcode);
+
+
+            OutputStream os = conn.getOutputStream();
+
+            Log.d(LOGTAG, "Request: " + data.toString());
+
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            bufferedWriter.write("data="+data.toString());
+            bufferedWriter.flush();
+            bufferedWriter.close();
+
+
+            InputStream inputStream = conn.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                response += line;
+            }
+
+            //Log.d(LOGTAG, "Do In background: " + response);
+            bufferedReader.close();
+            inputStream.close();
+            conn.disconnect();
+            os.close();
+            reader = new JSONObject(response);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+        return reader;
+    }
 }

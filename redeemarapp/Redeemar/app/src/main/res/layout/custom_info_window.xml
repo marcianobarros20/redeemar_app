@@ -21,15 +21,20 @@
 
     <ImageView
         android:id="@+id/badge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:adjustViewBounds="true"></ImageView>
+        android:layout_width="160dp"
+        android:layout_height="140dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_gravity="top"
+        android:scaleType="fitCenter"
+        android:layout_marginRight="4dp"
+        android:src="@drawable/icon_watermark" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/title"
@@ -40,6 +45,7 @@
             android:singleLine="true"
             android:textColor="#ff000000"
             android:textSize="14dp"
+            android:text="Window Title"
             android:textStyle="bold" />
 
         <TextView
@@ -49,6 +55,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textColor="#ff7f7f7f"
+            android:text="Window Content"
             android:textSize="14dp" />
     </LinearLayout>
 </LinearLayout>

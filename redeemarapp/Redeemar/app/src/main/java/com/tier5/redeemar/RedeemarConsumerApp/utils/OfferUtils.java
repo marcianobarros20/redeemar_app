@@ -109,4 +109,11 @@ public class OfferUtils {
         return res;
     }
 
+    public static String loadValidatePassCode(RequestQueue requestQueue, String user_id, String offer_id, String pass_code) {
+
+        JSONObject response = Requestor.requestValidatePassCodeJSON(requestQueue, Endpoints.getRequestUrlUpdateProfile(), user_id, offer_id, pass_code);
+        String res = Parser.parseUpdateProfileJSON(response);
+        Log.d(LOGTAG, "Inside loadValidatePassCode :"+res);
+        return res;
+    }
 }

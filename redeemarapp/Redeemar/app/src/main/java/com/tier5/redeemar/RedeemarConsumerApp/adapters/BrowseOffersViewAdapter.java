@@ -275,7 +275,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
 
         // Instantiate the RequestQueue.
-        if(!imageUrl.equalsIgnoreCase("")) {
+        if(imageUrl != null && !imageUrl.equalsIgnoreCase("")) {
 
             imageUrl = UrlEndpoints.serverBaseUrl + imageUrl;
             viewHolder.mImageLoader.get(imageUrl, ImageLoader.getImageListener(viewHolder.thumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));

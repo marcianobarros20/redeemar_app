@@ -219,12 +219,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
         if(listOffers.size() > 0 && adapter != null) {
             Log.d(LOGTAG, "Inside callback onMyOffersLoaded: " + listOffers.size());
-            //mAdapter = new MyOffersViewAdapter(getActivity(), listOffers, "MyOffers");
-            //mAdapter.setMode(ExpandableRecyclerAdapter.MODE_ACCORDION);
-            //mRecyclerOffers.setAdapter(mAdapter);
-            //mRecyclerOffers.setAdapter(mAdapter);
-
-
 
             adapter.setOffers(listOffers);
             mRecyclerOffers.setAdapter(adapter);

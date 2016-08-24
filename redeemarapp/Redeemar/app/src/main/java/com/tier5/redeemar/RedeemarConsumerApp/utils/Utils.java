@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.tier5.redeemar.RedeemarConsumerApp.DisplayFailureActivity;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -162,6 +163,27 @@ public class Utils {
             //fos.close();
         }
         return directory.getAbsolutePath();
+    }
+
+    public static String getFullAddress(Address address){
+
+        String fullAddr = "";
+
+        if(address.getStreet() != null && !address.getStreet().equalsIgnoreCase(""))
+            fullAddr = address.getStreet();
+
+        if(address.getStreet() != null && !address.getCity().equalsIgnoreCase(""))
+            fullAddr = fullAddr + ", " + address.getCity();
+
+
+        if(address.getState() != null && !address.getState().equalsIgnoreCase(""))
+            fullAddr = fullAddr + ", " + address.getState();
+
+        if(address.getZip() != null && !address.getZip().equalsIgnoreCase(""))
+            fullAddr = fullAddr + ", " + address.getZip();
+
+
+        return fullAddr;
     }
 
 

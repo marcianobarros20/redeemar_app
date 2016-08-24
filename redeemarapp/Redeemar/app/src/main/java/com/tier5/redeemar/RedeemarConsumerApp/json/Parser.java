@@ -42,6 +42,8 @@ import static com.tier5.redeemar.RedeemarConsumerApp.utils.Keys.EndpointOffers.K
 public class Parser {
 
     private static final String LOGTAG = "Parser";
+    private static final ArrayList storePics = new ArrayList<String>();
+    private static final ArrayList foods = new ArrayList<String>();
 
     public static ArrayList<Object> parseBrandDetailsJSON(JSONObject response) {
 
@@ -399,7 +401,48 @@ public class Parser {
         Log.d(LOGTAG, "Inside parseNearByBrandsJSON");
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+        storePics.add("http://media.openwifispots.com/LocationMedia/Standard_23082.jpg");
+        storePics.add("http://media.peaslovecarrots.com/LocationMedia/Standard_38950.jpg");
+        storePics.add("http://www.visit-vermont.com/adservimage/6809.jpg");
+        storePics.add("https://s-media-cache-ak0.pinimg.com/236x/77/e0/02/77e00273ce8ce92a032a14f1cb33632b.jpg");
+        storePics.add("http://www.chicagotraveler.com/sites/default/files/sutton-place-ext_A.jpg");
+        storePics.add("http://garycameradigital.com/media/Store_front.png");
+        storePics.add("https://allaccessbranson.com/images/listings/742393_115258.jpg");
+        storePics.add("http://downtownmanhattanks.com/wp-content/uploads/2011/01/Celebrations-resized-150x120.jpg");
+        storePics.add("https://insideretail.asia/wp-content/uploads/2015/07/Hollys-Coffee-Vietnam-150x120.jpg");
+        storePics.add("http://www.pripsjamaica.com/sites/default/files/styles/thumbnail_big/public/images/places/the-houseboat-grill-jamaica.jpg?itok=DRGvlRfL");
+        storePics.add("https://photoremedy.files.wordpress.com/2015/03/gd-c-palace-chicory-coffee-ext-1j.jpg?w=150&h=120&crop=1");
+        storePics.add("http://www.pripsjamaica.com/sites/default/files/styles/thumbnail_big/public/images/places/13710636_1086403191413996_637515536003171530_o.jpg?itok=R8xjso7A");
+        storePics.add("http://www.pripsjamaica.com/sites/default/files/styles/thumbnail_big/public/images/places/the_wine_shop.jpg?itok=Nf4_mp0G");
+        storePics.add("https://insideretail.asia/wp-content/uploads/2013/08/giantmalaysia-150x120.jpg");
+        storePics.add("https://www.travelvietnam.com/images/Golf-Can-Tho-Hotel-1.jpg");
+        storePics.add("https://insideretail.asia/wp-content/uploads/2013/08/mcdonaldsstore-150x120.jpg");
+        storePics.add("https://insideretail.asia/wp-content/uploads/2015/07/Country-Style-cooking-restaurant-150x120.png");
+
+
+        foods.add("http://www.happylifestyletips.com/wp-content/uploads/2014/04/fried-fast-foods-150x150.jpg");
+        foods.add("http://youngwomenshealth.org/wp-content/uploads/2014/02/fast-food-150x150.jpg");
+        foods.add("http://www.wonderslist.com/wp-content/uploads/2015/08/fast-food-during-pregnancy-150x150.jpg");
+        foods.add("http://www.naturalhealth365.com/wp-content/uploads/2016/02/fast-food-chicken-150x150.jpg");
+        foods.add("http://www.besthealthmag.ca/wp-content/uploads/2016/01/fast-food-150x150.jpg");
+        foods.add("http://www.girlsfash.com/wp-content/uploads/2014/11/disadvantages-of-fast-food-jpg-3-150x150.jpg");
+        foods.add("http://www.weightlossdietwatch.com/wp-content/uploads/2015/09/myths-about-fast-food-debunked-150x150.jpg");
+        foods.add("http://www.happylifestyletips.com/wp-content/uploads/2014/04/fried-fast-foods-150x150.jpg");
+        foods.add("https://s-media-cache-ak0.pinimg.com/236x/dd/07/63/dd07631e8a2769b74e88806bfac2c47c.jpg");
+        foods.add("http://healthytastysnack.com/wp-content/uploads/2016/03/Healthy-Tasty-Fast-Food-150x150.jpg");
+        foods.add("http://ihateworkinginretail.ooid.com/wp-content/uploads/2014/12/MENS_Grossest-Things-Fast-Food_01_01_4491569287_851d02a09c_z-150x150.jpg");
+        foods.add("http://holicoffee.com/wp-content/uploads/2014/05/queso-fundido-pizzas-best-healthy-weight-loss-calories-diet-fast-food-tip1-150x150.jpg");
+        foods.add("http://www.happylifestyletips.com/wp-content/uploads/2014/04/fried-fast-foods-150x150.jpg");
+        foods.add("http://youngwomenshealth.org/wp-content/uploads/2014/02/fast-food-150x150.jpg");
+        foods.add("http://www.wonderslist.com/wp-content/uploads/2015/08/fast-food-during-pregnancy-150x150.jpg");
+        foods.add("http://www.naturalhealth365.com/wp-content/uploads/2016/02/fast-food-chicken-150x150.jpg");
+        foods.add("http://www.besthealthmag.ca/wp-content/uploads/2016/01/fast-food-150x150.jpg");
+
+
+
+
         ArrayList<User> listBrands = new ArrayList<>();
+        int p = 0;
         if (response != null && response.length() > 0) {
 
 
@@ -414,9 +457,13 @@ public class Parser {
 
                     //Iterate the jsonArray and print the info of JSONObjects
                     for (int i = 0; i < offersArray.length(); i++) {
+                        if(storePics.size()-1 <= i) {
+                            p = 0;
+
+                        }
+                        Log.d(LOGTAG, "Id is: "+i);
+
                         JSONObject jsonObject = offersArray.getJSONObject(i);
-
-
                         double lat = 0.0, lng = 0.0;
 
                         User brand = new User();
@@ -432,7 +479,7 @@ public class Parser {
 
                             if (!jsonObject.isNull("company_name") && jsonObject.optString("company_name").trim() != "") {
                                 brand.setCompanyName(jsonObject.optString("company_name"));
-                                Log.d(LOGTAG, "Cluster Company Name: "+jsonObject.optString("company_name"));
+                                //Log.d(LOGTAG, "Cluster Company Name: "+jsonObject.optString("company_name"));
                             }
 
                             if (!jsonObject.isNull("address") && jsonObject.optString("address") != "") {
@@ -440,6 +487,26 @@ public class Parser {
                                 //Log.d(LOGTAG, "Cluster Address: "+jsonObject.optString("address"));
                             }
 
+                            if (!jsonObject.isNull("city") && jsonObject.optString("city") != "") {
+                                brand.setCity(jsonObject.optString("address"));
+                                //Log.d(LOGTAG, "Cluster Address: "+jsonObject.optString("address"));
+                            }
+
+                            if (!jsonObject.isNull("state") && jsonObject.optString("state") != "") {
+                                brand.setState(jsonObject.optString("state"));
+                                //Log.d(LOGTAG, "Cluster Address: "+jsonObject.optString("address"));
+                            }
+
+                            if (!jsonObject.isNull("zipcode") && jsonObject.optString("zipcode") != "") {
+                                brand.setZipcode(jsonObject.optString("zipcode"));
+                                //Log.d(LOGTAG, "Cluster Address: "+jsonObject.optString("address"));
+                            }
+
+
+                            if (!jsonObject.isNull("location") && jsonObject.optString("location") != "") {
+                                brand.setLocation(jsonObject.optString("location"));
+                                //Log.d(LOGTAG, "Cluster Address: "+jsonObject.optString("address"));
+                            }
 
                             if (!jsonObject.isNull("lat") && jsonObject.optString("lat").trim() != "") {
                                 lat = Double.parseDouble(jsonObject.optString("lat"));
@@ -454,7 +521,10 @@ public class Parser {
                             }
 
 
-                            //if (jsonObject.optString("profile") != null && jsonObject.optString("profile") != "") {
+
+                            brand.setStoreFrontImage(storePics.get(p).toString());
+                            brand.setStoreBrandPic(foods.get(p).toString());
+
                             if (!jsonObject.isNull("profile")) {
 
 
@@ -476,6 +546,8 @@ public class Parser {
                                 }
 
                             }
+
+                            p++;
 
 
                             listBrands.add(brand);

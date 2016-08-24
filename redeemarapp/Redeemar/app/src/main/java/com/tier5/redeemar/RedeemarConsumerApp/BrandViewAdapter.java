@@ -140,9 +140,9 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
 
         public SimpleViewHolder(View itemView) {
             super(itemView);
-            tvBrandName = (TextView) itemView.findViewById(R.id.brand_name);
+            /*tvBrandName = (TextView) itemView.findViewById(R.id.brand_name);
             tvAddress = (TextView) itemView.findViewById(R.id.address);
-            tvNumOffers = (TextView) itemView.findViewById(R.id.num_offers);
+            tvNumOffers = (TextView) itemView.findViewById(R.id.num_offers);*/
 
             thumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
 
