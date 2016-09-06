@@ -52,12 +52,13 @@ public class FragmentDrawer extends Fragment {
 
 
         // preparing navigation drawer items
+        // Commented out
         for (int i = 0; i < titles.length; i++) {
             NavDrawerItem navItem = new NavDrawerItem();
-            navItem.setTitle(titles[i]);
-            navItem.setIcon(icons[i]);
+            //navItem.setTitle(titles[i]);
+            //navItem.setIcon(icons[i]);
 
-            data.add(navItem);
+            //data.add(navItem);
         }
         return data;
     }

@@ -62,20 +62,16 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
     public MyOffersViewAdapter(Context context, String actName) {
         this.mContext = context;
         this.activityName = actName;
-
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-
     }
 
     public MyOffersViewAdapter(Context context, ArrayList<Offer> objects, String actName) {
         this.mContext = context;
         this.offerList = objects;
         this.activityName = actName;
-
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-
     }
 
 
@@ -99,8 +95,6 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
     @Override
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
 
-
-        String discDesc = "";
         StringBuilder sb = new StringBuilder(14);
         StringBuilder esb = new StringBuilder(14);
         String address_distance = "";
@@ -132,7 +126,6 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
             Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
             address_distance = address_distance + item.getDistance() + " miles";
         }
-
 
 
         if(offer_desc.length() > 50)
@@ -306,26 +299,6 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
         });
 
 
-
-
-
-
-        /*viewHolder.swipeLayout.getSurfaceView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String id = item.getOfferId();
-                //Toast.makeText(mContext, "Offer Id: " + id, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(v.getContext(), ValidateOfferActivity.class);
-                Log.d(LOGTAG, "This Offer Id: "+id);
-                intent.putExtra(v.getContext().getString(R.string.ext_offer_id), id);
-                v.getContext().startActivity(intent);
-
-            }
-        });*/
-
-
-
         viewHolder.tvValidateOffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -336,12 +309,8 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
                 Log.d(LOGTAG, "My Offer Id: "+id);
                 intent.putExtra(view.getContext().getString(R.string.ext_offer_id), id);
                 view.getContext().startActivity(intent);
-
-
             }
         });
-
-
 
         // mItemManger is member in RecyclerSwipeAdapter Class
         mItemManger.bindView(viewHolder.itemView, position);
@@ -358,9 +327,7 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
         return R.id.swipe;
     }
 
-
     //  ViewHolder Class
-
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
         private SwipeLayout swipeLayout;
         private TextView tvValidateOffer, tvOfferDescription, tvRetailValue, tvDiscount, tvPayValue, tvDistance, tVOnDemand;
@@ -384,11 +351,8 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
             tVOnDemand = (TextView) itemView.findViewById(R.id.on_demand);
             thumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
 
-
             distanceLayout = (LinearLayout) itemView.findViewById(R.id.distance_layout);
             discountLayout = (LinearLayout) itemView.findViewById(R.id.discount_layout);
-
-            //Image URL - This can point to any image file supported by Android
 
         }
     }

@@ -7,6 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
+
     <com.daimajia.swipe.SwipeLayout
         xmlns:swipe="http://schemas.android.com/apk/res-auto"
         android:id="@+id/swipe"
@@ -16,7 +18,6 @@
         swipe:rightEdgeSwipeOffset="0dp">
 
         <!--Bottom View For Right to Left-->
-
         <LinearLayout
             android:id="@+id/bottom_wrapper"
             android:layout_width="240dp"
@@ -45,7 +46,6 @@
             android:padding="0dp">
             <!-- Thumbnail Image -->
 
-
             <com.android.volley.toolbox.NetworkImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="140dp"
@@ -56,7 +56,6 @@
                 android:scaleType="centerCrop"
                 android:layout_marginRight="6dp"
                 android:src="@drawable/icon_watermark" />
-
 
 
             <TextView
@@ -72,7 +71,6 @@
                 android:textSize="11sp"
                 android:text="@string/on_demand"
                 android:visibility="gone"/>
-
 
             <!-- Offer Title -->
             <TextView
@@ -118,25 +116,22 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="PAY"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/black" />
-
 
                         <TextView
                             android:id="@+id/pay_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingLeft="5dp"
-                            android:text="$20.95"
+                            android:text="$"
                             android:gravity="start"
-                            android:textSize="@dimen/button_title_larger"
+                            android:textSize="@dimen/button_title_large"
                             android:textStyle="bold"
                             android:textColor="@color/green_text" />
 
                     </LinearLayout>
-
-
 
                     <LinearLayout
                         android:id="@+id/discount_layout"
@@ -151,7 +146,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="SAVE"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/black" />
 
@@ -159,10 +154,10 @@
                             android:id="@+id/discount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$20.95"
+                            android:text="$"
                             android:paddingLeft="5dp"
                             android:gravity="start"
-                            android:textSize="@dimen/button_title_larger"
+                            android:textSize="@dimen/button_title_large"
                             android:textStyle="bold"
                             android:textColor="@color/green_text" />
 
@@ -193,7 +188,7 @@
                             android:id="@+id/retail_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$50.99 Value"
+                            android:text="$ Value"
                             android:gravity="left"
                             android:textSize="12sp"
                             android:textStyle="bold"
@@ -216,7 +211,7 @@
                             android:id="@+id/expires"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="* Expires in 9 days"
+                            android:text="* Expires in days"
                             android:gravity="left"
                             android:textSize="12sp"
                             android:textStyle="bold"
@@ -238,6 +233,11 @@
 
 
     </com.daimajia.swipe.SwipeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
 </android.support.v7.widget.CardView>
 

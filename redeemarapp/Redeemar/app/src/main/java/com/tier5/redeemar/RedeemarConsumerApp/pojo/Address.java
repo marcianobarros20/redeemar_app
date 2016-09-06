@@ -13,6 +13,7 @@ public class Address implements Serializable {
     private String city;
     private String state;
     private String zip;
+    private String location;
     private LatLng coordinates;
 
     public Address() {
@@ -25,6 +26,14 @@ public class Address implements Serializable {
         this.street = street;
         this.town = town;
         this.coordinates = coordinates;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getCity() {
@@ -74,4 +83,5 @@ public class Address implements Serializable {
     public void setCoordinates(LatLng coordinates) {
         this.coordinates = coordinates;
     }
+
 }

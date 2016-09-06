@@ -73,7 +73,7 @@ public class DisplayFailureActivity extends Activity {
             //else
             //    tvSuccessMessage.setText(scan_err);
 
-            //tvErrorCode.setVisibility(View.VISIBLE);
+            tvErrorCode.setVisibility(View.VISIBLE);
 
             tvErrorCode.setText("Error Code: "+scan_err);
 

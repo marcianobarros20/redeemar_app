@@ -65,6 +65,9 @@
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.READ_LOGS" />
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+
 
     <!--
       NOTE: The setting 'android:launchMode="singleTask"' makes sure
@@ -223,21 +226,26 @@
             android:label="@string/app_name" />
 
 
-        <activity android:name="com.tier5.redeemar.RedeemarConsumerApp.GoogleSignInActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+        <activity android:name="com.tier5.redeemar.RedeemarConsumerApp.SearchActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
+            android:theme="@style/Theme.DesignDemo"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:label="@string/app_name" />
 
-        <activity android:name="com.tier5.redeemar.RedeemarConsumerApp.GooglePlusActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+        <activity android:name="com.tier5.redeemar.RedeemarConsumerApp.CategoryActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
+            android:theme="@style/Theme.DesignDemo"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:label="@string/app_name" />
 
-
+        <activity android:name="com.tier5.redeemar.RedeemarConsumerApp.SearchResultActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
+            android:theme="@style/Theme.DesignDemo"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

@@ -31,9 +31,6 @@ public class SendFeedbackAsyncTask extends AsyncTask<String, Void, String> {
     public SendFeedbackAsyncTask(TaskCompleted myComponent) {
         this.myComponent = myComponent;
         Log.d(LOGTAG, "Inside SendFeedbackAsync constructor: "+myComponent);
-
-        //this.context = ctx;
-
     }
 
     public SendFeedbackAsyncTask() {

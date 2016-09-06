@@ -13,11 +13,12 @@
 		android:padding="0dp">
 
 		<!-- Thumbnail Image -->
-		<ImageView
+		<com.android.volley.toolbox.NetworkImageView
 			android:id="@+id/thumbnailBrand"
 			android:src="@drawable/icon_watermark"
 			android:layout_width="120dp"
 			android:layout_height="120dp"
+			android:padding="4dp"
 			android:adjustViewBounds="false"
 			android:layout_centerVertical="true"
 			android:layout_alignParentLeft="true"
@@ -213,27 +214,36 @@
 			android:layout_toEndOf="@+id/thumbnailBrand"
 			android:layout_toRightOf="@+id/thumbnailBrand"
 			android:layout_below="@+id/LeftHeaderLayout"
-			android:gravity="center_horizontal|top"
-			android:weightSum="1">
+			android:gravity="center_horizontal|top">
 
-		<TextView
-			android:id="@+id/brandInfo"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:paddingTop="16dp"
-			android:paddingLeft="12dp"
-			android:paddingRight="4dp"
-			android:gravity="left|center_vertical"
-			android:color="@color/white"
-			android:text="A spohisticated New York city salon experience in a modern westchester location"
-			android:textSize="14sp"
-			android:layout_alignParentBottom="true"
-			android:layout_toRightOf="@+id/thumbnailBrand"
-			android:layout_toEndOf="@+id/thumbnailBrand" />
+
+			<TextView
+				android:id="@+id/brandInfo"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingTop="16dp"
+				android:paddingLeft="12dp"
+				android:paddingRight="4dp"
+				android:gravity="left|center_vertical"
+				android:color="@color/white"
+				android:textStyle="bold"
+				android:text=""
+				android:textSize="14sp"
+				android:layout_alignParentBottom="true"
+				android:layout_toRightOf="@+id/thumbnailBrand"
+				android:layout_toEndOf="@+id/thumbnailBrand" />
 
 		</LinearLayout>
 
 
 	</RelativeLayout>
+
+
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:background="@android:color/holo_green_dark"/>
+
+
 
 </LinearLayout>

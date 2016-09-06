@@ -48,10 +48,15 @@ public class DisplaySuccessActivity extends Activity {
     @Override
     public void onBackPressed()
     {
-        Intent intent = new Intent(Intent.ACTION_MAIN);
+
+        Intent sIntent = new Intent(getApplicationContext(), CloudReco.class);
+        startActivity(sIntent);
+        finish();
+
+        /*Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//***Change Here***
         startActivity(intent);
-        finish();
+        finish();*/
     }
 }

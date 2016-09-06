@@ -28,6 +28,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.async.BrandDetailsAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.MenuItemsAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.BrandLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.CategoriesLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
 
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
     private SharedPreferences.Editor editor;
 
 
+    private DatabaseHelper db;
+
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -63,6 +67,10 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
+
+        db = new DatabaseHelper(this);
+
+        Log.d(LOGTAG, "Count Categories: "+db.countCategories(0));
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -111,15 +119,19 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
 
         SharedPreferences.Editor editor = sharedpref.edit();
 
-        Gson gson = new Gson();
+        for(int i = 0; i < listCategories.size(); i++) {
+            Category cat = listCategories.get(i);
+            Log.d(LOGTAG, "Cat Name: "+cat.getCatName());
+            db.addCategory(cat);
+        }
+
+        /*Gson gson = new Gson();
         List<Category> textList = new ArrayList<Category>();
         textList.addAll(listCategories);
         String jsonText = gson.toJson(textList);
         Log.d(LOGTAG, "Category Gson Text: "+jsonText);
         editor.putString(getString(R.string.spf_categories), jsonText);
-        editor.commit();
-
-
+        editor.commit();*/
 
         Intent intent = new Intent(SplashScreenActivity.this, BrowseOffersActivity.class);
 

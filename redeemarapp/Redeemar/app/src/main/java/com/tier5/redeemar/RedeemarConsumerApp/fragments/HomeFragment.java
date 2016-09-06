@@ -306,13 +306,12 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
         //googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
-        googleMap.setOnCameraChangeListener(mClusterManager);
+        //googleMap.setOnCameraChangeListener(mClusterManager);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
         //Log.d(LOGTAG, "Max zoom is: "+googleMap.getMaxZoomLevel());
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10));
         mClusterManager = new ClusterManager(getActivity(), googleMap);
-        googleMap.setOnCameraChangeListener(mClusterManager);
         googleMap.setOnInfoWindowClickListener(mClusterManager);
         googleMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
 
@@ -359,7 +358,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
                     String ind = itm.getTitle();
 
-                    User br = (User) brandList.get(Integer.parseInt(ind));
+                    User br = brandList.get(Integer.parseInt(ind));
 
                     br.setLogoName(br.getLogoName());
                     br.setTargetId(br.getTargetId());
@@ -386,7 +385,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                     @Override
                     public void onItemClick(View view, int position) {
 
-                        User br = (User)dispBrandList.get(position);
+                        User br = dispBrandList.get(position);
 
                         if(br.getTargetId() != null) {
                             Log.d(LOGTAG, "Group Recycler Item has been clicked. Brand User Id is "+br.getId());
@@ -415,7 +414,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                 String ind = item.getTitle();
                 clickIndex = ind;
 
-                User br = (User) brandList.get(Integer.parseInt(ind));
+                User br = brandList.get(Integer.parseInt(ind));
 
                 br.setLogoName(br.getLogoName());
 
@@ -437,7 +436,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                     public void onItemClick(View view, int position) {
                         Log.d(LOGTAG, "Recycler Item has been clicked");
 
-                        User br = (User)dispBrandList.get(position);
+                        User br = dispBrandList.get(position);
 
                         if(br.getTargetId() != null) {
                             Log.d(LOGTAG, "Single Recycler Item has been clicked. Brand User Id is "+br.getId());
@@ -520,7 +519,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
             Log.d(LOGTAG, "Map title index: "+clickIndex);
 
             if(clickIndex != null && !clickIndex.equals("")) {
-                User br = (User) brandList.get(Integer.parseInt(clickIndex));
+                User br = brandList.get(Integer.parseInt(clickIndex));
                 String imageUrl = br.getStoreFrontImage();
                 Log.d(LOGTAG, "Map Image URL: "+imageUrl);
                 new DownloadImageTask(imStoreFrontPic).execute(imageUrl);

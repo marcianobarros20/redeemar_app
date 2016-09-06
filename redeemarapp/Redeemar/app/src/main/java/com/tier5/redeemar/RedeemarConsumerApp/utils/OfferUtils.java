@@ -77,9 +77,9 @@ public class OfferUtils {
     }
 
 
-    public static ArrayList<Offer> loadMyOffers(RequestQueue requestQueue, String userId) {
+    public static ArrayList<Offer> loadMyOffers(RequestQueue requestQueue, String userId, String lat, String lon) {
 
-        JSONObject response = Requestor.requestMyOffersJSON(requestQueue, Endpoints.getRequestUrlMyOffers(30), userId);
+        JSONObject response = Requestor.requestMyOffersJSON(requestQueue, Endpoints.getRequestUrlMyOffers(30), userId, lat, lon);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadMyOffers :"+listOffers.size());
         return listOffers;
@@ -111,9 +111,27 @@ public class OfferUtils {
 
     public static String loadValidatePassCode(RequestQueue requestQueue, String user_id, String offer_id, String pass_code) {
 
-        JSONObject response = Requestor.requestValidatePassCodeJSON(requestQueue, Endpoints.getRequestUrlUpdateProfile(), user_id, offer_id, pass_code);
-        String res = Parser.parseUpdateProfileJSON(response);
+        JSONObject response = Requestor.requestValidatePassCodeJSON(requestQueue, Endpoints.getValidatePasscode(), user_id, offer_id, pass_code);
+        String res = Parser.parseValidatePasscodeJSON(response);
         Log.d(LOGTAG, "Inside loadValidatePassCode :"+res);
         return res;
     }
+
+
+    public static String loadSearchFull(RequestQueue requestQueue, String location, String keyword) {
+
+        JSONObject response = Requestor.requestSearchFullJSON(requestQueue, Endpoints.getValidatePasscode(), location, keyword);
+        String res = Parser.parseSearchFullJSON(response);
+        Log.d(LOGTAG, "Inside loadSearchFull :"+res);
+        return res;
+    }
+
+    public static String loadSearchShort(RequestQueue requestQueue, String location, String keyword) {
+
+        JSONObject response = Requestor.requestSearchShortJSON(requestQueue, Endpoints.getValidatePasscode(), location, keyword);
+        String res = Parser.parseSearchShortJSON(response);
+        Log.d(LOGTAG, "Inside loadSearchFull :"+res);
+        return res;
+    }
 }
+

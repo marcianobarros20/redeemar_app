@@ -31,11 +31,13 @@
     </RelativeLayout>
 
     <!-- Footer aligned to bottom -->
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
         android:paddingBottom="40dp">
 
 
@@ -55,8 +57,23 @@
             android:textColor="@color/white"
             android:text="@string/shop_offers" />
 
+        <Button
+            android:id="@+id/btnScan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:textSize="@dimen/menu_title_med"
+            android:paddingTop="@dimen/button_padding_med"
+            android:paddingBottom="@dimen/button_padding_med"
+            android:paddingLeft="@dimen/button_padding"
+            android:paddingRight="@dimen/button_padding"
+            android:layout_margin="@dimen/activity_vertical_margin_small"
+            android:background="@drawable/button_green"
+            android:textColor="@color/white"
+            android:text="@string/scan_again" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 
 

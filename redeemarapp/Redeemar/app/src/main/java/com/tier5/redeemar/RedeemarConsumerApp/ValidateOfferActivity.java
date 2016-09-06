@@ -1,9 +1,7 @@
 package com.tier5.redeemar.RedeemarConsumerApp;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,11 +22,17 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
 import com.tier5.redeemar.RedeemarConsumerApp.async.ValidatePassCodeAsyncTask;
-import com.tier5.redeemar.RedeemarConsumerApp.fragments.BrowseOfferFragment;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,13 +54,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class ValidateOfferActivity extends AppCompatActivity implements TaskCompleted {
+public class ValidateOfferActivity extends AppCompatActivity implements TaskCompleted, OnMapReadyCallback {
 
     private static final String LOGTAG = "ValidateOffer";
 
     SupportMapFragment mapFragment;
     private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvDiscount, tvValidateAfter, tvValidateWithin;
-    private NetworkImageView thumbnail;
+    private NetworkImageView thumbnail, logoThumbnail;
     private ImageLoader mImageLoader;
     private EditText etRedeemCode;
     private Button btnRedeemScan, btnRedeemPassCode;
@@ -64,6 +68,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
 
+    private GoogleMap mMap;
     private Resources res;
     private SharedPreferences sharedpref;
     private SimpleDateFormat fromDateFormat;
@@ -71,11 +76,10 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
     private Toolbar toolbar;
     Typeface myFont;
 
-
+    private ProgressDialog mProgressDialog;
 
     int valCalc;
-    String offerId, user_id, perc_sym, cur_sym, days, save, off, disc;
-    Double lat, lon;
+    String offerId, user_id, perc_sym, cur_sym, days, save, off, disc, redemption_code;
 
 
     @Override
@@ -112,6 +116,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
 
         thumbnail = (NetworkImageView) findViewById(R.id.thumbnail);
+        logoThumbnail = (NetworkImageView) findViewById(R.id.logo_image);
 
         perc_sym = getResources().getString(R.string.percentage_symbol);
         cur_sym = getResources().getString(R.string.currency_symbol);
@@ -184,7 +189,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                     Log.d(LOGTAG, "Starting validation by passcode...");
 
                     etRedeemCode = (EditText) findViewById(R.id.redeem_code);
-                    String redemption_code = etRedeemCode.getText().toString();
+                    redemption_code = etRedeemCode.getText().toString();
 
                     if(redemption_code.equals("")) {
 
@@ -206,7 +211,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                     }
                     else
-                        new ValidatePassCodeAsyncTask().execute(user_id, offerId, redemption_code);
+                        callValidationTask();
                 }
             });
 
@@ -260,6 +265,19 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+    }
+
+    private void callValidationTask() {
+
+        new ValidatePassCodeAsyncTask(this, getApplicationContext()).execute(user_id, offerId, redemption_code);
     }
 
 
@@ -419,9 +437,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                                 try {
 
-
                                     GregorianCalendar calendar = new GregorianCalendar();
-
 
                                     if (!jsonMyOfferObject.isNull("validate_within")  && jsonMyOfferObject.getString("validate_within").toString().trim() != "") {
                                         Log.d(LOGTAG, "Validate Within: " + jsonMyOfferObject.getString("validate_within").toString());
@@ -429,8 +445,6 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                                         Date date1 = fromDateFormat.parse(validate_within);
                                         tvValidateWithin.setText(toDateFormat.format(date1));
-
-
                                     }
 
 
@@ -456,8 +470,6 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                         }
 
 
-
-
                         if(!jsonObject.isNull("offer_large_image_path") && jsonObject.getString("offer_large_image_path").toString() != "") {
 
 
@@ -478,6 +490,28 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                         }
 
+
+                        if(!jsonObject.isNull("logo_details") && !jsonObject.getString("logo_details").equalsIgnoreCase("")) {
+
+                            JSONObject jsonLogoSettings = new JSONObject(jsonObject.getString("logo_details"));
+
+                            if(!jsonLogoSettings.isNull("logo_name") && !jsonLogoSettings.getString("logo_name").equals("")) {
+
+                                Log.d(LOGTAG, "My Logo URL 2: "+jsonLogoSettings.getString("logo_name"));
+
+                                String logoImageUrl = UrlEndpoints.baseLogoMediumURL+ jsonLogoSettings.getString("logo_name");
+                                mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
+                                mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail,
+                                        R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
+                                logoThumbnail.setImageUrl(logoImageUrl, mImageLoader);
+                            }
+
+
+                        }
+
+
+
+
                         JSONArray jsonCompanyArray = new JSONArray(jsonObject.getString("company_detail"));
 
                         String address = "";
@@ -488,15 +522,66 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                             JSONObject jsonCompanyObject = jsonCompanyArray.getJSONObject(0);
 
+                            Address addr = new Address();
 
-                            if (!jsonCompanyObject.isNull("address")  && jsonCompanyObject.getString("address").toString() != "") {
+
+                            if (!jsonCompanyObject.isNull("address") && jsonCompanyObject.getString("address").toString() != "") {
                                 Log.d(LOGTAG, "address: " + jsonCompanyObject.getString("address").toString());
-                                address = jsonCompanyObject.getString("address");
-                                tvAddress.setText(address);
-
+                                addr.setStreet(jsonCompanyObject.getString("address"));
                             }
+                            else
+                                addr.setStreet("");
+
+
+
+                            if (!jsonCompanyObject.isNull("city") && jsonCompanyObject.getString("city").toString() != "") {
+                                Log.d(LOGTAG, "city: " + jsonCompanyObject.getString("city").toString());
+                                addr.setCity(jsonCompanyObject.getString("city"));
+                            }
+                            else
+                                addr.setCity("");
+
+
+                            if (!jsonCompanyObject.isNull("state") && jsonCompanyObject.getString("state").toString() != "") {
+                                Log.d(LOGTAG, "state: " + jsonCompanyObject.getString("state").toString());
+                                addr.setState(jsonCompanyObject.getString("state"));
+                            }
+                            else
+                                addr.setState("");
+
+                            if (!jsonCompanyObject.isNull("zipcode") && jsonCompanyObject.getString("zipcode").toString() != "") {
+                                Log.d(LOGTAG, "zipcode: " + jsonCompanyObject.getString("zipcode").toString());
+                                addr.setZip(jsonCompanyObject.getString("zipcode"));
+                            }
+                            else
+                                addr.setZip("");
+
+                            if (!jsonCompanyObject.isNull("location") && jsonCompanyObject.getString("location").toString() != "") {
+                                Log.d(LOGTAG, "location: " + jsonCompanyObject.getString("location").toString());
+                                addr.setLocation(jsonCompanyObject.getString("location"));
+                            }
+                            else
+                                addr.setLocation("");
+
+                            String fullAddress = Utils.getFormattedAddress(addr);
+
+                            tvAddress.setText(fullAddress);
 
                         }
+
+
+
+                        /*if(mMap != null) {
+
+                            LatLng point = new LatLng(latitude, lon);
+
+                            if(address != "")
+                                mMap.addMarker(new MarkerOptions().position(point).title(address));
+                            else
+                                mMap.addMarker(new MarkerOptions().position(point).title(getString(R.string.brand_location)));
+
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 16));
+                        }*/
 
 
                         JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));
@@ -531,12 +616,22 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
     @Override
     public void onTaskComplete(String result) {
 
-        Log.d(LOGTAG, "OnTaskCompleted inside EditProfile: "+result);
+        Log.d(LOGTAG, "OnTaskCompleted inside ValidateOfferActivity: "+result);
+
+
+        builder = new AlertDialog.Builder(ValidateOfferActivity.this);//Context parameter
+        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do stuff
+            }
+        });
+
+
 
         if(result.equalsIgnoreCase("R01001")) {
 
             builder.setMessage(getString(R.string.error_validation_success));
-
             alertDialog = builder.create();
             alertDialog.setTitle(getString(R.string.alert_title));
             alertDialog.setIcon(R.drawable.icon_tick);
@@ -569,6 +664,29 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
         }
 
+    }
+
+
+
+
+
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+        }
+
+        if (mProgressDialog != null && !mProgressDialog.isShowing()) {
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.show();
+        }
+
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 
 

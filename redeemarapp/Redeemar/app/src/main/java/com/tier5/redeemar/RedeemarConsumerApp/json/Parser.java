@@ -3,6 +3,8 @@ package com.tier5.redeemar.RedeemarConsumerApp.json;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +25,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.MarkerItem;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
@@ -174,10 +177,6 @@ public class Parser {
 
                 if (response.getString("messageCode").equals("R01001")) {
 
-                    //Log.d(LOGTAG, "Message Data: " + reader.getString("data"));
-
-
-
                     JSONArray offersArray = new JSONArray(response.getString("data"));
 
                     Log.d(LOGTAG, "Data Length: " + offersArray.length());
@@ -266,10 +265,24 @@ public class Parser {
                         }
 
 
+
+                        if(!jsonObject.isNull("value_text") && jsonObject.getString("value_text").toString() != "") {
+                            offer.setValueText(Integer.parseInt(jsonObject.getString("value_text")));
+                            Log.d(LOGTAG, "value_text: "+jsonObject.getString("value_text").toString());
+                        }
+                        else {
+                            offer.setValueText(1);
+                        }
+
+
+
                         if(!jsonObject.isNull("expires") && jsonObject.getString("expires").toString() != "") {
                             offer.setExpiredInDays(Integer.parseInt(jsonObject.getString("expires")));
                             Log.d(LOGTAG, "expires: "+jsonObject.getString("expires").toString());
                         }
+                        else
+                            offer.setExpiredInDays(100);
+
 
 
                         if(!jsonObject.isNull("location") && jsonObject.getString("location").toString() != "") {
@@ -282,46 +295,70 @@ public class Parser {
 
                         if(!jsonObject.isNull("distance") && jsonObject.getString("distance").toString() != "") {
                             offer.setDistance(jsonObject.getString("distance"));
+                            Log.d(LOGTAG, "distance: "+jsonObject.getString("distance").toString());
                         }
                         else {
                             offer.setDistance("");
                         }
 
+
+                        Log.d(LOGTAG, "Inside distance....");
+
+
                         if(!jsonObject.isNull("offer_image_path") && jsonObject.getString("offer_image_path").toString() != "") {
                             offer.setImageUrl(jsonObject.getString("offer_image_path"));
-                            //Log.d(LOGTAG, "offer_image_path: "+jsonObject.getString("offer_image_path").toString());
+                            Log.d(LOGTAG, "offer_image_path: "+jsonObject.getString("offer_image_path").toString());
                         }
 
                         if(!jsonObject.isNull("offer_large_image_path") && jsonObject.getString("offer_large_image_path").toString() != "") {
                             offer.setLargeImageUrl(jsonObject.getString("offer_large_image_path"));
-                            //Log.d(LOGTAG, "offer_image_path: "+jsonObject.getString("offer_image_path").toString());
+                            Log.d(LOGTAG, "offer_image_path: "+jsonObject.getString("offer_image_path").toString());
                         }
 
                         if(!jsonObject.isNull("on_demand") && jsonObject.getString("on_demand").toString() != "") {
                             offer.setOnDemand(Integer.parseInt(jsonObject.getString("on_demand")));
-                            //Log.d(LOGTAG, "On Demand: "+jsonObject.getString("on_demand").toString());
+                            Log.d(LOGTAG, "On Demand: "+jsonObject.getString("on_demand").toString());
                         }
 
 
-                        JSONObject jsonPartnerSettings = new JSONObject(jsonObject.getString("partner_settings"));
+//                        if(!jsonObject.getString("partner_settings").equals("") && !jsonObject.getString("partner_settings").equalsIgnoreCase("")) {
+//
+//
+//                            JSONObject jsonPartnerSettings = new JSONObject(jsonObject.getString("partner_settings"));
+//
+//                            if(!jsonPartnerSettings.isNull("price_range_id") && !jsonPartnerSettings.getString("price_range_id").equals("")) {
+//                                offer.setPriceRangeId(jsonPartnerSettings.getString("price_range_id").toString());
+//                                Log.d(LOGTAG, "Price Range Id: "+jsonObject.getString("price_range_id").toString());
+//                            }
+//                            else
+//                                offer.setPriceRangeId("");
+//
+//
+//                        }
 
-                        if(!jsonPartnerSettings.isNull("price_range_id")) {
-                            offer.setPriceRangeId(jsonPartnerSettings.getString("price_range_id").toString());
-                        }
-                        else
-                            offer.setPriceRangeId("");
+                        offer.setPriceRangeId("");
+
 
 
                         if(!jsonObject.isNull("logo_details") && !jsonObject.getString("logo_details").equalsIgnoreCase("")) {
 
                             JSONObject jsonLogoSettings = new JSONObject(jsonObject.getString("logo_details"));
 
+
+
                             if(!jsonLogoSettings.isNull("logo_name")) {
                                 offer.setBrandLogo(jsonLogoSettings.getString("logo_name").toString());
+                                String logoUrl = UrlEndpoints.baseLogoMediumURL + jsonLogoSettings.getString("logo_name");
+                                Log.d(LOGTAG, "My Logo URL 1: "+logoUrl);
+                                Bitmap myBitmap = BitmapFactory.decodeFile(logoUrl);
+                                Utils.saveToInternalStorage(myBitmap, jsonLogoSettings.getString("logo_name"));
                             }
                             else
                                 offer.setBrandLogo("");
 
+                        }
+                        else {
+                            offer.setBrandLogo("");
                         }
 
 
@@ -329,7 +366,7 @@ public class Parser {
 
                             JSONObject jsonCounters = new JSONObject(jsonObject.getString("counters"));
 
-                            if(!jsonCounters.isNull("offers_count")) {
+                            if(!jsonCounters.isNull("offers_count") && !jsonCounters.equals("offers_count")) {
                                 offer.setOffersCount(jsonCounters.getInt("offers_count"));
                             }
                             else
@@ -345,34 +382,38 @@ public class Parser {
 
 
 
-                        JSONArray companyArray = new JSONArray(jsonObject.getString("company_detail"));
 
-                        JSONObject companyJsonObject = companyArray.getJSONObject(0);
+                        if(!jsonObject.isNull("company_detail") && !jsonObject.getString("company_detail").equalsIgnoreCase("")) {
+                            JSONArray companyArray = new JSONArray(jsonObject.getString("company_detail"));
 
-                        if(!companyJsonObject.isNull("company_name")) {
-                            offer.setCompanyName(companyJsonObject.getString("company_name").toString());
-                            Log.d(LOGTAG, "Company name: "+companyJsonObject.getString("company_name").toString());
+                            if(companyArray.length() > 0) {
+
+                                JSONObject companyJsonObject = companyArray.getJSONObject(0);
+
+                                if (!companyJsonObject.isNull("company_name")) {
+                                    offer.setCompanyName(companyJsonObject.getString("company_name").toString());
+                                    Log.d(LOGTAG, "Company name: " + companyJsonObject.getString("company_name").toString());
+                                } else
+                                    offer.setCompanyName("");
+
+                                if (!companyJsonObject.isNull("address")) {
+                                    offer.setAddress(companyJsonObject.getString("address").toString());
+                                    Log.d(LOGTAG, "Address: " + companyJsonObject.getString("address").toString());
+                                } else
+                                    offer.setAddress("");
+
+                                if (!companyJsonObject.isNull("zipcode")) {
+                                    offer.setZipcode(companyJsonObject.getString("zipcode").toString());
+                                    Log.d(LOGTAG, "Zip Code: " + companyJsonObject.getString("zipcode").toString());
+                                } else
+                                    offer.setZipcode("");
+                            }
+
                         }
-                        else
-                            offer.setCompanyName("");
-
-                        if(!companyJsonObject.isNull("address")) {
-                            offer.setAddress(companyJsonObject.getString("address").toString());
-                            Log.d(LOGTAG, "Address: "+companyJsonObject.getString("address").toString());
-                        }
-                        else
-                            offer.setAddress("");
-
-                        if(!companyJsonObject.isNull("zipcode")) {
-                            offer.setZipcode(companyJsonObject.getString("zipcode").toString());
-                            Log.d(LOGTAG, "Zip Code: "+companyJsonObject.getString("zipcode").toString());
-                        }
-                        else
-                            offer.setZipcode("");
-
 
 
                         listOffers.add(offer);
+
 
 
                     } // End of for loop for videos
@@ -605,35 +646,40 @@ public class Parser {
 
                         Category category = new Category();
 
-                        category.setId(jsonObject.optString("id").toString());
-                        category.setParentId(jsonObject.optString("parent_id").toString());
-                        category.setCatName(jsonObject.optString("cat_name").toString());
-                        category.setStatus(jsonObject.optString("status").toString());
-                        category.setVisibility(jsonObject.optString("visibility").toString());
+                        category.setId(jsonObject.optInt("id"));
+                        category.setParentId(jsonObject.optInt("parent_id"));
+                        category.setCatName(jsonObject.optString("cat_name"));
+                        category.setStatus(jsonObject.optInt("status"));
+                        category.setVisibility(jsonObject.optInt("visibility"));
 
                         listMenus.add(category);
 
-                        JSONArray subCategoriesArray = jsonObject.optJSONArray("children");
+                        // Redundant section: will be removed in the next sprint
 
-                        //Iterate the jsonArray and print the info of JSONObjects
-                        for (int j = 0; j < subCategoriesArray.length(); j++) {
-                            JSONObject jsonObject2 = categoriesArray.getJSONObject(i);
+                        if(!jsonObject.isNull("children")) {
+
+                            JSONArray subCategoriesArray = jsonObject.optJSONArray("children");
+
+                            //Iterate the jsonArray and print the info of JSONObjects
+                            for (int j = 0; j < subCategoriesArray.length(); j++) {
+                                JSONObject jsonObject2 = categoriesArray.getJSONObject(i);
+
+                                Category subcategory = new Category();
+
+                                subcategory.setId(jsonObject2.optInt("id"));
+                                subcategory.setParentId(jsonObject2.optInt("parent_id"));
+                                subcategory.setCatName(jsonObject2.optString("cat_name").toString());
+                                subcategory.setStatus(jsonObject2.optInt("status"));
+                                subcategory.setVisibility(jsonObject2.optInt("visibility"));
+
+                                listMenus.add(subcategory);
 
 
-                            Category subcategory = new Category();
+                            } // End of for loop for categories
+
+                        }
 
 
-
-                            subcategory.setId(jsonObject2.optString("id").toString());
-                            subcategory.setParentId(jsonObject2.optString("parent_id").toString());
-                            subcategory.setCatName(jsonObject2.optString("cat_name").toString());
-                            subcategory.setStatus(jsonObject2.optString("status").toString());
-                            subcategory.setVisibility(jsonObject2.optString("visibility").toString());
-
-                            listMenus.add(subcategory);
-
-
-                        } // End of for loop for categories
 
 
                     } // End of for loop for categories
@@ -681,7 +727,89 @@ public class Parser {
 
     public static String parseUpdateProfileJSON(JSONObject response) {
 
-        Log.d(LOGTAG, "Inside parseSUpdateProfileJSON");
+        Log.d(LOGTAG, "Inside parseUpdateProfileJSON");
+
+        String msgCode = "";
+
+
+        if (response != null && response.length() > 0) {
+            try {
+
+                if(!response.isNull("messageCode")) {
+
+                    Log.d(LOGTAG, "Message Code: " + response.getString("messageCode"));
+                    msgCode = response.getString("messageCode");
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+            }
+
+        }
+        return msgCode;
+    }
+
+
+    public static String parseValidatePasscodeJSON(JSONObject response) {
+
+        Log.d(LOGTAG, "Inside parseValidatePasscodeJSON");
+
+        String msgCode = "";
+
+
+        if (response != null && response.length() > 0) {
+            try {
+
+                if(!response.isNull("messageCode")) {
+
+                    Log.d(LOGTAG, "Message Code: " + response.getString("messageCode"));
+                    msgCode = response.getString("messageCode");
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+            }
+
+        }
+        return msgCode;
+    }
+
+
+
+    public static String parseSearchShortJSON(JSONObject response) {
+
+        Log.d(LOGTAG, "Inside parseSearchFullJSON");
+
+        String msgCode = "";
+
+
+        if (response != null && response.length() > 0) {
+            try {
+
+                if(!response.isNull("messageCode")) {
+
+                    Log.d(LOGTAG, "Message Code: " + response.getString("messageCode"));
+                    msgCode = response.getString("messageCode");
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+            }
+
+        }
+        return msgCode;
+    }
+
+
+    public static String parseSearchFullJSON(JSONObject response) {
+
+        Log.d(LOGTAG, "Inside parseSearchFullJSON");
 
         String msgCode = "";
 

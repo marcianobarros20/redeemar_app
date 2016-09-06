@@ -12,6 +12,7 @@
     <style name="ToolBarStyle" parent="SampleAppsTheme">
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="elevation">6dp</item>
         <item name="android:textSize">12sp</item>
     </style>
 

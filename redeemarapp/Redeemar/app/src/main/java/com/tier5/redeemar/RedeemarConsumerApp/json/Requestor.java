@@ -193,7 +193,7 @@ public class Requestor {
 
 
 
-    public static JSONObject requestMyOffersJSON(RequestQueue requestQueue, String url, String userId) {
+    public static JSONObject requestMyOffersJSON(RequestQueue requestQueue, String url, String userId, String latitude, String longitude) {
 
 
         URL myUrl = null;
@@ -217,7 +217,9 @@ public class Requestor {
 
             data.put("webservice_name","showoffers");
             data.put("user_id", userId);
-
+            data.put("lat", latitude);
+            data.put("long", longitude);
+            data.put("radius", Constants.defaultRadius);
 
 
             OutputStream os = conn.getOutputStream();
@@ -403,7 +405,7 @@ public class Requestor {
 
 
 
-    public static JSONObject requestMenuItemsJSON(RequestQueue requestQueue, String url, String parentId) {
+    public static JSONObject requestMenuItemsJSON(RequestQueue requestQueue, String url) {
 
 
         URL myUrl = null;
@@ -425,8 +427,7 @@ public class Requestor {
 
             JSONObject data = new JSONObject();
 
-            data.put("webservice_name", "check_target");
-            data.put("target_id", parentId);
+            data.put("webservice_name", "categories");
 
 
             OutputStream os = conn.getOutputStream();
@@ -609,8 +610,6 @@ public class Requestor {
     }
 
 
-
-
     public static JSONObject requestValidatePassCodeJSON(RequestQueue requestQueue, String url, String userId, String offerId, String passcode) {
 
 
@@ -637,10 +636,10 @@ public class Requestor {
             data.put("user_id", userId);
             data.put("offer_id", offerId);
             data.put("redemption_code", passcode);
+            Log.d(LOGTAG, "Passcode: "+passcode);
 
 
             OutputStream os = conn.getOutputStream();
-
             Log.d(LOGTAG, "Request: " + data.toString());
 
 
@@ -678,4 +677,133 @@ public class Requestor {
 
         return reader;
     }
+
+
+    public static JSONObject requestSearchShortJSON(RequestQueue requestQueue, String url, String location, String keyword) {
+
+
+        URL myUrl = null;
+        HttpURLConnection conn = null;
+        String response = "";
+        JSONObject reader = null;
+
+
+
+        try {
+            myUrl = new URL(url);
+            conn = (HttpURLConnection) myUrl.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+
+            JSONObject data = new JSONObject();
+
+            data.put("webservice_name", "searchshort");
+            data.put("location", location);
+            data.put("keyword", keyword);
+
+            OutputStream os = conn.getOutputStream();
+            Log.d(LOGTAG, "Request: " + data.toString());
+
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            bufferedWriter.write("data="+data.toString());
+            bufferedWriter.flush();
+            bufferedWriter.close();
+
+
+            InputStream inputStream = conn.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                response += line;
+            }
+
+            //Log.d(LOGTAG, "Do In background: " + response);
+            bufferedReader.close();
+            inputStream.close();
+            conn.disconnect();
+            os.close();
+            reader = new JSONObject(response);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return reader;
+    }
+
+
+    public static JSONObject requestSearchFullJSON(RequestQueue requestQueue, String url, String location, String keyword) {
+
+
+        URL myUrl = null;
+        HttpURLConnection conn = null;
+        String response = "";
+        JSONObject reader = null;
+
+
+
+        try {
+            myUrl = new URL(url);
+            conn = (HttpURLConnection) myUrl.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+
+            JSONObject data = new JSONObject();
+
+            data.put("webservice_name", "searchfull");
+            data.put("location", location);
+            data.put("keyword", keyword);
+
+
+            OutputStream os = conn.getOutputStream();
+            Log.d(LOGTAG, "Request: " + data.toString());
+
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            bufferedWriter.write("data="+data.toString());
+            bufferedWriter.flush();
+            bufferedWriter.close();
+
+
+            InputStream inputStream = conn.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                response += line;
+            }
+
+            //Log.d(LOGTAG, "Do In background: " + response);
+            bufferedReader.close();
+            inputStream.close();
+            conn.disconnect();
+            os.close();
+            reader = new JSONObject(response);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return reader;
+    }
+
 }

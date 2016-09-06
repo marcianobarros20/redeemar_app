@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -23,11 +24,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,12 +37,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.gson.Gson;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
-import com.tier5.redeemar.RedeemarConsumerApp.exception.ActivityExceptionDemo;
+import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.AboutFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.BrowseOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.ContactFragment;
@@ -88,7 +90,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     double latitude = 0.0, longitude = 0.0;
     private Resources res;
     private SharedPreferences sharedpref;
-    private String user_id = "0", curFragment="";
+    private String user_id = "0", curFragment = "";
     private int REQUEST_COARSE_LOCATION = 0;
     private int REQUEST_FINE_LOCATION = 0;
     private View mLayout;
@@ -102,12 +104,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ArrayList<Category> categories;
-    private String redirectTo="", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "";
+    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "";
     private final int NavGroupId = 1001;
     private SharedPreferences.Editor editor;
     private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
     private ImageView imListView, imMapView, imThumbView;
-
+    private DatabaseHelper db;
 
 
     /**
@@ -115,6 +117,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
      */
     private static String[] PERMISSIONS_CONTACT = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION};
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
 
     @Override
@@ -122,51 +129,51 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.offers_recycler);
 
+        db = new DatabaseHelper(this);
 
 
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0);
 
-
-        if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
+        if (sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
             String userId = sharedpref.getString(res.getString(R.string.spf_user_id), "");
-            Log.d(LOGTAG, "User Id is: "+userId);
+            Log.d(LOGTAG, "User Id is: " + userId);
         }
 
-        if(sharedpref.getString(res.getString(R.string.spf_first_name), null) != null) {
+        if (sharedpref.getString(res.getString(R.string.spf_first_name), null) != null) {
             firstName = sharedpref.getString(res.getString(R.string.spf_first_name), "");
         }
 
-        if(sharedpref.getString(res.getString(R.string.spf_email), null) != null) {
+        if (sharedpref.getString(res.getString(R.string.spf_email), null) != null) {
             email = sharedpref.getString(res.getString(R.string.spf_email), "");
         }
 
 
-        if(sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
+        if (sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
             redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
         }
 
 
-        if(sharedpref.getString(res.getString(R.string.spf_redeemer_id), null) != null) {
+        if (sharedpref.getString(res.getString(R.string.spf_redeemer_id), null) != null) {
             redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
         }
 
 
-        if(sharedpref.getString(res.getString(R.string.spf_campaign_id), null) != null) {
+        if (sharedpref.getString(res.getString(R.string.spf_campaign_id), null) != null) {
             campaignId = sharedpref.getString(res.getString(R.string.spf_campaign_id), "");
         }
 
 
-        if(sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
+        if (sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
             categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
         }
 
 
         editor = sharedpref.edit();
 
-        Log.d(LOGTAG, "Redeemar id: "+redeemarId);
-        Log.d(LOGTAG, "Campaign id: "+campaignId);
-        Log.d(LOGTAG, "Category id: "+categoryId);
+        Log.d(LOGTAG, "Redeemar id: " + redeemarId);
+        Log.d(LOGTAG, "Campaign id: " + campaignId);
+        Log.d(LOGTAG, "Category id: " + categoryId);
 
 
         // Get Data from Intent
@@ -179,11 +186,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             redirectTo = extras.getString(getString(R.string.ext_redir_to));
             redeemarId = extras.getString(getString(R.string.ext_redeemar_id));
 
-            if(redirectTo.equalsIgnoreCase("CampaignOffers")) {
+            if (redirectTo.equalsIgnoreCase("CampaignOffers")) {
                 campaignId = extras.getString(getString(R.string.ext_campaign_id));
             }
 
-            if(redirectTo.equalsIgnoreCase("CategoryOffers")) {
+            if (redirectTo.equalsIgnoreCase("CategoryOffers")) {
                 categoryId = extras.getString(getString(R.string.ext_category_id));
             }
             Log.d(LOGTAG, "Redirect to 100: " + redirectTo);
@@ -200,9 +207,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         //setUpMap();
 
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
-
-
 
 
     private void setupToolbar() {
@@ -216,7 +224,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         }
 
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu); // it's getSupportActionBar() if you're using AppCompatActivity, not getActionBar()
             getSupportActionBar().setDisplayHomeAsUpEnabled(true); // it's getSupportActionBar() if you're using AppCompatActivity, not getActionBar()
         }
@@ -233,8 +241,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.setMaxFixedTabs(5);
         mBottomBar.setDefaultTabPosition(3);
-        mBottomBar.useFixedMode();
-        //mBottomBar.setActiveTabColor(null);
+        //mBottomBar.useFixedMode();
 
 
         mBottomBar.setItemsFromMenu(R.menu.bottombar_menu, new OnMenuTabClickListener() {
@@ -278,17 +285,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 } else if (menuItemId == R.id.bottom_browse_offers) {
 
-
                     Toast.makeText(getApplicationContext(), "Browse offers selected", Toast.LENGTH_SHORT).show();
-
-
                     getSupportActionBar().setTitle(R.string.browse_offers);
 
-                    Log.d(LOGTAG, "Redirect to 101: " + redirectTo);
-                    Log.d(LOGTAG, "Redeemar id 101: " + redeemarId);
-                    Log.d(LOGTAG, "Campaign id 101: " + campaignId);
-
-                    if(redirectTo.equalsIgnoreCase("EditProfile")) {
+                    if (redirectTo.equalsIgnoreCase("EditProfile")) {
 
                         getSupportActionBar().setTitle(R.string.nav_item_edit_profile);
                         Fragment editProfileFragment = new EditProfileFragment();
@@ -297,18 +297,15 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                         editProfileFragmentTransaction.replace(R.id.container_body, editProfileFragment);
                         editProfileFragmentTransaction.commit();
 
-                    }
-                    else {
+                    } else {
                         Fragment fr = new BrowseOfferFragment();
                         Bundle args1 = new Bundle();
 
-                        if(redirectTo.equalsIgnoreCase("BrandOffers")) {
+                        if (redirectTo.equalsIgnoreCase("BrandOffers")) {
                             getSupportActionBar().setTitle(R.string.offers_by_brand);
                             args1.putString(getString(R.string.ext_redir_to), "BrandOffers");
                             args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
-                        }
-
-                        else if(redirectTo.equalsIgnoreCase("CampaignOffers")) {
+                        } else if (redirectTo.equalsIgnoreCase("CampaignOffers")) {
 
                             /*editor.putString(getString(R.string.spf_redir_action), "CampaignOffers"); // Storing Last Activity
                             editor.putString(getString(R.string.spf_campaign_id), campaignId); // Storing Redeemar Id
@@ -321,9 +318,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                             args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
                             args1.putString(getString(R.string.ext_campaign_id), campaignId);
 
-                        }
-
-                        else if(redirectTo.equalsIgnoreCase("OnDemand")) {
+                        } else if (redirectTo.equalsIgnoreCase("OnDemand")) {
 
                             Log.d(LOGTAG, "Inside OnDemand");
 
@@ -341,8 +336,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     }
 
 
-                }
-                else if (menuItemId == R.id.bottom_daily_deals) {
+                } else if (menuItemId == R.id.bottom_daily_deals) {
 
                     editor.putString(getString(R.string.spf_redir_action), "OnDemand"); // Storing Redirect Action
                     editor.commit(); // commit changes
@@ -441,7 +435,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     }
 
 
-
     private void initNavigationDrawer() {
 
         Log.d(LOGTAG, "Inside left navigation menu init");
@@ -450,8 +443,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
 
         //navWelcome = (TextView) findViewById(R.id.nav_welcome);
-
-
 
 
         setupActionBarDrawerToogle();
@@ -501,10 +492,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
-                        Log.d(LOGTAG, "Menu Item clicked "+menuItem.getItemId());
+                        Log.d(LOGTAG, "Menu Item clicked " + menuItem.getItemId());
 
-                        MenuItem mPreviousMenuItem=null;
-
+                        MenuItem mPreviousMenuItem = null;
 
 
                         switch (menuItem.getItemId()) {
@@ -607,26 +597,33 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 if (mPreviousMenuItem != null) {
                                     mPreviousMenuItem.setChecked(false);
                                 }
-                                mPreviousMenuItem = menuItem;
+                                int catId = menuItem.getItemId();
 
-                                //mBottomBar.setDefaultTabPosition(3);
-                                //mBottomBar.selectTabAtPosition(3, false);
 
-                                String catName = Utils.stringToArray(jsonCatText, Category[].class).get(itemInd).getCatName();
+                                editor.putInt(res.getString(R.string.spf_category_level), 1); // Storing category Level
+                                editor.commit(); // commit changes
 
-                                Fragment browseOfferFragment1 = new BrowseOfferFragment();
-                                getSupportActionBar().setTitle(catName);
+                                Intent catIntent = new Intent(BrowseOffersActivity.this, CategoryActivity.class);
+                                catIntent.putExtra(getString(R.string.ext_redir_to), "CategoryOffers");
+                                //catIntent.putExtra(getString(R.string.ext_category_level), "1");
+                                catIntent.putExtra(getString(R.string.ext_category_id), catId);
+                                catIntent.putExtra(getString(R.string.ext_category_name), menuItem.getTitle());
+                                startActivity(catIntent);
+                                //Log.d(LOGTAG, "Category Name: "+menuItem.getTitle());
+
+                                /*Fragment browseOfferFragment1 = new BrowseOfferFragment();
+                                getSupportActionBar().setTitle(menuItem.getTitle());
                                 Bundle args1 = new Bundle();
                                 args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
                                 args1.putString(getString(R.string.ext_category_id), String.valueOf(menuItem.getItemId()));
                                 browseOfferFragment1.setArguments(args1);
+                                break;
 
                                 FragmentManager browseOfferFm1 = getFragmentManager();
                                 FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
                                 browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
-                                browseOfferFragmentTransaction1.commit();
+                                browseOfferFragmentTransaction1.commit();*/
 
-                                break;
 
                         }
 
@@ -640,13 +637,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         Gson gson = new Gson();
         jsonCatText = sharedpref.getString(getString(R.string.spf_categories), null);
-        Log.d(LOGTAG, "Category JSON: "+jsonCatText);
-
+        Log.d(LOGTAG, "Category JSON: " + jsonCatText);
 
 
         //String[] categories = gson.fromJson(jsonText, String[].class);  //EDIT: gso to gson
-        categories = (ArrayList) gson.fromJson(jsonCatText, ArrayList.class);  //EDIT: gso to gson
-        Log.d(LOGTAG, "Category JSON ArrayList: "+categories.size());
+        /*categories = (ArrayList) gson.fromJson(jsonCatText, ArrayList.class);  //EDIT: gso to gson
+        Log.d(LOGTAG, "Category JSON ArrayList: " + categories.size());
 
 
         String tempCatName = "";
@@ -654,27 +650,38 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         final Menu menu = navigationView.getMenu();
         int k = 0;
         for (int i = 0; i < categories.size(); i++) {
-            //Category menuCat = categories.get(i);
-
-            //String menuLabel = menuItem.getCatName()
 
             String catName = Utils.stringToArray(jsonCatText, Category[].class).get(i).getCatName();
             String parentId = Utils.stringToArray(jsonCatText, Category[].class).get(i).getParentId();
             String catId = Utils.stringToArray(jsonCatText, Category[].class).get(i).getId();
 
 
-            if(Integer.parseInt(parentId) == 0 && !tempCatName.equalsIgnoreCase(catName)) {
+            if (Integer.parseInt(parentId) == 0 && !tempCatName.equalsIgnoreCase(catName)) {
                 menu.add(NavGroupId, Integer.parseInt(catId), i, catName);
                 tempCatName = catName;
             }
 
-        }
-
-        // adding a section and items into it
-        /*final SubMenu subMenu = menu.addSubMenu("SubMenu Title");
-        for (int i = 1; i <= 2; i++) {
-            subMenu.add("SubMenu Item " + i);
         }*/
+
+        List categories = db.getCategories(0);
+        String tempCatName = "";
+        final Menu menu = navigationView.getMenu();
+
+        for (int i = 0; i < categories.size(); i++) {
+
+            Category cat = (Category) categories.get(i);
+            int catId = cat.getId();
+            String catName = cat.getCatName();
+            int parentId = cat.getParentId();
+
+
+
+            if (parentId == 0 && !tempCatName.equalsIgnoreCase(catName)) {
+                menu.add(NavGroupId, catId, i, catName);
+                tempCatName = catName;
+            }
+
+        }
 
 
         View headerView = navigationView.getHeaderView(0);
@@ -682,16 +689,15 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         navWelcome = (TextView) headerView.findViewById(R.id.nav_welcome);
         //navWelcome.setText("Welcome");
 
-        if(!firstName.equalsIgnoreCase("")) {
+        if (!firstName.equalsIgnoreCase("")) {
             String welcomeText = "Hi " + firstName;
             navWelcome.setText(welcomeText);
         }
 
 
-
         navEmail = (TextView) headerView.findViewById(R.id.nav_user_email);
 
-        if(!email.equalsIgnoreCase("")) {
+        if (!email.equalsIgnoreCase("")) {
             navEmail.setText(email);
         }
 
@@ -720,11 +726,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         navMyCredits.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 closeNavDrawer();
-
                 Toast.makeText(getApplicationContext(), "Coming soon", Toast.LENGTH_SHORT).show();
-
             }
 
         });
@@ -792,17 +795,20 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         int id = item.getItemId();
 
 
-
         switch (id) {
 
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
 
-            /*case R.id.action_search:
-                //Toast.makeText(getApplicationContext(), "Search option selected", Toast.LENGTH_SHORT).show();
-                Log.d(LOGTAG, "Inside BrowseOfferActivity");
-                return true;*/
+            case R.id.action_search:
+
+                Intent intent = new Intent(BrowseOffersActivity.this, CategoryActivity.class);
+
+                //overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
+                startActivity(intent);
+                Log.d(LOGTAG, "Inside CategoryActivity");
+                return true;
 
 
             case R.id.action_view_list:
@@ -810,23 +816,13 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 Fragment browseOfferListFragment = new BrowseOfferFragment();
                 getSupportActionBar().setTitle(getString(R.string.browse_offers));
 
-                /*Bundle args1 = new Bundle();
-                args1.putString(getString(R.string.ext_redir_to), "BrowseOffers");
-                args1.putString(getString(R.string.ext_view_type), "thumb");
-
-                browseOfferListFragment.setArguments(args1);*/
-
-
-
                 Log.d(LOGTAG, "Redirect to 102: " + redirectTo);
                 Log.d(LOGTAG, "Redeemar id 102: " + redeemarId);
                 Log.d(LOGTAG, "Campaign id 102: " + campaignId);
                 Log.d(LOGTAG, "Category id 102: " + categoryId);
 
-
                 editor.putString(getString(R.string.spf_view_type), "list"); // Storing User Id
                 editor.commit(); // commit changes
-
 
                 FragmentManager browseOfferFm = getFragmentManager();
                 FragmentTransaction browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
@@ -846,29 +842,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 Log.d(LOGTAG, "Campaign id 102: " + campaignId);
                 Log.d(LOGTAG, "Category id 102: " + categoryId);
 
-                /*Bundle args1 = new Bundle();
-                args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
-                args1.putString(getString(R.string.ext_category_id), String.valueOf(menuItem.getItemId()));
-                browseOfferFragment.setArguments(args1);*/
 
-
-                /*if(redirectTo.equalsIgnoreCase("BrandOffers")) {
-                    getSupportActionBar().setTitle(R.string.offers_by_brand);
-                    args1.putString(getString(R.string.ext_redir_to), "BrandOffers");
-                    args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
-                }
-
-                else if(redirectTo.equalsIgnoreCase("CampaignOffers")) {
-                    getSupportActionBar().setTitle(R.string.offers_by_campaign);
-                    args1.putString(getString(R.string.ext_redir_to), "CampaignOffers");
-                    args1.putString(getString(R.string.ext_campaign_id), campaignId);
-                }
-
-                else if(redirectTo.equalsIgnoreCase("CategoryOffers")) {
-                    getSupportActionBar().setTitle(R.string.offers_by_category);
-                    args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
-                    args1.putString(getString(R.string.ext_category_id), categoryId);
-                }*/
 
                 editor.putString(getString(R.string.spf_view_type), "thumb"); // Storing User Id
                 editor.commit(); // commit changes
@@ -898,24 +872,19 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
         //setUpMap();
+        Log.d(LOGTAG, "Resuming the app");
     }
 
     @Override
     public void passDataToActivity(String currentFragment) {
-        Log.d(LOGTAG, "Data passed from fragment to activity: "+currentFragment);
+        //Log.d(LOGTAG, "Data passed from fragment to activity: "+currentFragment);
         this.curFragment = currentFragment;
+        //Log.d(LOGTAG, "BottomBar is: "+this.mBottomBar);
 
-        Log.d(LOGTAG, "BottomBar is: "+this.mBottomBar);
-
-
-
-        //if(mBottomBar != null)
-        //    mBottomBar.selectTabAtPosition(3, false);
 
     }
 
@@ -936,16 +905,52 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
             finish();
             Log.d(LOGTAG, "Finished sending email...");
-        }
-        catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             Toast.makeText(BrowseOffersActivity.this, "There is no email client installed.", Toast.LENGTH_SHORT).show();
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
 
-    public interface RemiMap {
-        public void getMapData();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "BrowseOffers Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.tier5.redeemar.RedeemarConsumerApp/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "BrowseOffers Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.tier5.redeemar.RedeemarConsumerApp/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
+
+
 
 
 }

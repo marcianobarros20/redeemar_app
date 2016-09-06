@@ -284,13 +284,13 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
 
         //googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
-        googleMap.setOnCameraChangeListener(mClusterManager);
+        //googleMap.setOnCameraChangeListener(mClusterManager);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
         //Log.d(LOGTAG, "Max zoom is: "+googleMap.getMaxZoomLevel());
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10));
         mClusterManager = new ClusterManager(getActivity(), googleMap);
-        googleMap.setOnCameraChangeListener(mClusterManager);
+        //googleMap.setOnCameraChangeListener(mClusterManager);
         googleMap.setOnInfoWindowClickListener(mClusterManager);
         googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
         googleMap.setOnMarkerClickListener(mClusterManager);

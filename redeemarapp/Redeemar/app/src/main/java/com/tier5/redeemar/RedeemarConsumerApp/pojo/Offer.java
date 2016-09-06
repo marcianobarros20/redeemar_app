@@ -11,7 +11,7 @@ public class Offer implements Serializable {
             location, zipcode, catName, subcatName, brandLogo, brandInfo;
     Date startDate, endDate;
     double price, payValue, retailvalue, discount;
-    int valueCalculate, expiredInDays, campaignId, catId, subCatId, userAction, createdBy, onDemand, offersCount, dealsCount;
+    int valueCalculate, valueText, expiredInDays, campaignId, catId, subCatId, userAction, createdBy, onDemand, offersCount, dealsCount;
 
     public Offer() {
 
@@ -33,8 +33,17 @@ public class Offer implements Serializable {
         this.offersCount = offersCount;
     }
 
+
     public int getDealsCount() {
         return dealsCount;
+    }
+
+    public int getValueText() {
+        return valueText;
+    }
+
+    public void setValueText(int valueText) {
+        this.valueText = valueText;
     }
 
     public void setDealsCount(int dealsCount) {

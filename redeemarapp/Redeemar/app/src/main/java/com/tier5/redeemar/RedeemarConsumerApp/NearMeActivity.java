@@ -161,7 +161,7 @@ public class NearMeActivity extends BaseMapActivity implements ActivityCompat.On
        getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10));
 
        mClusterManager = new ClusterManager<MarkerItem>(this, getMap());
-       getMap().setOnCameraChangeListener(mClusterManager);
+       //getMap().setOnCameraChangeListener(mClusterManager);
        getMap().setInfoWindowAdapter(mClusterManager.getMarkerManager());
        getMap().setOnMarkerClickListener(mClusterManager);
 

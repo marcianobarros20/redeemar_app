@@ -745,6 +745,8 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
             Log.d(LOGTAG, "Tracking Result Count: "+finder.getResultCount() );
 
+            boolean targetFound = false;
+
             if (finder.getResultCount() > 0)
             {
                 TargetSearchResult result = finder.getResult(0);
@@ -760,7 +762,6 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                     Bundle extras = getIntent().getExtras();
 
                     // Check whether the usre is validating the
-
                     if (extras != null) {
 
                         String activityName = extras.getString(getString(R.string.ext_activity));
@@ -768,13 +769,16 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                         String offer_id = extras.getString(getString(R.string.ext_offer_id));
 
                         Log.d(LOGTAG, "After Recognition Activity Name: "+activityName);
-                        Log.d(LOGTAG, "After Recognition Offer Id: "+user_id);
+                        Log.d(LOGTAG, "After Recognition User Id: "+user_id);
                         Log.d(LOGTAG, "After Recognition Offer Id: "+offer_id);
 
 
-                        if(activityName.equals("Validation") && user_id != "" && offer_id != "") {
-                            Toast.makeText(getApplicationContext(), "Successfully validated the target, processing...", Toast.LENGTH_LONG).show();
+                        if(activityName.equals("Validation") && user_id != "" && offer_id != "" && targetFound == false) {
+                            targetFound = true;
+                            doStopTrackers();
+                            doDeinitTrackers();
                             new ValidateOfferAsyncTask().execute(offer_id, user_id, uniqueTargetId);
+
                         }
                         else {
                             Log.d(LOGTAG, "Logo validation failed, user id or offer id missing");
@@ -783,25 +787,9 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                     }
 
                     else {
-
-
-                        /*Intent dispSuccess = new Intent(getApplicationContext(), BrandMainActivity.class);
-                        dispSuccess.putExtra("unique_target_id", uniqueTargetId);
-                        startActivity(dispSuccess);
-                        finish();*/
-
                         new ValidateLogoAsyncTask().execute(uniqueTargetId);
-
                     }
 
-
-                    // Check if this target is suitable for tracking:
-                    /*if (result.getTrackingRating() > 0) {
-                        Trackable trackable = finder.enableTracking(result);
-
-                        if (mExtendedTracking)
-                            trackable.startExtendedTracking();
-                    }*/
 
                 } else {
 
@@ -1147,7 +1135,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                                 if(!json2.isNull("offer_id")) {
 
 
-                                    String offerId = (String) json2.get("offer_id");
+                                    String offerId = json2.get("offer_id").toString();
 
                                     Log.d(LOGTAG, "Inside action id 3: "+offerId);
 
@@ -1287,23 +1275,17 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
 
-
                 JSONObject data = new JSONObject();
-                //JSONObject auth=new JSONObject();
-                //JSONObject parent=new JSONObject();
                 data.put("offer_id", offer_id);
                 data.put("user_id", user_id);
                 data.put("target_id", target_id);
 
                 OutputStream os = conn.getOutputStream();
-
                 Log.d(LOGTAG, "Request: " + data.toString());
-
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 bufferedWriter.write("data="+data.toString());
                 bufferedWriter.flush();
                 bufferedWriter.close();
-
 
                 InputStream inputStream = conn.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -1312,7 +1294,6 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                     response += line;
                 }
 
-                //Log.d(LOGTAG, "Do In background: " + response);
                 bufferedReader.close();
                 inputStream.close();
                 conn.disconnect();
@@ -1347,7 +1328,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                     if (reader.getString("messageCode").equals("R01001")) {
 
 
-                        Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), DisplaySuccessActivity.class);
                         intent.putExtra(getString(R.string.ext_scan_err), "R02001");
                         startActivity(intent);
                         finish();

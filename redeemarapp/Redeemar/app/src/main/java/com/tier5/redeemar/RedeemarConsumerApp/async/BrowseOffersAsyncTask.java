@@ -33,8 +33,6 @@ public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Off
         this.myComponent = myComponent;
         Log.d(LOGTAG, "Inside BrowseOffersAsyncTask constructor: "+myComponent);
 
-        //this.context = ctx;
-
     }
 
     @Override
@@ -54,6 +52,7 @@ public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Off
         String user_id = params[0];
         String lat = params[1];
         String lng = params[2];
+
 
 
         ArrayList<Offer> listOffers = OfferUtils.loadBrowseOffers(requestQueue, user_id, lat, lng);

@@ -196,7 +196,7 @@ public class LoginActivity extends AppCompatActivity implements
 
 
 
-        myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
+        //myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
 
 
 
@@ -394,8 +394,8 @@ public class LoginActivity extends AppCompatActivity implements
         tvRegister = (TextView) findViewById(R.id.tv_register);
         tvForgotPass = (TextView) findViewById(R.id.tv_forgot_password);
 
-        tvRegister.setTypeface(myFont);
-        tvForgotPass.setTypeface(myFont);
+        //tvRegister.setTypeface(myFont);
+        //tvForgotPass.setTypeface(myFont);
 
 
     }
@@ -747,11 +747,11 @@ public class LoginActivity extends AppCompatActivity implements
 
                                     Bitmap bitmap = Utils.getFacebookProfilePicture(facebookUserId);
 
-                                    if(bitmap != null) {
+                                    /*if(bitmap != null) {
                                         String profilePicPath = Utils.saveToInternalStorage(getApplicationContext(), bitmap);
                                         Log.d(LOGTAG, "Profile Image Path: "+profilePicPath);
 
-                                    }
+                                    }*/
 
 
                                     /*

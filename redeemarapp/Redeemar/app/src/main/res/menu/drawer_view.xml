@@ -6,28 +6,29 @@
             android:id="@+id/nav_offers"
             android:icon="@drawable/ic_price_tag"
             android:title="@string/nav_item_offers"
-            android:visible="true" />
+            android:visible="false" />
 
         <item
             android:id="@+id/nav_help"
             android:icon="@drawable/ic_help"
             android:title="@string/nav_item_help"
-            android:visible="true" />
+            android:visible="false" />
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_about"
             android:title="@string/nav_item_about"
-            android:visible="true"  />
+            android:visible="false"  />
         <item
             android:id="@+id/nav_contact"
             android:icon="@drawable/ic_contact"
             android:title="@string/nav_item_contact"
-            android:visible="true"  />
+            android:visible="false"  />
 
         <item
             android:id="@+id/nav_rate"
             android:icon="@drawable/ic_rate"
-            android:title="@string/nav_item_rate" />
+            android:title="@string/nav_item_rate"
+            android:visible="false"  />
 
         <item
             android:id="@+id/nav_login"
@@ -39,14 +40,14 @@
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:title="@string/nav_item_signout"
-            android:visible="true" />
+            android:visible="false" />
 
 
         <item
             android:id="@+id/nav_export"
             android:icon="@drawable/ic_logout"
             android:title="@string/nav_item_export_log"
-            android:visible="true" />
+            android:visible="false" />
 
     </group>
 </menu>

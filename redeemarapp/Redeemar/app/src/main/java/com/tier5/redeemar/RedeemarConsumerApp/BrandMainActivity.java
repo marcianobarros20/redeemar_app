@@ -45,7 +45,7 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
     private TextView tvBrandName, hwTextView;
     private ImageView imBrandLogo;
-    private Button btnShopOffers;
+    private Button btnShopOffers, btnScan;
     String redeemarId = "", uniqueTargetId = "", lastActivity="", videoId = "", basePath = "";
     Context context;
 
@@ -75,6 +75,8 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
         youTubePlayerView.initialize(API_KEY, this);
 
         btnShopOffers = (Button) findViewById(R.id.shop_offers);
+        btnScan = (Button)  findViewById(R.id.btnScan);
+
         tvBrandName = (TextView) findViewById(R.id.brand_name);
         imBrandLogo = (ImageView) findViewById(R.id.brand_logo_image);
         context = this;
@@ -313,6 +315,18 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
             }
         });
 
+
+
+        btnScan.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                Intent sIntent = new Intent(getApplicationContext(), CloudReco.class);
+                startActivity(sIntent);
+                finish();
+            }
+        });
+
     }
 
 
@@ -320,9 +334,9 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
     @Override
     public void onBackPressed()
     {
-        Intent intent = new Intent(BrandMainActivity.this, BrowseOffersActivity.class);
-        startActivity(intent);
-        finish();
+        //Intent intent = new Intent(BrandMainActivity.this, BrowseOffersActivity.class);
+        //startActivity(intent);
+        //finish();
 
     }
 

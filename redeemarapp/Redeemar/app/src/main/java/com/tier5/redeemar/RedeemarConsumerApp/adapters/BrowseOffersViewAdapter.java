@@ -4,10 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,16 +29,21 @@ import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
 import com.tier5.redeemar.RedeemarConsumerApp.LoginActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.OfferDetailsActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
+import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadBitmapTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ImageDownloadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,17 +57,18 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 
-public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersViewAdapter.SimpleViewHolder> implements TaskCompleted {
+public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersViewAdapter.SimpleViewHolder> implements ImageDownloadedListener {
 
     private static final String LOGTAG = "SwipeRecyclerView";
     private Context mContext;
     private ArrayList<Offer> offerList;
-    //private ImageLoader mImageLoader;;
+    //private ImageLoader mImageLoader;
+    private Bitmap logoBmp;
     private SharedPreferences sharedpref;
     private String activityName;
     private String mViewType;
     private Resources res;
-    private String offerId, userId;
+    private String offerId, userId, offerImageFileName, LogoFileName;
     Typeface myFont;
 
 
@@ -129,6 +138,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         StringBuilder sb = new StringBuilder(14);
         StringBuilder esb = new StringBuilder(14);
         String address_distance = "";
+        String imageUrl = "";
+        String logoUrl = "";
 
         String perc_sym = mContext.getResources().getString(R.string.percentage_symbol);
         String off = mContext.getResources().getString(R.string.off);
@@ -138,6 +149,9 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         String expires_in = mContext.getResources().getString(R.string.expires_in);
         String days = mContext.getResources().getString(R.string.days);
         String distance_unit = mContext.getResources().getString(R.string.distance_unit);
+        String discount_text = "";
+
+        double dcRetail = 0, dcPay = 0;
 
 
         final Offer item = offerList.get(position);
@@ -168,7 +182,10 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             }
         }
 
-        //address_distance = item.getLocation()+" "+item.getDistance();
+        dcRetail = item.getRetailvalue();
+        dcPay = item.getPayValue();
+
+
 
         if(offer_desc.length() > 75)
             viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 75)+"...");
@@ -176,10 +193,10 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             viewHolder.tvOfferDescription.setText(offer_desc);
 
         if(item.getRetailvalue() > 0)
-            viewHolder.tvRetailValue.setText(cur_sym+String.valueOf(item.getRetailvalue()));
+            viewHolder.tvRetailValue.setText(cur_sym+Utils.formatPrice(dcRetail));
 
         if(item.getPayValue() > 0)
-            viewHolder.tvPayValue.setText(cur_sym+(String.valueOf(item.getPayValue())));
+            viewHolder.tvPayValue.setText(cur_sym+Utils.formatPrice(dcPay));
 
         if(!item.getDistance().equals(""))
             viewHolder.tvDistance.setText(String.valueOf(item.getDistance())+" "+distance_unit);
@@ -210,16 +227,26 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         viewHolder.tvRetailValue.setPaintFlags(viewHolder.tvRetailValue.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         int valCalc = item.getValueCalculate();
+        int valText = item.getValueText();
         Double discVal = item.getDiscount();
 
-        String imageUrl = "";
+        Log.d(LOGTAG, "Retail Value: "+item.getRetailvalue());
+        Log.d(LOGTAG, "Pay Value: "+item.getPayValue());
+        Log.d(LOGTAG, "Value Calculate: "+valCalc);
+
+        if(item.getRetailvalue() > 0 && item.getPayValue() > 0) {
+            discount_text = Utils.calculateDiscount(item.getRetailvalue(), item.getPayValue(), valCalc);
+            Log.d(LOGTAG, "My Discount Value: "+discount_text);
+        }
+
+
 
         if(mViewType.equalsIgnoreCase("thumb"))
             imageUrl = item.getLargeImageUrl();
         else
             imageUrl = item.getImageUrl();
 
-        if(discVal > 0) {
+        if(!discount_text.equals("")) {
             viewHolder.discountLayout.setVisibility(View.VISIBLE);
         }
         else {
@@ -227,32 +254,46 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         }
 
 
-        switch(valCalc)
-        {
-            case 1 :
-                sb.append(cur_sym).append(discVal).append(" ").append(off);
-                break;
-            case 2 :
-                sb.append(discVal).append(perc_sym).append(" ").append(off);
-                break;
-            case 3 :
-                sb.append(cur_sym).append(discVal).append(" ").append(disc);
-                break;
-            case 4 :
-                sb.append(discVal).append(perc_sym).append(" ").append(disc);
-                break;
-            case 5 :
-                sb.append(save).append(" ").append(cur_sym).append(discVal);
-                break;
-            case 6 :
-                sb.append(save).append(" ").append(discVal).append(perc_sym);
-                break;
-            default :
-                sb.append(cur_sym).append(discVal).append(" ").append(off);
+
+
+        // In case valCalc is 2 = then use percentage symbol, else use $ symbol
+        if(valCalc == 2) {
+
+            if(valText == 3) {
+                sb.append(save).append(" ").append(discount_text).append(perc_sym);
+            }
+            else if(valText == 2) {
+                sb.append(discount_text).append(perc_sym).append(" ").append(disc);
+            }
+            else {
+                sb.append(discount_text).append(perc_sym).append(" ").append(off);
+            }
+
+
+        }
+        else {
+
+            if(valText == 3) {
+                //sb.append(cur_sym).append(discVal).append(" ").append(off);
+                sb.append(save).append(" ").append(perc_sym).append(discount_text);
+
+            }
+            else if(valText == 2) {
+                sb.append(cur_sym).append(discount_text).append(" ").append(disc);
+            }
+            else {
+                sb.append(cur_sym).append(discount_text).append(" ").append(off);
+            }
         }
 
+        Log.d(LOGTAG, "Product Name: "+item.getOfferDescription());
+        Log.d(LOGTAG, "Product Discount: "+discount_text);
 
-        if(discVal > 0) {
+
+
+
+
+        if(!discount_text.equals("")) {
             viewHolder.tvDiscount.setText(sb);
             viewHolder.tvDiscount.setVisibility(View.VISIBLE);
         }
@@ -272,7 +313,32 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         }*/
 
 
+        // Download logo image and save to SD Card
+
+        /*if(item.getBrandLogo() != null && !item.getBrandLogo().equals("")) {
+            LogoFileName = item.getBrandLogo().toString();
+
+            if(Utils.showLogoImageFromStorage(LogoFileName, viewHolder.logoThumbnail)){
+
+            }
+            else {
+                logoUrl = UrlEndpoints.baseLogoSmallURL + LogoFileName;
+                Log.d(LOGTAG, "Logo URL: " + logoUrl);
+                new DownloadBitmapTask(this).execute(logoUrl);
+
+                // Check image is not null
+                if(logoBmp != null) {
+                    viewHolder.logoThumbnail.setImageBitmap(logoBmp);
+                }
+            }
+
+        }*/
+
+
+
         viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
+        viewHolder.mLogoImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
+
 
         // Instantiate the RequestQueue.
         if(imageUrl != null && !imageUrl.equalsIgnoreCase("")) {
@@ -288,11 +354,22 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         }
 
 
+        Log.d(LOGTAG, "Logo URL: "+item.getBrandLogo());
+
+        // Instantiate the RequestQueue.
+        if(item.getBrandLogo() != null && !item.getBrandLogo().equalsIgnoreCase("")) {
+
+            logoUrl = UrlEndpoints.baseLogoSmallURL + item.getBrandLogo();
+
+            Log.d(LOGTAG, "Logo URL: "+logoUrl);
+
+            viewHolder.mImageLoader.get(logoUrl, ImageLoader.getImageListener(viewHolder.logoThumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
+            viewHolder.logoThumbnail.setImageUrl(logoUrl, viewHolder.mImageLoader);
+            viewHolder.logoThumbnail.setAdjustViewBounds(false);
+        }
+
 
         viewHolder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
-
-        // Drag From Left
-        //viewHolder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left, viewHolder.swipeLayout.findViewById(R.id.bottom_wrapper1));
 
         // Drag From Right
         viewHolder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, viewHolder.swipeLayout.findViewById(R.id.bottom_wrapper));
@@ -307,10 +384,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             @Override
             public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-                //you are swiping.
 
-                Log.d(LOGTAG, "Swipe Top: "+topOffset);
-
+                //Log.d(LOGTAG, "Swipe Top: "+topOffset);
 
                 if(leftOffset <= -600) {
 
@@ -335,13 +410,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
                         Log.d(LOGTAG, "No. of Items: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
-
                     }
-
-
                 }
-
-
 
             }
 
@@ -510,24 +580,21 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
 
     @Override
-    public void onTaskComplete(String result) {
-
-        // TODO
+    public void onImageDownloaded(Bitmap imBmp) {
+        String logoImagePath = Utils.saveToInternalStorage(imBmp, LogoFileName);
+        this.logoBmp = imBmp;
+        //Utils.setImageView(logoImagePath, viewHolder.logoThumbnail);
     }
-
-
-    //  ViewHolder Class
 
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
         private SwipeLayout swipeLayout;
         //private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvPriceRangeId, tvDiscount, tvExpires;
         private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvRetailValue, tvDiscount, tvPayValue, tvDistance, tVOnDemand;
         private NetworkImageView thumbnail;
+        private NetworkImageView logoThumbnail;
         private ImageView mapIcon;
-        private ImageLoader mImageLoader;
+        private ImageLoader mImageLoader, mLogoImageLoader;
         private LinearLayout distanceLayout, discountLayout;
-
-
 
         LinearLayout rating;
 
@@ -544,6 +611,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             mapIcon = (ImageView) itemView.findViewById(R.id.map_icon);
             tVOnDemand = (TextView) itemView.findViewById(R.id.on_demand);
             thumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
+            logoThumbnail = (NetworkImageView) itemView.findViewById(R.id.logo_image);
 
             distanceLayout = (LinearLayout) itemView.findViewById(R.id.distance_layout);
             discountLayout = (LinearLayout) itemView.findViewById(R.id.discount_layout);
@@ -644,11 +712,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             if (resp != null) {
 
-
                 try {
                     //JSONObject json= (JSONObject) new JSONTokener(result).nextValue();
-
-
                     JSONObject reader = new JSONObject(resp);
 
                     int iRes = 0;

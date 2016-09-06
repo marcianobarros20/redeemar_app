@@ -2,6 +2,7 @@
     <item
         android:id="@+id/bottom_scan_offer"
         android:icon="@drawable/scan"
+        android:titleCondensed="@string/scan_offer"
         android:title="@string/scan_offer" />
 
 

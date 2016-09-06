@@ -24,7 +24,7 @@ public class MenuUtils {
 
     public static ArrayList<Category> loadMenuItem(RequestQueue requestQueue, String parentId) {
 
-        JSONObject response = Requestor.requestMenuItemsJSON(requestQueue, Endpoints.getRequestUrlMenuItems(), parentId);
+        JSONObject response = Requestor.requestMenuItemsJSON(requestQueue, Endpoints.getRequestUrlCategoryItems());
         ArrayList<Category> menuItems = Parser.parseMenuItemsJSON(response);
         Log.d(LOGTAG, "Inside loadMenuItem :"+menuItems.size());
         return menuItems;

@@ -102,6 +102,18 @@
             android:layout_alignParentTop="true"
             android:src="@drawable/icon_watermark"/>
 
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/logo_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:padding="4dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:maxWidth="100dp"
+            android:maxHeight="80dp"
+            android:src="@drawable/icon_watermark" />
 
         <LinearLayout
             android:layout_width="fill_parent"

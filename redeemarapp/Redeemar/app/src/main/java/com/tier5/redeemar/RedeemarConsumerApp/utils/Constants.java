@@ -19,4 +19,7 @@ public interface Constants {
 
     final String defaultYoutubeVideoId = "qcw0jQ5o-Ls";
 
+    final String logoDir = "redeemar/logos/";
+    final String offerDir = "redeemar/offers/";
+
 }

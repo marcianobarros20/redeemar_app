@@ -31,16 +31,12 @@ public class MyOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offer>>
     public MyOffersAsyncTask(OffersLoadedListener myComponent, Context ctx) {
         this.myComponent = myComponent;
         this.context = ctx;
-
     }
 
     @Override
     protected void onPreExecute() {
 
 
-        //mProgress = new ProgressDialog(context);
-        //mProgress.setMessage("Loading, please wait...");
-        //mProgress.show();
     }
 
 
@@ -48,13 +44,11 @@ public class MyOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offer>>
     protected ArrayList<Offer> doInBackground(String... params) {
 
         Log.d(LOGTAG, "Inside my list offers");
-
         String user_id = params[0];
         String lat = params[1];
-        String lng = params[2];
+        String lon = params[2];
 
-
-        ArrayList<Offer> listOffers = OfferUtils.loadMyOffers(requestQueue, user_id);
+        ArrayList<Offer> listOffers = OfferUtils.loadMyOffers(requestQueue, user_id, lat, lon);
         return listOffers;
     }
 
@@ -63,7 +57,6 @@ public class MyOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offer>>
         if (myComponent != null) {
             myComponent.onOffersLoaded(listOffers);
         }
-        //mProgress.dismiss();
     }
 
 

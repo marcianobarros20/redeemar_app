@@ -25,7 +25,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +51,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
     SupportMapFragment mapFragment;
     private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvPayValue, tvDiscount, tvRetailValue, tvExpires;
-    private NetworkImageView thumbnail;
+    private NetworkImageView thumbnail, logoThumbnail;
     private ImageLoader mImageLoader;
     private Button btnBank,  btnPass,  btnRedeem;
     private SharedPreferences sharedpref;
@@ -98,6 +100,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
 
         thumbnail = (NetworkImageView) findViewById(R.id.thumbnail);
+        logoThumbnail = (NetworkImageView) findViewById(R.id.logo_image);
 
         perc_sym = getResources().getString(R.string.percentage_symbol);
         cur_sym = getResources().getString(R.string.currency_symbol);
@@ -301,9 +304,6 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                 }
 
 
-
-
-
                 OutputStream os = conn.getOutputStream();
 
                 Log.d(LOGTAG, "Request: " + data.toString());
@@ -368,19 +368,15 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
                             JSONObject jsonObject = offerArray.getJSONObject(0);
 
-
-
                             if(jsonObject.optString("offer_description").toString() != null) {
                                 tvOfferTitle.setText(jsonObject.optString("offer_description").toString());
                                 Log.d(LOGTAG, "offer_description: "+jsonObject.optString("offer_description").toString());
                             }
 
-
                             if(jsonObject.optString("what_you_get").toString() != null) {
                                 tvWhatYouGet.setText(jsonObject.optString("what_you_get").toString());
                                 Log.d(LOGTAG, "what_you_get: "+jsonObject.optString("what_you_get").toString());
                             }
-
 
                             if(jsonObject.getString("retails_value") != "" && jsonObject.getString("retails_value").toString() != "") {
 
@@ -407,7 +403,6 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                                     tvDiscount.setText(jsonObject.getString("discount").toString().concat(perc_sym));
                                 else
                                     tvDiscount.setText(jsonObject.getString("discount").toString().concat(perc_sym));
-                                //Log.d(LOGTAG, "discount: "+jsonObject.getString("discount").toString());
                             }
 
 
@@ -424,19 +419,34 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
 
                                 String imageUrl = jsonObject.getString("offer_large_image_path");
-
                                 imageUrl = UrlEndpoints.serverBaseUrl  + imageUrl;
-
                                 Log.d(LOGTAG, "offer_large_image_path: "+imageUrl);
 
 
-
                                 mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
-
                                 mImageLoader.get(imageUrl, ImageLoader.getImageListener(thumbnail,
                                         R.drawable.icon_watermark, android.R.drawable
                                                 .ic_dialog_alert));
                                 thumbnail.setImageUrl(imageUrl, mImageLoader);
+
+                            }
+
+
+                            if(!jsonObject.isNull("logo_details") && !jsonObject.getString("logo_details").equalsIgnoreCase("")) {
+
+                                JSONObject jsonLogoSettings = new JSONObject(jsonObject.getString("logo_details"));
+
+                                if(!jsonLogoSettings.isNull("logo_name") && !jsonLogoSettings.getString("logo_name").equals("")) {
+
+                                    Log.d(LOGTAG, "My Logo URL1: "+jsonLogoSettings.getString("logo_name"));
+
+                                    String logoImageUrl = UrlEndpoints.baseLogoMediumURL+ jsonLogoSettings.getString("logo_name");
+                                    mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
+                                    mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail,
+                                            R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
+                                    logoThumbnail.setImageUrl(logoImageUrl, mImageLoader);
+                                }
+
 
                             }
 
@@ -463,6 +473,9 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
                             }
 
+
+
+
                             JSONArray jsonCompanyArray = new JSONArray(jsonObject.getString("company_detail"));
 
                             String address = "";
@@ -473,12 +486,47 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
                                 JSONObject jsonCompanyObject = jsonCompanyArray.getJSONObject(0);
 
+                                Address addr = new Address();
+
 
                                 if (!jsonCompanyObject.isNull("address") && jsonCompanyObject.getString("address").toString() != "") {
                                     Log.d(LOGTAG, "address: " + jsonCompanyObject.getString("address").toString());
-                                    address = jsonCompanyObject.getString("address");
-                                    tvAddress.setText(address);
+                                    addr.setStreet(jsonCompanyObject.getString("address"));
                                 }
+                                else
+                                    addr.setStreet("");
+
+
+                                if (!jsonCompanyObject.isNull("city") && jsonCompanyObject.getString("city").toString() != "") {
+                                    Log.d(LOGTAG, "city: " + jsonCompanyObject.getString("city").toString());
+                                    addr.setCity(jsonCompanyObject.getString("city"));
+                                }
+                                else
+                                    addr.setCity("");
+
+
+                                if (!jsonCompanyObject.isNull("state") && jsonCompanyObject.getString("state").toString() != "") {
+                                    Log.d(LOGTAG, "state: " + jsonCompanyObject.getString("state").toString());
+                                    addr.setState(jsonCompanyObject.getString("state"));
+                                }
+                                else
+                                    addr.setState("");
+
+                                if (!jsonCompanyObject.isNull("zipcode") && jsonCompanyObject.getString("zipcode").toString() != "") {
+                                    Log.d(LOGTAG, "zipcode: " + jsonCompanyObject.getString("zipcode").toString());
+                                    addr.setZip(jsonCompanyObject.getString("zipcode"));
+                                }
+                                else
+                                    addr.setZip("");
+
+                                if (!jsonCompanyObject.isNull("location") && jsonCompanyObject.getString("location").toString() != "") {
+                                    Log.d(LOGTAG, "location: " + jsonCompanyObject.getString("location").toString());
+                                    addr.setLocation(jsonCompanyObject.getString("location"));
+                                }
+                                else
+                                    addr.setLocation("");
+
+                                tvAddress.setText(Utils.getFormattedAddress(addr));
 
                             }
 

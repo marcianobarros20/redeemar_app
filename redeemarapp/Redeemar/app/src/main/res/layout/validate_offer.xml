@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_scroller"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg02"
@@ -33,14 +37,37 @@
     </LinearLayout>
 
 
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/thumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:padding="0dp"
-        android:layout_alignParentTop="true" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/list_row_selector"
+        android:padding="0dp">
+
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:padding="0dp"
+            android:layout_alignParentTop="true" />
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/logo_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:padding="4dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:maxWidth="100dp"
+            android:maxHeight="80dp"
+            android:src="@drawable/logo_medium" />
+
+    </RelativeLayout>
 
 
     <TextView
@@ -241,32 +268,23 @@
 
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:focusableInTouchMode="true"
+        android:gravity="center">
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/redemption_code"
-            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:id="@+id/redeem_code"
+            android:hint="@string/redemption_code"
+            android:nextFocusUp="@id/redeem_code"
+            android:nextFocusLeft="@id/redeem_code"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
             android:background="@drawable/text_field_bg"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
 
         <Button
             android:id="@+id/btn_redeem_by_passcode"
@@ -282,6 +300,17 @@
             android:layout_marginBottom="5dp"
             android:visibility="visible"
             android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+
 
         <View
             android:layout_width="match_parent"
@@ -309,4 +338,13 @@
     </LinearLayout>
 
 
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+
 </LinearLayout>
+</ScrollView>

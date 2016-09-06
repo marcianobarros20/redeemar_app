@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:visibility="gone">
 
 
 
@@ -12,50 +13,111 @@
         android:layout_height="wrap_content"
         android:gravity="left|center_vertical"
         android:layout_above="@id/my_recycler_view"
+        android:padding="4dp"
         android:background="@color/darkGray"
         android:orientation="horizontal">
 
-
-
         <TextView
-            android:id="@+id/tvToolHeader"
+            android:id="@+id/tvUserLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
             android:gravity="left"
-            android:text="@string/showing_all"
+            android:text="@string/user_location"
             android:textColor="@color/white"
             android:visibility="visible"
             android:layout_weight="1" />
+
+        <EditText
+            android:id="@+id/txtLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/your_location"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_corner"/>
 
 
         <ImageView
             android:id="@+id/menu_list_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="8dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:src="@drawable/ic_thumb_green"
-            android:layout_gravity="center_vertical|right" />
-
-        <ImageView
-            android:id="@+id/menu_map_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:src="@drawable/ic_map_view"
-            android:layout_gravity="center_vertical|right" />
+            android:layout_gravity="center_vertical|right"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/menu_thumb_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="8dp"
             android:paddingLeft="5dp"
             android:paddingRight="10dp"
             android:src="@drawable/ic_list_green"
-            android:layout_gravity="center_vertical|right" />
+            android:layout_gravity="center_vertical|right"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/menu_map_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:src="@drawable/ic_map_view"
+            android:layout_gravity="center_vertical|right"
+            android:visibility="gone" />
 
     </LinearLayout>
+
+    <LinearLayout
+
+        android:id="@+id/insideBottomToolbar1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:layout_below="@id/tvUserLocation"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:weightSum="1"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search"/>
+
+
+        <TextView
+            android:id="@+id/search_category"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="0dp"
+            android:gravity="left"
+            android:text="@string/category"
+            android:textColor="@color/darkGray" />
+
+        <EditText
+            android:id="@+id/txtKeyword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/lock"
+            android:hint="@string/search"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_corner"/>
+
+    </LinearLayout>
+
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
 
 </LinearLayout>

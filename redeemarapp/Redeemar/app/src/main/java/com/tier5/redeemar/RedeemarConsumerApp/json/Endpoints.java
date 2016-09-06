@@ -61,6 +61,12 @@ public class Endpoints {
                 + UrlEndpoints.URL_CHAR_QUESTION;
     }
 
+    public static String getRequestUrlCategoryItems() {
+
+        return UrlEndpoints.URL_CATEGORY_ITEMS
+                + UrlEndpoints.URL_CHAR_QUESTION;
+    }
+
     public static String getRequestUrlSendFeedback() {
 
         return UrlEndpoints.URL_SEND_FEEDBACK
@@ -73,4 +79,22 @@ public class Endpoints {
                 + UrlEndpoints.URL_CHAR_QUESTION;
     }
 
+    public static String getValidatePasscode() {
+
+        return UrlEndpoints.URL_VALIDATE_PASSCODE
+                + UrlEndpoints.URL_CHAR_QUESTION;
+    }
+
+    public static String getSearchShort() {
+
+        return UrlEndpoints.URL_SEARCH_SHORT
+                + UrlEndpoints.URL_CHAR_QUESTION;
+    }
+
+
+    public static String getFullShort() {
+
+        return UrlEndpoints.URL_SEARCH_FULL
+                + UrlEndpoints.URL_CHAR_QUESTION;
+    }
 }

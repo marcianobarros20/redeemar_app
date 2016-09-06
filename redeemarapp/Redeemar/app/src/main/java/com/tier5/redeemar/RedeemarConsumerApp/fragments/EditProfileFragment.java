@@ -163,7 +163,7 @@ public class EditProfileFragment extends Fragment implements TaskCompleted {
                     txtLastName.requestFocus();
                 }
 
-                else if(email.equals("") || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                else if(email.equals("") || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     flag = false;
                     errMsg = R.string.enter_valid_email;
                     txtEmail.requestFocus();

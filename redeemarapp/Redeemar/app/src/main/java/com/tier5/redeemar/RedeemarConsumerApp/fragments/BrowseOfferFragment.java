@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
@@ -32,8 +33,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
+import com.tier5.redeemar.RedeemarConsumerApp.CategoryActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
+import com.tier5.redeemar.RedeemarConsumerApp.SearchActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.async.BrandOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
@@ -43,6 +47,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.async.OnDemandOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 
 import org.json.JSONArray;
@@ -78,6 +83,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     Activity activity;
     private ActivityCommunicator activityCommunicator;
     private ImageView imListView, imMapView, imThumbView;
+    private TextView tvCategory;
 
 
 
@@ -134,10 +140,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         View layout = inflater.inflate(R.layout.fragment_offers, container, false);
         //Log.d(LOGTAG, "Inside browse offer fragment");
 
-
         imListView = (ImageView) layout.findViewById(R.id.menu_list_view);
         imMapView = (ImageView) layout.findViewById(R.id.menu_map_view);
         imThumbView = (ImageView) layout.findViewById(R.id.menu_thumb_view);
+        tvCategory = (TextView) layout.findViewById(R.id.search_category);
 
         editor = sharedpref.edit();
 
@@ -191,6 +197,19 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             }
         });
 
+        tvCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.d(LOGTAG, "Category clicked");
+
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), CategoryActivity.class);
+                startActivity(intent);
+                activity.overridePendingTransition(R.anim.right_to_left, R.anim.left_to_right);
+            }
+        });
+
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.my_recycler_view);
 
@@ -212,9 +231,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         mListOffers = new ArrayList<>();
 
-
         mAdapter = new BrowseOffersViewAdapter(getActivity(), "BrowseOffers");
-
         mRecyclerOffers.setAdapter(mAdapter);
 
         //update your Adapter to containg the retrieved movies
@@ -380,9 +397,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        MenuItem myActionMenuItem = menu.findItem( R.id.action_search);
+        /*MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) myActionMenuItem.getActionView();
-        searchView.setOnQueryTextListener(this);
+        searchView.setOnQueryTextListener(this);*/
     }
 
 
@@ -398,13 +415,13 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
            case R.id.action_search:
                Log.d(LOGTAG, "Inside BrowseOfferFragment");
+
                //Toast.makeText(getActivity().getApplicationContext(), "Search option selected", Toast.LENGTH_SHORT).show();
                //searchView.setVisibility(View.VISIBLE);
 
 
-               //final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-               //searchView.setOnQueryTextListener(this);
-
+               final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+               searchView.setOnQueryTextListener(this);
                return true;
 
 

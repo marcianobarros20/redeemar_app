@@ -5,26 +5,26 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.Settings;
-import android.text.TextUtils;
+import android.os.Environment;import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.tier5.redeemar.RedeemarConsumerApp.DisplayFailureActivity;
+import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadBitmapTask;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ImageDownloadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -34,6 +34,9 @@ import java.util.Locale;
 public class Utils {
 
     private static final String LOGTAG = "Utils";
+    private final int TYPE_LOGO = 1;
+    private final int TYPE_OFFER = 2;
+
 
     public static void CopyStream(InputStream is, OutputStream os)
     {
@@ -105,12 +108,10 @@ public class Utils {
 
             logText = result.toString();
 
-
-
             //Runtime.getRuntime().exec("logcat -d -v time -f "+file.getAbsolutePath());
         } catch (IOException e) {
 
-            Log.d(LOGTAG, "Exception occured in exporting ");
+            Log.d(LOGTAG, "Exception occured in exporting");
 
         }
 
@@ -140,16 +141,127 @@ public class Utils {
         }
 
         return null;
+    }
 
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            // Log exception
+            return null;
+        }
     }
 
 
-    public static String saveToInternalStorage(Context context, Bitmap bitmapImage){
-        ContextWrapper cw = new ContextWrapper(context);
+    public static String getFormattedAddress(Address address){
+
+        String fullAddr = "";
+
+        if(address.getStreet() != null && !address.getStreet().equals(""))
+            fullAddr = address.getStreet();
+
+        if(address.getLocation() != null && !address.getLocation().equals(""))
+            fullAddr = fullAddr + ", " + address.getLocation();
+
+        if(address.getCity() != null && !address.getCity().equals(""))
+            fullAddr = fullAddr + ", " + address.getCity();
+
+        if(address.getState() != null && !address.getState().equals(""))
+            fullAddr = fullAddr + ", " + address.getState();
+
+        if(address.getZip() != null && !address.getZip().equals(""))
+            fullAddr = fullAddr + ", " + address.getZip();
+
+        return fullAddr;
+    }
+
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
+
+    public static String calculateDiscount(Double retailVal, Double payVal, int type) {
+        Double discount = 0.0;
+        String disc = "";
+        DecimalFormat precision = new DecimalFormat("#.00");
+
+        Log.d(LOGTAG, "Type is: "+type);
+
+        // Type = 1 stands for absolute value
+        // Type = 2 stands for % value
+
+        try {
+
+
+            if(type == 1) {
+                discount = retailVal - payVal;
+                disc = String.valueOf(discount);
+                disc = precision.format(discount);
+            }
+            else {
+                discount = ((retailVal - payVal) / retailVal)*100;
+                disc = String.valueOf(Math.round(discount));
+            }
+
+
+
+
+        } catch (Exception ex) {
+            Log.d(LOGTAG, "Exception occurred in discount calculation "+ex.toString());
+        }
+
+
+        return disc;
+
+    }
+
+    public static String formatPrice(Double price) {
+
+        String sPrice = "";
+        DecimalFormat precision = new DecimalFormat("#.00");
+        sPrice = precision.format(price);
+        return sPrice;
+    }
+
+
+
+    public static File getFile(String dirName, String fileName) {
+        File mediaStorageDirLogo = new File(Environment.getExternalStorageDirectory(), dirName);
+        String path = mediaStorageDirLogo.getAbsolutePath() + "/" + fileName;
+        File file = new File(path);
+        return file;
+    }
+
+
+    public static String saveToInternalStorage(Bitmap bitmapImage, String filename){
+
+        File mediaStorageDirLogo = new File(Environment.getExternalStorageDirectory(), Constants.logoDir);
+
+        if (!mediaStorageDirLogo.exists()) {
+            if (!mediaStorageDirLogo.mkdirs()) {
+                Log.d("App", "failed to create directory");
+            }
+        }
+
+        /*ContextWrapper cw = new ContextWrapper(context);
         // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);*/
+
         // Create imageDir
-        File mypath=new File(directory,"profile.jpg");
+        File mypath = new File(mediaStorageDirLogo, filename);
+
+        Log.d(LOGTAG, "Saving image: "+mediaStorageDirLogo.getAbsolutePath());
 
         FileOutputStream fos = null;
         try {
@@ -162,29 +274,32 @@ public class Utils {
         } finally {
             //fos.close();
         }
-        return directory.getAbsolutePath();
+        return mediaStorageDirLogo.getAbsolutePath();
     }
 
-    public static String getFullAddress(Address address){
 
-        String fullAddr = "";
+    public static boolean setImageView(String imageFilePath, ImageView holder) {
+        Bitmap myBitmap = BitmapFactory.decodeFile(imageFilePath);
+        holder.setImageBitmap(myBitmap);
 
-        if(address.getStreet() != null && !address.getStreet().equalsIgnoreCase(""))
-            fullAddr = address.getStreet();
-
-        if(address.getStreet() != null && !address.getCity().equalsIgnoreCase(""))
-            fullAddr = fullAddr + ", " + address.getCity();
-
-
-        if(address.getState() != null && !address.getState().equalsIgnoreCase(""))
-            fullAddr = fullAddr + ", " + address.getState();
-
-        if(address.getZip() != null && !address.getZip().equalsIgnoreCase(""))
-            fullAddr = fullAddr + ", " + address.getZip();
-
-
-        return fullAddr;
+        return true;
     }
+
+
+    public static boolean showLogoImageFromStorage(String fileName, ImageView imView) {
+
+        if(Utils.getFile(Constants.logoDir, fileName).exists()) {
+            String imgFilePath = Environment.getExternalStorageDirectory() +"/"+ Constants.logoDir;
+            Log.d(LOGTAG, "Logo Path: " + imgFilePath);
+            File mediaStorageDirLogo = new File(imgFilePath, fileName);
+
+            Utils.setImageView(mediaStorageDirLogo.getAbsolutePath(), imView);
+            return true;
+        }
+        return false;
+
+    }
+
 
 
 
