@@ -23,7 +23,6 @@
                     layout="@layout/toolbar" />
             </LinearLayout>
 
-
         </LinearLayout>
 
         <LinearLayout
@@ -34,7 +33,6 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:orientation="vertical">
-
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/category_recycler_view"

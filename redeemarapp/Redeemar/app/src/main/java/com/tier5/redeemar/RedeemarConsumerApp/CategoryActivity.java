@@ -77,8 +77,15 @@ public class CategoryActivity extends AppCompatActivity {
             Log.d(LOGTAG, "Cat Level: " + catLevel);
 
             ArrayList categories = (ArrayList<Category>) db.getCategories(catId);
+
+            /*Category anyCat = new Category();
+            anyCat.setId(catId);
+            anyCat.setCatName("All");
+
+            categories.add(0, anyCat);*/
+
             Log.d(LOGTAG, "Count Cats: " + categories.size());
-            mAdapter.setCategories(categories);
+            mAdapter.setCategories(categories, catId);
 
         }
 

@@ -102,7 +102,7 @@ public class Requestor {
 
 
 
-    public static JSONObject requestOffersJSON(RequestQueue requestQueue, int mType, String url, String userId, String filterId, String catLevel, String latitude, String longitude) {
+    public static JSONObject requestOffersJSON(RequestQueue requestQueue, int mType, String url, String userId, String filterId, String catLevel, String latitude, String longitude, String selfLatitude, String selfLongitude) {
 
 
         URL myUrl = null;
@@ -128,6 +128,8 @@ public class Requestor {
             data.put("type", String.valueOf(mType));
             data.put("lat", latitude);
             data.put("long", longitude);
+            data.put("selflat", selfLatitude);
+            data.put("selflong", selfLongitude);
             data.put("radius", Constants.defaultRadius);
 
             data.put("user_id", userId);
@@ -805,5 +807,70 @@ public class Requestor {
         }
         return reader;
     }
+
+
+
+    public static JSONObject requestSearchLocationJSON(RequestQueue requestQueue, String url, String location) {
+
+
+        URL myUrl = null;
+        HttpURLConnection conn = null;
+        String response = "";
+        JSONObject reader = null;
+
+
+
+        try {
+            myUrl = new URL(url);
+            conn = (HttpURLConnection) myUrl.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+
+            JSONObject data = new JSONObject();
+
+            data.put("webservice_name", "locations");
+            data.put("keyword", location);
+
+
+            OutputStream os = conn.getOutputStream();
+            Log.d(LOGTAG, "Request: " + data.toString());
+
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            bufferedWriter.write("data="+data.toString());
+            bufferedWriter.flush();
+            bufferedWriter.close();
+
+
+            InputStream inputStream = conn.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                response += line;
+            }
+
+            //Log.d(LOGTAG, "Do In background: " + response);
+            bufferedReader.close();
+            inputStream.close();
+            conn.disconnect();
+            os.close();
+            reader = new JSONObject(response);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return reader;
+    }
+
 
 }

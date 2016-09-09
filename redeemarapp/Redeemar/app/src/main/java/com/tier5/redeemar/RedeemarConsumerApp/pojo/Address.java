@@ -8,6 +8,7 @@ import java.io.Serializable;
 import com.google.android.gms.maps.model.LatLng;
 
 public class Address implements Serializable {
+    private int id;
     private String street;
     private String town;
     private String city;
@@ -26,6 +27,14 @@ public class Address implements Serializable {
         this.street = street;
         this.town = town;
         this.coordinates = coordinates;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getLocation() {

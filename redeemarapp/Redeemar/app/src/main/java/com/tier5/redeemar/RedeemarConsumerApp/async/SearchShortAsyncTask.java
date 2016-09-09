@@ -51,7 +51,7 @@ public class SearchShortAsyncTask extends AsyncTask<String, Void, String> {
         String location = params[0];
         String keyword = params[1];
 
-        String res = OfferUtils.loadSearchFull(requestQueue, location, keyword);
+        String res = OfferUtils.loadSearchShort(requestQueue, location, keyword);
         return res;
     }
 

@@ -5,16 +5,17 @@ package com.tier5.redeemar.RedeemarConsumerApp.fragments;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.GravityCompat;
+import android.provider.Settings;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +23,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 
 //import android.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,46 +32,52 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
+import com.google.android.gms.maps.model.LatLng;
 import com.tier5.redeemar.RedeemarConsumerApp.CategoryActivity;
-import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
-import com.tier5.redeemar.RedeemarConsumerApp.SearchActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.adapters.SearchViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.async.BrandOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CampaignOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CategoryOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.FetchLocationAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.OnDemandOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.SearchLocationAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.LocationFetchedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
-
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Keys;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class BrowseOfferFragment extends Fragment implements OffersLoadedListener, SearchView.OnQueryTextListener  {
+public class BrowseOfferFragment extends Fragment implements OffersLoadedListener, UsersLoadedListener, LocationFetchedListener, SearchView.OnQueryTextListener  {
 
     private static final String LOGTAG = "BrowseOfferFragment";
+    private static final int LOCATION_SETTINGS_REQUEST = 1;
 
     //The key used to store arraylist of movie objects to and from parcelable
-    private static final String STATE_OFFERS = "state_offers";
     private ArrayList<Offer> mListOffers;
     private BrowseOffersViewAdapter mAdapter;
+    private SearchViewAdapter sAdapter;
 
     private TextView tvEmptyView;
     private RecyclerView mRecyclerOffers;
 
     //the arraylist containing our list of box office his
-    //private String redeemerId = "";
     private JSONArray offersArray;
     private Resources res;
     private SharedPreferences sharedpref;
@@ -77,15 +86,22 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private double latitude = 0.0, longitude = 0.0;
     //private FragmentActivity listener;
     private List<Offer> mModels;
-    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list";
+    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list", location = "";
     private static final int VERTICAL_ITEM_SPACE = 48;
-    //private SearchView searchView;
     Activity activity;
     private ActivityCommunicator activityCommunicator;
     private ImageView imListView, imMapView, imThumbView;
     private TextView tvCategory;
+    private AutoCompleteTextView autoComplete;
+    private boolean isInternetPresent = false;
+    private GPSTracker gps;
 
+    private ArrayList<String> locationList;
+    private ArrayList<LatLng> latLngList;
 
+    private ArrayAdapter<String> autoCompleteAdapter;
+
+    SuperConnectionDetector cd;
 
     public BrowseOfferFragment() {
         // Required empty public constructor
@@ -101,15 +117,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     }
 
 
-    // TODO: Rename and change types and number of parameters
-    /*public static BrowseOfferFragment newInstance(String param1, String param2) {
-        BrowseOfferFragment fragment = new BrowseOfferFragment();
-        Bundle args = new Bundle();
-        //put any extra arguments that you may want to supply to this fragment
-        fragment.setArguments(args);
-        return fragment;
-    }*/
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,7 +128,19 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         activity = getActivity();
 
-        activityCommunicator =(ActivityCommunicator) activity;
+        activityCommunicator = (ActivityCommunicator) activity;
+
+
+        cd = new SuperConnectionDetector(activity);
+        isInternetPresent = cd.isConnectingToInternet();
+
+        //check permission in marshmallow
+        if(Utils.checkLocationPermissions(getActivity(), getActivity().getApplicationContext())){
+            getlocation();
+        } else {
+            Log.d(LOGTAG, "Location permission not granted");
+        }
+
 
         setHasOptionsMenu(true);
         Bundle args1 = getArguments();
@@ -144,6 +163,53 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         imMapView = (ImageView) layout.findViewById(R.id.menu_map_view);
         imThumbView = (ImageView) layout.findViewById(R.id.menu_thumb_view);
         tvCategory = (TextView) layout.findViewById(R.id.search_category);
+        autoComplete = (AutoCompleteTextView) layout.findViewById(R.id.autoCompleteTextView1);
+        locationList = new ArrayList<String>();
+        latLngList = new ArrayList<LatLng>();
+
+        autoCompleteAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, locationList);
+        autoComplete.setThreshold(1);
+        autoComplete.setAdapter(autoCompleteAdapter);
+
+        autoComplete.addTextChangedListener(new TextWatcher() {
+
+            private boolean shouldAutoComplete = true;
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                shouldAutoComplete = true;
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (shouldAutoComplete) {
+                    callSearchLocationTask(s.toString());
+                    Log.d(LOGTAG, "Webservice will be called");
+                }
+            }
+
+        });
+
+        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
+                Log.d(LOGTAG, "Position clicked "+position);
+                LatLng geo = (LatLng) latLngList.get(position);
+
+                Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
+                Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
+
+                callAsyncTaskForLocation(String.valueOf(geo.latitude),  String.valueOf(geo.longitude));
+
+            }
+        });
+
+
 
         editor = sharedpref.edit();
 
@@ -292,12 +358,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 else if(redirectTo.equals("CategoryOffers") && !categoryId.equals(""))
                     new CategoryOffersAsyncTask(this).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude));
                 else if(redirectTo.equals("OnDemand")) {
-                    Log.d(LOGTAG, "Condition OnDemand");
                     new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude));
                 }
                 else
-                    new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude));
-
+                    new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), String.valueOf(latitude),  String.valueOf(longitude));
             }
 
             activityCommunicator.passDataToActivity(redirectTo);
@@ -340,8 +404,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
+
         // create class object
-        GPSTracker gps = new GPSTracker(getActivity());
+        /*GPSTracker gps = new GPSTracker(getActivity());
 
         // check if GPS enabled
         if(gps.canGetLocation()){
@@ -358,10 +423,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             // GPS or Network is not enabled
             // Ask user to enable GPS/network in settings
             gps.showSettingsAlert();
-        }
+        }*/
 
-        Log.d(LOGTAG, "Lat Values: "+latitude);
-        Log.d(LOGTAG, "Long Values: "+longitude);
 
         mListOffers = new ArrayList<Offer>();
         //mAdapter = new BrowseOffersViewAdapter(getActivity(), mDataSet, "BrowseOffers");
@@ -500,17 +563,11 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public void onOffersLoaded(ArrayList<Offer> listOffers) {
 
-
-        //Log.d(LOGTAG, "Inside callback onOffersLoaded: "+listOffers.size()+" Is Added: "+isAdded()+" Activity: "+activity);
-
-
-
         if (isAdded() && activity != null) {
             if (listOffers.size() > 0 && mAdapter != null) {
                 mModels = listOffers;
                 //Log.d(LOGTAG, "Inside Adapter: "+mAdapter);
                 mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), listOffers, "BrowseOffers");
-
                 mRecyclerOffers.setAdapter(mAdapter);
                 mRecyclerOffers.setVisibility(View.VISIBLE);
                 tvEmptyView.setVisibility(View.GONE);
@@ -519,12 +576,187 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             }
 
         }
-        //else
-        //    Toast.makeText(getActivity().getApplicationContext(), getString(R.string.unable_to_get_records), Toast.LENGTH_SHORT).show();
-
 
 
     }
 
 
+    private void callSearchLocationTask(String loc) {
+        location = loc;
+        new SearchLocationAsyncTask(this).execute(loc);
+    }
+
+
+    @Override
+    public void onUsersLoaded(ArrayList<User> listAddresses) {
+
+
+
+        if(!location.equals("")) {
+
+            location = location.toLowerCase();
+
+
+            Log.d(LOGTAG, "Location is: "+location);
+
+            int cnt = listAddresses.size();
+            int p = 0;
+            locationList.clear();
+
+            for(int i = 0; i < cnt; i++) {
+                String tAddress = "", tCity = "", tState = "", tZip = "", tLoc = "", tLat = "", tLon = "";
+
+                User addr = listAddresses.get(i);
+
+                if(addr.getAddress() != null)
+                    tAddress = addr.getAddress().toLowerCase();
+
+                if(addr.getCity() != null)
+                    tCity = addr.getCity().toLowerCase();
+
+                if(addr.getState() != null)
+                    tState = addr.getState().toLowerCase();
+
+                if(addr.getCity() != null)
+                    tZip = addr.getZipcode().toLowerCase();
+
+                if(addr.getLocation() != null)
+                    tLoc = addr.getLocation().toLowerCase();
+
+                if(addr.getLat() != null)
+                    tLat = addr.getLat().toLowerCase();
+
+                if(addr.getLon() != null)
+                    tLon = addr.getLon().toLowerCase();
+
+
+                if(tAddress.contains(location) && !Utils.findDuplicate(locationList, tAddress)) {
+                    locationList.add(tAddress);
+                    p++;
+                }
+
+                if(tCity.contains(location) && !Utils.findDuplicate(locationList, tCity)) {
+                    if(!tState.equals(""))
+                        locationList.add(tCity+", "+tState);
+                    else
+                        locationList.add(tCity);
+                    p++;
+                }
+                if(tState.contains(location) && !Utils.findDuplicate(locationList, tState)) {
+                    locationList.add(tState);
+                    p++;
+                }
+
+                if(tZip.contains(location) && !Utils.findDuplicate(locationList, tZip)) {
+                    locationList.add(tZip);
+                    p++;
+                }
+
+                if(tLoc.contains(location) && !Utils.findDuplicate(locationList, tLoc)) {
+                    locationList.add(tLoc);
+                    if(!tCity.equals(""))
+                        locationList.add(tLoc+", "+tCity);
+                    else if(!tState.equals(""))
+                        locationList.add(tLoc+", "+tState);
+                    else
+                        locationList.add(tLoc);
+                    p++;
+                }
+
+                Log.d(LOGTAG, "After User Loaded Lat is: "+tLat);
+                Log.d(LOGTAG, "After User Loaded Lon is: "+tLon);
+
+                if(tLat!="" && tLon != "")
+                    latLngList.add(new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
+
+
+
+
+
+
+            }
+        }
+
+        autoCompleteAdapter.clear();
+        autoCompleteAdapter.addAll(locationList);
+        autoCompleteAdapter.notifyDataSetChanged();
+        Log.d(LOGTAG, "Print array recursively: "+locationList.size());
+        //autoCompleteAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, locationList);
+        autoComplete.setAdapter(autoCompleteAdapter);
+        autoCompleteAdapter.notifyDataSetChanged();
+    }
+
+
+    public void getlocation(){
+        gps = new GPSTracker(getActivity());
+        if(gps.canGetLocation()){
+
+            // Your current location (Self Location)
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+
+            // Save the latitude and longitude in SharedPreferences
+            editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
+            editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(longitude));
+            editor.commit();
+
+
+
+            Log.d(LOGTAG, "Latitu");
+
+            if(isInternetPresent) {
+                if (Keys.latitude == 0.0 || Keys.longitude == 0.0) {
+                    //Utils.noLocationFound(getActivity());
+                }else {
+                    new FetchLocationAsyncTask(this, getActivity()).execute();
+                }
+            }else{
+                //Start_dialog start_dialog = new Start_dialog(MainActivity.this, "No internet connection available");
+                //start_dialog.dialogbox();
+            }
+        } else {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setTitle("GPS settings");
+            alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+            alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int which) {
+                    startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), LOCATION_SETTINGS_REQUEST);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+        }
+    }
+
+
+    @Override
+    public void onLocationFetched(User locUser) {
+
+        latitude = Double.parseDouble(locUser.getLat());
+        longitude = Double.parseDouble(locUser.getLon());
+
+        // Save the latitude and longitude in SharedPreferences
+        editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
+        editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(longitude));
+        editor.commit();
+
+
+        Log.d(LOGTAG, "Lat Values: "+latitude);
+        Log.d(LOGTAG, "Long Values: "+longitude);
+
+        autoComplete.setText(locUser.getLocation());
+
+
+    }
+
+    public void callAsyncTaskForLocation(String tLat, String tLng) {
+        Log.d(LOGTAG, "Inside callAsyncTaskForLocation");
+        mRecyclerOffers.setVisibility(View.GONE);
+        tvEmptyView.setVisibility(View.VISIBLE);
+        new BrowseOffersAsyncTask(this).execute(user_id, tLat, tLng, String.valueOf(latitude),  String.valueOf(longitude));
+    }
 }

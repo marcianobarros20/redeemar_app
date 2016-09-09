@@ -291,8 +291,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
 
 
-
-
         if(!discount_text.equals("")) {
             viewHolder.tvDiscount.setText(sb);
             viewHolder.tvDiscount.setVisibility(View.VISIBLE);
@@ -300,40 +298,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         else {
             viewHolder.tvDiscount.setVisibility(View.GONE);
         }
-
-        /*if(item.getExpiredInDays() > 0) {
-            DecimalFormat format = new DecimalFormat("#");
-            format.setDecimalSeparatorAlwaysShown(false);
-            //Image URLLog.d(LOGTAG, "Decimal: "+format.format(item.getExpiredInDays()));
-
-            esb.append(expires_in).append(" ").append(format.format(item.getExpiredInDays())).append(" ").append(days);
-
-            //esb.append(expires_in).append(" ").append(Math.floor(item.getExpiredInDays())).append(" ").append(days);
-            //viewHolder.tvPayValue.setText(esb);
-        }*/
-
-
-        // Download logo image and save to SD Card
-
-        /*if(item.getBrandLogo() != null && !item.getBrandLogo().equals("")) {
-            LogoFileName = item.getBrandLogo().toString();
-
-            if(Utils.showLogoImageFromStorage(LogoFileName, viewHolder.logoThumbnail)){
-
-            }
-            else {
-                logoUrl = UrlEndpoints.baseLogoSmallURL + LogoFileName;
-                Log.d(LOGTAG, "Logo URL: " + logoUrl);
-                new DownloadBitmapTask(this).execute(logoUrl);
-
-                // Check image is not null
-                if(logoBmp != null) {
-                    viewHolder.logoThumbnail.setImageBitmap(logoBmp);
-                }
-            }
-
-        }*/
-
 
 
         viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
@@ -363,7 +327,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             Log.d(LOGTAG, "Logo URL: "+logoUrl);
 
-            viewHolder.mImageLoader.get(logoUrl, ImageLoader.getImageListener(viewHolder.logoThumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
+            viewHolder.mImageLoader.get(logoUrl, ImageLoader.getImageListener(viewHolder.logoThumbnail, 0, 0));
             viewHolder.logoThumbnail.setImageUrl(logoUrl, viewHolder.mImageLoader);
             viewHolder.logoThumbnail.setAdjustViewBounds(false);
         }
@@ -570,7 +534,11 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
     @Override
     public int getItemCount() {
-        return offerList.size();
+        if(offerList != null)
+            return offerList.size();
+        else
+            return 0;
+
     }
 
     @Override

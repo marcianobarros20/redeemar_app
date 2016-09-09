@@ -1,5 +1,8 @@
 package com.tier5.redeemar.RedeemarConsumerApp;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,10 +19,13 @@ import android.widget.Toast;
 
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.CategoryViewAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.async.BrandOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.CategoryOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 
 import java.util.ArrayList;
 
@@ -33,10 +39,14 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
     private TextView tvEmptyView;
     private RecyclerView mRecyclerOffers;
 
+
+    private SharedPreferences sharedpref;
     private Toolbar toolbar;
     private DatabaseHelper db;
-    private int catId = 0;
-    private String catName = "";
+    private int catId = 0, catLevel = 0;
+    private String catName = "", userId = "";
+
+    private double latitude = 0.0, longitude = 0.0;
 
     Typeface myFont;
 
@@ -46,6 +56,8 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_result);
 
+        sharedpref = getApplicationContext().getSharedPreferences(getString(R.string.spf_key), 0); // 0 - for private mode
+
         db = new DatabaseHelper(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
@@ -54,7 +66,7 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
         tvEmptyView = (TextView) findViewById(R.id.empty_view);
 
         mAdapter = new BrowseOffersViewAdapter(this, "BrowseOffers");
-        mRecyclerView.setAdapter(mAdapter);
+        //mRecyclerView.setAdapter(mAdapter);
 
         Bundle extras = getIntent().getExtras();
 
@@ -62,23 +74,55 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
         if (extras != null) {
 
             String activity = extras.getString(getString(R.string.ext_activity));
-            catId = extras.getInt(getString(R.string.ext_category_id));
-            catName = extras.getString(getString(R.string.ext_category_name));
-            String catLevel = extras.getString(getString(R.string.ext_category_level));
-
-            Log.d(LOGTAG, "Cat Id: " + catId);
-            Log.d(LOGTAG, "Cat Name: " + catName);
-            Log.d(LOGTAG, "Cat Level: " + catLevel);
-
-
 
         }
 
 
+        // create class object
+        GPSTracker gps = new GPSTracker(this);
+
+        // check if GPS enabled
+        if(gps.canGetLocation()){
+
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+
+            if(latitude == 0 && longitude == 0) {
+                gps.showSettingsAlert();
+            }
+
+        } else {
+            // can't get location
+            // GPS or Network is not enabled
+            // Ask user to enable GPS/network in settings
+            gps.showSettingsAlert();
+        }
+
+        Log.d(LOGTAG, "Lat Values: "+latitude);
+        Log.d(LOGTAG, "Long Values: "+longitude);
+
+        if(sharedpref.getString(getString(R.string.spf_user_id), null) != null) {
+            userId = sharedpref.getString(getString(R.string.spf_user_id), "0");
+        }
+
+        if(sharedpref.getInt(getString(R.string.spf_category_id), 0) != 0) {
+            catId = sharedpref.getInt(getString(R.string.spf_category_id), 0);
+        }
+
+        if(sharedpref.getString(getString(R.string.spf_category_name), null) != null) {
+            catName = sharedpref.getString(getString(R.string.spf_category_name), "");
+        }
+
+        if(catId != 0) {
+
+            new CategoryOffersAsyncTask(this).execute(String.valueOf(catId), userId, String.valueOf(latitude), String.valueOf(longitude));
+        }
+
+        Log.d(LOGTAG, "Cat Id: " + catId);
+        Log.d(LOGTAG, "Cat Name: " + catName);
+
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-
-
 
             if(!catName.equals(""))
                 getSupportActionBar().setTitle(catName);
@@ -124,7 +168,10 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
         switch (item.getItemId())
         {
             case R.id.action_search:
-                Toast.makeText(SearchResultActivity.this, "Search is selected", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.right_to_left, R.anim.left_to_right);
                 return true;
 
             default:
@@ -136,5 +183,15 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
     @Override
     public void onOffersLoaded(ArrayList<Offer> listOffers) {
 
+        if (listOffers.size() > 0 && mAdapter != null) {
+            mAdapter = new BrowseOffersViewAdapter(getApplicationContext(), listOffers, "BrowseOffers");
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            tvEmptyView.setVisibility(View.GONE);
+        } else {
+            tvEmptyView.setText(getString(R.string.no_records));
+        }
+
     }
+
 }

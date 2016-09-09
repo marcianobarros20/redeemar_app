@@ -40,7 +40,7 @@ public class CategoryViewAdapter extends RecyclerView.Adapter<CategoryViewAdapte
     private Resources res;
     private SharedPreferences.Editor editor;
     Typeface myFont;
-    private int catId;
+    private int catId, pos=0;
     private String catName = "";
 
 
@@ -57,7 +57,17 @@ public class CategoryViewAdapter extends RecyclerView.Adapter<CategoryViewAdapte
     }
 
 
-    public void setCategories(ArrayList<Category> listCategories) {
+    public void setCategories(ArrayList<Category> listCategories, int mCatId) {
+
+        //ArrayList categories = (ArrayList<Category>) db.getCategories(catId);
+
+        Category anyCat = new Category();
+        anyCat.setId(mCatId);
+        anyCat.setCatName("All");
+
+        listCategories.add(0, anyCat);
+
+
         this.categoryList = listCategories;
         Log.d(LOGTAG, "Sub Categories count: "+listCategories.size());
         //update the adapter to reflect the new set of Offers
@@ -82,7 +92,7 @@ public class CategoryViewAdapter extends RecyclerView.Adapter<CategoryViewAdapte
             mViewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
         }
 
-        View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.search_row, parent, false);
+        View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.cat_row, parent, false);
         myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
         return new SimpleViewHolder(view);
     }
@@ -91,35 +101,51 @@ public class CategoryViewAdapter extends RecyclerView.Adapter<CategoryViewAdapte
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
 
         final Category item = categoryList.get(position);
+
+
         catName = item.getCatName();
+
         Log.d(LOGTAG, "Sub category is: "+catName);
         viewHolder.catName.setText(catName);
 
         viewHolder.catName.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+
+                pos = position;
 
                 Resources res = view.getResources();
                 sharedpref = view.getContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
                 catId = item.getId();
+                catName = item.getCatName();
+
+
                 Log.d(LOGTAG, "Category Id: "+categoryList.size());
                 categoryList = (ArrayList<Category>) db.getCategories(catId);
                 Log.d(LOGTAG, "No. of categories: "+categoryList.size());
-                if(categoryList.size() > 0) {
-                    Log.d(LOGTAG, "Category Level is set as: "+2);
+                Log.d(LOGTAG, "Position: "+view.getId());
+
+
+                if(categoryList.size() > 0 && pos > 0) {
                     editor.putInt(res.getString(R.string.spf_category_level), 2); // Storing Category Level
                     editor.commit(); // commit changes
-                    setCategories(categoryList);
+                    setCategories(categoryList, catId);
                 }
                 else {
 
-                    Log.d(LOGTAG, "Before SearchResultActivity");
+                    Log.d(LOGTAG, "Before Search Result Activity Cat Id: "+catId);
+                    Log.d(LOGTAG, "Before Search Result Activity Cat Name: "+item.getCatName());
+
+                    editor.putInt(res.getString(R.string.spf_category_id), catId);          // Storing Category Id
+                    editor.putString(res.getString(R.string.spf_category_name), item.getCatName());   // Storing Category Name
+                    editor.commit(); // commit changes
 
                     Intent catIntent = new Intent((Activity)mContext, SearchResultActivity.class);
                     catIntent.putExtra(res.getString(R.string.ext_redir_to), "CategoryOffers");
-                    catIntent.putExtra(res.getString(R.string.ext_category_name), catName);
-                    catIntent.putExtra(res.getString(R.string.ext_category_id), catId);
+                    //catIntent.putExtra(res.getString(R.string.ext_category_name), catName);
+                    //catIntent.putExtra(res.getString(R.string.ext_category_id), catId);
                     mContext.startActivity(catIntent);
                     ((Activity)mContext).finish();
                 }

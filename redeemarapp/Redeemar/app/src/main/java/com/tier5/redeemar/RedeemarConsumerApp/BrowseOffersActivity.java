@@ -104,6 +104,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ArrayList<Category> categories;
+    private int catId = 0;
     private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "";
     private final int NavGroupId = 1001;
     private SharedPreferences.Editor editor;
@@ -163,10 +164,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             campaignId = sharedpref.getString(res.getString(R.string.spf_campaign_id), "");
         }
 
-
-        if (sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
-            categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
-        }
+        //Log.d(LOGTAG, "AA Category Id: " + sharedpref.getString(res.getString(R.string.spf_category_id), ""));
 
 
         editor = sharedpref.edit();
@@ -803,10 +801,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
             case R.id.action_search:
 
-                Intent intent = new Intent(BrowseOffersActivity.this, CategoryActivity.class);
+                //Intent intent = new Intent(BrowseOffersActivity.this, CategoryActivity.class);
 
                 //overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
-                startActivity(intent);
+                //startActivity(intent);
                 Log.d(LOGTAG, "Inside CategoryActivity");
                 return true;
 

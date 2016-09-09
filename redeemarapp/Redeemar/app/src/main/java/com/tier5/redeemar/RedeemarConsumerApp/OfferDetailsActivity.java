@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
@@ -60,7 +60,8 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
     int valCalc;
     String offerId, perc_sym, cur_sym;
-    Double lat, lon;
+    Double lat, lon, payValue = 0.0, retailValue = 0.0 ;
+    String discount_text = "";
     Typeface myFont;
 
 
@@ -380,12 +381,16 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
                             if(jsonObject.getString("retails_value") != "" && jsonObject.getString("retails_value").toString() != "") {
 
+                                retailValue = jsonObject.getDouble("retails_value");
+
                                 tvRetailValue.setText(getString(R.string.currency_symbol).concat(jsonObject.getString("retails_value").toString()));
                                 Log.d(LOGTAG, "retails_value: "+jsonObject.getString("retails_value").toString());
                             }
 
 
                             if(jsonObject.getString("pay_value") != null && jsonObject.getString("pay_value").toString() != "") {
+
+                                payValue = jsonObject.getDouble("pay_value");
 
                                 tvPayValue.setText(getString(R.string.currency_symbol).concat(jsonObject.getString("pay_value").toString()));
                                 Log.d(LOGTAG, "pay_value: "+jsonObject.getString("pay_value").toString());
@@ -397,13 +402,18 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                                 Log.d(LOGTAG, "value_calculate: "+jsonObject.getString("value_calculate").toString());
                             }
 
-                            if(jsonObject.getString("discount") != null && jsonObject.getString("discount").toString() != "") {
 
-                                if(valCalc % 2 == 0)
-                                    tvDiscount.setText(jsonObject.getString("discount").toString().concat(perc_sym));
-                                else
-                                    tvDiscount.setText(jsonObject.getString("discount").toString().concat(perc_sym));
+                            if(retailValue > 0 && payValue > 0) {
+                                discount_text = Utils.calculateDiscount(retailValue, payValue, valCalc);
+                                Log.d(LOGTAG, "My Discount Value: "+discount_text);
                             }
+
+
+
+                            if(valCalc == 2)
+                                tvDiscount.setText(discount_text.concat(perc_sym));
+                            else
+                                tvDiscount.setText(cur_sym.concat(discount_text));
 
 
 
@@ -424,9 +434,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
 
                                 mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
-                                mImageLoader.get(imageUrl, ImageLoader.getImageListener(thumbnail,
-                                        R.drawable.icon_watermark, android.R.drawable
-                                                .ic_dialog_alert));
+                                mImageLoader.get(imageUrl, ImageLoader.getImageListener(thumbnail, R.drawable.ic_placeholder, R.drawable.ic_placeholder));
                                 thumbnail.setImageUrl(imageUrl, mImageLoader);
 
                             }
@@ -442,8 +450,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
                                     String logoImageUrl = UrlEndpoints.baseLogoMediumURL+ jsonLogoSettings.getString("logo_name");
                                     mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
-                                    mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail,
-                                            R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
+                                    mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail, 0, 0));
                                     logoThumbnail.setImageUrl(logoImageUrl, mImageLoader);
                                 }
 

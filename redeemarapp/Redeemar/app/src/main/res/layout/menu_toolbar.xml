@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="gone">
+    android:visibility="visible">
 
 
 
@@ -25,37 +25,51 @@
             android:gravity="left"
             android:text="@string/user_location"
             android:textColor="@color/white"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_weight="1" />
 
         <EditText
             android:id="@+id/txtLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/your_location"
+            android:hint="Manhattan"
             android:layout_weight="1"
-            android:background="@drawable/rounded_corner"/>
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:background="@drawable/rounded_corner"
+            android:visibility="gone" />
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:background="@drawable/rounded_corner"
+            android:hint="@string/search_location">
+            <requestFocus />
+        </AutoCompleteTextView>
+
 
 
         <ImageView
             android:id="@+id/menu_list_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:src="@drawable/ic_thumb_green"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/ic_thumb_green"
             android:layout_gravity="center_vertical|right"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <ImageView
             android:id="@+id/menu_thumb_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:paddingLeft="5dp"
+            android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:src="@drawable/ic_list_green"
+            android:background="@drawable/ic_list_green"
             android:layout_gravity="center_vertical|right"
             android:visibility="gone" />
 
@@ -63,10 +77,9 @@
             android:id="@+id/menu_map_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:src="@drawable/ic_map_view"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/ic_map_view"
             android:layout_gravity="center_vertical|right"
             android:visibility="gone" />
 
@@ -83,7 +96,8 @@
         android:paddingRight="4dp"
         android:weightSum="1"
         android:background="@color/white"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"

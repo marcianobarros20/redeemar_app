@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
+import com.tier5.redeemar.RedeemarConsumerApp.R;
+import com.tier5.redeemar.RedeemarConsumerApp.SearchActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.OfferUtils;
 
 /**
@@ -26,7 +28,7 @@ public class SearchFullAsyncTask extends AsyncTask<String, Void, String> {
 
         this.myComponent = myComponent;
         this.context = ctx;
-        dialog = new ProgressDialog(ctx);
+        dialog = new ProgressDialog(ctx.getApplicationContext());
         Log.d(LOGTAG, "Inside ValidatePassCode constructor: "+myComponent);
 
     }
@@ -37,8 +39,14 @@ public class SearchFullAsyncTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPreExecute() {
-        dialog.setMessage("Processing, please wait.");
-        dialog.show();
+        //dialog.setMessage("Processing, please wait.");
+        //dialog.show();
+
+
+        /*dialog.setMessage(context.getString(R.string.sending_data));
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        dialog.show();*/
 
     }
 

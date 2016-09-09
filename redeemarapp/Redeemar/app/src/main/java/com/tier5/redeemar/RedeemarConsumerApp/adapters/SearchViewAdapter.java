@@ -29,6 +29,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ImageDownloadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
@@ -49,112 +50,85 @@ import java.net.URL;
 import java.util.ArrayList;
 
 
-public class SearchViewAdapter extends RecyclerSwipeAdapter<SearchViewAdapter.SimpleViewHolder> implements ImageDownloadedListener {
+public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.ViewHolder> {
 
-    private static final String LOGTAG = "SwipeRecyclerView";
+    private static final String LOGTAG = "SearchViewAdapter";
     private Context mContext;
-    private ArrayList<Offer> offerList;
-    //private ImageLoader mImageLoader;
+    private ArrayList<User> addressList;
     private Bitmap logoBmp;
     private SharedPreferences sharedpref;
-    private String activityName;
-    private String mViewType;
     private Resources res;
-    private String offerId, userId, offerImageFileName, LogoFileName;
     Typeface myFont;
 
 
     public SearchViewAdapter(Context context) {
+        Log.d(LOGTAG, "Test 1");
         this.mContext = context;
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
     }
 
-    public SearchViewAdapter(Context context, String actName) {
+    public SearchViewAdapter(Context context, ArrayList<User> objects) {
+        Log.d(LOGTAG, "Test 1");
         this.mContext = context;
-        this.activityName = actName;
+        this.addressList = objects;
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
     }
 
+    public void setAddresses(ArrayList<User> listAddress) {
 
-    public SearchViewAdapter(Context context, ArrayList<Offer> objects, String actName) {
-        this.mContext = context;
-        this.offerList = objects;
-        this.activityName = actName;
-        res = context.getResources();
-        sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-
-    }
-
-    public void setOffers(ArrayList<Offer> listOffers) {
-        this.offerList = listOffers;
-
-        Log.d(LOGTAG, "Offers count: "+listOffers.size());
+        Log.d(LOGTAG, "Test 2");
+        this.addressList = listAddress;
+        Log.d(LOGTAG, "Address count: "+listAddress.size());
         //update the adapter to reflect the new set of Offers
         notifyDataSetChanged();
     }
 
 
-    @Override
-    public int getItemViewType(int position) {
-        // Just as an example, return 0 or 2 depending on position
-        // Note that unlike in ListView adapters, types don't have to be contiguous
-        return position % 2 * 2;
-    }
 
     @Override
-    public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        Log.d(LOGTAG, "View Type: "+viewType);
-        mViewType = "list";
-
-        if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
-            mViewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
-        }
-
-        Log.d(LOGTAG, "View type: "+mViewType);
-
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d(LOGTAG, "Test 3");
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        //View view = inflater.inflate(R.layout.search_row, parent, false);
         View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.search_row, parent, false);
 
+
         myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
-        return new SimpleViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(SearchViewAdapter.ViewHolder holder, int position) {
+        Log.d(LOGTAG, "Test 4");
+        final User item = addressList.get(position);
 
-
-
-        // mItemManger is member in RecyclerSwipeAdapter Class
-        mItemManger.bindView(viewHolder.itemView, position);
+        Log.d(LOGTAG, "Hello "+item.getCity());
+        holder.tvTitle.setTypeface(myFont);
+        holder.tvDescription.setTypeface(myFont);
+        holder.tvTitle.setText(item.getCity());
+        holder.tvDescription.setText(item.getState());
 
     }
+
 
     @Override
     public int getItemCount() {
-        return offerList.size();
-    }
-
-    @Override
-    public int getSwipeLayoutResourceId(int position) {
-        return R.id.swipe;
+        return addressList.size();
     }
 
 
-    @Override
-    public void onImageDownloaded(Bitmap imBmp) {
-        String logoImagePath = Utils.saveToInternalStorage(imBmp, LogoFileName);
-        this.logoBmp = imBmp;
-        //Utils.setImageView(logoImagePath, viewHolder.logoThumbnail);
-    }
 
-    public static class SimpleViewHolder extends RecyclerView.ViewHolder {
-        //private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvPriceRangeId, tvDiscount, tvExpires;
-        private TextView tvBankOffer, tvPassOffer;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public SimpleViewHolder(View itemView) {
+        private TextView tvTitle, tvDescription;
+
+        public ViewHolder(View itemView) {
             super(itemView);
+
+            tvTitle = (TextView) itemView.findViewById(R.id.title);
+            tvDescription = (TextView) itemView.findViewById(R.id.description);
 
 
         }

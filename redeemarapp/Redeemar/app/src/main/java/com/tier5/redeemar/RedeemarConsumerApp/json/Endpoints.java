@@ -97,4 +97,10 @@ public class Endpoints {
         return UrlEndpoints.URL_SEARCH_FULL
                 + UrlEndpoints.URL_CHAR_QUESTION;
     }
+
+    public static String getLocations() {
+
+        return UrlEndpoints.URL_SEARCH_LOCATION
+                + UrlEndpoints.URL_CHAR_QUESTION;
+    }
 }

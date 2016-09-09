@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg02"
@@ -35,19 +36,24 @@
             android:layout_marginRight="16dp"
             android:orientation="vertical">
 
-            <EditText
-                android:layout_below="@+id/location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/near_me"
-                android:drawableLeft="@drawable/ic_map" />
 
             <EditText
-                android:layout_below="@+id/keyword"
+                android:id="@+id/location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawablePadding="4dp"
+                android:hint="@string/near_me"
+                android:drawableLeft="@drawable/ic_location_dark" />
+
+            <EditText
+                android:id="@+id/keyword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="4dp"
                 android:hint="@string/search_keyword"
-                android:drawableLeft="@drawable/ic_map" />
+                android:drawableLeft="@drawable/ic_price_tag"
+                android:visibility="gone"/>
+
 
 
             <android.support.v7.widget.RecyclerView
@@ -70,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:text="@string/search"
-                android:visibility="invisible">
+                android:visibility="visible">
             </Button>
 
         </RelativeLayout>

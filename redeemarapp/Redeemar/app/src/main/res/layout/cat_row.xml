@@ -22,7 +22,7 @@
             android:gravity="center_horizontal">
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/cat_name"
                 android:text="Title"
                 android:layout_weight="1"
                 android:background="@color/white"
@@ -30,14 +30,6 @@
                 android:padding="18dp"
                 android:gravity="left|center_vertical"/>
 
-            <TextView
-                android:id="@+id/description"
-                android:text="Description"
-                android:layout_weight="1"
-                android:background="@color/white"
-                android:textColor="#000000"
-                android:padding="18dp"
-                android:gravity="left|center_vertical"/>
 
         </TableRow>
 

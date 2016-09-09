@@ -139,7 +139,7 @@ public class MyOffersActivity extends AppCompatActivity implements ActivityCompa
                 longitude = gps.getLongitude();
 
                 if(latitude == 0 && longitude == 0) {
-                    gps.showRequestPermissionDialog();
+                    //gps.showRequestPermissionDialog();
                 }
 
                 // \n is for new line
@@ -150,7 +150,7 @@ public class MyOffersActivity extends AppCompatActivity implements ActivityCompa
                 // GPS or Network is not enabled
                 // Ask user to enable GPS/network in settings
                 //gps.showSettingsAlert();
-                gps.showRequestPermissionDialog();
+                //gps.showRequestPermissionDialog();
             }
 
 

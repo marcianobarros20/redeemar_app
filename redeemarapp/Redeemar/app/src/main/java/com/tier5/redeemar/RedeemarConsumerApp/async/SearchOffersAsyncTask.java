@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
-import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.network.VolleySingleton;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
@@ -19,26 +18,25 @@ import java.util.ArrayList;
  */
 
 
-public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offer>> {
+public class SearchOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offer>> {
 
 
-    private static final String LOGTAG = "BrowseOffersAsync";
+    private static final String LOGTAG = "SearchOffersAsync";
     private OffersLoadedListener myComponent;
     private VolleySingleton volleySingleton;
     private RequestQueue requestQueue;
     private ProgressDialog mProgress;
     private Context context;
 
-    public BrowseOffersAsyncTask(OffersLoadedListener myComponent) {
+    public SearchOffersAsyncTask(OffersLoadedListener myComponent) {
         this.myComponent = myComponent;
-        Log.d(LOGTAG, "Inside BrowseOffersAsyncTask constructor: "+myComponent);
-
+        Log.d(LOGTAG, "Inside SearchOffersAsync constructor: "+myComponent);
     }
 
     @Override
     protected void onPreExecute() {
 
-        //mProgress = new ProgressDialog(this);
+        //mProgress = new ProgressDialog(context);
         //mProgress.setMessage("Loading, please wait...");
         //mProgress.show();
     }
@@ -47,17 +45,17 @@ public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Off
     @Override
     protected ArrayList<Offer> doInBackground(String... params) {
 
-        Log.d(LOGTAG, "Inside list offers");
+        Log.d(LOGTAG, "Inside list category offers...");
 
-        String user_id = params[0];
-        String lat = params[1];
-        String lng = params[2];
-        String sLat = params[3];
-        String sLng = params[4];
+        String category_id = params[0];
+        String user_id = params[1];
+        String lat = params[2];
+        String lng = params[3];
 
+        ArrayList<Offer> listOffers = OfferUtils.loadCategoryOffers(requestQueue, category_id, "0", user_id, lat, lng);
 
+        Log.d(LOGTAG, "List category offers size: "+listOffers.size());
 
-        ArrayList<Offer> listOffers = OfferUtils.loadBrowseOffers(requestQueue, user_id, lat, lng, sLat, sLng);
         return listOffers;
     }
 

@@ -3,62 +3,35 @@ package com.tier5.redeemar.RedeemarConsumerApp;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.SearchViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.async.SearchFullAsyncTask;
-import com.tier5.redeemar.RedeemarConsumerApp.async.SearchShortAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.SearchLocationAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
-import com.tier5.redeemar.RedeemarConsumerApp.async.ValidatePassCodeAsyncTask;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-public class SearchActivity extends AppCompatActivity implements TaskCompleted {
+public class SearchActivity extends AppCompatActivity implements UsersLoadedListener, TaskCompleted {
 
     private static final String LOGTAG = "Search";
 
@@ -67,7 +40,8 @@ public class SearchActivity extends AppCompatActivity implements TaskCompleted {
     private Button btnSearch;
     private SharedPreferences sharedpref;
     private RecyclerView mRecyclerView;
-    private BrowseOffersViewAdapter mAdapter;
+    private ArrayList<User> mListAddr;
+    private SearchViewAdapter mAdapter;
     private Toolbar toolbar;
 
     private AlertDialog.Builder builder;
@@ -86,13 +60,20 @@ public class SearchActivity extends AppCompatActivity implements TaskCompleted {
         myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
 
         txtLocation = (EditText) findViewById(R.id.location);
-        txtKeyword = (EditText) findViewById(R.id.location);
-
-
+        txtKeyword = (EditText) findViewById(R.id.keyword);
         mRecyclerView = (RecyclerView) findViewById(R.id.search_recycler_view);
 
-        //mAdapter = new SearchViewAdapter(this);
-        mRecyclerView.setAdapter(mAdapter);
+        mListAddr = new ArrayList<>();
+
+        mAdapter = new SearchViewAdapter(this);
+        mAdapter.setAddresses(mListAddr);
+        //mRecyclerView.setAdapter(mAdapter);
+
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(llm);
+        mRecyclerView.setAdapter( mAdapter );
+
 
         btnSearch = (Button) findViewById(R.id.btnSearch);
 
@@ -101,8 +82,6 @@ public class SearchActivity extends AppCompatActivity implements TaskCompleted {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.search);
-
-
 
             //setSupportActionBar(toolbar);
             //Your toolbar is now an action bar and you can use it like you always do, for example:
@@ -119,29 +98,39 @@ public class SearchActivity extends AppCompatActivity implements TaskCompleted {
         }
 
 
-        txtLocation.addTextChangedListener(new TextWatcher() {
+
+        txtLocation.addTextChangedListener(
+                new TextWatcher() {
+                    @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+                    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+                    private Timer timer=new Timer();
+                    private final long DELAY = 500; // milliseconds
+
+                    @Override
+                    public void afterTextChanged(final Editable s) {
+                        timer.cancel();
+                        timer = new Timer();
+                        timer.schedule(
+                                new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        // TODO: do what you need here (refresh list)
+                                        // you will probably need to use runOnUiThread(Runnable action) for some specific actions
+                                        Log.d(LOGTAG, "Calling the async task to load after 2 seconds "+location);
+                                        callSearchLocationTask();
+                                    }
+                                },
+                                DELAY
+                        );
+                    }
+                }
+        );
 
 
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // TODO Auto-generated method stub
 
-                //new SearchShortAsyncTask(this, getApplicationContext()).execute(location, keyword);
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-
-        });
 
 
 
@@ -160,20 +149,11 @@ public class SearchActivity extends AppCompatActivity implements TaskCompleted {
                 location = txtLocation.getText().toString();
                 keyword = txtKeyword.getText().toString();
 
-                if(location.equals("")) {
+                if(location.equals("") && keyword.equals("")) {
 
                     flag = false;
-                    errMsg = R.string.enter_valid_first_name;
-                    txtLocation.requestFocus();
-                }
-
-                else if(keyword.equals("")) {
-                    flag = false;
-                    errMsg = R.string.enter_valid_last_name;
-                    txtKeyword.requestFocus();
-                }
-
-                if(!flag) {
+                    errMsg = R.string.enter_location_or_keyword;
+                    //txtLocation.requestFocus();
 
                     builder = new AlertDialog.Builder(getApplicationContext());//Context parameter
                     builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -188,14 +168,17 @@ public class SearchActivity extends AppCompatActivity implements TaskCompleted {
                     alertDialog.setTitle(getString(R.string.alert_title));
                     alertDialog.setIcon(R.drawable.icon_cross);
                     alertDialog.show();
-
                 }
+
+
                 else {
 
-                    callSearchTask();
-                    pd = new ProgressDialog(getApplicationContext());
-                    pd.setMessage(getString(R.string.sending_data));
-                    pd.show();
+                    callSearchFullTask();
+//                    pd = new ProgressDialog(getApplicationContext());
+//                    pd.setMessage(getString(R.string.sending_data));
+//                    pd.show();
+
+
 
                 }
             }
@@ -203,86 +186,23 @@ public class SearchActivity extends AppCompatActivity implements TaskCompleted {
 
     }
 
-    private void callSearchTask() {
-
-        /*if(location.equals("") && keyword.equals(""))
-            new SearchFullAsyncTask(this, getApplicationContext()).execute(location, keyword);*/
+    private void callSearchFullTask() {
 
 
+        location = txtLocation.getText().toString();
+        keyword = txtKeyword.getText().toString();
+
+        if(!location.equals("") || !keyword.equals(""))
+            new SearchFullAsyncTask(this, getApplicationContext()).execute(location, keyword);
     }
 
+    private void callSearchLocationTask() {
 
-
-
-    @Override
-    public void onTaskComplete(String listResult) {
-
-        Log.d(LOGTAG, "OnTaskCompleted inside Search: "+listResult);
-
-
-
-        /*if (listResult.size() > 0 && mAdapter != null) {
-            mModels = listOffers;
-            //Log.d(LOGTAG, "Inside Adapter: "+mAdapter);
-            mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), listOffers, "BrowseOffers");
-
-            mRecyclerOffers.setAdapter(mAdapter);
-            mRecyclerOffers.setVisibility(View.VISIBLE);
-            tvEmptyView.setVisibility(View.GONE);
-        } else {
-            tvEmptyView.setText(getString(R.string.no_records));
-        }*/
-
-
-
-        /*
-        builder = new AlertDialog.Builder(SearchActivity.this);//Context parameter
-        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-
-
-
-        if(result.equalsIgnoreCase("R01001")) {
-
-            builder.setMessage(getString(R.string.error_validation_success));
-            alertDialog = builder.create();
-            alertDialog.setTitle(getString(R.string.alert_title));
-            alertDialog.setIcon(R.drawable.icon_tick);
-            alertDialog.show();
-
-        }
-        else {
-
-            if(result.equalsIgnoreCase("R01002"))
-                builder.setMessage(getString(R.string.offer_not_found));
-
-            else if(result.equalsIgnoreCase("R01003"))
-                builder.setMessage(getString(R.string.error_offer_expired));
-
-            else if(result.equalsIgnoreCase("R01004"))
-                builder.setMessage(getString(R.string.error_duplicate_validation));
-
-            else if(result.equalsIgnoreCase("R01005"))
-                builder.setMessage(getString(R.string.redemption_code_mismatch));
-
-            else
-                builder.setMessage(getString(R.string.offer_not_found));
-
-
-
-            alertDialog = builder.create();
-            alertDialog.setTitle(getString(R.string.alert_title));
-            alertDialog.setIcon(R.drawable.icon_cross);
-            alertDialog.show();
-
-        }*/
-
-
-
+        location = txtLocation.getText().toString();
+        if(!location.equals(""))
+            new SearchLocationAsyncTask(this).execute(location);
     }
+
 
 
 
@@ -315,5 +235,21 @@ public class SearchActivity extends AppCompatActivity implements TaskCompleted {
     }
 
 
+    @Override
+    public void onUsersLoaded(ArrayList<User> listAddresses) {
 
+        Log.d(LOGTAG, "Inside Location Adapter: "+listAddresses.size());
+
+        if (listAddresses.size() > 0) {
+            mAdapter = new SearchViewAdapter(this);
+            mAdapter.setAddresses(listAddresses);
+            mRecyclerView.setAdapter(mAdapter);
+        }
+
+    }
+
+    @Override
+    public void onTaskComplete(String result) {
+
+    }
 }

@@ -5,7 +5,9 @@ package com.tier5.redeemar.RedeemarConsumerApp.utils;
  */
 public interface Constants {
     String NA = "NA";
-    final String defaultRadius = "15550"; // Default search radius in KM
+    final String defaultRadius = "15500"; // Default search radius in KM
+
+
 
     // Vuforia Access Key & Secret
 
@@ -21,5 +23,7 @@ public interface Constants {
 
     final String logoDir = "redeemar/logos/";
     final String offerDir = "redeemar/offers/";
+
+
 
 }

@@ -1,11 +1,19 @@
 package com.tier5.redeemar.RedeemarConsumerApp.utils;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;import android.text.TextUtils;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -26,8 +34,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -196,8 +206,6 @@ public class Utils {
         String disc = "";
         DecimalFormat precision = new DecimalFormat("#.00");
 
-        Log.d(LOGTAG, "Type is: "+type);
-
         // Type = 1 stands for absolute value
         // Type = 2 stands for % value
 
@@ -267,7 +275,7 @@ public class Utils {
         try {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            //bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -300,6 +308,67 @@ public class Utils {
 
     }
 
+
+
+    public static boolean findDuplicate(ArrayList<String> listItems, String item) {
+        Log.d(LOGTAG, "Duplicate Items: "+listItems.size());
+        Log.d(LOGTAG, "An Item: "+item);
+
+        for(int i=0; i < listItems.size(); i++) {
+            if(listItems.get(i).equals(item))
+                return true;
+        }
+
+        return false;
+    }
+
+
+    public static boolean checkLocationPermissions(Activity activity, Context ctx) {
+
+
+        int REQUEST_ID_MULTIPLE_PERMISSIONS = 23;
+
+        String[] permissions = new String[]{
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+        };
+
+        int result;
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        for (String p:permissions) {
+            result = ContextCompat.checkSelfPermission(ctx,p);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(p);
+            }
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(activity, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
+
+
+    public static void noLocationFound(Context ctx){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        builder.setMessage("No location found.Please exit the app and start again.")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        //mCtx.finish();
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 
 
 
