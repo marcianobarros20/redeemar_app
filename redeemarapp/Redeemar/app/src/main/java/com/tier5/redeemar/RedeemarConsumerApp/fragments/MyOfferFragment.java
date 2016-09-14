@@ -207,7 +207,8 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         if(listOffers.size() > 0) {
             Log.d(LOGTAG, "Inside callback onMyOffersLoaded: " + listOffers.size());
             //adapter.setOffers(listOffers);
-            tvEmptyView.setVisibility(View.VISIBLE);
+            //mRecyclerOffers.setVisibility(View.VISIBLE);
+
 
             if (listOffers != null) {
 
@@ -295,10 +296,13 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
                 adapter = new BankedOffersAdapter(getActivity(), brands);
                 mRecyclerOffers.setAdapter(adapter);
                 mRecyclerOffers.setVisibility(View.VISIBLE);
+                tvEmptyView.setVisibility(View.GONE);
 
-            } else
+            }
+            else
                 tvEmptyView.setText(getString(R.string.no_records));
         }
-
+        else
+            tvEmptyView.setText(getString(R.string.no_records));
     }
 }
