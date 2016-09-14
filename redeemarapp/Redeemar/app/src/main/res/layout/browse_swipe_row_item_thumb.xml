@@ -104,7 +104,7 @@
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/logo_image"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"

@@ -15,7 +15,8 @@
         android:layout_above="@id/my_recycler_view"
         android:padding="4dp"
         android:background="@color/darkGray"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/tvUserLocation"
@@ -44,12 +45,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:lines="1"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
-            android:background="@drawable/rounded_corner"
-            android:hint="@string/search_location">
-            <requestFocus />
-        </AutoCompleteTextView>
+            android:background="@drawable/rounded_corner_gray"
+            android:nextFocusUp="@id/autoCompleteTextView1"
+            android:nextFocusLeft="@id/autoCompleteTextView1"
+            android:windowSoftInputMode="stateHidden"
+            android:hint="@string/search_location" />
 
 
 
@@ -71,7 +74,7 @@
             android:paddingRight="10dp"
             android:background="@drawable/ic_list_green"
             android:layout_gravity="center_vertical|right"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <ImageView
             android:id="@+id/menu_map_view"
@@ -81,7 +84,7 @@
             android:paddingRight="10dp"
             android:background="@drawable/ic_map_view"
             android:layout_gravity="center_vertical|right"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
     </LinearLayout>
 

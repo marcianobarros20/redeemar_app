@@ -190,6 +190,7 @@
     <string name="spf_last_offer_id">spf_last_offer_id</string>
     <string name="spf_no_auto_login">spf_no_auto_login</string>
     <string name="spf_category_level">spf_category_level</string>
+    <string name="spf_location_keyword">spf_location_keyword</string>
 
 
     <string name="ext_redeemar_id">REDEEMAR_ID</string>

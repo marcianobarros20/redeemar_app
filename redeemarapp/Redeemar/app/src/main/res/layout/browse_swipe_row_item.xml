@@ -113,15 +113,15 @@
 
             <com.android.volley.toolbox.NetworkImageView
                 android:id="@+id/logo_image"
-                android:layout_width="wrap_content"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:padding="2dp"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                android:maxWidth="100dp"
-                android:maxHeight="80dp" />
+                android:maxWidth="140dp"
+                android:maxHeight="100dp" />
 
             <TextView
                 android:id="@+id/on_demand"

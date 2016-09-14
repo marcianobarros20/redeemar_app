@@ -117,8 +117,6 @@
                 android:textStyle="bold"
                 android:textColor="@color/midmgray1"
                 android:textSize="@dimen/text28" />
-
-
             <!-- Star rating -->
 
             <LinearLayout
