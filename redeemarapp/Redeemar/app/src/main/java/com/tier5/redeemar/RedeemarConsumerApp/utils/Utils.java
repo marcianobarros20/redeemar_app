@@ -179,7 +179,7 @@ public class Utils {
         if(address.getLocation() != null && !address.getLocation().equals(""))
             fullAddr = fullAddr + ", " + address.getLocation();
 
-        if(address.getCity() != null && !address.getCity().equals(""))
+        if(address.getCity() != null && !address.getCity().equals("") && !address.getCity().equalsIgnoreCase(address.getLocation()))
             fullAddr = fullAddr + ", " + address.getCity();
 
         if(address.getState() != null && !address.getState().equals(""))

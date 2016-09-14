@@ -46,7 +46,7 @@ public class GetNearByOffersAsyncTask extends AsyncTask<String, Void, ArrayList<
 
     public GetNearByOffersAsyncTask(UsersLoadedListener myComponent){
         this.myComponent = myComponent;
-        Log.d(LOGTAG, "Inside GetNearByOffersAsyncTask constructor: "+myComponent);
+        Log.d(LOGTAG, "Inside GetNearByOffersAsyncTask constructor");
 
     }
 

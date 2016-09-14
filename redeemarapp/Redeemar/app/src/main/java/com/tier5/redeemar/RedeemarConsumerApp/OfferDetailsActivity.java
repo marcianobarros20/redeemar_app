@@ -196,9 +196,6 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
         });
 
 
-
-
-
     }
 
 

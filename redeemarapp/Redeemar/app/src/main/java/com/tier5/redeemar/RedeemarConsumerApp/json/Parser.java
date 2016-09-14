@@ -178,11 +178,8 @@ public class Parser {
                 if (response.getString("messageCode").equals("R01001")) {
 
                     JSONArray offersArray = new JSONArray(response.getString("data"));
-
                     Log.d(LOGTAG, "Data Length: " + offersArray.length());
-
                     int offerCnt =  offersArray.length();
-
 
                     //Iterate the jsonArray and print the info of JSONObjects
                     for (int i = 0; i < offerCnt; i++) {

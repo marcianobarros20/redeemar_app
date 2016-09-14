@@ -226,7 +226,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         List<Category> listCategories = new ArrayList<Category>();
 
-        String selectQuery = "SELECT * FROM " + TABLE_CATEGORIES + " WHERE "+KEY_PARENT_ID+" = "+pid+" order by "+KEY_CAT_NAME+"";
+        //String selectQuery = "SELECT * FROM " + TABLE_CATEGORIES + " WHERE "+KEY_PARENT_ID+" = "+pid+" order by "+KEY_CAT_NAME+"";
+        String selectQuery = "SELECT * FROM " + TABLE_CATEGORIES + " order by "+KEY_CAT_NAME+"";
+
         Log.d(LOGTAG, "SQL: "+selectQuery);
         Cursor cursor = db.rawQuery(selectQuery, null);
 

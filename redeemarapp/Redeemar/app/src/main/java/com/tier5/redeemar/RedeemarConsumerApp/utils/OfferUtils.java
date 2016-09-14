@@ -37,6 +37,7 @@ public class OfferUtils {
         Log.d(LOGTAG, "Self Lat: "+sLat);
         Log.d(LOGTAG, "Self Lon: "+sLat);
 
+        /* TODO: Use of sCatId not used now */
 
         JSONObject response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "0", "0", lat, lng, sLat, sLng);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
@@ -48,7 +49,7 @@ public class OfferUtils {
 
     public static ArrayList<Offer> loadBrandOffers(RequestQueue requestQueue, String redeemarId, String userId, String lat, String lng) {
 
-        JSONObject response = Requestor.requestOffersJSON(requestQueue, 1, Endpoints.getRequestUrlBrandOffers(30), userId, redeemarId, "0", lat, lng, "", "");
+        JSONObject response = Requestor.requestOffersJSON(requestQueue, 1, Endpoints.getRequestUrlBrandOffers(30), userId, redeemarId, "0", lat, lng, lat, lng);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadBrandOffers :"+listOffers.size());
         return listOffers;
@@ -57,7 +58,7 @@ public class OfferUtils {
 
     public static ArrayList<Offer> loadCampaignOffers(RequestQueue requestQueue, String campaignId, String userId, String lat, String lng) {
 
-        JSONObject response = Requestor.requestOffersJSON(requestQueue, 2, Endpoints.getRequestUrlCamapignOffers(30), userId, campaignId, "0", lat, lng, "", "");
+        JSONObject response = Requestor.requestOffersJSON(requestQueue, 2, Endpoints.getRequestUrlCamapignOffers(30), userId, campaignId, "0", lat, lng, lat, lng);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadCampaignOffers :"+listOffers.size());
         return listOffers;
@@ -66,7 +67,7 @@ public class OfferUtils {
 
     public static ArrayList<Offer> loadCategoryOffers(RequestQueue requestQueue, String catId, String catLevel, String userId, String lat, String lng) {
 
-        JSONObject response = Requestor.requestOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrandOffers(30), userId, catId, catLevel,  lat, lng, "", "");
+        JSONObject response = Requestor.requestOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrandOffers(30), userId, catId, catLevel,  lat, lng, lat, lng);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadCategoryOffers :"+listOffers.size());
         return listOffers;
@@ -75,7 +76,7 @@ public class OfferUtils {
 
     public static ArrayList<Offer> loadOnDemandOffers(RequestQueue requestQueue, String userId, String lat, String lng) {
 
-        JSONObject response = Requestor.requestOffersJSON(requestQueue, 4, Endpoints.getRequestUrlBrandOffers(30), userId, "0", "0", lat, lng, "", "");
+        JSONObject response = Requestor.requestOffersJSON(requestQueue, 4, Endpoints.getRequestUrlBrandOffers(30), userId, "0", "0", lat, lng, lat, lng);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadOnDemandOffers :"+listOffers.size());
         return listOffers;

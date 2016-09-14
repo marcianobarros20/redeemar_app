@@ -6,19 +6,18 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,14 +25,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +59,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.fragments.HomeFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.MyOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.RateUsFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Product;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
@@ -78,9 +81,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
      */
 
     private static final String LOGTAG = "BrowseOffer";
-
     private Toolbar mToolbar;
-
     private TextView tvEmptyView;
     private RecyclerView mRecyclerView;
     private String redeemerId = "";
@@ -109,8 +110,33 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private final int NavGroupId = 1001;
     private SharedPreferences.Editor editor;
     private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
-    private ImageView imListView, imMapView, imThumbView;
+
+
+    // For Multilevel Category Menu
+    ArrayList<String> mParentCategoryIds = new ArrayList<>();
+    ArrayList<String> mParentCategoryNames = new ArrayList<>();
+    ArrayList<String> mCategoryIds = new ArrayList<>();
+    ArrayList<String> mCategoryNames = new ArrayList<>();
+    ArrayList<String> mSubCategoryIds = new ArrayList<>();
+
+    private Product mMainProduct;
+    private Product.SubCategory mSubProduct, mSubProduct2, mSubSubProduct;
+    private Product.SubCategory.ItemList mSubProductItem;
+
+
+    private ArrayList<Product> pProductArrayList;
+    private ArrayList<Product.SubCategory> pSubItemArrayList;
+    private ArrayList<Product.SubCategory>pSubItemArrayList2;
+    private LinearLayout mLinearCategoryListView;
+    private ArrayList<Product.SubCategory.ItemList> mItemListArray;
+    private boolean isFirstViewClick = false;
+    private boolean isSecondViewClick = false;
+    boolean istrue=true;
+    boolean istrue1=true;
+    private int secondRowItemCount = 0, thirdRowItemCount = 0, mMenuCtr = 0, mSubMenuCtr = 0;;
+
     private DatabaseHelper db;
+
 
 
     /**
@@ -132,6 +158,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         db = new DatabaseHelper(this);
 
+        pProductArrayList = new ArrayList<Product>();
+        pSubItemArrayList2 = new ArrayList<Product.SubCategory>();
 
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0);
@@ -305,25 +333,14 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                             args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
                         } else if (redirectTo.equalsIgnoreCase("CampaignOffers")) {
 
-                            /*editor.putString(getString(R.string.spf_redir_action), "CampaignOffers"); // Storing Last Activity
-                            editor.putString(getString(R.string.spf_campaign_id), campaignId); // Storing Redeemar Id
-                            editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
-                            editor.commit(); // commit changes*/
-
-
                             getSupportActionBar().setTitle(R.string.offers_by_campaign);
                             args1.putString(getString(R.string.ext_redir_to), "CampaignOffers");
                             args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
                             args1.putString(getString(R.string.ext_campaign_id), campaignId);
 
                         } else if (redirectTo.equalsIgnoreCase("OnDemand")) {
-
                             Log.d(LOGTAG, "Inside OnDemand");
-
                             args1.putString(getString(R.string.ext_redir_to), "onDemand");
-                            //editor.putString(getString(R.string.spf_redir_action), ""); // Storing Last Activity
-                            //editor.commit(); // commit changes
-
                         }
 
                         fr.setArguments(args1);
@@ -422,13 +439,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
             }
         });
-
-        /*mBottomBar.mapColorForTab(0, R.color.green_header);
-        mBottomBar.mapColorForTab(1, R.color.green_header);
-        mBottomBar.mapColorForTab(2, R.color.green_header);
-        mBottomBar.mapColorForTab(3, R.color.green_header);
-        mBottomBar.mapColorForTab(4, R.color.green_header);*/
-
 
     }
 
@@ -601,15 +611,15 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 editor.putInt(res.getString(R.string.spf_category_level), 1); // Storing category Level
                                 editor.commit(); // commit changes
 
-                                Intent catIntent = new Intent(BrowseOffersActivity.this, CategoryActivity.class);
+                               /* Intent catIntent = new Intent(BrowseOffersActivity.this, CategoryActivity.class);
                                 catIntent.putExtra(getString(R.string.ext_redir_to), "CategoryOffers");
-                                //catIntent.putExtra(getString(R.string.ext_category_level), "1");
                                 catIntent.putExtra(getString(R.string.ext_category_id), catId);
                                 catIntent.putExtra(getString(R.string.ext_category_name), menuItem.getTitle());
-                                startActivity(catIntent);
+                                startActivity(catIntent);*/
+
                                 //Log.d(LOGTAG, "Category Name: "+menuItem.getTitle());
 
-                                /*Fragment browseOfferFragment1 = new BrowseOfferFragment();
+                                Fragment browseOfferFragment1 = new BrowseOfferFragment();
                                 getSupportActionBar().setTitle(menuItem.getTitle());
                                 Bundle args1 = new Bundle();
                                 args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
@@ -617,7 +627,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 browseOfferFragment1.setArguments(args1);
                                 break;
 
-                                FragmentManager browseOfferFm1 = getFragmentManager();
+                                /*FragmentManager browseOfferFm1 = getFragmentManager();
                                 FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
                                 browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
                                 browseOfferFragmentTransaction1.commit();*/
@@ -638,29 +648,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         Log.d(LOGTAG, "Category JSON: " + jsonCatText);
 
 
-        //String[] categories = gson.fromJson(jsonText, String[].class);  //EDIT: gso to gson
-        /*categories = (ArrayList) gson.fromJson(jsonCatText, ArrayList.class);  //EDIT: gso to gson
-        Log.d(LOGTAG, "Category JSON ArrayList: " + categories.size());
-
-
-        String tempCatName = "";
-        //adding items run time
-        final Menu menu = navigationView.getMenu();
-        int k = 0;
-        for (int i = 0; i < categories.size(); i++) {
-
-            String catName = Utils.stringToArray(jsonCatText, Category[].class).get(i).getCatName();
-            String parentId = Utils.stringToArray(jsonCatText, Category[].class).get(i).getParentId();
-            String catId = Utils.stringToArray(jsonCatText, Category[].class).get(i).getId();
-
-
-            if (Integer.parseInt(parentId) == 0 && !tempCatName.equalsIgnoreCase(catName)) {
-                menu.add(NavGroupId, Integer.parseInt(catId), i, catName);
-                tempCatName = catName;
-            }
-
-        }*/
-
         List categories = db.getCategories(0);
         String tempCatName = "";
         final Menu menu = navigationView.getMenu();
@@ -673,16 +660,21 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             int parentId = cat.getParentId();
 
 
-
-            if (parentId == 0 && !tempCatName.equalsIgnoreCase(catName)) {
-                menu.add(NavGroupId, catId, i, catName);
-                tempCatName = catName;
+            if(parentId == 0) {
+                mParentCategoryIds.add(String.valueOf(catId));
+                mParentCategoryNames.add(catName);
             }
+            mCategoryIds.add(String.valueOf(catId));
+            mSubCategoryIds.add(String.valueOf(parentId));
+            mCategoryNames.add(catName);
 
         }
 
 
         View headerView = navigationView.getHeaderView(0);
+
+        mLinearCategoryListView = (LinearLayout) headerView.findViewById(R.id.category_listview);
+
 
         navWelcome = (TextView) headerView.findViewById(R.id.nav_welcome);
         //navWelcome.setText("Welcome");
@@ -755,11 +747,15 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 final ListView menuView = (ListView) child;
                 final HeaderViewListAdapter adapter = (HeaderViewListAdapter) menuView.getAdapter();
 
-
                 final BaseAdapter wrapped = (BaseAdapter) adapter.getWrappedAdapter();
                 wrapped.notifyDataSetChanged();
             }
         }
+
+        populateListMenuItems();
+        setupListMenu();
+
+
     }
 
     @Override
@@ -831,16 +827,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             case R.id.action_view_thumb:
                 Toast.makeText(getApplicationContext(), "Thumbnail view option selected", Toast.LENGTH_SHORT).show();
 
-                //Fragment browseOfferThumbFragment = new BrowseOfferFragment();
-                //getSupportActionBar().setTitle(getString(R.string.browse_offers));
-
-
                 Log.d(LOGTAG, "Redirect to 102: " + redirectTo);
                 Log.d(LOGTAG, "Redeemar id 102: " + redeemarId);
                 Log.d(LOGTAG, "Campaign id 102: " + campaignId);
                 Log.d(LOGTAG, "Category id 102: " + categoryId);
-
-
 
                 editor.putString(getString(R.string.spf_view_type), "thumb"); // Storing User Id
                 editor.commit(); // commit changes
@@ -946,6 +936,294 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    public void populateListMenuItems() {
+
+        for(int i=0;i<mParentCategoryIds.size();i++){
+            istrue=true;
+            pSubItemArrayList=new ArrayList<Product.SubCategory>();
+            for(int j=0;j<mSubCategoryIds.size();j++){
+                istrue1=true;
+                if(mParentCategoryIds.get(i).equals(mSubCategoryIds.get(j))) {
+
+                    if(istrue){
+                        mItemListArray=new ArrayList<Product.SubCategory.ItemList>();
+                        // Main Category
+
+                        Log.d("MENU", "AA1 "+mParentCategoryIds.get(i));
+                        Log.d("MENU", "AA2 "+mParentCategoryNames.get(i));
+                        pProductArrayList.add(new Product(mParentCategoryIds.get(i), mParentCategoryNames.get(i), pSubItemArrayList, false));
+
+                        istrue=false;
+                    }
+
+                    for(int k=0;k<mCategoryIds.size();k++) {
+                        if(mCategoryIds.get(j).equals(mSubCategoryIds.get(k))) {
+
+                            if(istrue1) {
+                                mItemListArray=new ArrayList<Product.SubCategory.ItemList>();
+                                istrue1=false;
+                            }
+
+                            // Third Category
+                            Log.d("MENU", "CC1 "+mCategoryIds.get(k));
+                            Log.d("MENU", "CC2 "+mCategoryNames.get(k));
+                            mItemListArray.add(new Product.SubCategory.ItemList(mCategoryIds.get(k), mCategoryNames.get(k)));
+                        }
+                    }
+                    // Sub Category
+                    pSubItemArrayList.add(new Product.SubCategory(mCategoryIds.get(j), mCategoryNames.get(j), mItemListArray, false));
+
+                    Log.d("MENU", "BB1 "+mCategoryIds.get(j));
+                    Log.d("MENU", "BB2 "+mCategoryNames.get(j));
+                    mItemListArray=new ArrayList<Product.SubCategory.ItemList>();
+                }
+            }
+        }
+
+    }
+
+
+    public void setupListMenu() {
+
+        int nctr = 0;
+
+
+        for (int i = 0; i < pProductArrayList.size(); i++) {
+
+
+
+            mMenuCtr = i;
+
+            LayoutInflater inflater = null;
+            inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View mLinearView = inflater.inflate(R.layout.row_cat_first, null);
+
+            final TextView mProductName = (TextView) mLinearView.findViewById(R.id.textViewName);
+            final RelativeLayout mLinearFirstArrow=(RelativeLayout)mLinearView.findViewById(R.id.linearFirst);
+            final ImageView mImageArrowFirst=(ImageView)mLinearView.findViewById(R.id.imageFirstArrow);
+            final LinearLayout mLinearScrollSecond=(LinearLayout)mLinearView.findViewById(R.id.linear_scroll);
+
+            mLinearFirstArrow.setId(i);
+
+            if(isFirstViewClick==false){
+                mLinearScrollSecond.setVisibility(View.GONE);
+                mImageArrowFirst.setBackgroundResource(R.drawable.circle_plus);
+            }
+            else{
+                mLinearScrollSecond.setVisibility(View.VISIBLE);
+                mImageArrowFirst.setBackgroundResource(R.drawable.circle_minus);
+            }
+
+
+
+            secondRowItemCount = pProductArrayList.get(i).getmSubCategoryList().size();
+
+            mProductName.setOnTouchListener(new View.OnTouchListener() {
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    int xn = mLinearFirstArrow.getId();
+                    mMainProduct = pProductArrayList.get(xn);
+                    isFirstViewClick = mMainProduct.getOpened();
+
+                    Log.d(LOGTAG, "A new menu clicked "+xn+" : "+isFirstViewClick+" "+secondRowItemCount);
+
+                    if(secondRowItemCount > 0) {
+
+                        if (isFirstViewClick == false) {
+
+                            mImageArrowFirst.setBackgroundResource(R.drawable.circle_minus);
+                            mLinearScrollSecond.setVisibility(View.VISIBLE);
+                            mMainProduct.setOpened(true);
+
+                        } else {
+                            mMainProduct.setOpened(false);
+                            mImageArrowFirst.setBackgroundResource(R.drawable.circle_plus);
+                            mLinearScrollSecond.setVisibility(View.GONE);
+                        }
+
+                        pProductArrayList.set(mMenuCtr, mMainProduct);
+                    }
+                    else {
+                        Log.d(LOGTAG, "First level menu clicked");
+                    }
+                    return false;
+                }
+            });
+
+
+            ////////////////////////////// SUB CATEGORY STARTS //////////////////////////////////
+
+
+
+            final String name = pProductArrayList.get(i).getpName();
+            mProductName.setText(name);
+
+            for (int j = 0; j < secondRowItemCount; j++) {
+
+                mSubMenuCtr = j;
+
+                LayoutInflater inflater2 = null;
+                inflater2 = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View mLinearView2 = inflater2.inflate(R.layout.row_cat_second, null);
+
+                TextView mSubItemName = (TextView) mLinearView2.findViewById(R.id.textViewTitle);
+                final RelativeLayout mLinearSecondArrow=(RelativeLayout)mLinearView2.findViewById(R.id.linearSecond);
+                final ImageView mImageArrowSecond=(ImageView)mLinearView2.findViewById(R.id.imageSecondArrow);
+                final LinearLayout mLinearScrollThird=(LinearLayout)mLinearView2.findViewById(R.id.linear_scroll_third);
+
+                mLinearSecondArrow.setId(j);
+
+                mSubProduct = pProductArrayList.get(i).getmSubCategoryList().get(j);
+
+                Log.d(LOGTAG, "Sub Cat Id: "+mSubProduct.getpId());
+                Log.d(LOGTAG, "Sub Cat Name: "+mSubProduct.getpSubCatName());
+
+                thirdRowItemCount = pProductArrayList.get(i).getmSubCategoryList().get(j).getmItemListArray().size();
+
+                Log.d(LOGTAG, "Third Row Count: "+thirdRowItemCount);
+
+                //thirdRowItemCount = mSubProduct.getmItemListArray().size();
+
+                if(isSecondViewClick==false) {
+                    mLinearScrollThird.setVisibility(View.GONE);
+                    mImageArrowSecond.setBackgroundResource(R.drawable.circle_plus);
+
+                }
+                else {
+                    mLinearScrollThird.setVisibility(View.VISIBLE);
+                    mImageArrowSecond.setBackgroundResource(R.drawable.circle_minus);
+                }
+
+                mSubItemName.setOnTouchListener(new View.OnTouchListener() {
+
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+
+                        int xm = mLinearSecondArrow.getId();
+
+                        mSubProduct2 = pProductArrayList.get(mMenuCtr).getmSubCategoryList().get(xm);
+
+                        Log.d(LOGTAG, "Second Item Id: "+mSubProduct2.getpId());
+                        Log.d(LOGTAG, "Second Item Inner Id: "+mSubProduct2.getpSubCatName());
+
+                        isSecondViewClick = mSubProduct2.getOpened();
+                        thirdRowItemCount = mSubProduct2.getmItemListArray().size();
+
+                        //if(thirdRowItemCount > 0) {
+
+                            if(isSecondViewClick == false) {
+                                mImageArrowSecond.setBackgroundResource(R.drawable.circle_minus);
+                                mLinearScrollThird.setVisibility(View.VISIBLE);
+                                mSubProduct2.setOpened(true);
+                            } else {
+                                mImageArrowSecond.setBackgroundResource(R.drawable.circle_plus);
+                                mLinearScrollThird.setVisibility(View.GONE);
+                                mSubProduct2.setOpened(false);
+                            }
+
+                        //}
+                        //else {
+
+                            Fragment browseOfferFragment1 = new BrowseOfferFragment();
+                            getSupportActionBar().setTitle(mSubProduct2.getpSubCatName());
+                            Bundle args1 = new Bundle();
+                            args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
+                            args1.putString(getString(R.string.ext_category_id), String.valueOf(mSubProduct2.getpId()));
+                            args1.putString(getString(R.string.ext_category_name), String.valueOf(mSubProduct2.getpSubCatName()));
+                            browseOfferFragment1.setArguments(args1);
+
+                            FragmentManager browseOfferFm1 = getFragmentManager();
+                            FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
+                            browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
+                            browseOfferFragmentTransaction1.commit();
+
+                            if(thirdRowItemCount == 0) {
+
+                                mDrawerLayout.closeDrawers();
+                            }
+                        //}
+
+                        return false;
+                    }
+                });
+
+
+                final String catName = pProductArrayList.get(i).getmSubCategoryList().get(j).getpSubCatName();
+                mSubItemName.setText(catName);
+
+
+
+
+                if(thirdRowItemCount == 0)
+                    mImageArrowSecond.setVisibility(View.INVISIBLE);
+                else
+                {
+
+                    mImageArrowSecond.setVisibility(View.VISIBLE);
+
+                    for (int k = 0; k < thirdRowItemCount; k++) {
+
+                        LayoutInflater inflater3 = null;
+                        inflater3 = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        View mLinearView3 = inflater3.inflate(R.layout.row_cat_third, null);
+                        final RelativeLayout mLinearThirdArrow=(RelativeLayout)mLinearView3.findViewById(R.id.linearThird);
+                        mLinearThirdArrow.setId(k);
+
+                        mSubSubProduct = pProductArrayList.get(i).getmSubCategoryList().get(j);
+
+                        TextView mItemName = (TextView) mLinearView3.findViewById(R.id.textViewItemName);
+                        final String itemId = mSubSubProduct.getmItemListArray().get(k).getId();
+                        final String itemName = mSubSubProduct.getmItemListArray().get(k).getItemName();
+                        mItemName.setText(itemName);
+
+
+                        mItemName.setOnTouchListener(new View.OnTouchListener() {
+
+                            @Override
+                            public boolean onTouch(View v, MotionEvent event) {
+
+
+                                int xp = mLinearThirdArrow.getId();
+
+
+                                Fragment browseOfferFragment1 = new BrowseOfferFragment();
+                                getSupportActionBar().setTitle(itemName);
+                                Bundle args1 = new Bundle();
+                                args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
+                                args1.putString(getString(R.string.ext_category_id), String.valueOf(itemId));
+                                browseOfferFragment1.setArguments(args1);
+
+                                FragmentManager browseOfferFm1 = getFragmentManager();
+                                FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
+                                browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
+                                browseOfferFragmentTransaction1.commit();
+
+                                Log.d(LOGTAG, "Third level menu id: "+itemId);
+                                mDrawerLayout.closeDrawers();
+                                return false;
+                            }
+                        });
+
+
+
+                        mLinearScrollThird.addView(mLinearView3);
+                        nctr++;
+                    }
+                }
+
+                mLinearScrollSecond.addView(mLinearView2);
+                nctr++;
+
+            }
+
+            mLinearCategoryListView.addView(mLinearView);
+            nctr++;
+        }
+
     }
 
 

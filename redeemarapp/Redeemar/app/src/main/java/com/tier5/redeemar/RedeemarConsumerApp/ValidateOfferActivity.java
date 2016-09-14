@@ -78,8 +78,10 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
     private ProgressDialog mProgressDialog;
 
-    int valCalc;
+    int valCalc, valText;
     String offerId, user_id, perc_sym, cur_sym, days, save, off, disc, redemption_code;
+    Double lat = 0.0, lon = 0.0, payValue = 0.0, retailValue = 0.0 ;
+    String discount_text = "";
 
 
     @Override
@@ -104,7 +106,6 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
         btnRedeemPassCode = (Button) findViewById(R.id.btn_redeem_by_passcode);
         btnRedeemScan = (Button) findViewById(R.id.btn_redeem_by_scan);
 
-
         tvAddress.setTypeface(myFont);
         tvOfferTitle.setTypeface(myFont);
         tvWhatYouGet.setTypeface(myFont);
@@ -112,8 +113,6 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
         tvDiscount.setTypeface(myFont);
         tvValidateWithin.setTypeface(myFont);
         tvValidateAfter.setTypeface(myFont);
-
-
 
         thumbnail = (NetworkImageView) findViewById(R.id.thumbnail);
         logoThumbnail = (NetworkImageView) findViewById(R.id.logo_image);
@@ -272,6 +271,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.d(LOGTAG, "Inside onMapReady");
         mMap = googleMap;
     }
 
@@ -365,8 +365,6 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
 
                 try {
-                    //JSONObject json= (JSONObject) new JSONTokener(result).nextValue();
-
 
                     JSONObject reader = new JSONObject(resp);
 
@@ -387,44 +385,79 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                             Log.d(LOGTAG, "What you get: "+jsonObject.optString("what_you_get").toString());
                         }
 
-                        if(!jsonObject.isNull("discount") && jsonObject.getString("discount").toString() != "") {
+
+                        if(jsonObject.getString("retails_value") != "" && jsonObject.getString("retails_value").toString() != "") {
+
+                            retailValue = jsonObject.getDouble("retails_value");
+
+                            //tvRetailValue.setText(getString(R.string.currency_symbol).concat(jsonObject.getString("retails_value").toString()));
+                            Log.d(LOGTAG, "retails_value: "+jsonObject.getString("retails_value").toString());
+                        }
 
 
-                           String discVal = jsonObject.getString("discount");
+                        if(jsonObject.getString("pay_value") != null && jsonObject.getString("pay_value").toString() != "") {
 
-                           StringBuilder sb = new StringBuilder(14);
+                            payValue = jsonObject.getDouble("pay_value");
+
+                            //tvPayValue.setText(getString(R.string.currency_symbol).concat(jsonObject.getString("pay_value").toString()));
+                            Log.d(LOGTAG, "pay_value: "+jsonObject.getString("pay_value").toString());
+                        }
 
 
+                        if(jsonObject.getString("value_text") != null && jsonObject.getString("value_text").toString() != "") {
+                            valText = Integer.parseInt(jsonObject.getString("value_text"));
+                            Log.d(LOGTAG, "value_text: "+jsonObject.getString("value_text").toString());
+                        }
 
-                            switch(valCalc)
-                            {
-                                case 1 :
-                                    sb.append(cur_sym).append(discVal).append(" ").append(off);
-                                    break;
-                                case 2 :
-                                    sb.append(discVal).append(perc_sym).append(" ").append(off);
-                                    break;
-                                case 3 :
-                                    sb.append(cur_sym).append(discVal).append(" ").append(disc);
-                                    break;
-                                case 4 :
-                                    sb.append(discVal).append(perc_sym).append(" ").append(disc);
-                                    break;
-                                case 5 :
-                                    sb.append(save).append(" ").append(cur_sym).append(discVal);
-                                    break;
-                                case 6 :
-                                    sb.append(save).append(" ").append(discVal).append(perc_sym);
-                                    break;
-                                default :
-                                    sb.append(cur_sym).append(discVal).append(" ").append(off);
+                        if(jsonObject.getString("value_calculate") != null && jsonObject.getString("value_calculate").toString() != "") {
+                            valCalc = Integer.parseInt(jsonObject.getString("value_calculate"));
+                            Log.d(LOGTAG, "value_calculate: "+jsonObject.getString("value_calculate").toString());
+                        }
+
+
+                        if(retailValue > 0 && payValue > 0) {
+                            discount_text = Utils.calculateDiscount(retailValue, payValue, valCalc);
+                            Log.d(LOGTAG, "My Discount Value: "+discount_text);
+                        }
+
+                        /*if(valCalc == 2)
+                            tvDiscount.setText(discount_text.concat(perc_sym));
+                        else
+                            tvDiscount.setText(cur_sym.concat(discount_text));*/
+
+                        StringBuffer sDisc = new StringBuffer();
+
+                        if(valCalc == 2) {
+
+                            if(valText == 3) {
+                                sDisc.append(save).append(" ").append(discount_text).append(perc_sym);
+                            }
+                            else if(valText == 2) {
+                                sDisc.append(discount_text).append(perc_sym).append(" ").append(disc);
+                            }
+                            else {
+                                sDisc.append(discount_text).append(perc_sym).append(" ").append(off);
                             }
 
-                            tvDiscount.setText(sb);
 
-
-                            //Log.d(LOGTAG, "discount: "+jsonObject.getString("discount").toString());
                         }
+                        else {
+
+                            if(valText == 3) {
+                                //sb.append(cur_sym).append(discVal).append(" ").append(off);
+                                sDisc.append(save).append(" ").append(perc_sym).append(discount_text);
+
+                            }
+                            else if(valText == 2) {
+                                sDisc.append(cur_sym).append(discount_text).append(" ").append(disc);
+                            }
+                            else {
+                                sDisc.append(cur_sym).append(discount_text).append(" ").append(off);
+                            }
+                        }
+
+                        tvDiscount.setText(sDisc);
+
 
                         if(!jsonObject.isNull("myoffer_details") && jsonObject.getString("myoffer_details").trim() != "") {
 
@@ -451,8 +484,6 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                                     if (!jsonMyOfferObject.isNull("validate_after")  && jsonMyOfferObject.getString("validate_after").toString().trim() != "") {
                                         Log.d(LOGTAG, "Validate After: " + jsonMyOfferObject.getString("validate_after").toString());
                                         String validate_after = jsonMyOfferObject.getString("validate_after");
-
-                                        //calendar.setTime(fromDateFormat.parse(validate_after));
 
                                         Date date2 = fromDateFormat.parse(validate_after);
 
@@ -482,9 +513,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                             mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
 
-                            mImageLoader.get(imageUrl, ImageLoader.getImageListener(thumbnail,
-                                    R.drawable.icon_watermark, android.R.drawable
-                                            .ic_dialog_alert));
+                            mImageLoader.get(imageUrl, ImageLoader.getImageListener(thumbnail, R.drawable.ic_placeholder, R.drawable.ic_placeholder));
                             thumbnail.setImageUrl(imageUrl, mImageLoader);
 
 
@@ -501,13 +530,41 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                                 String logoImageUrl = UrlEndpoints.baseLogoMediumURL+ jsonLogoSettings.getString("logo_name");
                                 mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
-                                mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail,
-                                        R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
+                                //mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
+                                mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail, 0, 0));
                                 logoThumbnail.setImageUrl(logoImageUrl, mImageLoader);
                             }
 
 
                         }
+
+
+
+
+                        if(!jsonObject.isNull("latitude") && jsonObject.getString("latitude").toString().trim() != "") {
+
+                            Log.d(LOGTAG, "latitude: "+jsonObject.getString("latitude").toString());
+                            try {
+                                lat = Double.parseDouble(jsonObject.getString("latitude").toString());
+                            } catch (NumberFormatException e) {
+                                lat = 0.0; // your default value
+                            }
+                        }
+
+                        if(!jsonObject.isNull("longitude") && jsonObject.getString("longitude").toString().trim() != "") {
+
+                            Log.d(LOGTAG, "longitude: "+jsonObject.getString("longitude").toString());
+
+
+                            try {
+                                lon = Double.parseDouble(jsonObject.getString("longitude").toString());
+                            } catch (NumberFormatException e) {
+                                lon = 0.0; // your default value
+                            }
+
+                        }
+
+
 
 
 
@@ -571,9 +628,12 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
 
 
-                        /*if(mMap != null) {
+                        if(mMap != null) {
 
-                            LatLng point = new LatLng(latitude, lon);
+                            Log.d(LOGTAG, "MAP: "+lat);
+                            Log.d(LOGTAG, "MAP: "+lat);
+
+                            LatLng point = new LatLng(lat, lat);
 
                             if(address != "")
                                 mMap.addMarker(new MarkerOptions().position(point).title(address));
@@ -581,7 +641,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                                 mMap.addMarker(new MarkerOptions().position(point).title(getString(R.string.brand_location)));
 
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 16));
-                        }*/
+                        }
 
 
                         JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));

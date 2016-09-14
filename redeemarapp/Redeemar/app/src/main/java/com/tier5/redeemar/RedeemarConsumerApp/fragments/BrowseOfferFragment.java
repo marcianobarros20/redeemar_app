@@ -22,7 +22,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 
-//import android.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -39,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.CategoryActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
@@ -48,8 +48,8 @@ import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CampaignOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CategoryOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.FetchLocationAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.OnDemandOffersAsyncTask;
-import com.tier5.redeemar.RedeemarConsumerApp.async.SearchLocationAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.LocationFetchedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
@@ -62,7 +62,10 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BrowseOfferFragment extends Fragment implements OffersLoadedListener, UsersLoadedListener, LocationFetchedListener, SearchView.OnQueryTextListener  {
 
@@ -86,7 +89,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private double latitude = 0.0, longitude = 0.0;
     //private FragmentActivity listener;
     private List<Offer> mModels;
-    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list", location = "";
+    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list", location = "", categoryName = "", locKeyword = "",
+            selfLat = "", selfLon = "";
     private static final int VERTICAL_ITEM_SPACE = 48;
     Activity activity;
     private ActivityCommunicator activityCommunicator;
@@ -123,7 +127,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                              Bundle savedInstanceState) {
 
         Log.d(LOGTAG, "Inside onCreateView");
-        //getActivity().setTitle(R.string.browse_offers);
+
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.browse_offers);
 
         activity = getActivity();
@@ -133,6 +137,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         cd = new SuperConnectionDetector(activity);
         isInternetPresent = cd.isConnectingToInternet();
+
+
 
         //check permission in marshmallow
         if(Utils.checkLocationPermissions(getActivity(), getActivity().getApplicationContext())){
@@ -151,13 +157,19 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             redeemarId = args1.getString(getString(R.string.ext_redeemar_id), "");
             campaignId = args1.getString(getString(R.string.ext_campaign_id), "");
             categoryId = args1.getString(getString(R.string.ext_category_id), "");
+
+            categoryName = args1.getString(getString(R.string.ext_category_name), "");
             viewType = args1.getString(getString(R.string.ext_view_type), "");
 
         }
 
+        if(!categoryName.equals(""))
+            ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(categoryName);
+
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_offers, container, false);
-        //Log.d(LOGTAG, "Inside browse offer fragment");
+
+        layout.findViewById(R.id.mainOfferListLayout).requestFocus();
 
         imListView = (ImageView) layout.findViewById(R.id.menu_list_view);
         imMapView = (ImageView) layout.findViewById(R.id.menu_map_view);
@@ -167,9 +179,36 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         locationList = new ArrayList<String>();
         latLngList = new ArrayList<LatLng>();
 
+        if(imListView.getVisibility() == View.VISIBLE) {
+            Log.d(LOGTAG, "Inside ListView");
+            imListView.setVisibility(View.GONE);
+            imThumbView.setVisibility(View.VISIBLE);
+            imMapView.setVisibility(View.GONE);
+        }
+        else if(imThumbView.getVisibility() == View.VISIBLE) {
+            Log.d(LOGTAG, "Inside ThumbView");
+            imListView.setVisibility(View.GONE);
+            imThumbView.setVisibility(View.GONE);
+            imMapView.setVisibility(View.VISIBLE);
+        }
+        else if(imMapView.getVisibility() == View.VISIBLE) {
+            Log.d(LOGTAG, "Inside MapView");
+            imListView.setVisibility(View.VISIBLE);
+            imThumbView.setVisibility(View.GONE);
+            imMapView.setVisibility(View.GONE);
+        }
+
+        callSearchLocationTask();
+
+
+
         autoCompleteAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, locationList);
+        autoComplete.animate();
         autoComplete.setThreshold(1);
         autoComplete.setAdapter(autoCompleteAdapter);
+
+        editor = sharedpref.edit();
+
 
         autoComplete.addTextChangedListener(new TextWatcher() {
 
@@ -188,8 +227,13 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             @Override
             public void afterTextChanged(Editable s) {
                 if (shouldAutoComplete) {
-                    callSearchLocationTask(s.toString());
-                    Log.d(LOGTAG, "Webservice will be called");
+
+                    // Set to Shared Preference
+                    editor.putString(res.getString(R.string.spf_location_keyword), s.toString()); // Set view type to list
+                    editor.commit();
+
+                    //callSearchLocationTask(s.toString());
+                    Log.d(LOGTAG, "Set to sharedpref");
                 }
             }
 
@@ -206,12 +250,13 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
                 callAsyncTaskForLocation(String.valueOf(geo.latitude),  String.valueOf(geo.longitude));
 
+
+
             }
         });
 
 
 
-        editor = sharedpref.edit();
 
         imListView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,7 +271,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 fragmentTransaction.replace(R.id.container_body, fragment2);
                 fragmentTransaction.commit();
 
-                Log.d(LOGTAG, "List view clicked");
+                /*Log.d(LOGTAG, "List view clicked");
+                imListView.setVisibility(View.GONE);
+                imThumbView.setVisibility(View.VISIBLE);
+                imMapView.setVisibility(View.GONE);*/
             }
         });
 
@@ -243,6 +291,12 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 fragmentTransaction.replace(R.id.container_body, fragment2);
                 fragmentTransaction.commit();
                 Log.d(LOGTAG, "Map view clicked");
+
+                /*Log.d(LOGTAG, "Thumb view clicked");
+                imListView.setVisibility(View.VISIBLE);
+                imThumbView.setVisibility(View.GONE);
+                imMapView.setVisibility(View.GONE);*/
+
             }
         });
 
@@ -259,7 +313,11 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 fragmentTransaction.replace(R.id.container_body, fragment2);
                 fragmentTransaction.commit();
 
-                Log.d(LOGTAG, "Thumb view clicked");
+                /*imListView.setVisibility(View.GONE);
+                imThumbView.setVisibility(View.GONE);
+                imMapView.setVisibility(View.VISIBLE);*/
+
+
             }
         });
 
@@ -278,13 +336,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.my_recycler_view);
-
-
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        /*ViewGroup.LayoutParams params=mRecyclerOffers.getLayoutParams();
-        params.height=100;
-        mRecyclerOffers.setLayoutParams(params);*/
 
         // Check if the Android version code is greater than or equal to Lollipop
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -327,20 +380,30 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 Log.d(LOGTAG, "Campaign id 102: " + campaignId);
                 Log.d(LOGTAG, "Category id 102: " + categoryId);
 
+                if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) != null) {
+                    locKeyword = sharedpref.getString(res.getString(R.string.spf_location_keyword), "");
+                    //autoComplete.setText(locKeyword);
+                }
+
+                if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
+                    selfLat = sharedpref.getString(res.getString(R.string.spf_last_lat), "");
+                }
+
+                if(sharedpref.getString(res.getString(R.string.spf_last_lon), null) != null) {
+                    selfLon = sharedpref.getString(res.getString(R.string.spf_last_lon), "");
+                }
+
                 /*if(sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
                     redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
                 }
-
 
                 if(sharedpref.getString(res.getString(R.string.spf_redeemer_id), null) != null) {
                     redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
                 }
 
-
                 if(sharedpref.getString(res.getString(R.string.spf_campaign_id), null) != null) {
                     campaignId = sharedpref.getString(res.getString(R.string.spf_campaign_id), "");
                 }
-
 
                 if(sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
                     categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
@@ -351,17 +414,23 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 Log.d(LOGTAG, "Campaign id 103: " + campaignId);
                 Log.d(LOGTAG, "Category id 103: " + categoryId);
 
+                if(selfLat.equals(""))
+                    selfLat = String.valueOf(latitude);
+
+                if(selfLon.equals(""))
+                    selfLon = String.valueOf(longitude);
+
+
                 if(redirectTo.equals("BrandOffers") && !redeemarId.equals(""))
-                    new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude));
+                    new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else if(redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
-                    new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude));
+                    new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else if(redirectTo.equals("CategoryOffers") && !categoryId.equals(""))
-                    new CategoryOffersAsyncTask(this).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude));
-                else if(redirectTo.equals("OnDemand")) {
-                    new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude));
-                }
+                    new CategoryOffersAsyncTask(this).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+                else if(redirectTo.equals("OnDemand"))
+                    new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else
-                    new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), String.valueOf(latitude),  String.valueOf(longitude));
+                    new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), selfLat, selfLon);
             }
 
             activityCommunicator.passDataToActivity(redirectTo);
@@ -405,27 +474,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
-        // create class object
-        /*GPSTracker gps = new GPSTracker(getActivity());
-
-        // check if GPS enabled
-        if(gps.canGetLocation()){
-
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-
-            if(latitude == 0 && longitude == 0) {
-                gps.showSettingsAlert();
-            }
-
-        } else {
-            // can't get location
-            // GPS or Network is not enabled
-            // Ask user to enable GPS/network in settings
-            gps.showSettingsAlert();
-        }*/
-
-
         mListOffers = new ArrayList<Offer>();
         //mAdapter = new BrowseOffersViewAdapter(getActivity(), mDataSet, "BrowseOffers");
     }
@@ -460,9 +508,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        /*MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
+        MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) myActionMenuItem.getActionView();
-        searchView.setOnQueryTextListener(this);*/
+        searchView.setOnQueryTextListener(this);
     }
 
 
@@ -581,109 +629,116 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     }
 
 
-    private void callSearchLocationTask(String loc) {
-        location = loc;
-        new SearchLocationAsyncTask(this).execute(loc);
+    private void callSearchLocationTask() {
+        new GetNearByOffersAsyncTask(this).execute(String.valueOf(latitude), String.valueOf(longitude));
     }
 
 
     @Override
     public void onUsersLoaded(ArrayList<User> listAddresses) {
 
+        Set<User> setAddress = new LinkedHashSet<>(listAddresses);
 
-
-        if(!location.equals("")) {
-
-            location = location.toLowerCase();
-
-
-            Log.d(LOGTAG, "Location is: "+location);
-
-            int cnt = listAddresses.size();
-            int p = 0;
-            locationList.clear();
-
-            for(int i = 0; i < cnt; i++) {
-                String tAddress = "", tCity = "", tState = "", tZip = "", tLoc = "", tLat = "", tLon = "";
-
-                User addr = listAddresses.get(i);
-
-                if(addr.getAddress() != null)
-                    tAddress = addr.getAddress().toLowerCase();
-
-                if(addr.getCity() != null)
-                    tCity = addr.getCity().toLowerCase();
-
-                if(addr.getState() != null)
-                    tState = addr.getState().toLowerCase();
-
-                if(addr.getCity() != null)
-                    tZip = addr.getZipcode().toLowerCase();
-
-                if(addr.getLocation() != null)
-                    tLoc = addr.getLocation().toLowerCase();
-
-                if(addr.getLat() != null)
-                    tLat = addr.getLat().toLowerCase();
-
-                if(addr.getLon() != null)
-                    tLon = addr.getLon().toLowerCase();
-
-
-                if(tAddress.contains(location) && !Utils.findDuplicate(locationList, tAddress)) {
-                    locationList.add(tAddress);
-                    p++;
-                }
-
-                if(tCity.contains(location) && !Utils.findDuplicate(locationList, tCity)) {
-                    if(!tState.equals(""))
-                        locationList.add(tCity+", "+tState);
-                    else
-                        locationList.add(tCity);
-                    p++;
-                }
-                if(tState.contains(location) && !Utils.findDuplicate(locationList, tState)) {
-                    locationList.add(tState);
-                    p++;
-                }
-
-                if(tZip.contains(location) && !Utils.findDuplicate(locationList, tZip)) {
-                    locationList.add(tZip);
-                    p++;
-                }
-
-                if(tLoc.contains(location) && !Utils.findDuplicate(locationList, tLoc)) {
-                    locationList.add(tLoc);
-                    if(!tCity.equals(""))
-                        locationList.add(tLoc+", "+tCity);
-                    else if(!tState.equals(""))
-                        locationList.add(tLoc+", "+tState);
-                    else
-                        locationList.add(tLoc);
-                    p++;
-                }
-
-                Log.d(LOGTAG, "After User Loaded Lat is: "+tLat);
-                Log.d(LOGTAG, "After User Loaded Lon is: "+tLon);
-
-                if(tLat!="" && tLon != "")
-                    latLngList.add(new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
-
-
-
-
-
-
-            }
+        Iterator it = setAddress.iterator();
+        while(it.hasNext()) {
+            Log.d(LOGTAG, "ITEM: "+it.next().toString());
         }
 
-        autoCompleteAdapter.clear();
-        autoCompleteAdapter.addAll(locationList);
-        autoCompleteAdapter.notifyDataSetChanged();
-        Log.d(LOGTAG, "Print array recursively: "+locationList.size());
+        location = location.toLowerCase();
+
+        int cnt = listAddresses.size();
+        int p = 0;
+        locationList.clear();
+        boolean found = false;
+
+        for(int i = 0; i < cnt; i++) {
+            String tAddress = "", tCity = "", tState = "", tZip = "", tLoc = "", tLat = "", tLon = "";
+
+            User addr = listAddresses.get(i);
+
+            if(addr.getAddress() != null)
+                tAddress = addr.getAddress().trim();
+
+            if(addr.getCity() != null)
+                tCity = addr.getCity().trim();
+
+            if(addr.getState() != null)
+                tState = addr.getState().trim();
+
+            if(addr.getZipcode() != null)
+                tZip = addr.getZipcode().trim();
+
+            if(addr.getLocation() != null)
+                tLoc = addr.getLocation().trim();
+
+            if(addr.getLat() != null)
+                tLat = addr.getLat().trim();
+
+            if(addr.getLon() != null)
+                tLon = addr.getLon().trim();
+
+
+            /*if(tAddress.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tAddress) && !Utils.findDuplicate(locationList, tAddress+", "+tState.toUpperCase())) {
+                found = true;
+                if(!tState.equals(""))
+                    locationList.add(tAddress+", "+tState.toUpperCase());
+                else
+                    locationList.add(tAddress);
+                p++;
+            }*/
+
+            if(tCity.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tCity) && !Utils.findDuplicate(locationList, tCity+", "+tState.toUpperCase()) && !found) {
+                //found = true;
+                if(!tState.equals(""))
+                    locationList.add(tCity+", "+tState.toUpperCase());
+                else
+                    locationList.add(tCity);
+                p++;
+            }
+            if(tState.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tState)) {
+                locationList.add(tState);
+                p++;
+            }
+
+            if(tZip.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tZip)) {
+                locationList.add(tZip);
+                p++;
+            }
+
+            if(tLoc.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tLoc) && !Utils.findDuplicate(locationList, tLoc+", "+tState)) {
+                found = true;
+                locationList.add(tLoc);
+                if(!tState.equals(""))
+                    locationList.add(tLoc+", "+tState);
+                else
+                    locationList.add(tLoc);
+                p++;
+            }
+
+
+            Log.d(LOGTAG, "After User Loaded Lat is: "+tLat);
+            Log.d(LOGTAG, "After User Loaded Lon is: "+tLon);
+
+            if(tLat!="" && tLon != "")
+                latLngList.add(new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
+        }
+
+
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) != null) {
+            locKeyword = sharedpref.getString(res.getString(R.string.spf_location_keyword), "");
+            autoComplete.setText(locKeyword);
+        }
+
+
+        //autoCompleteAdapter.clear();
+        //autoCompleteAdapter.addAll(locationList);
+        //autoCompleteAdapter.notifyDataSetChanged();
+        //Log.d(LOGTAG, "Print array recursively: "+locationList.size());
         //autoCompleteAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, locationList);
-        autoComplete.setAdapter(autoCompleteAdapter);
-        autoCompleteAdapter.notifyDataSetChanged();
+        //autoComplete.setAdapter(autoCompleteAdapter);
+        //autoCompleteAdapter.notifyDataSetChanged();
     }
 
 
@@ -699,10 +754,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
             editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(longitude));
             editor.commit();
-
-
-
-            Log.d(LOGTAG, "Latitu");
 
             if(isInternetPresent) {
                 if (Keys.latitude == 0.0 || Keys.longitude == 0.0) {
@@ -740,6 +791,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         longitude = Double.parseDouble(locUser.getLon());
 
         // Save the latitude and longitude in SharedPreferences
+        // This is user's location where he is now
         editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
         editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(longitude));
         editor.commit();
@@ -748,7 +800,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         Log.d(LOGTAG, "Lat Values: "+latitude);
         Log.d(LOGTAG, "Long Values: "+longitude);
 
-        autoComplete.setText(locUser.getLocation());
+        locationList.add(locUser.getLocation());
+        if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) == null) {
+
+            // Set to Shared Preference
+            editor.putString(res.getString(R.string.spf_location_keyword), locUser.getLocation()); // Set view type to list
+            editor.commit();
+            autoComplete.setText(locKeyword);
+        }
+        else
+            autoComplete.setText(locUser.getLocation());
 
 
     }
@@ -757,6 +818,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         Log.d(LOGTAG, "Inside callAsyncTaskForLocation");
         mRecyclerOffers.setVisibility(View.GONE);
         tvEmptyView.setVisibility(View.VISIBLE);
-        new BrowseOffersAsyncTask(this).execute(user_id, tLat, tLng, String.valueOf(latitude),  String.valueOf(longitude));
+        if(!categoryId.equals(""))
+            new CategoryOffersAsyncTask(this).execute(categoryId, tLat, tLng, String.valueOf(latitude),  String.valueOf(longitude));
+        else
+            new BrowseOffersAsyncTask(this).execute(user_id, tLat, tLng, String.valueOf(latitude),  String.valueOf(longitude), "");
+
     }
 }

@@ -754,7 +754,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                 String uniqueTargetId = result.getUniqueTargetId();
                 Log.d(LOGTAG, "Cloud Reco Unique Target Id: " + uniqueTargetId);
 
-                if(uniqueTargetId != "") {
+                if(!uniqueTargetId.equalsIgnoreCase("")) {
 
 
                     String targetName = result.getTargetName();
@@ -1134,7 +1134,6 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
                                 if(!json2.isNull("offer_id")) {
 
-
                                     String offerId = json2.get("offer_id").toString();
 
                                     Log.d(LOGTAG, "Inside action id 3: "+offerId);
@@ -1144,7 +1143,6 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                                     sIntent.putExtra(getString(R.string.ext_offer_id), offerId);
                                     startActivity(sIntent);
                                     finish();
-
 
                                 }
 
@@ -1158,13 +1156,25 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                                     Log.d(LOGTAG, "Inside action id 4");
                                     //showInitializationErrorMessage(getString(R.string.error_validation_wrong_place));
 
+                                    /*Intent intent = new Intent(getApplicationContext(), DisplaySuccessActivity.class);
+                                    intent.putExtra(getString(R.string.ext_scan_err), "R02001");
+                                    startActivity(intent);
+                                    finish();*/
+
                                     Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
                                     intent.putExtra(getString(R.string.ext_scan_err), "R02005");
                                     startActivity(intent);
                                     finish();
 
-
                                 }
+                                /*else {
+
+                                    Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                                    intent.putExtra(getString(R.string.ext_scan_err), "R02005");
+                                    startActivity(intent);
+                                    finish();
+
+                                }*/
 
                             }
 
@@ -1327,13 +1337,10 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
                     if (reader.getString("messageCode").equals("R01001")) {
 
-
                         Intent intent = new Intent(getApplicationContext(), DisplaySuccessActivity.class);
                         intent.putExtra(getString(R.string.ext_scan_err), "R02001");
                         startActivity(intent);
                         finish();
-
-
 
                     }
 
