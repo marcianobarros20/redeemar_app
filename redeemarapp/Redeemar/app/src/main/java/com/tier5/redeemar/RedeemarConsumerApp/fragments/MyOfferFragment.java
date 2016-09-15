@@ -209,7 +209,7 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
             }
 
             // \n is for new line
-            Toast.makeText(getActivity().getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity().getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
 
         } else {
             // can't get location

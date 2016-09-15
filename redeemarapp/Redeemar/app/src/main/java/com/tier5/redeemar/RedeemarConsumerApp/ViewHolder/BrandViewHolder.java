@@ -2,6 +2,7 @@ package com.tier5.redeemar.RedeemarConsumerApp.ViewHolder;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.Log;
@@ -90,9 +91,13 @@ public class BrandViewHolder extends ParentViewHolder {
         super.setExpanded(expanded);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             if (expanded) {
-                thumbnailBrand.setRotation(ROTATED_POSITION);
+                //thumbnailBrand.setRotation(ROTATED_POSITION);
+
+                //thumbnailBrand.setBackgroundColor(Color.GRAY);
             } else {
-                thumbnailBrand.setRotation(INITIAL_POSITION);
+                //thumbnailBrand.setRotation(INITIAL_POSITION);
+
+                //thumbnailBrand.setBackgroundColor(Color.WHITE);
             }
         }
     }
@@ -101,7 +106,7 @@ public class BrandViewHolder extends ParentViewHolder {
     public void onExpansionToggled(boolean expanded) {
         super.onExpansionToggled(expanded);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            RotateAnimation rotateAnimation;
+            /*RotateAnimation rotateAnimation;
             if (expanded) { // rotate clockwise
                  rotateAnimation = new RotateAnimation(ROTATED_POSITION,
                         INITIAL_POSITION,
@@ -116,7 +121,10 @@ public class BrandViewHolder extends ParentViewHolder {
 
             rotateAnimation.setDuration(200);
             rotateAnimation.setFillAfter(true);
-            thumbnailBrand.startAnimation(rotateAnimation);
+            thumbnailBrand.startAnimation(rotateAnimation);*/
+
+
+
         }
     }
 }
