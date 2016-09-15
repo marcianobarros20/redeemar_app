@@ -67,7 +67,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BrowseOfferFragment extends Fragment implements OffersLoadedListener, UsersLoadedListener, LocationFetchedListener,  SearchView.OnQueryTextListener  {
+public class BrowseOfferFragment extends Fragment implements OffersLoadedListener, UsersLoadedListener,  SearchView.OnQueryTextListener  {
 
     private static final String LOGTAG = "BrowseOfferFragment";
     private static final int LOCATION_SETTINGS_REQUEST = 1;
@@ -281,23 +281,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             @Override
             public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
 
-
-                // When the user selects any items from the autocomplete we get the position as well as the location text
-
                 // Getting the location text if the array list size minus 1 is greater than or equal to the current position index
-
                 String selectedLocation = parent.getItemAtPosition(position).toString();
 
-
-                Log.d(LOGTAG, "AutoComplete Selected Location: "+selectedLocation);
+                Log.d(LOGTAG, "AutoComplete Selected position: "+position);
 
                 if(!selectedLocation.equals("")) {
                     // Save it in shared preference
                     editor.putString(res.getString(R.string.spf_location_keyword), selectedLocation); // Set view type to list
                     editor.commit();
                 }
-
-
 
                 // From that position we get the lat-long
                 LatLng geo = (LatLng) latLngList.get(position);
@@ -449,8 +442,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
             if(isInternetPresent) {
 
-                if (redirectTo.equals("BrandOffers") && !redeemarId.equals(""))
-                    new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+                if (redirectTo.equals("BrandOffers") && !redeemarId.equals("")) {
+                    Log.d(LOGTAG, "Inside Brand Offers");
+                    new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude));
+                }
                 else if (redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
                     new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else if (redirectTo.equals("CategoryOffers") && !categoryId.equals(""))
@@ -517,20 +512,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         activity = getActivity();
         getActivity().setTitle(R.string.browse_offers);
 
-
-        // Get the current geo position
-        gps = new GPSTracker(getActivity());
-
-        // If GPSTracker can get the current location of the user
-        if(gps.canGetLocation()) {
-
-            // Your current location (Self Location)
-            selfLat = String.valueOf(gps.getLatitude());
-            selfLon = String.valueOf(gps.getLongitude());
-
-        }
-
-
+        if(isInternetPresent)
+            getMyLocation();
 
 
     }
@@ -740,7 +723,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
             if(tLoc.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tLoc) && !Utils.findDuplicate(locationList, tLoc+", "+tState)) {
                 found = true;
-                locationList.add(tLoc);
+                //locationList.add(tLoc);
                 if(!tState.equals(""))
                     locationList.add(tLoc+", "+tState);
                 else
@@ -778,28 +761,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         if(gps.canGetLocation()) {
 
             // Your current location (Self Location)
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
+            selfLat = String.valueOf(gps.getLatitude());
+            selfLon = String.valueOf(gps.getLongitude());
 
-            Log.d(LOGTAG, "My Lat Values: "+latitude);
-            Log.d(LOGTAG, "My Long Values: "+longitude);
+            Log.d(LOGTAG, "My Lat Values: "+selfLat);
+            Log.d(LOGTAG, "My Long Values: "+selfLon);
 
-
-            // Save the latitude and longitude in SharedPreferences
-            // By default your current location is the location you are searching the offers from
-            if(latitude != 0.0 && longitude != 0.0) {
-                editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
-                editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(longitude));
-                editor.commit();
-            }
 
 
             // CHeck if internet is enabled in device
-            if(isInternetPresent) {
-
-                // If internet is enabled then call a API which will get location
-                new FetchLocationAsyncTask(this, getActivity().getApplicationContext()).execute(String.valueOf(latitude), String.valueOf(longitude));
-            } else {
+            if(!isInternetPresent) {
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
                 alertDialog.setTitle("Internet");
@@ -836,22 +807,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     }
 
 
-    @Override
-    public void onLocationFetched(User locUser) {
-
-        // Gte the location from web services
-        if(locUser.getLocation() != null && !locUser.getLocation().equals("")) {
-            Log.d(LOGTAG, "My current location is: " + locUser.getLocation());
-            // Set to Shared Preference
-            editor.putString(res.getString(R.string.spf_location_keyword), locUser.getLocation()); // Set location keyword
-            editor.commit();
-        }
-        else {
-            Log.d(LOGTAG, "No location is found");
-        }
-
-
-    }
 
 
 

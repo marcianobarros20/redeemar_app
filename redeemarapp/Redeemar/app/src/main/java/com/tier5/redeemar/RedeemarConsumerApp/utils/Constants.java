@@ -5,7 +5,7 @@ package com.tier5.redeemar.RedeemarConsumerApp.utils;
  */
 public interface Constants {
     String NA = "NA";
-    final String defaultRadius = "300"; // Default search radius in KM
+    final String defaultRadius = "1000"; // Default search radius in KM
 
 
 

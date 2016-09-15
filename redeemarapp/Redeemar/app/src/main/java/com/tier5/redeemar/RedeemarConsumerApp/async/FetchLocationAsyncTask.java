@@ -48,11 +48,14 @@ public class FetchLocationAsyncTask extends AsyncTask<String, Void, User> {
     @Override
     protected User doInBackground(String... params) {
 
+        String lat = params[0];
+        String lon = params[1];
+
         User user = new User();
 
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         try {
-            List<Address> addressList = geocoder.getFromLocation(Keys.latitude, Keys.longitude, 1);
+            List<Address> addressList = geocoder.getFromLocation(Double.parseDouble(lat), Double.parseDouble(lon), 1);
             if (addressList != null && addressList.size() > 0) {
                 Address address = addressList.get(0);
 

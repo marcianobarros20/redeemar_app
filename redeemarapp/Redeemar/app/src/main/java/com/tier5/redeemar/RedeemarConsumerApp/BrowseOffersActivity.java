@@ -60,7 +60,6 @@ import com.tier5.redeemar.RedeemarConsumerApp.fragments.MyOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.RateUsFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Product;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
 import org.json.JSONArray;

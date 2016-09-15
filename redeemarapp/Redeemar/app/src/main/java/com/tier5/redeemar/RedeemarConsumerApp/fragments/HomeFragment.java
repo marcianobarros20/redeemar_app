@@ -3,9 +3,12 @@ package com.tier5.redeemar.RedeemarConsumerApp.fragments;
 /**
  * Created by Dibs on 29/07/15.
  */
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -18,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -58,6 +62,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.MarkerItem;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 
 import java.util.ArrayList;
@@ -86,9 +91,10 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
     SharedPreferences.Editor editor;
     //private Double last_lat = 0.0, last_lon = 0.0;
     boolean isLocationSensetive = false;
-
-
     private boolean mMapViewExpanded = false;
+    private SuperConnectionDetector cd;
+    private boolean isInternetPresent = false;
+
 
     String clickIndex = "", companyName="", companyLocation="";
 
@@ -109,9 +115,29 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
         res = getResources();
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-
-
         editor = sharedpref.edit();
+
+
+        cd = new SuperConnectionDetector(getActivity());
+        isInternetPresent = cd.isConnectingToInternet();
+
+        if(!isInternetPresent) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setTitle("Internet");
+            alertDialog.setMessage("Internet not enabled in your device. Do you want to enable it from settings menu");
+            alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int which) {
+                    startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 1);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+
+        }
 
 
 

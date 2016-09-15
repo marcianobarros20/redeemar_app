@@ -32,16 +32,23 @@ public class OfferUtils {
         return brandInfo;
     }
 
-    public static ArrayList<Offer> loadBrowseOffers(RequestQueue requestQueue, String userId, String lat, String lng, String sLat, String sLng) {
+    public static ArrayList<Offer> loadBrowseOffers(RequestQueue requestQueue, String userId, String lat, String lng, String sLat, String sLng, String catId) {
 
-        Log.d(LOGTAG, "Self Lat: "+sLat);
-        Log.d(LOGTAG, "Self Lon: "+sLat);
+        //Log.d(LOGTAG, "Self Lat: "+sLat);
+        //Log.d(LOGTAG, "Self Lon: "+sLng);
+        //Log.d(LOGTAG, "Self Lon: "+catId);
 
         /* TODO: Use of sCatId not used now */
+        JSONObject response = null;
 
-        JSONObject response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "0", "0", lat, lng, sLat, sLng);
+        // Currently catLevel value is not used in web service
+        if(!catId.equals(""))
+            response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, catId, "0", lat, lng, sLat, sLng);
+        else
+            response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "", "0", lat, lng, sLat, sLng);
+
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
-        //MyApplication.getWritableDatabase().insertOffers(DBOffers.ALL_OFFERS, listOffers, true);
+
         Log.d(LOGTAG, "Inside loadBrowseOffers :"+listOffers.size());
         return listOffers;
     }

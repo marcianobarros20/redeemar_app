@@ -1,21 +1,17 @@
-/*===============================================================================
-Copyright (c) 2016 PTC Inc. All Rights Reserved.
-
-Copyright (c) 2012-2014 Qualcomm Connected Experiences, Inc. All Rights Reserved.
-
-Vuforia is a trademark of PTC Inc., registered in the United States and other 
-countries.
-===============================================================================*/
-
 package com.tier5.redeemar.RedeemarConsumerApp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup.LayoutParams;
@@ -23,32 +19,33 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
-import com.google.gson.Gson;
-import com.tier5.redeemar.RedeemarConsumerApp.async.BrandDetailsAsyncTask;
+import com.google.android.gms.maps.model.LatLng;
+import com.tier5.redeemar.RedeemarConsumerApp.async.FetchLocationAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.MenuItemsAsyncTask;
-import com.tier5.redeemar.RedeemarConsumerApp.callbacks.BrandLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.CategoriesLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.LocationFetchedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
-
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-//import android.support.multidex.MultiDex;
-
-
-public class SplashScreenActivity extends Activity implements CategoriesLoadedListener
+public class SplashScreenActivity extends Activity implements CategoriesLoadedListener, LocationFetchedListener
 {
 
     private static final String LOGTAG = "SplashScreenActivity";
     private static long SPLASH_MILLIS = 500;
-
+    private static final int LOCATION_SETTINGS_REQUEST = 1;
     private Resources res;
     private SharedPreferences sharedpref;
     private SharedPreferences.Editor editor;
+    private GPSTracker gps;
+    private double latitude = 0.0, longitude = 0.0;
 
+    private SuperConnectionDetector cd;
+    private boolean isInternetPresent = false;
 
     private DatabaseHelper db;
 
@@ -56,7 +53,6 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        //MultiDex.install(this);
     }
     
     
@@ -64,13 +60,18 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        // Check internet connectivity
+        cd = new SuperConnectionDetector(this);
+        isInternetPresent = cd.isConnectingToInternet();
+
+        Log.d(LOGTAG, "Internet enabled: "+isInternetPresent);
+
+
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
-
         db = new DatabaseHelper(this);
-
-        Log.d(LOGTAG, "Count Categories: "+db.countCategories(0));
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -89,11 +90,8 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         editor.putString(getString(R.string.spf_campaign_id), ""); // Storing Campaign Id
         editor.putString(getString(R.string.spf_category_id), ""); // Storing category Id
         editor.commit();
-
         // Get the menun items from server
         new MenuItemsAsyncTask(this).execute("0");
-
-
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable()
@@ -121,7 +119,7 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
 
         for(int i = 0; i < listCategories.size(); i++) {
             Category cat = listCategories.get(i);
-            Log.d(LOGTAG, "Cat Name: "+cat.getCatName());
+            //Log.d(LOGTAG, "Cat Name: "+cat.getCatName());
             db.addCategory(cat);
         }
 
@@ -133,10 +131,95 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         editor.putString(getString(R.string.spf_categories), jsonText);
         editor.commit();*/
 
-        Intent intent = new Intent(SplashScreenActivity.this, BrowseOffersActivity.class);
 
+
+
+        //check permission in marshmallow
+        if(Utils.checkLocationPermissions(this, getApplicationContext())){
+            // Fetch location
+            Log.d(LOGTAG, "Inside location");
+            getMyLocation();
+
+        } else {
+            Log.d(LOGTAG, "Location permission not granted");
+        }
+
+
+        Intent intent = new Intent(SplashScreenActivity.this, BrowseOffersActivity.class);
         startActivity(intent);
         finish();
 
     }
+
+
+    public void getMyLocation() {
+        // Initialize GPSTracker
+        gps = new GPSTracker(this);
+
+        // If GPSTracker can get the location
+        if(gps.canGetLocation()) {
+
+            // Your current location (Self Location)
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+
+            Log.d(LOGTAG, "My Values Lat: " + latitude);
+            Log.d(LOGTAG, "My Values Long: " + longitude);
+
+            // Save the latitude and longitude in SharedPreferences
+            // By default your current location is the location you are searching the offers from
+            if (latitude != 0.0 && longitude != 0.0) {
+                editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
+                editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(longitude));
+                editor.commit();
+            }
+
+
+            // CHeck if internet is enabled in device
+            if (isInternetPresent) {
+                // If internet is enabled then call a API which will get location
+                new FetchLocationAsyncTask(this, getApplicationContext()).execute(String.valueOf(latitude), String.valueOf(longitude));
+            }
+        }
+    }
+
+
+    @Override
+    public void onLocationFetched(User locUser) {
+
+        String curLoc = "";
+
+        // Get the location from web services
+        if(locUser.getCity() != null && !locUser.getCity().equals("")) {
+            curLoc = locUser.getCity();
+            Log.d(LOGTAG, "City: "+curLoc);
+        }
+        else if(locUser.getLocation() != null && !locUser.getLocation().equals("")) {
+            curLoc = locUser.getLocation();
+            Log.d(LOGTAG, "Location: "+curLoc);
+        }
+        else if(locUser.getState() != null && !locUser.getState().equals("")) {
+            curLoc = locUser.getState();
+            Log.d(LOGTAG, "State: "+curLoc);
+
+        }
+        else if(locUser.getZipcode() != null && !locUser.getZipcode().equals("")) {
+            curLoc = locUser.getZipcode();
+            Log.d(LOGTAG, "Zip: "+curLoc);
+        }
+
+
+
+        if(!curLoc.equals("")) {
+
+            editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
+            editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(longitude));
+            editor.putString(res.getString(R.string.spf_location_keyword), curLoc); // Set location keyword
+            editor.commit();
+
+        }
+
+
+    }
+
 }

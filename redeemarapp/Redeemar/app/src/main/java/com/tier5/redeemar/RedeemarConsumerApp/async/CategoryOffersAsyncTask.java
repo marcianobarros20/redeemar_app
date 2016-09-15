@@ -31,10 +31,6 @@ public class CategoryOffersAsyncTask extends AsyncTask<String, Void, ArrayList<O
     public CategoryOffersAsyncTask(OffersLoadedListener myComponent) {
         this.myComponent = myComponent;
         Log.d(LOGTAG, "Inside CategoryOffersAsync constructor: "+myComponent);
-
-        //this.context = ctx;
-
-
     }
 
     @Override
