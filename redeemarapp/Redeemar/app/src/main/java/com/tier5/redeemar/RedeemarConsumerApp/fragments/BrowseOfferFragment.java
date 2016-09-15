@@ -67,7 +67,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BrowseOfferFragment extends Fragment implements OffersLoadedListener, UsersLoadedListener, LocationFetchedListener, SearchView.OnQueryTextListener  {
+public class BrowseOfferFragment extends Fragment implements OffersLoadedListener, UsersLoadedListener, LocationFetchedListener,  SearchView.OnQueryTextListener  {
 
     private static final String LOGTAG = "BrowseOfferFragment";
     private static final int LOCATION_SETTINGS_REQUEST = 1;
@@ -86,7 +86,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private SharedPreferences sharedpref;
     private SharedPreferences.Editor editor;
     private String user_id = "0";
-    private double latitude = 0.0, longitude = 0.0;
+    private double latitude = 0.0, longitude = 0.0, selfLatitude = 0.0, selfLongitude = 0.0;
     //private FragmentActivity listener;
     private List<Offer> mModels;
     private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list", location = "", categoryName = "", locKeyword = "",
@@ -97,18 +97,17 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private ImageView imListView, imMapView, imThumbView;
     private TextView tvCategory;
     private AutoCompleteTextView autoComplete;
-    private boolean isInternetPresent = false;
     private GPSTracker gps;
-
     private ArrayList<String> locationList;
     private ArrayList<LatLng> latLngList;
-
     private ArrayAdapter<String> autoCompleteAdapter;
-
-    SuperConnectionDetector cd;
+    private SuperConnectionDetector cd;
+    private boolean isInternetPresent = false;
 
     public BrowseOfferFragment() {
         // Required empty public constructor
+
+
     }
 
     public static BrowseOfferFragment newInstance(String param1) {
@@ -126,27 +125,20 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d(LOGTAG, "Inside onCreateView");
-
+        Log.d(LOGTAG, "XXX Inside onCreateView");
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.browse_offers);
-
         activity = getActivity();
-
         activityCommunicator = (ActivityCommunicator) activity;
 
+        res = getResources();
+        sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+        editor = sharedpref.edit();
 
-        cd = new SuperConnectionDetector(activity);
-        isInternetPresent = cd.isConnectingToInternet();
-
-
-
-        //check permission in marshmallow
-        if(Utils.checkLocationPermissions(getActivity(), getActivity().getApplicationContext())){
-            getlocation();
-        } else {
-            Log.d(LOGTAG, "Location permission not granted");
+        if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
+            user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
+            sharedpref.getString(res.getString(R.string.spf_first_name), "");
         }
-
+        mListOffers = new ArrayList<Offer>();
 
         setHasOptionsMenu(true);
         Bundle args1 = getArguments();
@@ -198,8 +190,59 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             imMapView.setVisibility(View.GONE);
         }
 
-        callSearchLocationTask();
 
+        cd = new SuperConnectionDetector(activity);
+        isInternetPresent = cd.isConnectingToInternet();
+
+        if(isInternetPresent)
+            getMyLocation();
+        else {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setTitle("Internet");
+            alertDialog.setMessage("Internet not enabled in your device. Do you want to enable it from settings menu");
+            alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int which) {
+                    startActivityForResult(new Intent(Settings.ACTION_SETTINGS), LOCATION_SETTINGS_REQUEST);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+
+        }
+
+
+
+
+
+
+
+        // Read shared preference for the lat-long
+        // Save the latitude and longitude in SharedPreferences
+        if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
+            latitude = Double.parseDouble(sharedpref.getString(res.getString(R.string.spf_last_lat), null));
+
+            if(selfLat.equals(""))
+                selfLat = String.valueOf(latitude);
+
+        }
+
+        if(sharedpref.getString(res.getString(R.string.spf_last_lon), null) != null) {
+            longitude = Double.parseDouble(sharedpref.getString(res.getString(R.string.spf_last_lon), null));
+
+
+            if(selfLon.equals(""))
+                selfLon = String.valueOf(longitude);
+        }
+
+
+
+        // Collect all address related keywords to be populated to the autocomplete box
+        if(isInternetPresent)
+            callSearchLocationTask();
 
 
         autoCompleteAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, locationList);
@@ -228,12 +271,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             public void afterTextChanged(Editable s) {
                 if (shouldAutoComplete) {
 
-                    // Set to Shared Preference
-                    editor.putString(res.getString(R.string.spf_location_keyword), s.toString()); // Set view type to list
-                    editor.commit();
 
-                    //callSearchLocationTask(s.toString());
-                    Log.d(LOGTAG, "Set to sharedpref");
                 }
             }
 
@@ -242,15 +280,39 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
-                Log.d(LOGTAG, "Position clicked "+position);
+
+
+                // When the user selects any items from the autocomplete we get the position as well as the location text
+
+                // Getting the location text if the array list size minus 1 is greater than or equal to the current position index
+
+                String selectedLocation = parent.getItemAtPosition(position).toString();
+
+
+                Log.d(LOGTAG, "AutoComplete Selected Location: "+selectedLocation);
+
+                if(!selectedLocation.equals("")) {
+                    // Save it in shared preference
+                    editor.putString(res.getString(R.string.spf_location_keyword), selectedLocation); // Set view type to list
+                    editor.commit();
+                }
+
+
+
+                // From that position we get the lat-long
                 LatLng geo = (LatLng) latLngList.get(position);
 
                 Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
                 Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
 
-                callAsyncTaskForLocation(String.valueOf(geo.latitude),  String.valueOf(geo.longitude));
+                // Set the geo location of the place you want to search the offers for
+                editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(geo.latitude));
+                editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(geo.longitude));
+                editor.commit();
 
 
+                // Pass the latitude and longitude to fetch the location information
+                loadOffersForCategoryLocations(String.valueOf(geo.latitude),  String.valueOf(geo.longitude));
 
             }
         });
@@ -362,81 +424,46 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        //if this fragment starts for the first time, load the list of movies from a database
+        //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
+        //if the database is empty, trigger an AsycnTask to download movie list from the web
+        if (mListOffers.isEmpty()) {
 
+            Log.d(LOGTAG, "Redirect to 102: " + redirectTo);
+            Log.d(LOGTAG, "Redeemar id 102: " + redeemarId);
+            Log.d(LOGTAG, "Campaign id 102: " + campaignId);
+            Log.d(LOGTAG, "Category id 102: " + categoryId);
 
-        if (savedInstanceState != null) {
-            //if this fragment starts after a rotation or configuration change, load the existing movies from a parcelable
-            //mListOffers = savedInstanceState.getParcelableArrayList(STATE_OFFERS);
-
-            Log.d(LOGTAG, "Inside savedInstanceState");
-        } else {
-            //if this fragment starts for the first time, load the list of movies from a database
-            //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
-            //if the database is empty, trigger an AsycnTask to download movie list from the web
-            if (mListOffers.isEmpty()) {
-
-                Log.d(LOGTAG, "Redirect to 102: " + redirectTo);
-                Log.d(LOGTAG, "Redeemar id 102: " + redeemarId);
-                Log.d(LOGTAG, "Campaign id 102: " + campaignId);
-                Log.d(LOGTAG, "Category id 102: " + categoryId);
-
-                if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) != null) {
-                    locKeyword = sharedpref.getString(res.getString(R.string.spf_location_keyword), "");
-                    //autoComplete.setText(locKeyword);
-                }
-
-                if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
-                    selfLat = sharedpref.getString(res.getString(R.string.spf_last_lat), "");
-                }
-
-                if(sharedpref.getString(res.getString(R.string.spf_last_lon), null) != null) {
-                    selfLon = sharedpref.getString(res.getString(R.string.spf_last_lon), "");
-                }
-
-                /*if(sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
-                    redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
-                }
-
-                if(sharedpref.getString(res.getString(R.string.spf_redeemer_id), null) != null) {
-                    redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
-                }
-
-                if(sharedpref.getString(res.getString(R.string.spf_campaign_id), null) != null) {
-                    campaignId = sharedpref.getString(res.getString(R.string.spf_campaign_id), "");
-                }
-
-                if(sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
-                    categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
-                }*/
-
-                Log.d(LOGTAG, "Redirect to 103: " + redirectTo);
-                Log.d(LOGTAG, "Redeemar id 103: " + redeemarId);
-                Log.d(LOGTAG, "Campaign id 103: " + campaignId);
-                Log.d(LOGTAG, "Category id 103: " + categoryId);
-
-                if(selfLat.equals(""))
-                    selfLat = String.valueOf(latitude);
-
-                if(selfLon.equals(""))
-                    selfLon = String.valueOf(longitude);
-
-
-                if(redirectTo.equals("BrandOffers") && !redeemarId.equals(""))
-                    new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
-                else if(redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
-                    new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
-                else if(redirectTo.equals("CategoryOffers") && !categoryId.equals(""))
-                    new CategoryOffersAsyncTask(this).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
-                else if(redirectTo.equals("OnDemand"))
-                    new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
-                else
-                    new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), selfLat, selfLon);
+            if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) != null) {
+                locKeyword = sharedpref.getString(res.getString(R.string.spf_location_keyword), "");
+                //autoComplete.setText(locKeyword);
             }
 
-            activityCommunicator.passDataToActivity(redirectTo);
+            /*if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
+                selfLat = sharedpref.getString(res.getString(R.string.spf_last_lat), "");
+            }
 
+            if(sharedpref.getString(res.getString(R.string.spf_last_lon), null) != null) {
+                selfLon = sharedpref.getString(res.getString(R.string.spf_last_lon), "");
+            }*/
+
+            if(isInternetPresent) {
+
+                if (redirectTo.equals("BrandOffers") && !redeemarId.equals(""))
+                    new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+                else if (redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
+                    new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+                else if (redirectTo.equals("CategoryOffers") && !categoryId.equals(""))
+                    new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId);
+                else if (redirectTo.equals("OnDemand"))
+                    new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+                else
+                    new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
+
+            }
         }
 
+        activityCommunicator.passDataToActivity(redirectTo);
 
     }
 
@@ -460,21 +487,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        res = getResources();
-        sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-        editor = sharedpref.edit();
 
-        if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
-            user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
-            sharedpref.getString(res.getString(R.string.spf_first_name), "");
-        }
-
-        Log.d(LOGTAG, "Browse Offer User Id: "+user_id);
-
-
-
-
-        mListOffers = new ArrayList<Offer>();
         //mAdapter = new BrowseOffersViewAdapter(getActivity(), mDataSet, "BrowseOffers");
     }
 
@@ -503,6 +516,23 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         activity = getActivity();
         getActivity().setTitle(R.string.browse_offers);
+
+
+        // Get the current geo position
+        gps = new GPSTracker(getActivity());
+
+        // If GPSTracker can get the current location of the user
+        if(gps.canGetLocation()) {
+
+            // Your current location (Self Location)
+            selfLat = String.valueOf(gps.getLatitude());
+            selfLon = String.valueOf(gps.getLongitude());
+
+        }
+
+
+
+
     }
 
 
@@ -588,10 +618,12 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 final String compAddr = model.getAddress().toLowerCase();
                 final String compZip = model.getZipcode().toLowerCase();
 
+                Log.d(LOGTAG, "Search more info is "+moreInfo);
+
                 if (offerDesc.contains(query) || whatYouGet.contains(query) || moreInfo.contains(query) || compName.contains(query)
                         || compAddr.contains(query) || compZip.contains(query)) {
                     filteredModelList.add(model);
-                    Log.d(LOGTAG, "Search result is "+offerDesc);
+
                     p++;
 
                 }
@@ -630,6 +662,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
     private void callSearchLocationTask() {
+        // This will callback onUsersLoaded function after execution
         new GetNearByOffersAsyncTask(this).execute(String.valueOf(latitude), String.valueOf(longitude));
     }
 
@@ -639,10 +672,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         Set<User> setAddress = new LinkedHashSet<>(listAddresses);
 
-        Iterator it = setAddress.iterator();
+        /*Iterator it = setAddress.iterator();
         while(it.hasNext()) {
             Log.d(LOGTAG, "ITEM: "+it.next().toString());
-        }
+        }*/
 
         location = location.toLowerCase();
 
@@ -723,47 +756,66 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 latLngList.add(new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
         }
 
-
-
-
+        // Now read shared preference and add your current location to this ArrayList
         if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) != null) {
             locKeyword = sharedpref.getString(res.getString(R.string.spf_location_keyword), "");
-            autoComplete.setText(locKeyword);
+            if(!locKeyword.equals("")) {
+                locationList.add(locKeyword);
+
+                // Also set the keyword  as default text
+                autoComplete.setText(locKeyword);
+            }
         }
 
-
-        //autoCompleteAdapter.clear();
-        //autoCompleteAdapter.addAll(locationList);
-        //autoCompleteAdapter.notifyDataSetChanged();
-        //Log.d(LOGTAG, "Print array recursively: "+locationList.size());
-        //autoCompleteAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, locationList);
-        //autoComplete.setAdapter(autoCompleteAdapter);
-        //autoCompleteAdapter.notifyDataSetChanged();
     }
 
 
-    public void getlocation(){
+    public void getMyLocation() {
+        // Initialize GPSTracker
         gps = new GPSTracker(getActivity());
-        if(gps.canGetLocation()){
+
+        // If GPSTracker can get the location
+        if(gps.canGetLocation()) {
 
             // Your current location (Self Location)
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
 
-            // Save the latitude and longitude in SharedPreferences
-            editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
-            editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(longitude));
-            editor.commit();
+            Log.d(LOGTAG, "My Lat Values: "+latitude);
+            Log.d(LOGTAG, "My Long Values: "+longitude);
 
+
+            // Save the latitude and longitude in SharedPreferences
+            // By default your current location is the location you are searching the offers from
+            if(latitude != 0.0 && longitude != 0.0) {
+                editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
+                editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(longitude));
+                editor.commit();
+            }
+
+
+            // CHeck if internet is enabled in device
             if(isInternetPresent) {
-                if (Keys.latitude == 0.0 || Keys.longitude == 0.0) {
-                    //Utils.noLocationFound(getActivity());
-                }else {
-                    new FetchLocationAsyncTask(this, getActivity()).execute();
-                }
-            }else{
-                //Start_dialog start_dialog = new Start_dialog(MainActivity.this, "No internet connection available");
-                //start_dialog.dialogbox();
+
+                // If internet is enabled then call a API which will get location
+                new FetchLocationAsyncTask(this, getActivity().getApplicationContext()).execute(String.valueOf(latitude), String.valueOf(longitude));
+            } else {
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                alertDialog.setTitle("Internet");
+                alertDialog.setMessage("Internet not enabled in your device. Do you want to enable it from settings menu");
+                alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), LOCATION_SETTINGS_REQUEST);
+                    }
+                });
+                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.show();
+
             }
         } else {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
@@ -787,41 +839,32 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public void onLocationFetched(User locUser) {
 
-        latitude = Double.parseDouble(locUser.getLat());
-        longitude = Double.parseDouble(locUser.getLon());
-
-        // Save the latitude and longitude in SharedPreferences
-        // This is user's location where he is now
-        editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
-        editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(longitude));
-        editor.commit();
-
-
-        Log.d(LOGTAG, "Lat Values: "+latitude);
-        Log.d(LOGTAG, "Long Values: "+longitude);
-
-        locationList.add(locUser.getLocation());
-        if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) == null) {
-
+        // Gte the location from web services
+        if(locUser.getLocation() != null && !locUser.getLocation().equals("")) {
+            Log.d(LOGTAG, "My current location is: " + locUser.getLocation());
             // Set to Shared Preference
-            editor.putString(res.getString(R.string.spf_location_keyword), locUser.getLocation()); // Set view type to list
+            editor.putString(res.getString(R.string.spf_location_keyword), locUser.getLocation()); // Set location keyword
             editor.commit();
-            autoComplete.setText(locKeyword);
         }
-        else
-            autoComplete.setText(locUser.getLocation());
+        else {
+            Log.d(LOGTAG, "No location is found");
+        }
 
 
     }
 
-    public void callAsyncTaskForLocation(String tLat, String tLng) {
-        Log.d(LOGTAG, "Inside callAsyncTaskForLocation");
+
+
+    public void loadOffersForCategoryLocations(String tLat, String tLng) {
+
+        // This location as selected by user from auto complete
         mRecyclerOffers.setVisibility(View.GONE);
         tvEmptyView.setVisibility(View.VISIBLE);
+        // Here latitude and longitude are the present location of the user (Self Location)
         if(!categoryId.equals(""))
-            new CategoryOffersAsyncTask(this).execute(categoryId, tLat, tLng, String.valueOf(latitude),  String.valueOf(longitude));
+            new CategoryOffersAsyncTask(this).execute(categoryId, tLat, tLng, selfLat,  selfLon);
         else
-            new BrowseOffersAsyncTask(this).execute(user_id, tLat, tLng, String.valueOf(latitude),  String.valueOf(longitude), "");
+            new BrowseOffersAsyncTask(this).execute(user_id, tLat, tLng, selfLat, selfLon, "");
 
     }
 }

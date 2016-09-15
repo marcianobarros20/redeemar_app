@@ -87,8 +87,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private String redeemerId = "";
     private JSONArray offersArray;
     private BottomBar mBottomBar;
-    private GPSTracker gps;
-    double latitude = 0.0, longitude = 0.0;
+    private double latitude = 0.0, longitude = 0.0;
     private Resources res;
     private SharedPreferences sharedpref;
     private String user_id = "0", curFragment = "";
@@ -157,6 +156,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         setContentView(R.layout.offers_recycler);
 
         db = new DatabaseHelper(this);
+
+
 
         pProductArrayList = new ArrayList<Product>();
         pSubItemArrayList2 = new ArrayList<Product.SubCategory>();

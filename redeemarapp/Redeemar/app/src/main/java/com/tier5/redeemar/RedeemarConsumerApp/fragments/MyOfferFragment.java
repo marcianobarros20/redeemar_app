@@ -4,11 +4,14 @@ package com.tier5.redeemar.RedeemarConsumerApp.fragments;
  * Created by tier5 on 22/6/16.
  */
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +30,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.Banked;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Brand;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 
 import org.json.JSONArray;
 
@@ -51,6 +55,8 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
     private SharedPreferences sharedpref;
     private String user_id = "";
     double latitude = 0.0, longitude = 0.0;
+    private SuperConnectionDetector cd;
+    private boolean isInternetPresent = false;
 
 
 
@@ -77,6 +83,29 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         View layout = inflater.inflate(R.layout.fragment_banked, container, false);
         Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.main_recycler);
+
+
+        cd = new SuperConnectionDetector(getActivity());
+        isInternetPresent = cd.isConnectingToInternet();
+
+        if(!isInternetPresent) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setTitle("Internet");
+            alertDialog.setMessage("Internet not enabled in your device. Do you want to enable it from settings menu");
+            alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int which) {
+                    startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 1);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+
+        }
+
 
 
         /*adapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
@@ -249,9 +278,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
                             final Offer item1 = listOffers.get(q);
 
-
-                            Log.d(LOGTAG, "My Redeemar Id: " + tempRedeemarId);
-                            Log.d(LOGTAG, "My Redeemar Id 1: " + item1.getCreatedBy());
 
                             if(mRedeemarId == item1.getCreatedBy()) {
 

@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.async.SendFeedbackAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
 import com.tier5.redeemar.RedeemarConsumerApp.async.UpdateProfileAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 
 /**
  * Created by Tier5 on 29/07/15.
@@ -46,6 +48,10 @@ public class EditProfileFragment extends Fragment implements TaskCompleted {
     private String user_id="0", email="", first_name = "", last_name = "", phone = "";
     private String FIRST_NAME_REGEX = "/^[a-z ,.'-]+$/i";
 
+    private SuperConnectionDetector cd;
+    private boolean isInternetPresent = false;
+
+
 
     public EditProfileFragment() {
         // Required empty public constructor
@@ -56,9 +62,6 @@ public class EditProfileFragment extends Fragment implements TaskCompleted {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-
-
-
 
     }
 
@@ -78,6 +81,29 @@ public class EditProfileFragment extends Fragment implements TaskCompleted {
 
 
 
+        cd = new SuperConnectionDetector(getActivity());
+        isInternetPresent = cd.isConnectingToInternet();
+
+        if(!isInternetPresent) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setTitle("Internet");
+            alertDialog.setMessage("Internet not enabled in your device. Do you want to enable it from settings menu");
+            alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int which) {
+                    startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 1);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+
+        }
+
+
+
         txtFirstName = (EditText) rootView.findViewById(R.id.first_name);
         txtLastName = (EditText) rootView.findViewById(R.id.last_name);
         txtEmail = (EditText) rootView.findViewById(R.id.email);
@@ -86,7 +112,6 @@ public class EditProfileFragment extends Fragment implements TaskCompleted {
 
 
         res = getResources();
-
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {

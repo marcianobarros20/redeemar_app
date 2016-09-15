@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -349,15 +350,14 @@ public class Utils {
     }
 
 
-    public static void noLocationFound(Context ctx){
+    public static void noLocationFound(Context ctx, String msg){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-        builder.setMessage("No location found.Please exit the app and start again.")
+        builder.setMessage(msg)
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        //mCtx.finish();
 
                     }
                 })
@@ -369,6 +369,7 @@ public class Utils {
         AlertDialog alert = builder.create();
         alert.show();
     }
+
 
 
 
