@@ -177,6 +177,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         if(redirectTo.equals("OnDemand"))
             ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(R.string.daily_deals);
+
         else if(!categoryName.equals(""))
             ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(categoryName);
 
@@ -698,6 +699,13 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 mRecyclerOffers.setAdapter(mAdapter);
                 mRecyclerOffers.setVisibility(View.VISIBLE);
                 tvEmptyView.setVisibility(View.GONE);
+
+                if(redeemarId.equals("CampaignOffer")) {
+
+                        ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle("Campaign");
+
+                }
+
             } else {
                 tvEmptyView.setText(getString(R.string.no_records));
             }

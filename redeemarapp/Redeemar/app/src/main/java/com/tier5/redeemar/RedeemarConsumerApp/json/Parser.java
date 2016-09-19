@@ -342,6 +342,24 @@ public class Parser {
                         }
 
 
+
+                        if(!jsonObject.isNull("campaign_details") && !jsonObject.getString("campaign_details").equalsIgnoreCase("")) {
+
+                            JSONObject jsonCampaignSettings = new JSONObject(jsonObject.getString("campaign_details"));
+
+
+
+                            if(!jsonCampaignSettings.isNull("campaign_name")) {
+                                offer.setCampaignName(jsonCampaignSettings.getString("campaign_name").toString());
+                            }
+                            else
+                                offer.setCampaignName("");
+
+                        }
+                        else {
+                            offer.setCampaignName("");
+                        }
+
                         if(!jsonObject.isNull("counters") && !jsonObject.getString("counters").equalsIgnoreCase("")) {
 
                             JSONObject jsonCounters = new JSONObject(jsonObject.getString("counters"));

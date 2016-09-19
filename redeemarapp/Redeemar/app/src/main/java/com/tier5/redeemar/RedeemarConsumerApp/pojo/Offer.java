@@ -8,13 +8,21 @@ public class Offer implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String offerId, offerDescription, whatYouGet, moreInformation, settingsVal, priceRangeId, imageName, address, imageUrl,  largeImageUrl, distance, companyName,
-            location, zipcode, catName, subcatName, brandLogo, brandInfo;
+            location, zipcode, catName, subcatName, brandLogo, brandInfo, campaignName;
     Date startDate, endDate;
     double price, payValue, retailvalue, discount;
     int valueCalculate, valueText, expiredInDays, campaignId, catId, subCatId, userAction, createdBy, onDemand, offersCount, dealsCount;
 
     public Offer() {
 
+    }
+
+    public String getCampaignName() {
+        return campaignName;
+    }
+
+    public void setCampaignName(String campaignName) {
+        this.campaignName = campaignName;
     }
 
     public String getBrandInfo() {
