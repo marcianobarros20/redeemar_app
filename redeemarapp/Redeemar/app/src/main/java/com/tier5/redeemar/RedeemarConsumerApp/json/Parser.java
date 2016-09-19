@@ -122,10 +122,10 @@ public class Parser {
                         String provider = jsonObject.optString("provider").toString();
 
 
-                        Log.d(LOGTAG, "BrandVideo Id: " + videoId);
-                        Log.d(LOGTAG, "BrandVideo Thumb: " + videoThumb);
-                        Log.d(LOGTAG, "BrandVideo URL: " + videoUrl);
-                        Log.d(LOGTAG, "Provider: " + provider);
+                        //Log.d(LOGTAG, "BrandVideo Id: " + videoId);
+                        //Log.d(LOGTAG, "BrandVideo Thumb: " + videoThumb);
+                        //Log.d(LOGTAG, "BrandVideo URL: " + videoUrl);
+                        //Log.d(LOGTAG, "Provider: " + provider);
 
 
                         BrandVideo video  = new BrandVideo();
@@ -482,7 +482,6 @@ public class Parser {
                             p = 0;
 
                         }
-                        Log.d(LOGTAG, "Id is: "+i);
 
                         JSONObject jsonObject = offersArray.getJSONObject(i);
                         double lat = 0.0, lng = 0.0;

@@ -30,7 +30,7 @@ public class OnDemandOffersAsyncTask extends AsyncTask<String, Void, ArrayList<O
 
     public OnDemandOffersAsyncTask(OffersLoadedListener myComponent) {
         this.myComponent = myComponent;
-        Log.d(LOGTAG, "Inside OnDemandOffersAsyncTask constructor: "+myComponent);
+        Log.d(LOGTAG, "Inside OnDemandOffersAsyncTask constructor");
 
         //this.context = ctx;
 
@@ -53,9 +53,11 @@ public class OnDemandOffersAsyncTask extends AsyncTask<String, Void, ArrayList<O
         String user_id = params[0];
         String lat = params[1];
         String lng = params[2];
+        String sLat = params[3];
+        String sLng = params[4];
 
 
-        ArrayList<Offer> listOffers = OfferUtils.loadOnDemandOffers(requestQueue, user_id, lat, lng);
+        ArrayList<Offer> listOffers = OfferUtils.loadOnDemandOffers(requestQueue, user_id, lat, lng, sLat, sLng);
         return listOffers;
     }
 

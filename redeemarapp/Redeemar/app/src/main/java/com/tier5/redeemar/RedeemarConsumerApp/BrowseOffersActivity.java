@@ -340,6 +340,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                         } else if (redirectTo.equalsIgnoreCase("OnDemand")) {
                             Log.d(LOGTAG, "Inside OnDemand");
+                            getSupportActionBar().setTitle(R.string.daily_deals);
                             args1.putString(getString(R.string.ext_redir_to), "onDemand");
                         }
 

@@ -54,10 +54,10 @@
             android:nextFocusUp="@id/autoCompleteTextView1"
             android:nextFocusLeft="@id/autoCompleteTextView1"
             android:windowSoftInputMode="stateHidden"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:drawableRight="@drawable/expand"
             android:padding="8dp"
-            android:hint="@string/search_location" />
+            android:hint="Location" />
 
         <AutoCompleteTextView
             android:id="@+id/autoCompleteTextView2"
@@ -71,10 +71,10 @@
             android:nextFocusUp="@id/autoCompleteTextView1"
             android:nextFocusLeft="@id/autoCompleteTextView1"
             android:windowSoftInputMode="stateHidden"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:drawableRight="@drawable/expand"
             android:padding="8dp"
-            android:hint="@string/search_location" />
+            android:hint="Keywords" />
 
 
 

@@ -121,9 +121,7 @@ public class Utils {
 
             //Runtime.getRuntime().exec("logcat -d -v time -f "+file.getAbsolutePath());
         } catch (IOException e) {
-
             Log.d(LOGTAG, "Exception occured in exporting");
-
         }
 
 
@@ -131,9 +129,7 @@ public class Utils {
         try {
             Runtime.getRuntime().exec("logcat -c");
         } catch (IOException e) {
-
             Log.d(LOGTAG, "Runtime Exception occured in exporting ");
-
         }
 
         return logText;
@@ -312,8 +308,8 @@ public class Utils {
 
 
     public static boolean findDuplicate(ArrayList<String> listItems, String item) {
-        Log.d(LOGTAG, "Duplicate Items: "+listItems.size());
-        Log.d(LOGTAG, "An Item: "+item);
+        //Log.d(LOGTAG, "Duplicate Items: "+listItems.size());
+        //Log.d(LOGTAG, "An Item: "+item);
 
         for(int i=0; i < listItems.size(); i++) {
             if(listItems.get(i).equals(item))

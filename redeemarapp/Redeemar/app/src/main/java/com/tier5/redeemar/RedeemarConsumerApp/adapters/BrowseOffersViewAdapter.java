@@ -172,18 +172,18 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         }*/
 
         if(!item.getLocation().equals("")) {
-            Log.d(LOGTAG, "Browse Distance: "+item.getLocation());
+            //Log.d(LOGTAG, "Browse Distance: "+item.getLocation());
             address_distance = item.getLocation();
         }
         else if(!item.getLocation().equals("")) {
-            Log.d(LOGTAG, "Browse Distance: "+item.getLocation());
+            //Log.d(LOGTAG, "Browse Distance: "+item.getLocation());
             address_distance = item.getLocation();
         }
 
 
 
         if(!item.getDistance().equalsIgnoreCase("")) {
-            Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
+            //Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
             if(address_distance.equalsIgnoreCase("")) {
                 address_distance = address_distance + item.getDistance() + " miles";
             }
@@ -240,13 +240,13 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         int valText = item.getValueText();
         Double discVal = item.getDiscount();
 
-        Log.d(LOGTAG, "Retail Value: "+item.getRetailvalue());
-        Log.d(LOGTAG, "Pay Value: "+item.getPayValue());
-        Log.d(LOGTAG, "Value Calculate: "+valCalc);
+        //Log.d(LOGTAG, "Retail Value: "+item.getRetailvalue());
+        //Log.d(LOGTAG, "Pay Value: "+item.getPayValue());
+        //Log.d(LOGTAG, "Value Calculate: "+valCalc);
 
         if(item.getRetailvalue() > 0 && item.getPayValue() > 0) {
             discount_text = Utils.calculateDiscount(item.getRetailvalue(), item.getPayValue(), valCalc);
-            Log.d(LOGTAG, "My Discount Value: "+discount_text);
+            //Log.d(LOGTAG, "My Discount Value: "+discount_text);
         }
 
 
@@ -296,8 +296,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             }
         }
 
-        Log.d(LOGTAG, "Product Name: "+item.getOfferDescription());
-        Log.d(LOGTAG, "Product Discount: "+discount_text);
+        //Log.d(LOGTAG, "Product Name: "+item.getOfferDescription());
+        //Log.d(LOGTAG, "Product Discount: "+discount_text);
 
 
 
@@ -328,7 +328,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         }
 
 
-        Log.d(LOGTAG, "Logo URL: "+item.getBrandLogo());
+        //Log.d(LOGTAG, "Logo URL: "+item.getBrandLogo());
 
         // Instantiate the RequestQueue.
         if(item.getBrandLogo() != null && !item.getBrandLogo().equalsIgnoreCase("")) {
@@ -378,11 +378,11 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                         editor.putString(res.getString(R.string.spf_last_offer_id), offerId); // Storing Last Offer Id
                         editor.commit();
 
-                        Log.d(LOGTAG, "Last Offer Id: "+offerId);
+                        //Log.d(LOGTAG, "Last Offer Id: "+offerId);
 
-                        Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
+                        //Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
-                        Log.d(LOGTAG, "No. of Items: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
+                        //Log.d(LOGTAG, "No. of Items: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
                     }
                 }
@@ -409,9 +409,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             @Override
             public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
                 //when user's hand released.
-
             }
-
 
         });
 

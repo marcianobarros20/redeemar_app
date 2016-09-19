@@ -25,6 +25,7 @@ import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -174,14 +175,14 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
-        if(!categoryName.equals(""))
+        if(redirectTo.equals("OnDemand"))
+            ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(R.string.daily_deals);
+        else if(!categoryName.equals(""))
             ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(categoryName);
 
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_offers, container, false);
-
         layout.findViewById(R.id.mainOfferListLayout).requestFocus();
-
         imListView = (ImageView) layout.findViewById(R.id.menu_list_view);
         imMapView = (ImageView) layout.findViewById(R.id.menu_map_view);
         imThumbView = (ImageView) layout.findViewById(R.id.menu_thumb_view);
@@ -289,29 +290,29 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
-
+    // When any location is selected from the drop-down
     autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                Address selected = (Address) arg0.getAdapter().getItem(arg2);
-                //Toast.makeText(activity, "Clicked " + arg2 + " city: " + selected.getLocation(), Toast.LENGTH_SHORT).show();
+        Address selected = (Address) arg0.getAdapter().getItem(arg2);
+        //Toast.makeText(activity, "Clicked " + arg2 + " city: " + selected.getLocation(), Toast.LENGTH_SHORT).show();
 
-                //From that position we get the lat-long
-                LatLng geo = (LatLng) selected.getCoordinates();
+        //From that position we get the lat-long
+        LatLng geo = (LatLng) selected.getCoordinates();
 
-                Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
-                Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
+        Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
+        Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
 
-                // Set the geo location of the place you want to search the offers for
-                editor.putString(res.getString(R.string.spf_location_keyword), selected.getLocation()); // Set view type to list
-                editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(geo.latitude));
-                editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(geo.longitude));
-                editor.commit();
+        // Set the geo location of the place you want to search the offers for
+        editor.putString(res.getString(R.string.spf_location_keyword), selected.getLocation()); // Set view type to list
+        editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(geo.latitude));
+        editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(geo.longitude));
+        editor.commit();
 
 
-                // Pass the latitude and longitude to fetch the location information
-                loadOffersForCategoryLocations(String.valueOf(geo.latitude),  String.valueOf(geo.longitude));
+        // Pass the latitude and longitude to fetch the location information
+        loadOffersForCategoryLocations(String.valueOf(geo.latitude),  String.valueOf(geo.longitude), categoryId, redirectTo);
 
             }
         });
@@ -344,57 +345,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         });
 
-        /*autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        autoComplete.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
-
-                // Getting the location text if the array list size minus 1 is greater than or equal to the current position index
-                String selectedLocation = parent.getItemAtPosition(position).toString();
-
-                Log.d(LOGTAG, "AutoComplete Selected position: "+position);
-
-                if(!selectedLocation.equals("")) {
-                    // Save it in shared preference
-                    editor.putString(res.getString(R.string.spf_location_keyword), selectedLocation); // Set view type to list
-                    editor.commit();
-
-                    //From that position we get the lat-long
-                    //LatLng geo = (LatLng) locationItems.get(selectedLocation);
-
-                    //Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
-                    //Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
-
-
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
+                if(keyCode == KeyEvent.KEYCODE_DEL) {
+                    autoComplete.setText("");
                 }
-
-                if(locationItems.get(selectedLocation) != null) {
-                    if(locationItems.get(selectedLocation) instanceof LatLng) {
-
-                        //From that position we get the lat-long
-                        LatLng geo = (LatLng) locationItems.get(selectedLocation);
-
-                        Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
-                        Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
-
-                        // Set the geo location of the place you want to search the offers for
-                        editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(geo.latitude));
-                        editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(geo.longitude));
-                        editor.commit();
-
-
-                        // Pass the latitude and longitude to fetch the location information
-                        loadOffersForCategoryLocations(String.valueOf(geo.latitude),  String.valueOf(geo.longitude));
-
-
-                    }
-                    else {
-                        System.out.println("Not found");
-                    }
-                }
+                return false;
             }
-        });*/
-
-
+        });
 
 
         imListView.setOnClickListener(new View.OnClickListener() {
@@ -481,11 +441,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 fragmentTransaction.replace(R.id.container_body, fragment2);
                 fragmentTransaction.commit();
 
-                /*imListView.setVisibility(View.GONE);
-                imThumbView.setVisibility(View.GONE);
-                imMapView.setVisibility(View.VISIBLE);*/
-
-
             }
         });
 
@@ -556,6 +511,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             }*/
 
             if(isInternetPresent) {
+                Log.d(LOGTAG, "Redirect to: "+redirectTo);
 
                 if (redirectTo.equals("BrandOffers") && !redeemarId.equals("")) {
                     Log.d(LOGTAG, "Inside Brand Offers");
@@ -938,13 +894,19 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
-        public void loadOffersForCategoryLocations(String tLat, String tLng) {
+        public void loadOffersForCategoryLocations(String tLat, String tLng, String catId, String redir) {
 
         // This location as selected by user from auto complete
         mRecyclerOffers.setVisibility(View.GONE);
         tvEmptyView.setVisibility(View.VISIBLE);
+
         // Here latitude and longitude are the present location f the user (Self Location)
-        if(!categoryId.equals(""))
+            Log.d(LOGTAG, "My Redirection: "+redirectTo);
+            Log.d(LOGTAG, "My Category Id: "+categoryId);
+
+        if(redirectTo.equals("OnDemand"))
+            new OnDemandOffersAsyncTask(this).execute(user_id, tLat, tLng, selfLat,  selfLon);
+        else if(!categoryId.equals(""))
             new CategoryOffersAsyncTask(this).execute(categoryId, user_id, tLat, tLng, selfLat,  selfLon);
         else
             new BrowseOffersAsyncTask(this).execute(user_id, tLat, tLng, selfLat, selfLon, "");
