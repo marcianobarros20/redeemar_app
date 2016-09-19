@@ -22,6 +22,11 @@ public class UrlEndpoints {
     public static final String URL_SEARCH_SHORT        =  serverBaseUrl+"admin/public/index.php/bridge/searchshort";
     public static final String URL_SEARCH_FULL         =  serverBaseUrl+"admin/public/index.php/bridge/searchfull";
     public static final String URL_SEARCH_LOCATION     =  serverBaseUrl+"admin/public/index.php/bridge/locations";
+
+    public static final String bankOffersURL           = serverBaseUrl+"admin/public/index.php/bridge/bankoffer";
+    public static final String passOffersURL           = serverBaseUrl+"admin/public/index.php/bridge/passoffer";
+
+
     public static final String baseLogoLargeURL        = serverBaseUrl+"filemanager/userfiles/large/";
     public static final String baseLogoMediumURL       = serverBaseUrl+"filemanager/userfiles/medium/";
     public static final String baseLogoSmallURL        = serverBaseUrl+"filemanager/userfiles/small/";
@@ -33,8 +38,6 @@ public class UrlEndpoints {
     public static final String registerURL             = serverBaseUrl+"admin/public/index.php/bridge/userregister?";
     public static final String browseOffersURL         = serverBaseUrl+"admin/public/index.php/bridge/alloffers?";
     public static final String mapOffersURL            = serverBaseUrl+"admin/public/index.php/bridge/mapalloffers?";
-    public static final String bankOffersURL           = serverBaseUrl+"admin/public/index.php/bridge/bankoffer?";
-    public static final String passOffersURL           = serverBaseUrl+"admin/public/index.php/bridge/passoffer?";
     public static final String myOffersURL             = serverBaseUrl+"admin/public/index.php/bridge/myoffer?";
     public static final String validateOfferDetailsURL = serverBaseUrl+"admin/public/index.php/bridge/validateofferdetail?";
     public static final String redemptionURL           = serverBaseUrl+"admin/public/index.php/bridge/redeemption?";

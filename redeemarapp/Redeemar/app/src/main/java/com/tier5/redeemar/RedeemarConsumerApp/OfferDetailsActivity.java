@@ -1,5 +1,6 @@
 package com.tier5.redeemar.RedeemarConsumerApp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -57,7 +58,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
     private SharedPreferences sharedpref;
     private GoogleMap mMap;
     private Toolbar toolbar;
-
+    private ProgressDialog pd;
     int valCalc;
     String offerId, perc_sym, cur_sym;
     Double lat, lon, payValue = 0.0, retailValue = 0.0 ;
@@ -139,11 +140,15 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
             @Override
             public void onClick(View view) {
 
+
+                showProgressDialog();
+
                 Resources res = view.getResources();
                 sharedpref = view.getContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
                 Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
                 if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {
+
 
                     SharedPreferences.Editor editor = sharedpref.edit();
                     editor.putString(res.getString(R.string.spf_redir_action), "BANK_OFFER"); // Storing Email
@@ -167,6 +172,8 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
         btnPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                showProgressDialog();
 
                 Resources res = view.getResources();
                 sharedpref = view.getContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
@@ -685,6 +692,8 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
             if (resp != null) {
 
+                hideProgressDialog();
+
 
                 try {
                     //JSONObject json= (JSONObject) new JSONTokener(result).nextValue();
@@ -713,6 +722,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
                             Toast.makeText(getApplicationContext(), "Offer has been banked", Toast.LENGTH_SHORT).show();
                         }
+
 
 
 
@@ -747,5 +757,28 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
 
     }
+
+
+
+    private void showProgressDialog() {
+        if (pd == null) {
+            pd = new ProgressDialog(this);
+        }
+
+        if (pd != null && !pd.isShowing()) {
+            pd.setMessage(getString(R.string.loading));
+            pd.setIndeterminate(true);
+            pd.show();
+
+        }
+
+    }
+
+    private void hideProgressDialog() {
+        if (pd != null && pd.isShowing()) {
+            pd.dismiss();
+        }
+    }
+
 
 }

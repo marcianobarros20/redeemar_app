@@ -702,7 +702,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
                 if(redeemarId.equals("CampaignOffer")) {
 
-                        ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle("Campaign");
+                    // TODO: Need to show the campaign instead of just showing the text Camapign
+                    ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle("Campaign");
 
                 }
 
