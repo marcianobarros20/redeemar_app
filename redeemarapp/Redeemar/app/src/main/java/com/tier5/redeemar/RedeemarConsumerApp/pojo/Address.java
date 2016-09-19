@@ -22,10 +22,10 @@ public class Address implements Serializable {
     }
 
 
-    public Address(String street, String town, LatLng coordinates) {
+    public Address(String city, String state, LatLng coordinates) {
         super();
-        this.street = street;
-        this.town = town;
+        this.city = city;
+        this.state = state;
         this.coordinates = coordinates;
     }
 
@@ -91,6 +91,11 @@ public class Address implements Serializable {
 
     public void setCoordinates(LatLng coordinates) {
         this.coordinates = coordinates;
+    }
+
+    @Override
+    public String toString() {
+        return location;
     }
 
 }

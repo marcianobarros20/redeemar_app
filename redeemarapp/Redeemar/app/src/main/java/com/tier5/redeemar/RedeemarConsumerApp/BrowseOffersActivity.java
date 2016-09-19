@@ -989,10 +989,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         int nctr = 0;
 
-
         for (int i = 0; i < pProductArrayList.size(); i++) {
-
-
 
             mMenuCtr = i;
 
@@ -1015,8 +1012,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 mLinearScrollSecond.setVisibility(View.VISIBLE);
                 mImageArrowFirst.setBackgroundResource(R.drawable.circle_minus);
             }
-
-
 
             secondRowItemCount = pProductArrayList.get(i).getmSubCategoryList().size();
 
@@ -1131,6 +1126,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                             Fragment browseOfferFragment1 = new BrowseOfferFragment();
                             getSupportActionBar().setTitle(mSubProduct2.getpSubCatName());
                             Bundle args1 = new Bundle();
+
+                            /*editor.putString(getString(R.string.spf_category_id), String.valueOf(mSubProduct2.getpId())); // Storing Redirect Action
+                            editor.putString(getString(R.string.spf_redir_action), "CategoryOffers"); // Storing Redirect Action
+                            editor.putString(getString(R.string.spf_category_name), mSubProduct2.getpSubCatName()); // Storing Redirect Action
+                            editor.commit(); // commit changes*/
+
                             args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
                             args1.putString(getString(R.string.ext_category_id), String.valueOf(mSubProduct2.getpId()));
                             args1.putString(getString(R.string.ext_category_name), String.valueOf(mSubProduct2.getpSubCatName()));
@@ -1185,26 +1186,28 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                             @Override
                             public boolean onTouch(View v, MotionEvent event) {
+                            int xp = mLinearThirdArrow.getId();
 
+                            Fragment browseOfferFragment1 = new BrowseOfferFragment();
+                            getSupportActionBar().setTitle(itemName);
+                            Bundle args1 = new Bundle();
+                            args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
+                            args1.putString(getString(R.string.ext_category_id), String.valueOf(itemId));
+                            browseOfferFragment1.setArguments(args1);
 
-                                int xp = mLinearThirdArrow.getId();
+                            /*editor.putString(getString(R.string.spf_redir_action), "CategoryOffers"); // Storing Redirect Action
+                            editor.putString(getString(R.string.spf_category_id), String.valueOf(String.valueOf(itemId))); // Storing Redirect Action
+                            editor.putString(getString(R.string.spf_category_name), itemName); // Storing Redirect Action
+                            editor.commit(); // commit changes*/
 
+                            FragmentManager browseOfferFm1 = getFragmentManager();
+                            FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
+                            browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
+                            browseOfferFragmentTransaction1.commit();
 
-                                Fragment browseOfferFragment1 = new BrowseOfferFragment();
-                                getSupportActionBar().setTitle(itemName);
-                                Bundle args1 = new Bundle();
-                                args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
-                                args1.putString(getString(R.string.ext_category_id), String.valueOf(itemId));
-                                browseOfferFragment1.setArguments(args1);
-
-                                FragmentManager browseOfferFm1 = getFragmentManager();
-                                FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
-                                browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
-                                browseOfferFragmentTransaction1.commit();
-
-                                Log.d(LOGTAG, "Third level menu id: "+itemId);
-                                mDrawerLayout.closeDrawers();
-                                return false;
+                            Log.d(LOGTAG, "Third level menu id: "+itemId);
+                            mDrawerLayout.closeDrawers();
+                            return false;
                             }
                         });
 

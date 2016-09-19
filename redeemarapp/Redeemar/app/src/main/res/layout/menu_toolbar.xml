@@ -3,9 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="visible">
-
-
+    android:visibility="visible"
+    android:weightSum="1">
 
     <LinearLayout
         android:id="@+id/insideToolbar"
@@ -19,50 +18,74 @@
         android:visibility="visible">
 
         <TextView
-            android:id="@+id/tvUserLocation"
+            android:id="@+id/current_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
             android:gravity="left"
             android:text="@string/user_location"
             android:textColor="@color/white"
-            android:visibility="gone"
-            android:layout_weight="1" />
+            android:textSize="14sp"
+            android:layout_weight="0"
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/txtLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Manhattan"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_corner_white"
             android:visibility="gone" />
+
+
 
         <AutoCompleteTextView
             android:id="@+id/autoCompleteTextView1"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:lines="1"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:background="@drawable/rounded_corner_gray"
+            android:textColor="@color/green_text"
+            android:textColorHint="@color/green_text"
+            android:background="@drawable/rounded_corner_white"
             android:nextFocusUp="@id/autoCompleteTextView1"
             android:nextFocusLeft="@id/autoCompleteTextView1"
             android:windowSoftInputMode="stateHidden"
+            android:textSize="16sp"
+            android:drawableRight="@drawable/expand"
+            android:padding="8dp"
+            android:hint="@string/search_location" />
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextView2"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:lines="1"
+            android:textColor="@color/green_text"
+            android:textColorHint="@color/green_text"
+            android:background="@drawable/rounded_corner_white"
+            android:nextFocusUp="@id/autoCompleteTextView1"
+            android:nextFocusLeft="@id/autoCompleteTextView1"
+            android:windowSoftInputMode="stateHidden"
+            android:textSize="16sp"
+            android:drawableRight="@drawable/expand"
+            android:padding="8dp"
             android:hint="@string/search_location" />
 
 
 
         <ImageView
             android:id="@+id/menu_list_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:background="@drawable/ic_thumb_green"
+            android:background="@drawable/ic_thumb_white"
             android:layout_gravity="center_vertical|right"
             android:visibility="visible" />
 
@@ -70,9 +93,10 @@
             android:id="@+id/menu_thumb_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:background="@drawable/ic_list_green"
+            android:background="@drawable/ic_list_white"
             android:layout_gravity="center_vertical|right"
             android:visibility="visible" />
 
@@ -80,9 +104,10 @@
             android:id="@+id/menu_map_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:background="@drawable/ic_map_view"
+            android:background="@drawable/ic_map_white"
             android:layout_gravity="center_vertical|right"
             android:visibility="visible" />
 
@@ -94,7 +119,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left|center_vertical"
-        android:layout_below="@id/tvUserLocation"
+        android:layout_below="@id/insideToolbar"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:weightSum="1"
@@ -106,7 +131,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/search"/>
-
 
         <TextView
             android:id="@+id/search_category"

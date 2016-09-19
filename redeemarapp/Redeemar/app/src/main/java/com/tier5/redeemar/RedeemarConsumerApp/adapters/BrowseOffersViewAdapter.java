@@ -158,7 +158,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         String offer_desc = item.getOfferDescription();
 
-        if(item.getLocation() != null && !item.getLocation().equalsIgnoreCase("") && !item.getLocation().equalsIgnoreCase("null")) {
+        /*if(item.getLocation() != null && !item.getLocation().equalsIgnoreCase("") && !item.getLocation().equalsIgnoreCase("null")) {
             address_distance = item.getLocation() + " ";
             Log.d(LOGTAG, "Browse Location: "+address_distance);
         }
@@ -169,7 +169,17 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         if(address_distance.equalsIgnoreCase("")) {
             Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
             address_distance = item.getZipcode() + " ";
+        }*/
+
+        if(!item.getLocation().equals("")) {
+            Log.d(LOGTAG, "Browse Distance: "+item.getLocation());
+            address_distance = item.getLocation();
         }
+        else if(!item.getLocation().equals("")) {
+            Log.d(LOGTAG, "Browse Distance: "+item.getLocation());
+            address_distance = item.getLocation();
+        }
+
 
 
         if(!item.getDistance().equalsIgnoreCase("")) {

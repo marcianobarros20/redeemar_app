@@ -43,7 +43,6 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
     private SharedPreferences.Editor editor;
     private GPSTracker gps;
     private double latitude = 0.0, longitude = 0.0;
-
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
 
@@ -214,7 +213,8 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
 
             editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
             editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(longitude));
-            editor.putString(res.getString(R.string.spf_location_keyword), curLoc); // Set location keyword
+            editor.putString(res.getString(R.string.spf_last_location_keyword), curLoc); // Set location keyword
+            //editor.putString(res.getString(R.string.spf_location_keyword), curLoc); // Set location keyword
             editor.commit();
 
         }

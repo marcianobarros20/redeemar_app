@@ -54,7 +54,7 @@ public class CategoryOffersAsyncTask extends AsyncTask<String, Void, ArrayList<O
         String sLat = params[4];
         String slng = params[5];
 
-        ArrayList<Offer> listOffers = OfferUtils.loadCategoryOffers(requestQueue, category_id, "0", user_id, lat, lng);
+        ArrayList<Offer> listOffers = OfferUtils.loadCategoryOffers(requestQueue, category_id, "0", user_id, lat, lng, sLat, slng);
 
         Log.d(LOGTAG, "List category offers size: "+listOffers.size());
 

@@ -36,6 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
@@ -54,6 +55,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.LocationFetchedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
@@ -62,9 +64,11 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class BrowseOfferFragment extends Fragment implements OffersLoadedListener, UsersLoadedListener,  SearchView.OnQueryTextListener  {
@@ -95,18 +99,20 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     Activity activity;
     private ActivityCommunicator activityCommunicator;
     private ImageView imListView, imMapView, imThumbView;
-    private TextView tvCategory;
+    private TextView tvCategory, tvUserLocation;
     private AutoCompleteTextView autoComplete;
     private GPSTracker gps;
     private ArrayList<String> locationList;
+    private ArrayList<Address> autoCompleteList;
+    //private ArrayList<LatLng> latLngList;
     private ArrayList<LatLng> latLngList;
-    private ArrayAdapter<String> autoCompleteAdapter;
+    private ArrayAdapter<Address> autoCompleteAdapter;
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
+    private Map<String, LatLng> locationItems;
 
     public BrowseOfferFragment() {
         // Required empty public constructor
-
 
     }
 
@@ -130,6 +136,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         activity = getActivity();
         activityCommunicator = (ActivityCommunicator) activity;
 
+
+
         res = getResources();
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
@@ -150,10 +158,21 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             campaignId = args1.getString(getString(R.string.ext_campaign_id), "");
             categoryId = args1.getString(getString(R.string.ext_category_id), "");
 
+
             categoryName = args1.getString(getString(R.string.ext_category_name), "");
             viewType = args1.getString(getString(R.string.ext_view_type), "");
 
         }
+
+        if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
+            latitude = Double.parseDouble(sharedpref.getString(res.getString(R.string.spf_last_lat), null));
+
+            if(selfLat.equals(""))
+                selfLat = String.valueOf(latitude);
+
+        }
+
+
 
         if(!categoryName.equals(""))
             ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(categoryName);
@@ -167,12 +186,19 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         imMapView = (ImageView) layout.findViewById(R.id.menu_map_view);
         imThumbView = (ImageView) layout.findViewById(R.id.menu_thumb_view);
         tvCategory = (TextView) layout.findViewById(R.id.search_category);
+        tvUserLocation = (TextView) layout.findViewById(R.id.current_location);
         autoComplete = (AutoCompleteTextView) layout.findViewById(R.id.autoCompleteTextView1);
         locationList = new ArrayList<String>();
         latLngList = new ArrayList<LatLng>();
+        locationItems = new HashMap<String, LatLng>();
 
         if(imListView.getVisibility() == View.VISIBLE) {
             Log.d(LOGTAG, "Inside ListView");
+
+            editor.putString(res.getString(R.string.spf_view_type), "list");
+            editor.commit();
+
+
             imListView.setVisibility(View.GONE);
             imThumbView.setVisibility(View.VISIBLE);
             imMapView.setVisibility(View.GONE);
@@ -215,11 +241,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         }
 
 
-
-
-
-
-
         // Read shared preference for the lat-long
         // Save the latitude and longitude in SharedPreferences
         if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
@@ -233,7 +254,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         if(sharedpref.getString(res.getString(R.string.spf_last_lon), null) != null) {
             longitude = Double.parseDouble(sharedpref.getString(res.getString(R.string.spf_last_lon), null));
 
-
             if(selfLon.equals(""))
                 selfLon = String.valueOf(longitude);
         }
@@ -245,10 +265,57 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             callSearchLocationTask();
 
 
-        autoCompleteAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, locationList);
+        /*autoCompleteAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, locationList);
         autoComplete.animate();
         autoComplete.setThreshold(1);
+        autoComplete.setAdapter(autoCompleteAdapter);*/
+
+        autoCompleteList = new ArrayList<Address>();
+
+        autoCompleteAdapter = new ArrayAdapter<Address>(activity, android.R.layout.simple_dropdown_item_1line, autoCompleteList);
         autoComplete.setAdapter(autoCompleteAdapter);
+
+        autoComplete.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+            /*if (hasFocus) {
+
+                autoComplete.setText("");
+                autoComplete.requestFocus();
+
+            }*/
+            }
+        });
+
+
+
+
+    autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                Address selected = (Address) arg0.getAdapter().getItem(arg2);
+                //Toast.makeText(activity, "Clicked " + arg2 + " city: " + selected.getLocation(), Toast.LENGTH_SHORT).show();
+
+                //From that position we get the lat-long
+                LatLng geo = (LatLng) selected.getCoordinates();
+
+                Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
+                Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
+
+                // Set the geo location of the place you want to search the offers for
+                editor.putString(res.getString(R.string.spf_location_keyword), selected.getLocation()); // Set view type to list
+                editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(geo.latitude));
+                editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(geo.longitude));
+                editor.commit();
+
+
+                // Pass the latitude and longitude to fetch the location information
+                loadOffersForCategoryLocations(String.valueOf(geo.latitude),  String.valueOf(geo.longitude));
+
+            }
+        });
+
 
         editor = sharedpref.edit();
 
@@ -277,7 +344,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         });
 
-        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
 
@@ -290,25 +357,42 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     // Save it in shared preference
                     editor.putString(res.getString(R.string.spf_location_keyword), selectedLocation); // Set view type to list
                     editor.commit();
+
+                    //From that position we get the lat-long
+                    //LatLng geo = (LatLng) locationItems.get(selectedLocation);
+
+                    //Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
+                    //Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
+
+
                 }
 
-                // From that position we get the lat-long
-                LatLng geo = (LatLng) latLngList.get(position);
+                if(locationItems.get(selectedLocation) != null) {
+                    if(locationItems.get(selectedLocation) instanceof LatLng) {
 
-                Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
-                Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
+                        //From that position we get the lat-long
+                        LatLng geo = (LatLng) locationItems.get(selectedLocation);
 
-                // Set the geo location of the place you want to search the offers for
-                editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(geo.latitude));
-                editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(geo.longitude));
-                editor.commit();
+                        Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
+                        Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
+
+                        // Set the geo location of the place you want to search the offers for
+                        editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(geo.latitude));
+                        editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(geo.longitude));
+                        editor.commit();
 
 
-                // Pass the latitude and longitude to fetch the location information
-                loadOffersForCategoryLocations(String.valueOf(geo.latitude),  String.valueOf(geo.longitude));
+                        // Pass the latitude and longitude to fetch the location information
+                        loadOffersForCategoryLocations(String.valueOf(geo.latitude),  String.valueOf(geo.longitude));
 
+
+                    }
+                    else {
+                        System.out.println("Not found");
+                    }
+                }
             }
-        });
+        });*/
 
 
 
@@ -317,14 +401,43 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             @Override
             public void onClick(View view) {
 
-                editor.putString(res.getString(R.string.spf_view_type), "list"); // Set view type to list
-                editor.commit();
+                if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+                    viewType = sharedpref.getString(res.getString(R.string.spf_view_type), null);
 
-                BrowseOfferFragment fragment2 = new BrowseOfferFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.container_body, fragment2);
-                fragmentTransaction.commit();
+
+
+                    if(viewType.equals("map")) {
+                        editor.putString(res.getString(R.string.spf_view_type), "list"); // Set view type to list
+                        editor.commit();
+                    }
+                    else if(viewType.equals("thumb")) {
+                        editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to list
+                        editor.commit();
+                    }
+                    else {
+                        editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Set view type to list
+                        editor.commit();
+                    }
+
+
+                }
+
+
+                if(viewType.equals("map")) {
+                    MapViewFragment fragment3 = new MapViewFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.container_body, fragment3);
+                    fragmentTransaction.commit();
+                }
+                else {
+                    BrowseOfferFragment fragment2 = new BrowseOfferFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.container_body, fragment2);
+                    fragmentTransaction.commit();
+
+                }
 
                 /*Log.d(LOGTAG, "List view clicked");
                 imListView.setVisibility(View.GONE);
@@ -428,8 +541,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             Log.d(LOGTAG, "Category id 102: " + categoryId);
 
             if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) != null) {
-                locKeyword = sharedpref.getString(res.getString(R.string.spf_location_keyword), "");
+                locKeyword = sharedpref.getString(res.getString(R.string.spf_last_location_keyword), "");
+                tvUserLocation.setText(locKeyword);
                 //autoComplete.setText(locKeyword);
+                Log.d(LOGTAG, "Keyword is: "+locKeyword);
             }
 
             /*if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
@@ -533,8 +648,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         int id = item.getItemId();
 
-
-
         switch (id) {
 
            case R.id.action_search:
@@ -606,15 +719,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 if (offerDesc.contains(query) || whatYouGet.contains(query) || moreInfo.contains(query) || compName.contains(query)
                         || compAddr.contains(query) || compZip.contains(query)) {
                     filteredModelList.add(model);
-
                     p++;
-
                 }
-
             }
         }
-
-
         Log.d(LOGTAG, "No. of match found is "+p);
         return filteredModelList;
     }
@@ -664,7 +772,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         int cnt = listAddresses.size();
         int p = 0;
-        locationList.clear();
+        autoCompleteList.clear();
         boolean found = false;
 
         for(int i = 0; i < cnt; i++) {
@@ -703,21 +811,27 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 p++;
             }*/
 
+            Address locAddress = new Address();
+            String la = "";
+
             if(tCity.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tCity) && !Utils.findDuplicate(locationList, tCity+", "+tState.toUpperCase()) && !found) {
                 //found = true;
+
                 if(!tState.equals(""))
-                    locationList.add(tCity+", "+tState.toUpperCase());
+                    la = tCity+", "+tState.toUpperCase();
                 else
-                    locationList.add(tCity);
+                    la = tCity;
+
+
                 p++;
             }
             if(tState.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tState)) {
-                locationList.add(tState);
+                la = tState;
                 p++;
             }
 
             if(tZip.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tZip)) {
-                locationList.add(tZip);
+                la = tZip;
                 p++;
             }
 
@@ -725,26 +839,40 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 found = true;
                 //locationList.add(tLoc);
                 if(!tState.equals(""))
-                    locationList.add(tLoc+", "+tState);
+                   la = tLoc+", "+tState;
                 else
-                    locationList.add(tLoc);
+                    la = tLoc;
                 p++;
             }
+
+            locAddress.setLocation(la);
+            locationList.add(la);
+
+
+            locAddress.setCoordinates(new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
 
 
             Log.d(LOGTAG, "After User Loaded Lat is: "+tLat);
             Log.d(LOGTAG, "After User Loaded Lon is: "+tLon);
 
-            if(tLat!="" && tLon != "")
+            if(!la.equals("") && !tLat.equals("") && !tLon.equals("")) {
+                /*
                 latLngList.add(new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
+                locationItems.put(tLoc, new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
+                */
+
+                autoCompleteList.add(locAddress);
+
+            }
         }
+
+        autoCompleteAdapter.notifyDataSetChanged();
 
         // Now read shared preference and add your current location to this ArrayList
         if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) != null) {
             locKeyword = sharedpref.getString(res.getString(R.string.spf_location_keyword), "");
             if(!locKeyword.equals("")) {
                 locationList.add(locKeyword);
-
                 // Also set the keyword  as default text
                 autoComplete.setText(locKeyword);
             }
@@ -810,14 +938,14 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
-    public void loadOffersForCategoryLocations(String tLat, String tLng) {
+        public void loadOffersForCategoryLocations(String tLat, String tLng) {
 
         // This location as selected by user from auto complete
         mRecyclerOffers.setVisibility(View.GONE);
         tvEmptyView.setVisibility(View.VISIBLE);
-        // Here latitude and longitude are the present location of the user (Self Location)
+        // Here latitude and longitude are the present location f the user (Self Location)
         if(!categoryId.equals(""))
-            new CategoryOffersAsyncTask(this).execute(categoryId, tLat, tLng, selfLat,  selfLon);
+            new CategoryOffersAsyncTask(this).execute(categoryId, user_id, tLat, tLng, selfLat,  selfLon);
         else
             new BrowseOffersAsyncTask(this).execute(user_id, tLat, tLng, selfLat, selfLon, "");
 

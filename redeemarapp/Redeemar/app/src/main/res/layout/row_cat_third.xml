@@ -19,7 +19,7 @@
             android:text="@string/category"
             android:textColor="@color/md_blue_500"
             android:layout_marginLeft="20dp"
-            android:textSize="13sp"
+            android:textSize="16sp"
             android:padding="5dp" />
 
     </RelativeLayout>

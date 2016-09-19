@@ -4,11 +4,9 @@
     <string name="action_search">Search</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
-
     <string name="nav_item_home">Home</string>
     <string name="nav_item_friends">Friends</string>
     <string name="nav_item_notifications">Messages</string>
-
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_help</item>
@@ -17,7 +15,6 @@
         <item>@string/nav_item_rate</item>
         <item>@string/nav_item_signout</item>
     </string-array>
-
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_icons">
         <item>@drawable/ic_help</item>
@@ -26,8 +23,6 @@
         <item>@drawable/ic_contact</item>
         <item>@drawable/ic_logout</item>
     </string-array>
-
-
     <string name="nav_item_offers">All Offers</string>
     <string name="nav_item_help">Help</string>
     <string name="nav_item_about">About</string>
@@ -35,26 +30,16 @@
     <string name="nav_item_contact">Contact</string>
     <string name="nav_item_signin">Sign In</string>
     <string name="nav_item_signout">Sign Out</string>
-
-
     <string name="title_home">Home</string>
     <string name="title_friends">Friends</string>
     <string name="title_messages">Messages</string>
-
-
-
     <string name="app_description">Redeemar Sample Applications</string>
     <string name="default_font">MyriadProRegular.otf</string>
-
     <string name="facebook_app_id">1628334827492894</string>
-
-
     <string name="button_start">Start Scanning</string>
     <string name="activities_list_title_string">Redeemar Samples</string>
     <string name="activities_list_empty">No activities</string>
-
     <string name="button_OK">OK</string>
-
     <string name="UPDATE_ERROR_AUTHORIZATION_FAILED_TITLE">Authorization Error</string>
     <string name="UPDATE_ERROR_PROJECT_SUSPENDED_TITLE">Authorization Error</string>
     <string name="UPDATE_ERROR_NO_NETWORK_CONNECTION_TITLE">Network Unavailable</string>
@@ -73,7 +58,6 @@
     <string name="UPDATE_ERROR_REQUEST_TIMEOUT_DESC">The network request has timed out, please check your internet connection and try again.</string>
     <string name="UPDATE_ERROR_BAD_FRAME_QUALITY_DESC">The camera does not have enough detail, please try again later.</string>
     <string name="UPDATE_ERROR_UNKNOWN_DESC">The service is unavaiable, please try again later.</string>
-
     <string name="INIT_ERROR">Error</string>
     <string name="INIT_ERROR_DEVICE_NOT_SUPPORTED">Failed to initialize Vuforia. This device is not supported.</string>
     <string name="INIT_ERROR_NO_CAMERA_ACCESS">Failed to initialize Vuforia. Camera not accessible</string>
@@ -87,7 +71,6 @@
     <string name="INIT_LICENSE_ERROR_UNKNOWN_ERROR">Failed to initialize Vuforia.</string>
     <string name="INIT_OBJECT_DATASET_NOT_FOUND_TITLE">Database not found</string>
     <string name="INIT_OBJECT_DATASET_NOT_FOUND">Please scan an object and load a database</string>
-
     <string name="offer_not_found">This offer is not available for redemption now.</string>
     <string name="error_validation_wrong_place">You cannot validate this offer from here. Please select the offer from banked offer list and then tap Validate button.</string>
     <string name="error_offer_expired">You are scannaing an image not associated this offer or the offer has reached max redemption limit.</string>
@@ -98,19 +81,12 @@
     <string name="error_validation_wrong_redeemar">Unable to get redeemer details.</string>
     <string name="failed">Failed to complete this process.</string>
     <string name="redemption_code_mismatch">You have entered a wrong redemption code.</string>
-
-
-
-
-
     <string name="cgi_animation">This will display a CGI animation. Coming soon.</string>
     <string name="coming_soon">This will display a CGI animation. Coming soon.</string>
-
     <string name="content_desc_camera_button">Camera Button</string>
     <string name="overlay_build_target_help">Hold the device parallel to the target</string>
     <string name="target_quality_error_title">Low Quality Image</string>
     <string name="target_quality_error_desc">The image has very little detail, please try another.</string>
-
     <string name="menu_back">Redeemar Samples</string>
     <string name="menu_extended_tracking">Extended Tracking</string>
     <string name="menu_character_mode">Character Mode</string>
@@ -140,7 +116,6 @@
     <string name="brand_name">Loading brand information...</string>
     <string name="brand">Brand</string>
     <string name="brand_description">We appreciate our customers for their loyalty and past patronage</string>
-
     <string name="shop_offers">Shop Offers</string>
     <string name="continue_to_browse">Continue</string>
     <string name="scan_again">Scan Again</string>
@@ -191,8 +166,6 @@
     <string name="spf_no_auto_login">spf_no_auto_login</string>
     <string name="spf_category_level">spf_category_level</string>
     <string name="spf_location_keyword">spf_location_keyword</string>
-
-
     <string name="ext_redeemar_id">REDEEMAR_ID</string>
     <string name="ext_offer_id">OFFER_ID</string>
     <string name="ext_user_id">USER_ID</string>
@@ -210,15 +183,12 @@
     <string name="ext_category_name">CATEGORY_NAME</string>
     <string name="ext_category_level">CATEGORY_LEVEL</string>
     <string name="ext_view_type">VIEW_TYPE</string>
-
     <string name="brand_not_found">Unable to find matching logo in our database</string>
     <string name="brand_not_associated">We are able to recognize the logo. However, this brand is not yet associated with Redeemar. We have sent email request.</string>
     <string name="brand_video_not_found">No video uploaded for this Brand</string>
     <string name="no_target_found">Sorry! We have failed to recognize this target.</string>
-
     <string name="rating">Rating</string>
     <string name="price_range_id">$$$</string>
-
     <string name="expires">Expire in</string>
     <string name="expired">Expired</string>
     <string name="expires_in">*Expires in</string>
@@ -234,9 +204,6 @@
     <string name="no_records">No record found.</string>
     <string name="unable_to_get_records">Unable to get record found.</string>
     <string name="active">Active</string>
-
-
-
     <string name="bank_it">BANK</string>
     <string name="pass_it">PASS</string>
     <string name="scan_offer">Scan</string>
@@ -247,9 +214,6 @@
     <string name="category">Category</string>
     <string name="search">Search</string>
     <string name="search_location">Search location</string>
-
-
-
     <string name="my_offers">Banked</string>
     <string name="nearby">Nearby</string>
     <string name="map_view">Nearby</string>
@@ -259,18 +223,13 @@
     <string name="open_drawer">Open</string>
     <string name="close_drawer">Close</string>
     <string name="my_banked">Banked Offers</string>
-
-
     <string name="nearby_brands">Brands Nearby</string>
     <string name="offers_by_brand">Offers by brand</string>
     <string name="offers_by_campaign">Offers by campaign</string>
     <string name="offers_by_category">Offers by category</string>
     <string name="offers_on_demand">On-Demand Offers</string>
-
-
     <string name="offer_title">Offer description...</string>
     <string name="offer_title_new">Loading new offer details...</string>
-
     <string name="what_you_get">What you get</string>
     <string name="bank">Bank Offer</string>
     <string name="pass">Pass Offer</string>
@@ -298,8 +257,6 @@
     <string name="signing_in">Signing in...</string>
     <string name="error_signing_in">Error occured in signing in. Please try again later.</string>
     <string name="validity">Valid within</string>
-
-
     <string name="Search">Search</string>
     <string name="list_view">List View</string>
     <string name="thumb_view">Thumbnail View</string>
@@ -309,11 +266,9 @@
     <string name="msg_feedback_sent">Your feedback has been sent to our support desk. We value your feedback.</string>
     <string name="msg_feedback_not_sent">Unable to send feedback.</string>
     <string name="enter_rating_feedback">Please enter feedback and rating</string>
-
     <!-- Login -->
     <string name="alert_title">Alert!</string>
     <string name="alert_thanks">Thank you!</string>
-
     <string name="enter_email">Please enter email</string>
     <string name="enter_password">Please enter email</string>
     <string name="enter_valid_email">Please enter a valid email</string>
@@ -321,28 +276,21 @@
     <string name="enter_password_email">Please enter email and password</string>
     <string name="password_mismatch">Password and confirm password mismatch</string>
     <string name="sending_data">Sending data...</string>
-
-
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="email">Email</string>
     <string name="phone">Phone</string>
     <string name="update_profile">Update Profile</string>
-
     <string name="enter_valid_first_name">Please enter a valid first name</string>
     <string name="enter_valid_last_name">Please enter a valid last name</string>
     <string name="msg_profile_updated">Thank you for updating your profile information</string>
     <string name="msg_profile_not_updated">Unable to update profile</string>
-
-
     <string name="logging_in">Logging in...</string>
-
     <string name="login_auth_denied">Invalid email and password combination</string>
     <string name="user_status_inactive">You account is inactive. Please contact redeemar support</string>
     <string name="invalid_user_pass">Invalid username and password</string>
     <string name="duplicate_email">User with this email id already exists in our records</string>
     <string name="unknown_reg_err">Unknown error occured. Please try again.</string>
-
     <string name="validate">Validate Offer</string>
     <string name="validate_offer">VALIDATE OFFER</string>
     <string name="offer_starts">Valid from</string>
@@ -351,8 +299,6 @@
     <string name="validate_by_scan">VALIDATE BY SCANNING</string>
     <string name="redemption_code">Redemption Code</string>
     <string name="enter_redemption_code">Please enter redemption code to validate</string>
-
-
     <string name="advertisement">Want to show your ads here?</string>
     <string name="advertisement2">Contact us at info@redeemar.com</string>
     <string name="offer_details">Offer Details</string>
@@ -363,7 +309,6 @@
     <string name="error_auth_failure">Authentication failed</string>
     <string name="error_network">Network failure</string>
     <string name="error_parser">Parse error</string>
-
     <string name="drawer_item_home">Home</string>
     <string name="drawer_item_settings">Settings</string>
     <string name="nav_search">Search</string>
@@ -371,8 +316,6 @@
     <string name="nav_item_my_offers">My Offers</string>
     <string name="nav_item_edit_profile">Edit Profile</string>
     <string name="nav_item_export_log">Export Log</string>
-
-
     <string name="btn_logout_from_google">Logout from Google</string>
     <string name="btn_revoke_access">Revoke Access</string>
     <string name="app_prod">Production</string>
@@ -380,9 +323,8 @@
     <string name="app_dev">Development</string>
     <string name="collapsed">Collapsed</string>
     <string name="expanded">Expanded</string>
-
     <string name="near_me">Near Me</string>
-    <string name="search_keyword">What do you want to search with</string>
+    <string name="search_keyword">Search Keywords</string>
 
     <string name="enter_location">Please enter location</string>
     <string name="enter_search_keyword">Please enter search keyword</string>

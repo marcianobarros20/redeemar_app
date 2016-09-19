@@ -36,14 +36,14 @@ public class OfferUtils {
 
         //Log.d(LOGTAG, "Self Lat: "+sLat);
         //Log.d(LOGTAG, "Self Lon: "+sLng);
-        //Log.d(LOGTAG, "Self Lon: "+catId);
+        Log.d(LOGTAG, "Self Cat: "+catId);
 
         /* TODO: Use of sCatId not used now */
         JSONObject response = null;
 
         // Currently catLevel value is not used in web service
         if(!catId.equals(""))
-            response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, catId, "0", lat, lng, sLat, sLng);
+            response = Requestor.requestOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrowseOffers(30), userId, catId, "0", lat, lng, sLat, sLng);
         else
             response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "", "0", lat, lng, sLat, sLng);
 
@@ -72,9 +72,9 @@ public class OfferUtils {
     }
 
 
-    public static ArrayList<Offer> loadCategoryOffers(RequestQueue requestQueue, String catId, String catLevel, String userId, String lat, String lng) {
+    public static ArrayList<Offer> loadCategoryOffers(RequestQueue requestQueue, String catId, String catLevel, String userId, String lat, String lng, String selfLat, String selfLon) {
 
-        JSONObject response = Requestor.requestOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrandOffers(30), userId, catId, catLevel,  lat, lng, lat, lng);
+        JSONObject response = Requestor.requestOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrandOffers(30), userId, catId, catLevel,  lat, lng, selfLat, selfLon);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadCategoryOffers :"+listOffers.size());
         return listOffers;
