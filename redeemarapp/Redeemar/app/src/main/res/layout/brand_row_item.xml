@@ -4,20 +4,22 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_row_selector"
+    android:gravity="center"
     android:padding="4dp">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
         android:weightSum="1"
         android:orientation="horizontal">
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/thumbnail"
             android:layout_width="0dp"
+            android:layout_height="120dp"
             android:layout_weight="0.5"
-            android:layout_height="140dp"
             android:gravity="center"
             android:scaleType="fitStart"
             android:src="@drawable/icon_watermark"/>
@@ -27,7 +29,7 @@
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/thumbnailBrandPic"
             android:layout_width="0dp"
-            android:layout_height="140dp"
+            android:layout_height="120dp"
             android:layout_weight="0.5"
             android:gravity="top"
             android:scaleType="centerCrop"

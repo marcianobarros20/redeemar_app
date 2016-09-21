@@ -246,6 +246,14 @@
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
             android:label="@string/app_name" />
+
+        <activity android:name="com.tier5.redeemar.RedeemarConsumerApp.BrandOfferActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize"
+            android:theme="@style/Theme.DesignDemo"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            android:label="@string/app_name" />
+
     </application>
 
 </manifest>

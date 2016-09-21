@@ -49,6 +49,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.tier5.redeemar.RedeemarConsumerApp.BrandOfferActivity;
+import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
 import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
@@ -56,6 +58,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.RecyclerItemClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.ResizeAnimation;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrandViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadImageTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadSaveImageAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByBrandsAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
@@ -65,6 +68,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.MarkerItem;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 
@@ -174,12 +178,10 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
             brandList = new ArrayList<>();
             dispBrandList = new ArrayList<>();
 
-
             containerLayout = (RelativeLayout) rootView.findViewById(R.id.mainContainer);
             innerContainerLayout = (LinearLayout) rootView.findViewById(R.id.innerContainer);
             mRecyclerView = (RecyclerView) rootView.findViewById(R.id.myRecyclerView);
             innerContainerLayout.setVisibility(View.VISIBLE);
-
 
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
 
@@ -325,7 +327,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
         //Toast.makeText(getActivity().getApplicationContext(), "My Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
 
-        Log.d(LOGTAG, "Inside onmayReady");
+        Log.d(LOGTAG, "Inside onMapReady");
 
 
         mClusterManager = new ClusterManager(getActivity(), googleMap);
@@ -353,13 +355,13 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
             @Override
             public void onMapClick(LatLng arg0) {
-                // TODO Auto-generated method stub
-                Log.d(LOGTAG, "OnMap Clicked "+arg0.latitude + "-" + arg0.longitude);
-                editor.putString(getString(R.string.spf_last_lat), String.valueOf(arg0.latitude)); // Storing Lat
-                editor.putString(getString(R.string.spf_last_lon), String.valueOf(arg0.longitude)); // Storing Lon
-                editor.commit(); // commit changes
-                mMapViewExpanded = true;
-                animateMapView();
+            // TODO Auto-generated method stub
+            Log.d(LOGTAG, "OnMap Clicked "+arg0.latitude + "-" + arg0.longitude);
+            //editor.putString(getString(R.string.spf_last_lat), String.valueOf(arg0.latitude)); // Storing Lat
+            //editor.putString(getString(R.string.spf_last_lon), String.valueOf(arg0.longitude)); // Storing Lon
+            //editor.commit(); // commit changes
+            mMapViewExpanded = true;
+            animateMapView();
             }
 
 
@@ -372,8 +374,6 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                 //clickedCluster = cluster; // remember for use later in the Adapter
 
                 ArrayList myItem = (ArrayList) cluster.getItems();
-
-
 
                 if(dispBrandList.size() > 0)
                     dispBrandList.clear();
@@ -394,9 +394,6 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
                 }
 
-
-
-                //ArrayList usr = (ArrayList) cluster.getItems();
 
                 mAdapter = new BrandViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrandList");
                 mRecyclerView.setAdapter(mAdapter);
@@ -432,7 +429,8 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
         mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MarkerItem>() {
             @Override
             public boolean onClusterItemClick(MarkerItem item) {
-                //clickedClusterItem = item;
+
+                Log.d(LOGTAG, "MyItem: "+item.getTitle());
 
                 if(dispBrandList.size() > 0)
                     dispBrandList.clear();
@@ -441,16 +439,13 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                 clickIndex = ind;
 
                 User br = brandList.get(Integer.parseInt(ind));
-
                 br.setLogoName(br.getLogoName());
-
 
                 companyName = br.getCompanyName();
                 companyLocation = br.getLocation();
 
 
                 dispBrandList.add(br);
-
                 mAdapter = new BrandViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrandList");
                 mRecyclerView.setAdapter(mAdapter);
 
@@ -479,8 +474,6 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                     animateMapView();
 
                 Log.d(LOGTAG, "Map View: "+getMapViewStatus());
-
-
                 Log.d(LOGTAG, "Cluster item clicked "+item.getTitle());
                 return false;
             }
@@ -532,13 +525,8 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
         private void render(Marker marker, View view) {
 
-
-            //((ImageView) view.findViewById(R.id.badge)).setImageResource(badge);
-            //imStoreFrontPic = ((ImageView) view.findViewById(R.id.badge));
-
             tvInfoTitle = (TextView) view.findViewById(R.id.title);
             tvInfoSnippet = (TextView) view.findViewById(R.id.snippet);
-
             imStoreFrontPic = (ImageView) view.findViewById(R.id.badge);
 
             //String ind = marker.getTitle();
@@ -546,9 +534,17 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
 
             if(clickIndex != null && !clickIndex.equals("")) {
                 User br = brandList.get(Integer.parseInt(clickIndex));
-                String imageUrl = br.getStoreFrontImage();
-                Log.d(LOGTAG, "Map Image URL: "+imageUrl);
-                new DownloadImageTask(imStoreFrontPic).execute(imageUrl);
+                if(br.getStoreFrontImage() != null && !br.getStoreFrontImage().equals("")) {
+
+                    String imageUrl = br.getStoreFrontImage();
+                    Log.d(LOGTAG, "Store Image URL: "+imageUrl);
+                    new DownloadImageTask(imStoreFrontPic).execute(imageUrl);
+
+                }
+
+
+                //new DownloadSaveImageAsyncTask(getActivity()).execute(imageUrl);
+
                 tvInfoTitle.setText(companyName);
                 tvInfoSnippet.setText(companyLocation);
 
@@ -599,14 +595,6 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
         mClusterManager.cluster();
 
 
-        //Log.d(LOGTAG, "Just after brands getting loaded");
-
-
-
-        //mAdapter = new BrandViewAdapter(getActivity().getApplicationContext(), brandList, "BrandList");
-        //mRecyclerView.setAdapter(mAdapter);
-
-
 
     }
 
@@ -645,11 +633,12 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
     public void openFragment(String redeemarId) {
 
         editor.putString(getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
+        editor.putString(getString(R.string.spf_popup_action), "1"); // Storing Last Activity
         editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
         editor.commit(); // commit changes
 
 
-        Bundle args = new Bundle();
+        /*Bundle args = new Bundle();
         args.putString(getString(R.string.ext_redir_to), "BrandOffers");
         args.putString(getString(R.string.ext_redeemar_id), redeemarId);
         Fragment fr = new BrowseOfferFragment();
@@ -657,7 +646,11 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
         FragmentManager fm = getFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(R.id.container_body, fr);
-        fragmentTransaction.commit();
+        fragmentTransaction.commit();*/
+
+        Intent intent = new Intent(getActivity(), BrowseOffersActivity.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
 

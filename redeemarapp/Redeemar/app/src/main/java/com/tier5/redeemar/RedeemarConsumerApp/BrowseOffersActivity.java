@@ -104,6 +104,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private NavigationView mNavigationView;
     private ArrayList<Category> categories;
     private int catId = 0;
+    int lastClick = 0;
     private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "";
     private final int NavGroupId = 1001;
     private SharedPreferences.Editor editor;
@@ -153,10 +154,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.offers_recycler);
-
         db = new DatabaseHelper(this);
-
-
 
         pProductArrayList = new ArrayList<Product>();
         pSubItemArrayList2 = new ArrayList<Product.SubCategory>();
@@ -644,9 +642,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
     private void addItemsRunTime(NavigationView navigationView) {
 
-        Gson gson = new Gson();
-        jsonCatText = sharedpref.getString(getString(R.string.spf_categories), null);
-        Log.d(LOGTAG, "Category JSON: " + jsonCatText);
+        //Gson gson = new Gson();
+        //jsonCatText = sharedpref.getString(getString(R.string.spf_categories), null);
+        //Log.d(LOGTAG, "Category JSON: " + jsonCatText);
 
 
         List categories = db.getCategories(0);
@@ -941,25 +939,24 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
     public void populateListMenuItems() {
 
-        for(int i=0;i<mParentCategoryIds.size();i++){
+        for(int i=0; i<mParentCategoryIds.size(); i++) {
             istrue=true;
             pSubItemArrayList=new ArrayList<Product.SubCategory>();
             for(int j=0;j<mSubCategoryIds.size();j++){
                 istrue1=true;
                 if(mParentCategoryIds.get(i).equals(mSubCategoryIds.get(j))) {
 
-                    if(istrue){
-                        mItemListArray=new ArrayList<Product.SubCategory.ItemList>();
+                    if(istrue) {
+                        mItemListArray = new ArrayList<Product.SubCategory.ItemList>();
                         // Main Category
 
                         Log.d("MENU", "AA1 "+mParentCategoryIds.get(i));
                         Log.d("MENU", "AA2 "+mParentCategoryNames.get(i));
                         pProductArrayList.add(new Product(mParentCategoryIds.get(i), mParentCategoryNames.get(i), pSubItemArrayList, false));
-
-                        istrue=false;
+                        istrue = false;
                     }
 
-                    for(int k=0;k<mCategoryIds.size();k++) {
+                    for(int k=0; k<mCategoryIds.size(); k++) {
                         if(mCategoryIds.get(j).equals(mSubCategoryIds.get(k))) {
 
                             if(istrue1) {
@@ -988,7 +985,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
     public void setupListMenu() {
 
-        int nctr = 0;
+        int nctr = 0; int pctr = 0;
 
         for (int i = 0; i < pProductArrayList.size(); i++) {
 
@@ -1003,44 +1000,47 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             final ImageView mImageArrowFirst=(ImageView)mLinearView.findViewById(R.id.imageFirstArrow);
             final LinearLayout mLinearScrollSecond=(LinearLayout)mLinearView.findViewById(R.id.linear_scroll);
 
+            Product pProd = pProductArrayList.get(i);
+
             mLinearFirstArrow.setId(i);
 
-            if(isFirstViewClick==false){
+            if(pProd.getOpened()==false) {
                 mLinearScrollSecond.setVisibility(View.GONE);
                 mImageArrowFirst.setBackgroundResource(R.drawable.circle_plus);
             }
-            else{
+            else {
                 mLinearScrollSecond.setVisibility(View.VISIBLE);
                 mImageArrowFirst.setBackgroundResource(R.drawable.circle_minus);
             }
 
             secondRowItemCount = pProductArrayList.get(i).getmSubCategoryList().size();
-
             mProductName.setOnTouchListener(new View.OnTouchListener() {
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
 
                     int xn = mLinearFirstArrow.getId();
+
+                    lastClick = mMenuCtr;
+
+
                     mMainProduct = pProductArrayList.get(xn);
                     isFirstViewClick = mMainProduct.getOpened();
+                    secondRowItemCount = mMainProduct.getmSubCategoryList().size();
 
                     Log.d(LOGTAG, "A new menu clicked "+xn+" : "+isFirstViewClick+" "+secondRowItemCount);
 
                     if(secondRowItemCount > 0) {
 
                         if (isFirstViewClick == false) {
-
                             mImageArrowFirst.setBackgroundResource(R.drawable.circle_minus);
                             mLinearScrollSecond.setVisibility(View.VISIBLE);
                             mMainProduct.setOpened(true);
-
                         } else {
-                            mMainProduct.setOpened(false);
                             mImageArrowFirst.setBackgroundResource(R.drawable.circle_plus);
                             mLinearScrollSecond.setVisibility(View.GONE);
+                            mMainProduct.setOpened(false);
                         }
-
                         pProductArrayList.set(mMenuCtr, mMainProduct);
                     }
                     else {
@@ -1070,24 +1070,21 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 final RelativeLayout mLinearSecondArrow=(RelativeLayout)mLinearView2.findViewById(R.id.linearSecond);
                 final ImageView mImageArrowSecond=(ImageView)mLinearView2.findViewById(R.id.imageSecondArrow);
                 final LinearLayout mLinearScrollThird=(LinearLayout)mLinearView2.findViewById(R.id.linear_scroll_third);
-
                 mLinearSecondArrow.setId(j);
 
-                mSubProduct = pProductArrayList.get(i).getmSubCategoryList().get(j);
+                mSubProduct = pProductArrayList.get(mMenuCtr).getmSubCategoryList().get(j);
 
                 Log.d(LOGTAG, "Sub Cat Id: "+mSubProduct.getpId());
                 Log.d(LOGTAG, "Sub Cat Name: "+mSubProduct.getpSubCatName());
 
                 thirdRowItemCount = pProductArrayList.get(i).getmSubCategoryList().get(j).getmItemListArray().size();
 
-                Log.d(LOGTAG, "Third Row Count: "+thirdRowItemCount);
-
+                //Log.d(LOGTAG, "Third Row Count: "+thirdRowItemCount);
                 //thirdRowItemCount = mSubProduct.getmItemListArray().size();
 
                 if(isSecondViewClick==false) {
                     mLinearScrollThird.setVisibility(View.GONE);
                     mImageArrowSecond.setBackgroundResource(R.drawable.circle_plus);
-
                 }
                 else {
                     mLinearScrollThird.setVisibility(View.VISIBLE);
@@ -1101,15 +1098,23 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                         int xm = mLinearSecondArrow.getId();
 
+                        Log.d(LOGTAG, "After click: "+xm);
+                        Log.d(LOGTAG, "After click: "+mMenuCtr);
+
                         mSubProduct2 = pProductArrayList.get(mMenuCtr).getmSubCategoryList().get(xm);
 
-                        Log.d(LOGTAG, "Second Item Id: "+mSubProduct2.getpId());
-                        Log.d(LOGTAG, "Second Item Inner Id: "+mSubProduct2.getpSubCatName());
+
+                        //mSubProduct2 = pProductArrayList.get(mMenuCtr).getmSubCategoryList().get(xm);
+                        //Log.d(LOGTAG, ": "+xm);
+                        //Log.d(LOGTAG, "Second Item Id: "+mSubProduct2.getpId());
+                        //Log.d(LOGTAG, "Second Item Inner Id: "+mSubProduct2.getpSubCatName());
+
 
                         isSecondViewClick = mSubProduct2.getOpened();
                         thirdRowItemCount = mSubProduct2.getmItemListArray().size();
+                        Log.d(LOGTAG, "A new sub menu clicked "+xm+" : "+isSecondViewClick+" "+thirdRowItemCount);
 
-                        //if(thirdRowItemCount > 0) {
+                        if(thirdRowItemCount > 0) {
 
                             if(isSecondViewClick == false) {
                                 mImageArrowSecond.setBackgroundResource(R.drawable.circle_minus);
@@ -1121,8 +1126,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 mSubProduct2.setOpened(false);
                             }
 
-                        //}
-                        //else {
+                        }
+                        else {
 
                             Fragment browseOfferFragment1 = new BrowseOfferFragment();
                             getSupportActionBar().setTitle(mSubProduct2.getpSubCatName());
@@ -1144,10 +1149,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                             browseOfferFragmentTransaction1.commit();
 
                             if(thirdRowItemCount == 0) {
-
                                 mDrawerLayout.closeDrawers();
                             }
-                        //}
+                        }
 
                         return false;
                     }
@@ -1156,9 +1160,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 final String catName = pProductArrayList.get(i).getmSubCategoryList().get(j).getpSubCatName();
                 mSubItemName.setText(catName);
-
-
-
 
                 if(thirdRowItemCount == 0)
                     mImageArrowSecond.setVisibility(View.INVISIBLE);
@@ -1221,11 +1222,13 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 mLinearScrollSecond.addView(mLinearView2);
                 nctr++;
+                pctr++;
 
             }
 
             mLinearCategoryListView.addView(mLinearView);
             nctr++;
+            pctr++;
         }
 
     }

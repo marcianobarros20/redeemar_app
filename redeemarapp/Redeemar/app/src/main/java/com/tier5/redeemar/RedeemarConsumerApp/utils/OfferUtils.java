@@ -34,8 +34,6 @@ public class OfferUtils {
 
     public static ArrayList<Offer> loadBrowseOffers(RequestQueue requestQueue, String userId, String lat, String lng, String sLat, String sLng, String catId) {
 
-        //Log.d(LOGTAG, "Self Lat: "+sLat);
-        //Log.d(LOGTAG, "Self Lon: "+sLng);
         Log.d(LOGTAG, "Self Cat: "+catId);
 
         /* TODO: Use of sCatId not used now */

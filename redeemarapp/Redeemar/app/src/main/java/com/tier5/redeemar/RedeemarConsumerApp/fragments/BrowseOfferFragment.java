@@ -22,6 +22,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -111,6 +112,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
     private Map<String, LatLng> locationItems;
+    private Toolbar toolbar;
 
     public BrowseOfferFragment() {
         // Required empty public constructor
@@ -123,6 +125,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         Bundle b = new Bundle();
         b.putSerializable("offers", param1);
         fragment.setArguments(b);
+
+
+
         return fragment;
     }
 
@@ -134,6 +139,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         Log.d(LOGTAG, "XXX Inside onCreateView");
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.browse_offers);
+
+
+
+
         activity = getActivity();
         activityCommunicator = (ActivityCommunicator) activity;
 
@@ -143,9 +152,36 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
 
+        if(sharedpref.getString(res.getString(R.string.spf_popup_action), null) != null) {
+            String popup = sharedpref.getString(res.getString(R.string.spf_popup_action), "0");
+
+            if(popup.equals("1")) {
+
+                if (toolbar != null) {
+                    ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+                    ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.offer_details);
+
+                    //setSupportActionBar(toolbar);
+                    //Your toolbar is now an action bar and you can use it like you always do, for example:
+                    ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+                    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // back button pressed
+                            getActivity().finish();
+                        }
+                    });
+
+                }
+
+            }
+
+        }
+
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
             user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
-            sharedpref.getString(res.getString(R.string.spf_first_name), "");
+            //sharedpref.getString(res.getString(R.string.spf_first_name), "");
         }
         mListOffers = new ArrayList<Offer>();
 
@@ -170,7 +206,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
             if(selfLat.equals(""))
                 selfLat = String.valueOf(latitude);
-
         }
 
 
@@ -817,17 +852,11 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             locAddress.setCoordinates(new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
 
 
-            Log.d(LOGTAG, "After User Loaded Lat is: "+tLat);
-            Log.d(LOGTAG, "After User Loaded Lon is: "+tLon);
+            //Log.d(LOGTAG, "After User Loaded Lat is: "+tLat);
+            //Log.d(LOGTAG, "After User Loaded Lon is: "+tLon);
 
             if(!la.equals("") && !tLat.equals("") && !tLon.equals("")) {
-                /*
-                latLngList.add(new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
-                locationItems.put(tLoc, new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
-                */
-
                 autoCompleteList.add(locAddress);
-
             }
         }
 

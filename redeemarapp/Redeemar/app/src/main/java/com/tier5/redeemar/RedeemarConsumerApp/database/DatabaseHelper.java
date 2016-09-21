@@ -227,7 +227,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Category> listCategories = new ArrayList<Category>();
 
         //String selectQuery = "SELECT * FROM " + TABLE_CATEGORIES + " WHERE "+KEY_PARENT_ID+" = "+pid+" order by "+KEY_CAT_NAME+"";
-        String selectQuery = "SELECT * FROM " + TABLE_CATEGORIES + " order by "+KEY_CAT_NAME+"";
+        String selectQuery = "SELECT * FROM " + TABLE_CATEGORIES + " WHERE "+KEY_CAT_STATUS+"=1 AND "+KEY_CAT_VISIBILITY+"=1 ORDER BY "+KEY_PARENT_ID+","+KEY_CAT_NAME;
 
         Log.d(LOGTAG, "SQL: "+selectQuery);
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -260,7 +260,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String selectQuery = "SELECT  COUNT("+KEY_ID+") AS counter FROM " + TABLE_CATEGORIES + " WHERE "+KEY_PARENT_ID+"="+id;
-        Log.d("DEBUG", "SQL: "+selectQuery);
+        Log.d("DEBUG", "SQL1: "+selectQuery);
         Cursor cursor = db.rawQuery(selectQuery, null);
 
 

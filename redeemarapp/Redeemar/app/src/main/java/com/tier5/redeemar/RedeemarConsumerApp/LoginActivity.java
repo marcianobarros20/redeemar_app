@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements
     private Button btnLogin;
     private LoginButton btnFBLogin;
     private SignInButton btnGoogleSignIn;
-    private String email="", password="", firstName = "", lastName = "";;
+    private String email="", password="", firstName = "", lastName = "";
     private ProgressDialog pd;
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;

@@ -150,6 +150,7 @@
     <string name="spf_category_name">spf_category_name</string>
     <string name="spf_campaign_id">spf_campaign_id</string>
     <string name="spf_redir_action">spf_redir_action</string>
+    <string name="spf_popup_action">spf_popup_action</string>
     <string name="spf_user_id">spf_user_id</string>
     <string name="spf_email">spf_email</string>
     <string name="spf_first_name">spf_first_name</string>

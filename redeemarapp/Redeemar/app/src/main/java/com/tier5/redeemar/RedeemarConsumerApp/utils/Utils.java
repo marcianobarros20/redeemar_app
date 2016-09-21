@@ -382,6 +382,24 @@ public class Utils {
         return (rad * 180.0 / Math.PI);
     }
 
+    public static void close(InputStream stream) {
+        if(stream != null) {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    public static void close(OutputStream stream) {
+        if(stream != null) {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

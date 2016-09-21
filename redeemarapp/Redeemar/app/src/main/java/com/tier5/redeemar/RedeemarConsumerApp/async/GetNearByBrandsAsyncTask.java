@@ -46,7 +46,7 @@ public class GetNearByBrandsAsyncTask extends AsyncTask<String, Void, ArrayList<
 
     public GetNearByBrandsAsyncTask(UsersLoadedListener myComponent){
         this.myComponent = myComponent;
-        Log.d(LOGTAG, "Inside GetNearByBrandsAsyncTask constructor: "+myComponent);
+        Log.d(LOGTAG, "Inside GetNearByBrandsAsyncTask constructor");
 
     }
 

@@ -69,7 +69,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
     private String mViewType;
     private Resources res;
     private String offerId, userId, offerImageFileName, LogoFileName;
-    Typeface myFont;
+    Typeface myFont, myFontBold;
 
 
     public BrowseOffersViewAdapter(Context context, String actName) {
@@ -128,6 +128,9 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         //view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item_thumb, parent, false);
 
         myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
+
+        myFontBold = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font_bold));
+
         return new SimpleViewHolder(view);
     }
 
@@ -172,14 +175,9 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         }*/
 
         if(!item.getLocation().equals("")) {
-            //Log.d(LOGTAG, "Browse Distance: "+item.getLocation());
+            Log.d(LOGTAG, "Browse Location: "+item.getLocation());
             address_distance = item.getLocation();
         }
-        else if(!item.getLocation().equals("")) {
-            //Log.d(LOGTAG, "Browse Distance: "+item.getLocation());
-            address_distance = item.getLocation();
-        }
-
 
 
         if(!item.getDistance().equalsIgnoreCase("")) {
@@ -228,9 +226,9 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             viewHolder.tVOnDemand.setVisibility(View.GONE);
         }
 
-        viewHolder.tvOfferDescription.setTypeface(myFont);
+        viewHolder.tvOfferDescription.setTypeface(myFontBold);
         viewHolder.tvRetailValue.setTypeface(myFont);
-        viewHolder.tvPayValue.setTypeface(myFont);
+        viewHolder.tvPayValue.setTypeface(myFontBold);
         viewHolder.tvDistance.setTypeface(myFont);
         viewHolder.tvDiscount.setTypeface(myFont);
 
@@ -240,15 +238,10 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         int valText = item.getValueText();
         Double discVal = item.getDiscount();
 
-        //Log.d(LOGTAG, "Retail Value: "+item.getRetailvalue());
-        //Log.d(LOGTAG, "Pay Value: "+item.getPayValue());
-        //Log.d(LOGTAG, "Value Calculate: "+valCalc);
 
         if(item.getRetailvalue() > 0 && item.getPayValue() > 0) {
             discount_text = Utils.calculateDiscount(item.getRetailvalue(), item.getPayValue(), valCalc);
-            //Log.d(LOGTAG, "My Discount Value: "+discount_text);
         }
-
 
 
         if(mViewType.equalsIgnoreCase("thumb"))
@@ -285,7 +278,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             if(valText == 3) {
                 //sb.append(cur_sym).append(discVal).append(" ").append(off);
-                sb.append(save).append(" ").append(perc_sym).append(discount_text);
+                sb.append(save).append(" ").append(discount_text).append(perc_sym);
 
             }
             else if(valText == 2) {

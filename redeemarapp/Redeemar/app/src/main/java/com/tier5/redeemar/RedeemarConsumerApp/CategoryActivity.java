@@ -110,7 +110,7 @@ public class CategoryActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                    Log.d(LOGTAG, "Category Level: "+catLevel);
+                    //Log.d(LOGTAG, "Category Level: "+catLevel);
 
                     // back button pressed
                     finish();

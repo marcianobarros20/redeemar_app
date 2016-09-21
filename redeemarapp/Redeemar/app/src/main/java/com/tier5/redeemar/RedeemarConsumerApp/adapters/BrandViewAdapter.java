@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,7 +26,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import java.util.ArrayList;
 
 
-public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.SimpleViewHolder> implements TaskCompleted {
+public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.SimpleViewHolder> implements AbsListView.OnScrollListener, TaskCompleted {
 
     private static final String LOGTAG = "BrandViewAdapter";
     private Context mContext;
@@ -125,6 +126,21 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
         // TODO
     }
 
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+
+
+    }
+
+    @Override
+    public void onScroll(AbsListView absListView, int firstVisible, int visibleCount, int totalCount) {
+        //firstvisible is your first visible item in the list
+        Log.d(LOGTAG, "First Visible "+firstVisible);
+        Log.d(LOGTAG, "Visible Count "+visibleCount);
+        Log.d(LOGTAG, "Total Count "+totalCount);
+    }
 
     //  ViewHolder Class
 

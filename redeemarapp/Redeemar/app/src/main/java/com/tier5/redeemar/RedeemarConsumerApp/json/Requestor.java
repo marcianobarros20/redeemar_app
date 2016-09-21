@@ -131,9 +131,7 @@ public class Requestor {
             data.put("selflat", selfLatitude);
             data.put("selflong", selfLongitude);
             data.put("radius", Constants.defaultRadius);
-
             data.put("user_id", userId);
-
 
             // Filter By Redeemar Id
             if(mType == 1) {
