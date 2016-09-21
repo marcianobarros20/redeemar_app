@@ -98,68 +98,74 @@
             android:background="@drawable/list_row_selector"
             android:padding="0dp">
 
-            <!-- Thumbnail Image -->
-            <com.android.volley.toolbox.NetworkImageView
-                android:id="@+id/thumbnail"
-                android:layout_width="160dp"
-                android:layout_height="120dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:layout_marginRight="6dp"
-                android:src="@drawable/icon_watermark"/>
+            <RelativeLayout
+                android:id="@+id/imagePanel"
+                android:layout_width="170dp"
+                android:layout_height="130dp"
+                android:background="@color/white"
+                android:paddingRight="8dp">
 
+                <!-- Thumbnail Image -->
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/thumbnail"
+                    android:layout_width="170dp"
+                    android:layout_height="130dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:layout_marginRight="6dp"
+                    android:src="@drawable/icon_watermark"/>
 
-            <com.android.volley.toolbox.NetworkImageView
-                android:id="@+id/logo_image"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:padding="2dp"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                android:maxWidth="140dp"
-                android:maxHeight="100dp" />
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/logo_image"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:padding="4dp"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:maxWidth="140dp"
+                    android:maxHeight="100dp" />
 
-            <TextView
-                android:id="@+id/on_demand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginBottom="20dp"
-                android:background="@color/violet_opac"
-                android:textColor="@color/white"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:textSize="12sp"
-                android:text="@string/on_demand"
-                android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/on_demand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="0dp"
+                    android:background="@color/violet_opac"
+                    android:textColor="@color/white"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:textSize="12sp"
+                    android:text="@string/on_demand"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
             <!-- Offer Title -->
             <TextView
                 android:id="@+id/offer_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/thumbnail"
-                android:layout_toRightOf="@+id/thumbnail"
+                android:layout_alignTop="@+id/imagePanel"
+                android:layout_toRightOf="@+id/imagePanel"
                 android:text="@string/offer_title"
                 android:lines="2"
-                android:paddingTop="8dp"
+                android:paddingTop="4dp"
                 android:paddingBottom="12dp"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/darkGray"/>
+                android:textSize="19sp"
+                android:textColor="@color/darkGray" />
 
             <LinearLayout
                 android:id="@+id/offer_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/thumbnail"
+                android:layout_toRightOf="@+id/imagePanel"
                 android:layout_below="@id/offer_description"
                 android:paddingBottom="10dp"
                 android:layout_alignParentBottom="true"
@@ -178,14 +184,14 @@
                             android:layout_gravity="center_vertical"
                             android:orientation="vertical">
 
-
                             <TextView
                                 android:id="@+id/discount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="left"
                                 android:text="Discount"
-                                style="@style/GreenSmallText" />
+                                android:textSize="18sp"
+                                android:textColor="@color/green_text" />
 
                         </LinearLayout>
 
@@ -205,7 +211,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Retail value"
                                 android:gravity="center_horizontal"
-                                android:textSize="@dimen/text_title_med"
+                                android:textSize="17sp"
                                 android:textStyle="bold"
                                 android:textColor="@color/gray" />
 
@@ -218,7 +224,7 @@
                                 android:gravity="center_horizontal"
                                 android:paddingBottom="4dp"
                                 android:textStyle="bold"
-                                android:textSize="@dimen/button_title_larger"
+                                android:textSize="20sp"
                                 android:textColor="@color/green_text" />
 
                         </LinearLayout>
@@ -244,7 +250,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Location"
-                            android:textSize="@dimen/menu_title_small"
+                            android:textSize="11sp"
                             android:textColor="@color/gray"
                             android:layout_gravity="left|center_vertical"/>
 

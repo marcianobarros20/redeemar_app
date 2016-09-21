@@ -44,8 +44,6 @@
             android:background="@drawable/list_row_selector"
             android:padding="0dp">
 
-
-
                 <com.android.volley.toolbox.NetworkImageView
                     android:id="@+id/thumbnail"
                     android:layout_width="match_parent"
@@ -59,7 +57,7 @@
                     android:id="@+id/logo_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
                     android:padding="4dp"
                     android:scaleType="fitCenter"
@@ -68,6 +66,10 @@
                     android:maxHeight="80dp"/>
 
         </RelativeLayout>
+
+
+
+
 
         <TextView
             android:id="@+id/address"
@@ -79,6 +81,7 @@
             android:text="@string/address"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:gravity="center"
+            android:textSize="20sp"
             style="@style/DarkBgTitle" />
 
 
@@ -91,9 +94,9 @@
             android:layout_marginLeft="@dimen/content_padding_small"
             android:layout_marginRight="@dimen/content_padding_small"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:textSize="26sp"
             android:gravity="center"
             style="@style/GreenLargerText" />
-
 
         <LinearLayout
             android:id="@+id/offer_ratings"
@@ -169,6 +172,7 @@
             android:layout_marginLeft="@dimen/content_padding"
             android:layout_marginRight="@dimen/content_padding"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:textSize="17sp"
             android:gravity="center"
             style="@style/MedText" />
 
@@ -232,6 +236,7 @@
                         android:layout_margin="@dimen/activity_vertical_margin_small"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
                         android:text=""
+                        android:textSize="26sp"
                         android:gravity="center"
                         style="@style/GreenXLargeText" />
 
@@ -242,6 +247,7 @@
                         android:layout_margin="@dimen/activity_vertical_margin_small"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
                         android:text=""
+                        android:textSize="26sp"
                         android:gravity="center"
                         style="@style/GreenXLargeText" />
 
@@ -252,13 +258,14 @@
                         android:layout_margin="@dimen/activity_vertical_margin_small"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
                         android:text=""
+                        android:textSize="26sp"
                         android:gravity="center"
                         style="@style/GreenXLargeText" />
-
 
                 </TableRow>
 
             </TableLayout>
+
         </LinearLayout>
 
 
@@ -269,7 +276,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:layout_margin="10dp"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="6dp"
             android:orientation="horizontal">
 
             <Button
@@ -326,7 +334,7 @@
             android:gravity="center"
             android:background="@color/green_header"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="wrap_content"

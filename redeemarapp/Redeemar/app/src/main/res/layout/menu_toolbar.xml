@@ -74,7 +74,8 @@
             android:textSize="14sp"
             android:drawableRight="@drawable/expand"
             android:padding="8dp"
-            android:hint="Keywords" />
+            android:hint="Keywords"
+            android:visibility="gone"/>
 
 
 

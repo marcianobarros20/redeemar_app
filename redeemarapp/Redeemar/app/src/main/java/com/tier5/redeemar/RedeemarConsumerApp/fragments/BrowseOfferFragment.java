@@ -126,8 +126,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         b.putSerializable("offers", param1);
         fragment.setArguments(b);
 
-
-
         return fragment;
     }
 
@@ -140,13 +138,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         Log.d(LOGTAG, "XXX Inside onCreateView");
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.browse_offers);
 
-
-
-
         activity = getActivity();
         activityCommunicator = (ActivityCommunicator) activity;
-
-
 
         res = getResources();
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
@@ -195,7 +188,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             campaignId = args1.getString(getString(R.string.ext_campaign_id), "");
             categoryId = args1.getString(getString(R.string.ext_category_id), "");
 
-
             categoryName = args1.getString(getString(R.string.ext_category_name), "");
             viewType = args1.getString(getString(R.string.ext_view_type), "");
 
@@ -209,7 +201,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         }
 
 
-
         if(redirectTo.equals("OnDemand"))
             ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(R.string.daily_deals);
 
@@ -218,6 +209,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_offers, container, false);
+
         layout.findViewById(R.id.mainOfferListLayout).requestFocus();
         imListView = (ImageView) layout.findViewById(R.id.menu_list_view);
         imMapView = (ImageView) layout.findViewById(R.id.menu_map_view);
@@ -232,8 +224,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         if(imListView.getVisibility() == View.VISIBLE) {
             Log.d(LOGTAG, "Inside ListView");
 
-            editor.putString(res.getString(R.string.spf_view_type), "list");
-            editor.commit();
+            //editor.putString(res.getString(R.string.spf_view_type), "list");
+            //editor.commit();
 
 
             imListView.setVisibility(View.GONE);
@@ -385,6 +377,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
+                Log.d(LOGTAG, "Backspace");
                 if(keyCode == KeyEvent.KEYCODE_DEL) {
                     autoComplete.setText("");
                 }
@@ -400,8 +393,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
                     viewType = sharedpref.getString(res.getString(R.string.spf_view_type), null);
 
-
-
                     if(viewType.equals("map")) {
                         editor.putString(res.getString(R.string.spf_view_type), "list"); // Set view type to list
                         editor.commit();
@@ -414,10 +405,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                         editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Set view type to list
                         editor.commit();
                     }
-
-
                 }
-
 
                 if(viewType.equals("map")) {
                     MapViewFragment fragment3 = new MapViewFragment();

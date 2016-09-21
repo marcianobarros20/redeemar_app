@@ -84,7 +84,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.main_recycler);
 
-
         cd = new SuperConnectionDetector(getActivity());
         isInternetPresent = cd.isConnectingToInternet();
 
@@ -106,29 +105,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
         }
 
-
-
-        /*adapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
-
-            @Override
-            public void onListItemExpanded(int position) {
-                Brand expandedRecipe = recipes.get(position);
-
-                String toastMsg = "This is a test message";
-                Toast.makeText(getActivity(), toastMsg, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onListItemCollapsed(int position) {
-                Brand collapsedRecipe = recipes.get(position);
-
-                String toastMsg = getResources().getString(R.string.collapsed, "Hello");
-                Toast.makeText(getActivity(),
-                        toastMsg,
-                        Toast.LENGTH_SHORT)
-                        .show();
-            }
-        });*/
 
         //mRecyclerOffers.setAdapter(adapter);
         //adapter = new BankedOfferAdapter(getActivity());

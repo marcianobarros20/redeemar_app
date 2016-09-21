@@ -127,9 +127,9 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         //view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item_thumb, parent, false);
 
-        myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
+        //myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
 
-        myFontBold = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font_bold));
+        //myFontBold = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font_bold));
 
         return new SimpleViewHolder(view);
     }
@@ -179,7 +179,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             address_distance = item.getLocation();
         }
 
-
         if(!item.getDistance().equalsIgnoreCase("")) {
             //Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
             if(address_distance.equalsIgnoreCase("")) {
@@ -226,11 +225,11 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             viewHolder.tVOnDemand.setVisibility(View.GONE);
         }
 
-        viewHolder.tvOfferDescription.setTypeface(myFontBold);
+        /*viewHolder.tvOfferDescription.setTypeface(myFontBold);
         viewHolder.tvRetailValue.setTypeface(myFont);
         viewHolder.tvPayValue.setTypeface(myFontBold);
         viewHolder.tvDistance.setTypeface(myFont);
-        viewHolder.tvDiscount.setTypeface(myFont);
+        viewHolder.tvDiscount.setTypeface(myFont);*/
 
         viewHolder.tvRetailValue.setPaintFlags(viewHolder.tvRetailValue.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
@@ -515,11 +514,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
                     }
                     mItemManger.closeAllItems();
-
-
-
                     //Toast.makeText(view.getContext(), "Offer passed!", Toast.LENGTH_SHORT).show();
-
                 }
 
 

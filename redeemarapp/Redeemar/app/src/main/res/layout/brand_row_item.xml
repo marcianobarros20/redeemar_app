@@ -1,48 +1,48 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/list_row_selector"
-    android:gravity="center"
-    android:padding="4dp">
-
-
-    <LinearLayout
+    <TableLayout
+        android:id="@+id/tabla_cuerpo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:weightSum="1"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/thumbnail"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_weight="0.5"
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
             android:gravity="center"
-            android:scaleType="fitStart"
-            android:src="@drawable/icon_watermark"/>
+            android:layout_gravity="center"
+            android:weightSum="1">
 
 
-        <!-- Brand Name -->
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/thumbnailBrandPic"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_weight="0.5"
-            android:gravity="top"
-            android:scaleType="centerCrop"
-            android:src="@drawable/icon_watermark" />
-
-    </LinearLayout>
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_weight="0.5"
+                android:src="@drawable/icon_watermark"/>
 
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/green_header"/>
+            <!-- Brand Name -->
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/thumbnailBrandPic"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_weight="0.5"
+                android:scaleType="centerCrop"
+                android:src="@drawable/icon_watermark" />
 
 
-</RelativeLayout>
 
+        </TableRow>
+
+
+    </TableLayout>
+
+
+</LinearLayout>

@@ -158,11 +158,11 @@ public class MyOffersViewAdapter extends RecyclerSwipeAdapter<MyOffersViewAdapte
             viewHolder.tVOnDemand.setVisibility(View.GONE);
         }
 
-        viewHolder.tvOfferDescription.setTypeface(myFont);
+        /*viewHolder.tvOfferDescription.setTypeface(myFont);
         viewHolder.tvRetailValue.setTypeface(myFont);
         viewHolder.tvPayValue.setTypeface(myFont);
         viewHolder.tvDistance.setTypeface(myFont);
-        viewHolder.tvDiscount.setTypeface(myFont);
+        viewHolder.tvDiscount.setTypeface(myFont);*/
 
         viewHolder.tvRetailValue.setPaintFlags(viewHolder.tvRetailValue.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 

@@ -18,6 +18,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.tier5.redeemar.RedeemarConsumerApp.async.FetchLocationAsyncTask;
@@ -110,7 +111,18 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
     @Override
     public void onCategoriesLoaded(ArrayList<Category> listCategories) {
 
-        Log.d(LOGTAG, "Items inside Category List: "+listCategories.size());
+        //Log.d(LOGTAG, "Items inside Category List: "+listCategories.size());
+
+
+        // return 0.75 if it's LDPI
+        // return 1.0 if it's MDPI
+        // return 1.5 if it's HDPI
+        // return 2.0 if it's XHDPI
+        // return 3.0 if it's XXHDPI
+        // return 4.0 if it's XXXHDPI
+
+        Log.d(LOGTAG, "Screen Density: "+getResources().getDisplayMetrics().density);
+        Toast.makeText(SplashScreenActivity.this, "Screen Density: "+getResources().getDisplayMetrics().density, Toast.LENGTH_LONG).show();
 
         sharedpref = getApplicationContext().getSharedPreferences(getString(R.string.spf_key), 0); // 0 - for private mode
 

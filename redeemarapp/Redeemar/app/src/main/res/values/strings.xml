@@ -35,6 +35,7 @@
     <string name="title_messages">Messages</string>
     <string name="app_description">Redeemar Sample Applications</string>
     <string name="default_font">MyriadProRegular.otf</string>
+    <string name="default_font_bold">MyriadProBold.otf</string>
     <string name="facebook_app_id">1628334827492894</string>
     <string name="button_start">Start Scanning</string>
     <string name="activities_list_title_string">Redeemar Samples</string>
@@ -199,7 +200,7 @@
     <string name="miles">Miles</string>
     <string name="percentage_symbol">%</string>
     <string name="off">OFF</string>
-    <string name="save">Save</string>
+    <string name="save">SAVE</string>
     <string name="discount">Discount</string>
     <string name="offers_in">Offers</string>
     <string name="no_records">No record found.</string>
@@ -234,8 +235,8 @@
     <string name="what_you_get">What you get</string>
     <string name="bank">Bank Offer</string>
     <string name="pass">Pass Offer</string>
-    <string name="pay">Pay</string>
-    <string name="value">Value</string>
+    <string name="pay">PAY</string>
+    <string name="value">VALUE</string>
     <string name="redeem">REDEEM</string>
     <string name="countdown">7 days</string>
     <string name="address">Address</string>
@@ -260,7 +261,7 @@
     <string name="validity">Valid within</string>
     <string name="Search">Search</string>
     <string name="list_view">List View</string>
-    <string name="thumb_view">Thumbnail View</string>
+    <string name="thumb_view">Ad View</string>
     <string name="rate_app">Please rate your experience with the app</string>
     <string name="enter_feedback">Enter your feedback</string>
     <string name="send_feedback">Send Feedback</string>

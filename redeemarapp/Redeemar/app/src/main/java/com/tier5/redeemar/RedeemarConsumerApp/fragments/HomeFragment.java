@@ -426,6 +426,8 @@ public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapR
                 return false;
             }
         });
+
+
         mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MarkerItem>() {
             @Override
             public boolean onClusterItemClick(MarkerItem item) {

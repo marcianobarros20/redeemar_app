@@ -70,7 +70,7 @@ public class BrandViewHolder extends ParentViewHolder {
 
             //String LogoImageUrlVal = UrlEndpoints.serverBaseUrl + brand.getBrandLogo();
 
-            mImageLoader.get(brand.getBrandLogo(), ImageLoader.getImageListener(thumbnailBrand, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
+            mImageLoader.get(brand.getBrandLogo(), ImageLoader.getImageListener(thumbnailBrand, R.drawable.icon_watermark, 0));
             thumbnailBrand.setImageUrl(brandUrl, mImageLoader);
             thumbnailBrand.setAdjustViewBounds(false);
 

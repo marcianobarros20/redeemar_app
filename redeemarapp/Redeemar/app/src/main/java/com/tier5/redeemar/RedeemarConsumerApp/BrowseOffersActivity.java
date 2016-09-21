@@ -787,6 +787,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         int id = item.getItemId();
 
+        Log.d(LOGTAG, "Inside Menu BrowseOffer "+id+" "+R.id.action_view_thumb);
+
+
 
         switch (id) {
 
@@ -800,7 +803,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 //overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
                 //startActivity(intent);
-                Log.d(LOGTAG, "Inside CategoryActivity");
                 return true;
 
 

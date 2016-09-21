@@ -6,7 +6,7 @@ package com.tier5.redeemar.RedeemarConsumerApp.utils;
 public class UrlEndpoints {
 
 
-    public static final String serverBaseUrl = "http://dev.redeemar.com/";
+    public static final String serverBaseUrl = "http://beta.redeemar.com/";
 
     public static final String basePathURL             = serverBaseUrl+"admin/uploads/original/";
     public static final String URL_ALL_OFFERS          =  serverBaseUrl+"admin/public/index.php/bridge/alloffers";
@@ -22,11 +22,8 @@ public class UrlEndpoints {
     public static final String URL_SEARCH_SHORT        =  serverBaseUrl+"admin/public/index.php/bridge/searchshort";
     public static final String URL_SEARCH_FULL         =  serverBaseUrl+"admin/public/index.php/bridge/searchfull";
     public static final String URL_SEARCH_LOCATION     =  serverBaseUrl+"admin/public/index.php/bridge/locations";
-
     public static final String bankOffersURL           = serverBaseUrl+"admin/public/index.php/bridge/bankoffer";
     public static final String passOffersURL           = serverBaseUrl+"admin/public/index.php/bridge/passoffer";
-
-
     public static final String baseLogoLargeURL        = serverBaseUrl+"filemanager/userfiles/large/";
     public static final String baseLogoMediumURL       = serverBaseUrl+"filemanager/userfiles/medium/";
     public static final String baseLogoSmallURL        = serverBaseUrl+"filemanager/userfiles/small/";

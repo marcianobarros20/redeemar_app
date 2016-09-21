@@ -191,7 +191,7 @@ public class BankedViewHolder extends ChildViewHolder {
         // Instantiate the RequestQueue.
         if(!imageUrlVal.equalsIgnoreCase("")) {
             imageUrlVal = UrlEndpoints.serverBaseUrl + imageUrlVal;
-            mImageLoader.get(imageUrlVal, ImageLoader.getImageListener(tvThumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
+            mImageLoader.get(imageUrlVal, ImageLoader.getImageListener(tvThumbnail, R.drawable.icon_watermark, 0));
             tvThumbnail.setImageUrl(imageUrlVal, mImageLoader);
         }
 
