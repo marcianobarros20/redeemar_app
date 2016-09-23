@@ -48,8 +48,6 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
     @Override
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.brand_row_item, parent, false);
-
-
         myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
         return new SimpleViewHolder(view);
     }
@@ -59,7 +57,6 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
         final User item = userList.get(position);
         viewHolder.tvBrandName.setText(item.getCompanyName());
         viewHolder.tvAddress.setText(item.getAddress());
-
         viewHolder.tvBrandName.setTypeface(myFont);
         viewHolder.tvAddress.setTypeface(myFont);
         viewHolder.tvNumOffers.setTypeface(myFont);

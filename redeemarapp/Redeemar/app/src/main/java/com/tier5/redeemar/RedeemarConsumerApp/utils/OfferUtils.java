@@ -10,6 +10,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.json.Parser;
 import com.tier5.redeemar.RedeemarConsumerApp.json.Requestor;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 
 import org.json.JSONObject;
@@ -51,6 +52,34 @@ public class OfferUtils {
         return listOffers;
     }
 
+    public static ArrayList<Offer> loadBrowseOffers(RequestQueue requestQueue, String userId, String lat, String lng, String sLat, String sLng, String catId, String keyword) {
+
+        Log.d(LOGTAG, "Self Cat: "+catId);
+
+        /* TODO: Use of sCatId not used now */
+        JSONObject response = null;
+
+        // Currently catLevel value is not used in web service
+        if(!catId.equals("")) {
+            if(!keyword.equals(""))
+                response = Requestor.requestSearchOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrowseOffers(30), userId, catId, "0", lat, lng, sLat, sLng, keyword);
+            else
+                response = Requestor.requestOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrowseOffers(30), userId, catId, "0", lat, lng, sLat, sLng);
+        }
+        else {
+            if(!keyword.equals(""))
+                response = Requestor.requestSearchOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "", "0", lat, lng, sLat, sLng, keyword);
+            else
+                response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "", "0", lat, lng, sLat, sLng);
+        }
+
+
+        ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
+
+        Log.d(LOGTAG, "Inside loadBrowseOffers :"+listOffers.size());
+        return listOffers;
+    }
+
 
     public static ArrayList<Offer> loadBrandOffers(RequestQueue requestQueue, String redeemarId, String userId, String lat, String lng) {
 
@@ -70,7 +99,7 @@ public class OfferUtils {
     }
 
 
-    public static ArrayList<Offer> loadCategoryOffers(RequestQueue requestQueue, String catId, String catLevel, String userId, String lat, String lng, String selfLat, String selfLon) {
+    public static ArrayList<Offer> loadCategoryOffers(RequestQueue requestQueue, String catId, String catLevel, String userId, String lat, String lng, String selfLat, String selfLon, String keyword) {
 
         JSONObject response = Requestor.requestOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrandOffers(30), userId, catId, catLevel,  lat, lng, selfLat, selfLon);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
@@ -129,21 +158,13 @@ public class OfferUtils {
     }
 
 
-    public static String loadSearchFull(RequestQueue requestQueue, String location, String keyword) {
+    public static ArrayList<Search> loadSearchFull(RequestQueue requestQueue, String keyword) {
 
-        JSONObject response = Requestor.requestSearchFullJSON(requestQueue, Endpoints.getValidatePasscode(), location, keyword);
-        String res = Parser.parseSearchFullJSON(response);
-        Log.d(LOGTAG, "Inside loadSearchFull :"+res);
-        return res;
+        JSONObject response = Requestor.requestSearchFullJSON(requestQueue, Endpoints.getSearchFull(), keyword);
+        ArrayList<Search> listSearch = Parser.parseSearchFullJSON(response);
+        return listSearch;
     }
 
-    public static String loadSearchShort(RequestQueue requestQueue, String location, String keyword) {
-
-        JSONObject response = Requestor.requestSearchFullJSON(requestQueue, Endpoints.getValidatePasscode(), location, keyword);
-        String res = Parser.parseSearchFullJSON(response);
-        Log.d(LOGTAG, "Inside loadSearchFull :"+res);
-        return res;
-    }
     public static ArrayList<User> loadSearchLocation(RequestQueue requestQueue, String location) {
 
         JSONObject response = Requestor.requestSearchLocationJSON(requestQueue, Endpoints.getLocations(), location);

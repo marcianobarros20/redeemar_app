@@ -22,10 +22,13 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
 import com.tier5.redeemar.RedeemarConsumerApp.LoginActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.OfferDetailsActivity;
+import com.tier5.redeemar.RedeemarConsumerApp.OfferListActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
+import com.tier5.redeemar.RedeemarConsumerApp.SearchResultActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ImageDownloadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
@@ -54,33 +57,34 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
 
     private static final String LOGTAG = "SearchViewAdapter";
     private Context mContext;
-    private ArrayList<User> addressList;
-    private Bitmap logoBmp;
-    private SharedPreferences sharedpref;
+    private ArrayList<Search> keywordList;
     private Resources res;
-    Typeface myFont;
+    //Typeface myFont;
+
+    private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
+
 
 
     public SearchViewAdapter(Context context) {
-        Log.d(LOGTAG, "Test 1");
         this.mContext = context;
         res = context.getResources();
-        sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
     }
 
-    public SearchViewAdapter(Context context, ArrayList<User> objects) {
-        Log.d(LOGTAG, "Test 1");
+    public SearchViewAdapter(Context context, ArrayList<Search> objects) {
         this.mContext = context;
-        this.addressList = objects;
+        this.keywordList = objects;
         res = context.getResources();
-        sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+        sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0);
+
+        editor = sharedpref.edit();
+
     }
 
-    public void setAddresses(ArrayList<User> listAddress) {
+    public void setKeyword(ArrayList<Search> listKeyword) {
 
-        Log.d(LOGTAG, "Test 2");
-        this.addressList = listAddress;
-        Log.d(LOGTAG, "Address count: "+listAddress.size());
+        this.keywordList = listKeyword;
+        Log.d(LOGTAG, "Keyword count: "+listKeyword.size());
         //update the adapter to reflect the new set of Offers
         notifyDataSetChanged();
     }
@@ -89,33 +93,52 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d(LOGTAG, "Test 3");
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         //View view = inflater.inflate(R.layout.search_row, parent, false);
         View view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.search_row, parent, false);
-
-
-        myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
+        //myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(SearchViewAdapter.ViewHolder holder, int position) {
-        Log.d(LOGTAG, "Test 4");
-        final User item = addressList.get(position);
+        final Search item = keywordList.get(position);
 
-        Log.d(LOGTAG, "Hello "+item.getCity());
-        holder.tvTitle.setTypeface(myFont);
-        holder.tvDescription.setTypeface(myFont);
-        holder.tvTitle.setText(item.getCity());
-        holder.tvDescription.setText(item.getState());
+        Log.d(LOGTAG, "Hello "+item.getCategoryName());
+        //holder.tvTitle.setTypeface(myFont);
+        //holder.tvDescription.setTypeface(myFont);
+        holder.tvTitle.setText(item.getDescription()+" in "+item.getCategoryName());
+        holder.tvDescription.setText("");
+
+        holder.tvTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String id = item.getCategoryId();
+                Intent intent = new Intent(v.getContext(), BrowseOffersActivity.class);
+
+                editor.putString(res.getString(R.string.spf_redir_action), "CategoryOffers");
+                editor.putString(res.getString(R.string.spf_search_keyword), item.getDescription());
+                editor.putString(res.getString(R.string.spf_category_name), item.getCategoryName());
+                editor.putString(res.getString(R.string.spf_category_id), id);
+                editor.commit();
+
+                intent.putExtra(v.getContext().getString(R.string.ext_redir_to), "CategoryOffers");
+                /*intent.putExtra(v.getContext().getString(R.string.spf_search_keyword), item.getDescription());
+                intent.putExtra(v.getContext().getString(R.string.spf_category_name), item.getCategoryName());
+                intent.putExtra(v.getContext().getString(R.string.spf_category_id), id);*/
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                v.getContext().startActivity(intent);
+
+            }
+        });
 
     }
 
 
     @Override
     public int getItemCount() {
-        return addressList.size();
+        return keywordList.size();
     }
 
 
@@ -126,11 +149,8 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
 
         public ViewHolder(View itemView) {
             super(itemView);
-
             tvTitle = (TextView) itemView.findViewById(R.id.title);
             tvDescription = (TextView) itemView.findViewById(R.id.description);
-
-
         }
     }
 

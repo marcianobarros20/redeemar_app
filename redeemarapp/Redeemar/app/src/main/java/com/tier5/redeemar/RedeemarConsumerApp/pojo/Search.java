@@ -5,25 +5,33 @@ import java.util.Date;
 
 public class Search implements Serializable {
 
-    private String  resDescription, resCategory;
+    private String  description, categoryId, categoryName;
 
     public Search() {
 
     }
 
-    public String getResDescription() {
-        return resDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setResDescription(String resDescription) {
-        this.resDescription = resDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getResCategory() {
-        return resCategory;
+    public String getCategoryId() {
+        return categoryId;
     }
 
-    public void setResCategory(String resCategory) {
-        this.resCategory = resCategory;
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

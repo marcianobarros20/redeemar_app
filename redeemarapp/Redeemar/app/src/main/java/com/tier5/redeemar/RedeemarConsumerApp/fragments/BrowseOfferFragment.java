@@ -96,7 +96,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     //private FragmentActivity listener;
     private List<Offer> mModels;
     private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list", location = "", categoryName = "", locKeyword = "",
-            selfLat = "", selfLon = "";
+            selfLat = "", selfLon = "", keyword = "", catId = "", catName = "";;
     private static final int VERTICAL_ITEM_SPACE = 48;
     Activity activity;
     private ActivityCommunicator activityCommunicator;
@@ -172,14 +172,14 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         }
 
-        if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
-            user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
-            //sharedpref.getString(res.getString(R.string.spf_first_name), "");
-        }
+
+
         mListOffers = new ArrayList<Offer>();
 
         setHasOptionsMenu(true);
         Bundle args1 = getArguments();
+
+        Log.d(LOGTAG, "Size: "+args1.size());
 
         if(args1 != null && args1.size() > 0) {
 
@@ -191,7 +191,38 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             categoryName = args1.getString(getString(R.string.ext_category_name), "");
             viewType = args1.getString(getString(R.string.ext_view_type), "");
 
+            Log.d(LOGTAG, "Category Name: "+categoryName);
+
         }
+
+
+        if (sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
+            categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "0");
+            Log.d(LOGTAG, "Search Cat Id: " + categoryId);
+
+        }
+        if (sharedpref.getString(res.getString(R.string.spf_category_name), null) != null) {
+            categoryName = sharedpref.getString(res.getString(R.string.spf_category_name), "");
+        }
+
+
+        if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
+            user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
+            //sharedpref.getString(res.getString(R.string.spf_first_name), "");
+        }
+
+
+        if (sharedpref.getString(res.getString(R.string.spf_search_keyword), null) != null) {
+            keyword = sharedpref.getString(res.getString(R.string.spf_search_keyword), "");
+            Log.d(LOGTAG, "Search Keyword: " + keyword);
+        }
+
+
+        if (sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
+            redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
+        }
+
+
 
         if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
             latitude = Double.parseDouble(sharedpref.getString(res.getString(R.string.spf_last_lat), null));
@@ -535,7 +566,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             }*/
 
             if(isInternetPresent) {
-                Log.d(LOGTAG, "Redirect to: "+redirectTo);
+                Log.d(LOGTAG, "My Redirect to: "+redirectTo);
 
                 if (redirectTo.equals("BrandOffers") && !redeemarId.equals("")) {
                     Log.d(LOGTAG, "Inside Brand Offers");
@@ -543,8 +574,13 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 }
                 else if (redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
                     new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
-                else if (redirectTo.equals("CategoryOffers") && !categoryId.equals(""))
-                    new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId);
+                else if (redirectTo.equals("CategoryOffers") && !categoryId.equals("")) {
+                    if(!keyword.equals(""))
+                        new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId, keyword);
+                    else
+                        new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId);
+
+                }
                 else if (redirectTo.equals("OnDemand"))
                     new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else

@@ -92,7 +92,7 @@ public class Endpoints {
     }
 
 
-    public static String getFullShort() {
+    public static String getSearchFull() {
 
         return UrlEndpoints.URL_SEARCH_FULL
                 + UrlEndpoints.URL_CHAR_QUESTION;

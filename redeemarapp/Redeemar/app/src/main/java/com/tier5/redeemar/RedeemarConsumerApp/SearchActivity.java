@@ -25,22 +25,23 @@ import com.tier5.redeemar.RedeemarConsumerApp.adapters.SearchViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.async.SearchFullAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.SearchLocationAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.SearchLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SearchActivity extends AppCompatActivity implements UsersLoadedListener, TaskCompleted {
+public class SearchActivity extends AppCompatActivity implements SearchLoadedListener {
 
     private static final String LOGTAG = "Search";
 
     //private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvPayValue, tvDiscount, tvRetailValue, tvExpires;
-    private EditText txtLocation, txtKeyword;
-    private Button btnSearch;
+    private EditText txtLocation, txtKeyword, txtSearch;
     private SharedPreferences sharedpref;
     private RecyclerView mRecyclerView;
-    private ArrayList<User> mListAddr;
+    private ArrayList<Search> mListAddr;
     private SearchViewAdapter mAdapter;
     private Toolbar toolbar;
 
@@ -48,7 +49,7 @@ public class SearchActivity extends AppCompatActivity implements UsersLoadedList
     private AlertDialog alertDialog;
     private ProgressDialog pd;
 
-    String location = "", keyword = "";
+    String keyword = "";
     Typeface myFont;
 
 
@@ -59,15 +60,15 @@ public class SearchActivity extends AppCompatActivity implements UsersLoadedList
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
 
-        txtLocation = (EditText) findViewById(R.id.location);
-        txtKeyword = (EditText) findViewById(R.id.keyword);
+
+        txtSearch = (EditText) findViewById(R.id.search_box);
+
+
         mRecyclerView = (RecyclerView) findViewById(R.id.search_recycler_view);
 
-        mListAddr = new ArrayList<>();
+        mListAddr = new ArrayList<Search>();
 
-        mAdapter = new SearchViewAdapter(this);
-        mAdapter.setAddresses(mListAddr);
-        //mRecyclerView.setAdapter(mAdapter);
+        mAdapter = new SearchViewAdapter(this, mListAddr);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -75,13 +76,16 @@ public class SearchActivity extends AppCompatActivity implements UsersLoadedList
         mRecyclerView.setAdapter( mAdapter );
 
 
-        btnSearch = (Button) findViewById(R.id.btnSearch);
 
 
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.search);
+
+            EditText searchBox = (EditText) findViewById(R.id.search_text);
+            //searchBox.setKeyListener(null);
+            //searchBox.setEnabled(false);
 
             //setSupportActionBar(toolbar);
             //Your toolbar is now an action bar and you can use it like you always do, for example:
@@ -99,7 +103,7 @@ public class SearchActivity extends AppCompatActivity implements UsersLoadedList
 
 
 
-        txtLocation.addTextChangedListener(
+        txtSearch.addTextChangedListener(
                 new TextWatcher() {
                     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
                     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -115,10 +119,12 @@ public class SearchActivity extends AppCompatActivity implements UsersLoadedList
                                 new TimerTask() {
                                     @Override
                                     public void run() {
+
+                                        keyword = txtSearch.getText().toString();
                                         // TODO: do what you need here (refresh list)
                                         // you will probably need to use runOnUiThread(Runnable action) for some specific actions
-                                        Log.d(LOGTAG, "Calling the async task to load after 2 seconds "+location);
-                                        callSearchLocationTask();
+                                        Log.d(LOGTAG, "Calling the async task to load after 2 seconds "+keyword);
+                                        callSearchKeywordTask();
                                     }
                                 },
                                 DELAY
@@ -127,82 +133,15 @@ public class SearchActivity extends AppCompatActivity implements UsersLoadedList
                 }
         );
 
-
-
-
-
-
-
-
-        btnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Resources res = view.getResources();
-                sharedpref = view.getContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-                Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
-
-                boolean flag = true;
-                int errMsg = 0;
-
-
-                location = txtLocation.getText().toString();
-                keyword = txtKeyword.getText().toString();
-
-                if(location.equals("") && keyword.equals("")) {
-
-                    flag = false;
-                    errMsg = R.string.enter_location_or_keyword;
-                    //txtLocation.requestFocus();
-
-                    builder = new AlertDialog.Builder(getApplicationContext());//Context parameter
-                    builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //do stuff
-                        }
-                    });
-                    builder.setMessage(getString(errMsg));
-                    alertDialog = builder.create();
-
-                    alertDialog.setTitle(getString(R.string.alert_title));
-                    alertDialog.setIcon(R.drawable.icon_cross);
-                    alertDialog.show();
-                }
-
-
-                else {
-
-                    callSearchFullTask();
-//                    pd = new ProgressDialog(getApplicationContext());
-//                    pd.setMessage(getString(R.string.sending_data));
-//                    pd.show();
-
-
-
-                }
-            }
-        });
-
     }
 
-    private void callSearchFullTask() {
+    private void callSearchKeywordTask() {
 
+        keyword = txtSearch.getText().toString();
 
-        location = txtLocation.getText().toString();
-        keyword = txtKeyword.getText().toString();
-
-        if(!location.equals("") || !keyword.equals(""))
-            new SearchFullAsyncTask(this, getApplicationContext()).execute(location, keyword);
+        if(!keyword.equals(""))
+            new SearchFullAsyncTask(this, getApplicationContext()).execute(keyword);
     }
-
-    private void callSearchLocationTask() {
-
-        location = txtLocation.getText().toString();
-        if(!location.equals(""))
-            new SearchLocationAsyncTask(this).execute(location);
-    }
-
 
 
 
@@ -235,21 +174,17 @@ public class SearchActivity extends AppCompatActivity implements UsersLoadedList
     }
 
 
+
     @Override
-    public void onUsersLoaded(ArrayList<User> listAddresses) {
+    public void onSearchLoaded(ArrayList<Search> listKeywords) {
 
-        Log.d(LOGTAG, "Inside Location Adapter: "+listAddresses.size());
+        Log.d(LOGTAG, "Inside Search Adapter: "+listKeywords.size());
 
-        if (listAddresses.size() > 0) {
-            mAdapter = new SearchViewAdapter(this);
-            mAdapter.setAddresses(listAddresses);
+        if (listKeywords.size() > 0) {
+            mAdapter = new SearchViewAdapter(this, listKeywords);
+            mAdapter.setKeyword(listKeywords);
             mRecyclerView.setAdapter(mAdapter);
         }
-
-    }
-
-    @Override
-    public void onTaskComplete(String result) {
 
     }
 }

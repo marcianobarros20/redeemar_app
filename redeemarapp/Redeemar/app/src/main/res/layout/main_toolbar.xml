@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:local="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toolbar"
+    android:id="@+id/main_toolbar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minHeight="?attr/actionBarSize"
@@ -10,13 +10,15 @@
     local:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     local:navigationIcon="?attr/homeAsUpIndicator">
 
-    <TextView
-        android:id="@+id/search_text"
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Search for keywords"
+        android:id="@+id/search_box"
         android:textColor="@color/gray"
-        android:paddingLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="5dp"
+        android:drawablePadding="5dp"
+        android:textSize="12sp"
         android:drawableLeft="@drawable/ic_search_green"
         android:background="@drawable/rounded_corner_white" />
 

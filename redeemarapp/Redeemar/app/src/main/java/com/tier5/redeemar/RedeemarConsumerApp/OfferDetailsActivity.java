@@ -7,6 +7,8 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -45,6 +47,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class OfferDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -64,6 +68,12 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
     Double lat, lon, payValue = 0.0, retailValue = 0.0 ;
     String discount_text = "";
     Typeface myFont;
+    private Handler handler;
+    private Runnable runnable;
+
+    final static long seconds_in_milllies = 1000L;
+    final static long minutes_in_millies = seconds_in_milllies * 60;
+    final static long hours_in_millies = minutes_in_millies * 60;
 
 
     @Override
@@ -779,6 +789,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
             pd.dismiss();
         }
     }
+
 
 
 }

@@ -158,7 +158,8 @@
                 android:lines="2"
                 android:paddingTop="4dp"
                 android:paddingBottom="12dp"
-                android:textSize="19sp"
+                android:textSize="17sp"
+                android:textStyle="bold"
                 android:textColor="@color/darkGray" />
 
             <LinearLayout
@@ -211,7 +212,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Retail value"
                                 android:gravity="center_horizontal"
-                                android:textSize="17sp"
+                                android:textSize="16sp"
                                 android:textStyle="bold"
                                 android:textColor="@color/gray" />
 
@@ -224,7 +225,7 @@
                                 android:gravity="center_horizontal"
                                 android:paddingBottom="4dp"
                                 android:textStyle="bold"
-                                android:textSize="20sp"
+                                android:textSize="18sp"
                                 android:textColor="@color/green_text" />
 
                         </LinearLayout>

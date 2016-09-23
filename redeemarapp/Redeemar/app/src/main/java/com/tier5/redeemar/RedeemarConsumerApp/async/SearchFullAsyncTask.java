@@ -8,28 +8,30 @@ import android.util.Log;
 import com.android.volley.RequestQueue;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.SearchActivity;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.SearchLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.OfferUtils;
+
+import java.util.ArrayList;
 
 /**
  * Created by tier5 on 22/6/16.
  */
 
 
-public class SearchFullAsyncTask extends AsyncTask<String, Void, String> {
+public class SearchFullAsyncTask extends AsyncTask<String, Void, ArrayList<Search>> {
 
 
     private static final String LOGTAG = "SearchFullAsyncTask";
-    private TaskCompleted myComponent;
+    private SearchLoadedListener myComponent;
     private RequestQueue requestQueue;
     private Context context;
-    private ProgressDialog dialog;
 
-    public SearchFullAsyncTask(TaskCompleted myComponent, Context ctx) {
+    public SearchFullAsyncTask(SearchLoadedListener myComponent, Context ctx) {
 
         this.myComponent = myComponent;
         this.context = ctx;
-        dialog = new ProgressDialog(ctx.getApplicationContext());
-        Log.d(LOGTAG, "Inside ValidatePassCode constructor: "+myComponent);
+        Log.d(LOGTAG, "Inside SearchFullAsyncTask constructor");
 
     }
 
@@ -39,39 +41,26 @@ public class SearchFullAsyncTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPreExecute() {
-        //dialog.setMessage("Processing, please wait.");
-        //dialog.show();
-
-
-        /*dialog.setMessage(context.getString(R.string.sending_data));
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(false);
-        dialog.show();*/
 
     }
 
 
     @Override
-    protected String doInBackground(String... params) {
+    protected ArrayList<Search> doInBackground(String... params) {
 
-        Log.d(LOGTAG, "Inside BG Task for ValidatePassCode");
+        Log.d(LOGTAG, "Inside BG Task for SearchFullAsyncTask");
 
-        String location = params[0];
-        String keyword = params[1];
+        String keyword = params[0];
 
-        String res = OfferUtils.loadSearchFull(requestQueue, location, keyword);
+        ArrayList<Search> res = OfferUtils.loadSearchFull(requestQueue, keyword);
         return res;
     }
 
     @Override
-    protected void onPostExecute(String resp) {
-        if (dialog.isShowing()) {
-            dialog.dismiss();
-        }
+    protected void onPostExecute(ArrayList<Search> resp) {
 
-        Log.d(LOGTAG, "Response is: "+resp);
         if (myComponent != null) {
-            myComponent.onTaskComplete(resp);
+            myComponent.onSearchLoaded(resp);
         }
     }
 

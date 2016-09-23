@@ -21,7 +21,7 @@
 
                 <include
                     android:id="@+id/toolbar"
-                    layout="@layout/toolbar" />
+                    layout="@layout/main_toolbar" />
             </LinearLayout>
 
 
@@ -35,24 +35,6 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:orientation="vertical">
-
-
-            <EditText
-                android:id="@+id/location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawablePadding="4dp"
-                android:hint="@string/near_me"
-                android:drawableLeft="@drawable/ic_location_dark" />
-
-            <EditText
-                android:id="@+id/keyword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawablePadding="4dp"
-                android:hint="@string/search_keyword"
-                android:drawableLeft="@drawable/ic_price_tag"
-                android:visibility="gone"/>
 
 
 

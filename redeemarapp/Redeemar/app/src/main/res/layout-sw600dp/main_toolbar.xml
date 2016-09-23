@@ -10,14 +10,10 @@
     local:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     local:navigationIcon="?attr/homeAsUpIndicator">
 
-    <TextView
-        android:id="@+id/search_text"
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Search for keywords"
-        android:textColor="@color/gray"
-        android:paddingLeft="10dp"
-        android:drawableLeft="@drawable/ic_search_green"
-        android:background="@drawable/rounded_corner_white" />
+        android:id="@+id/myEditText"
+        android:background="@color/green_text" />
 
 </android.support.v7.widget.Toolbar>

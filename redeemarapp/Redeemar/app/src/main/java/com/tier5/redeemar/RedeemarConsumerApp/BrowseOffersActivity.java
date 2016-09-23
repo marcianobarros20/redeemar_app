@@ -32,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -105,7 +106,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private ArrayList<Category> categories;
     private int catId = 0;
     int lastClick = 0;
-    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "";
+    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "",
+             keyword = "", catName = "";
     private final int NavGroupId = 1001;
     private SharedPreferences.Editor editor;
     private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
@@ -156,6 +158,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         setContentView(R.layout.offers_recycler);
         db = new DatabaseHelper(this);
 
+
+
         pProductArrayList = new ArrayList<Product>();
         pSubItemArrayList2 = new ArrayList<Product.SubCategory>();
 
@@ -186,18 +190,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         }
 
 
-        if (sharedpref.getString(res.getString(R.string.spf_campaign_id), null) != null) {
-            campaignId = sharedpref.getString(res.getString(R.string.spf_campaign_id), "");
-        }
-
-        //Log.d(LOGTAG, "AA Category Id: " + sharedpref.getString(res.getString(R.string.spf_category_id), ""));
-
-
         editor = sharedpref.edit();
 
         Log.d(LOGTAG, "Redeemar id: " + redeemarId);
         Log.d(LOGTAG, "Campaign id: " + campaignId);
         Log.d(LOGTAG, "Category id: " + categoryId);
+
 
 
         // Get Data from Intent
@@ -217,10 +215,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             if (redirectTo.equalsIgnoreCase("CategoryOffers")) {
                 categoryId = extras.getString(getString(R.string.ext_category_id));
             }
+
+            if (redirectTo.equalsIgnoreCase("CategoryOffers")) {
+                categoryId = extras.getString(getString(R.string.ext_category_id));
+            }
             Log.d(LOGTAG, "Redirect to 100: " + redirectTo);
-            Log.d(LOGTAG, "Redeemar id 100: " + redeemarId);
-            Log.d(LOGTAG, "Category id 100: " + campaignId);
-            Log.d(LOGTAG, "Category id 100: " + categoryId);
         }
 
 
@@ -241,10 +240,30 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        TextView searchBox = (TextView) findViewById(R.id.search_text);
+        //searchBox.setKeyListener(null);
+        //searchBox.setEnabled(false);
+
+
+
+        searchBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Log.d(LOGTAG, "Inside New Menu Browse Offer..");
+
+                Intent intent = new Intent(BrowseOffersActivity.this, SearchActivity.class);
+                startActivity(intent);
+                //finish();
+            }
+
+        });
+
+
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.browse_offers);
-
 
         }
 
@@ -759,6 +778,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
     @Override
     public void onBackPressed() {
+
+        Log.d(LOGTAG, "Inside back pressed Browse");
         if (isNavDrawerOpen()) {
             closeNavDrawer();
         } else {
@@ -811,10 +832,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 Fragment browseOfferListFragment = new BrowseOfferFragment();
                 getSupportActionBar().setTitle(getString(R.string.browse_offers));
 
-                Log.d(LOGTAG, "Redirect to 102: " + redirectTo);
-                Log.d(LOGTAG, "Redeemar id 102: " + redeemarId);
-                Log.d(LOGTAG, "Campaign id 102: " + campaignId);
-                Log.d(LOGTAG, "Category id 102: " + categoryId);
 
                 editor.putString(getString(R.string.spf_view_type), "list"); // Storing User Id
                 editor.commit(); // commit changes
@@ -828,10 +845,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             case R.id.action_view_thumb:
                 Toast.makeText(getApplicationContext(), "Thumbnail view option selected", Toast.LENGTH_SHORT).show();
 
-                Log.d(LOGTAG, "Redirect to 102: " + redirectTo);
-                Log.d(LOGTAG, "Redeemar id 102: " + redeemarId);
-                Log.d(LOGTAG, "Campaign id 102: " + campaignId);
-                Log.d(LOGTAG, "Category id 102: " + categoryId);
 
                 editor.putString(getString(R.string.spf_view_type), "thumb"); // Storing User Id
                 editor.commit(); // commit changes
@@ -1076,9 +1089,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 mSubProduct = pProductArrayList.get(mMenuCtr).getmSubCategoryList().get(j);
 
-                Log.d(LOGTAG, "Sub Cat Id: "+mSubProduct.getpId());
-                Log.d(LOGTAG, "Sub Cat Name: "+mSubProduct.getpSubCatName());
-
                 thirdRowItemCount = pProductArrayList.get(i).getmSubCategoryList().get(j).getmItemListArray().size();
 
                 //Log.d(LOGTAG, "Third Row Count: "+thirdRowItemCount);
@@ -1100,17 +1110,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                         int xm = mLinearSecondArrow.getId();
 
-                        Log.d(LOGTAG, "After click: "+xm);
-                        Log.d(LOGTAG, "After click: "+mMenuCtr);
-
                         mSubProduct2 = pProductArrayList.get(mMenuCtr).getmSubCategoryList().get(xm);
-
-
-                        //mSubProduct2 = pProductArrayList.get(mMenuCtr).getmSubCategoryList().get(xm);
-                        //Log.d(LOGTAG, ": "+xm);
-                        //Log.d(LOGTAG, "Second Item Id: "+mSubProduct2.getpId());
-                        //Log.d(LOGTAG, "Second Item Inner Id: "+mSubProduct2.getpSubCatName());
-
 
                         isSecondViewClick = mSubProduct2.getOpened();
                         thirdRowItemCount = mSubProduct2.getmItemListArray().size();

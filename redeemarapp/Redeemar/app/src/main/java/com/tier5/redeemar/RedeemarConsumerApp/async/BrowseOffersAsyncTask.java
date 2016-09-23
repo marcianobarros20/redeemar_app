@@ -53,7 +53,7 @@ public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Off
         String sLng = params[4];
         String catId = params[5];
 
-        Log.d(LOGTAG, "Catsss: "+catId);
+
 
         ArrayList<Offer> listOffers = OfferUtils.loadBrowseOffers(requestQueue, user_id, lat, lng, sLat, sLng, catId);
         return listOffers;

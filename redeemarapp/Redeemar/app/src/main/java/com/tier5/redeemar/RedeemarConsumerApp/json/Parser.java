@@ -26,6 +26,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.BrandVideo;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
@@ -813,12 +814,11 @@ public class Parser {
     }
 
 
-    public static String parseSearchFullJSON(JSONObject response) {
+    public static ArrayList<Search> parseSearchFullJSON(JSONObject response) {
 
         Log.d(LOGTAG, "Inside parseSearchFullJSON");
 
-        String msgCode = "";
-
+        ArrayList<Search> listSearch = new ArrayList<Search>();
 
         if (response != null && response.length() > 0) {
             try {
@@ -826,7 +826,55 @@ public class Parser {
                 if(!response.isNull("messageCode")) {
 
                     Log.d(LOGTAG, "Message Code: " + response.getString("messageCode"));
-                    msgCode = response.getString("messageCode");
+
+                    if (response.getString("messageCode").equals("R01001")) {
+
+                        JSONObject json2 = new JSONObject(response.getString("data"));
+
+
+                        if(!json2.isNull("mi") && !json2.isNull("ci")  && !json2.isNull("cn") ) {
+
+                            JSONArray keywordArray = json2.optJSONArray("mi");
+                            JSONArray catIdArray = json2.optJSONArray("ci");
+                            JSONArray catNameArray = json2.optJSONArray("cn");
+
+                            Log.d(LOGTAG, "Keywords List: " + keywordArray.length());
+
+
+                            //Iterate the jsonArray and print the info of JSONObjects
+                            for (int j = 0; j < keywordArray.length(); j++) {
+
+
+                                if(catIdArray.get(j) != null && catNameArray.get(j) != null && keywordArray.get(j) != null) {
+
+                                    Search search = new Search();
+
+                                    Log.d(LOGTAG, "Keyword 1: " + keywordArray.get(j));
+                                    Log.d(LOGTAG, "Keyword 1: " + catIdArray.get(j));
+                                    Log.d(LOGTAG, "Keyword 1: " + catNameArray.get(j));
+
+                                    search.setDescription(keywordArray.get(j).toString());
+                                    search.setCategoryId(catIdArray.get(j).toString());
+                                    search.setCategoryName(catNameArray.get(j).toString());
+
+
+
+                                    listSearch.add(search);
+                                }
+
+
+
+                            } // End of for loop for categories
+
+                        }
+
+
+
+                    }
+
+
+
+
                 }
 
 
@@ -836,7 +884,7 @@ public class Parser {
             }
 
         }
-        return msgCode;
+        return listSearch;
     }
 
 

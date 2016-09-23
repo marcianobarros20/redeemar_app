@@ -43,8 +43,8 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
     private SharedPreferences sharedpref;
     private Toolbar toolbar;
     private DatabaseHelper db;
-    private int catId = 0, catLevel = 0;
-    private String catName = "", userId = "";
+    private int catLevel = 0;
+    private String catId = "", catName = "", userId = "";
 
     private double latitude = 0.0, longitude = 0.0;
 
@@ -74,6 +74,9 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
         if (extras != null) {
 
             String activity = extras.getString(getString(R.string.ext_activity));
+
+            catId = extras.getString(getString(R.string.ext_category_id));
+            catName = extras.getString(getString(R.string.ext_category_name));
 
         }
 
@@ -105,17 +108,10 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
             userId = sharedpref.getString(getString(R.string.spf_user_id), "0");
         }
 
-        if(sharedpref.getInt(getString(R.string.spf_category_id), 0) != 0) {
-            catId = sharedpref.getInt(getString(R.string.spf_category_id), 0);
-        }
 
-        if(sharedpref.getString(getString(R.string.spf_category_name), null) != null) {
-            catName = sharedpref.getString(getString(R.string.spf_category_name), "");
-        }
+        if(!catId.equals("")) {
 
-        if(catId != 0) {
-
-            new CategoryOffersAsyncTask(this).execute(String.valueOf(catId), userId, String.valueOf(latitude), String.valueOf(longitude));
+            new CategoryOffersAsyncTask(this).execute(catId, userId, String.valueOf(latitude), String.valueOf(longitude));
         }
 
         Log.d(LOGTAG, "Cat Id: " + catId);
@@ -134,14 +130,14 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                // back button pressed
-                finish();
-                overridePendingTransition(R.anim.right_to_left, R.anim.left_to_right);
-                }
-            });
+//            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                // back button pressed
+//                finish();
+//                overridePendingTransition(R.anim.right_to_left, R.anim.left_to_right);
+//                }
+//            });
 
         }
 
