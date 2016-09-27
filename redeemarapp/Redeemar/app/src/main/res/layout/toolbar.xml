@@ -13,10 +13,15 @@
     <TextView
         android:id="@+id/search_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="30dp"
         android:text="Search for keywords"
+        android:textSize="12sp"
         android:textColor="@color/gray"
+        android:gravity="center_vertical"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
         android:paddingLeft="10dp"
+        android:drawablePadding="10dp"
         android:drawableLeft="@drawable/ic_search_green"
         android:background="@drawable/rounded_corner_white" />
 

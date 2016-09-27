@@ -32,7 +32,6 @@ public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Off
     public BrowseOffersAsyncTask(OffersLoadedListener myComponent) {
         this.myComponent = myComponent;
         Log.d(LOGTAG, "Inside BrowseOffersAsyncTask constructor");
-
     }
 
     @Override
@@ -53,8 +52,6 @@ public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Off
         String sLng = params[4];
         String catId = params[5];
 
-
-
         ArrayList<Offer> listOffers = OfferUtils.loadBrowseOffers(requestQueue, user_id, lat, lng, sLat, sLng, catId);
         return listOffers;
     }
@@ -64,11 +61,7 @@ public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Off
         if (myComponent != null) {
             myComponent.onOffersLoaded(listOffers);
         }
-        //mProgress.dismiss();
     }
-
-
-
 
 }
 

@@ -32,7 +32,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,7 +44,6 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.gson.Gson;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
@@ -106,8 +104,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private ArrayList<Category> categories;
     private int catId = 0;
     int lastClick = 0;
-    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "",
-             keyword = "", catName = "";
+    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "", keyword = "", catName = "";
     private final int NavGroupId = 1001;
     private SharedPreferences.Editor editor;
     private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
@@ -134,7 +131,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private boolean isSecondViewClick = false;
     boolean istrue=true;
     boolean istrue1=true;
-    private int secondRowItemCount = 0, thirdRowItemCount = 0, mMenuCtr = 0, mSubMenuCtr = 0;;
+    private int secondRowItemCount = 0, thirdRowItemCount = 0, mMenuCtr = 0, mSubMenuCtr = 0;
+
+    private MenuItem actionView;
 
     private DatabaseHelper db;
 
@@ -189,13 +188,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
         }
 
-
         editor = sharedpref.edit();
 
         Log.d(LOGTAG, "Redeemar id: " + redeemarId);
         Log.d(LOGTAG, "Campaign id: " + campaignId);
         Log.d(LOGTAG, "Category id: " + categoryId);
-
 
 
         // Get Data from Intent
@@ -216,12 +213,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 categoryId = extras.getString(getString(R.string.ext_category_id));
             }
 
-            if (redirectTo.equalsIgnoreCase("CategoryOffers")) {
-                categoryId = extras.getString(getString(R.string.ext_category_id));
-            }
-            Log.d(LOGTAG, "Redirect to 100: " + redirectTo);
         }
-
 
         setupToolbar();
 
@@ -245,14 +237,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         //searchBox.setEnabled(false);
 
 
-
         searchBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 Log.d(LOGTAG, "Inside New Menu Browse Offer..");
-
                 Intent intent = new Intent(BrowseOffersActivity.this, SearchActivity.class);
                 startActivity(intent);
                 //finish();
@@ -264,14 +252,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.browse_offers);
-
         }
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu); // it's getSupportActionBar() if you're using AppCompatActivity, not getActionBar()
             getSupportActionBar().setDisplayHomeAsUpEnabled(true); // it's getSupportActionBar() if you're using AppCompatActivity, not getActionBar()
         }
-
 
         /*final ActionBar ab = this.getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.list);
@@ -280,12 +266,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
     private void setupBottombar(BottomBar mBottomBar, Bundle savedInstanceState) {
 
-
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.setMaxFixedTabs(5);
         mBottomBar.setDefaultTabPosition(3);
         //mBottomBar.useFixedMode();
-
 
         mBottomBar.setItemsFromMenu(R.menu.bottombar_menu, new OnMenuTabClickListener() {
             @Override
@@ -718,14 +702,14 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             @Override
             public void onClick(View v) {
 
-                closeNavDrawer();
+            closeNavDrawer();
 
-                getSupportActionBar().setTitle(R.string.nav_item_my_offers);
-                Fragment myOfferFragment = new MyOfferFragment();
-                FragmentManager myOfferFm = getFragmentManager();
-                FragmentTransaction myOfferFragmentTransaction = myOfferFm.beginTransaction();
-                myOfferFragmentTransaction.replace(R.id.container_body, myOfferFragment);
-                myOfferFragmentTransaction.commit();
+            getSupportActionBar().setTitle(R.string.nav_item_my_offers);
+            Fragment myOfferFragment = new MyOfferFragment();
+            FragmentManager myOfferFm = getFragmentManager();
+            FragmentTransaction myOfferFragmentTransaction = myOfferFm.beginTransaction();
+            myOfferFragmentTransaction.replace(R.id.container_body, myOfferFragment);
+            myOfferFragmentTransaction.commit();
 
             }
 
@@ -744,14 +728,14 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             @Override
             public void onClick(View v) {
 
-                closeNavDrawer();
+            closeNavDrawer();
 
-                getSupportActionBar().setTitle(R.string.nav_item_edit_profile);
-                Fragment editProfileFragment = new EditProfileFragment();
-                FragmentManager editProfileFm = getFragmentManager();
-                FragmentTransaction editProfileFragmentTransaction = editProfileFm.beginTransaction();
-                editProfileFragmentTransaction.replace(R.id.container_body, editProfileFragment);
-                editProfileFragmentTransaction.commit();
+            getSupportActionBar().setTitle(R.string.nav_item_edit_profile);
+            Fragment editProfileFragment = new EditProfileFragment();
+            FragmentManager editProfileFm = getFragmentManager();
+            FragmentTransaction editProfileFragmentTransaction = editProfileFm.beginTransaction();
+            editProfileFragmentTransaction.replace(R.id.container_body, editProfileFragment);
+            editProfileFragmentTransaction.commit();
 
             }
 
@@ -800,6 +784,29 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        actionView = menu.findItem(R.id.action_view_type);
+
+        if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+            String viewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
+
+            if(viewType.equals("thumb")) {
+                actionView.setIcon(R.drawable.ic_thumb_white);
+            }
+
+            else if(viewType.equals("map")) {
+                actionView.setIcon(R.drawable.ic_list_white);
+            }
+
+            else {
+                actionView.setIcon(R.drawable.ic_map_white);
+
+            }
+
+
+
+
+        }
+
         return true;
     }
 
@@ -808,7 +815,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         int id = item.getItemId();
 
-        Log.d(LOGTAG, "Inside Menu BrowseOffer "+id+" "+R.id.action_view_thumb);
+        //Log.d(LOGTAG, "Inside Menu BrowseOffer "+id+" "+R.id.action_view_thumb);
 
 
 
@@ -818,28 +825,52 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
 
+
+            case R.id.action_view_type:
+
+                Fragment browseOfferListFragment = new BrowseOfferFragment();
+                getSupportActionBar().setTitle(getString(R.string.browse_offers));
+
+                if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+                    String viewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
+
+                    if(viewType.equals("thumb")) {
+                        Toast.makeText(getApplicationContext(), "Map view coming soon", Toast.LENGTH_SHORT).show();
+                        actionView.setIcon(R.drawable.ic_thumb_white);
+                        editor.putString(getString(R.string.spf_view_type), "map"); // Storing View Type to Map
+                    }
+
+                    else if(viewType.equals("map")) {
+                        //Toast.makeText(getApplicationContext(), "List view option selected", Toast.LENGTH_SHORT).show();
+                        actionView.setIcon(R.drawable.ic_list_white);
+                        editor.putString(getString(R.string.spf_view_type), "list"); // Storing View Type to List
+                    }
+
+                    else {
+                        //Toast.makeText(getApplicationContext(), "Thumb view option selected", Toast.LENGTH_SHORT).show();
+                        actionView.setIcon(R.drawable.ic_map_white);
+                        editor.putString(getString(R.string.spf_view_type), "thumb"); // Storing View Type to Thumb
+                    }
+
+                        editor.commit(); // commit changes
+
+
+                }
+
+
+                FragmentManager browseOfferFm = getFragmentManager();
+                FragmentTransaction browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
+                browseOfferFragmentTransaction.replace(R.id.container_body, browseOfferListFragment);
+                browseOfferFragmentTransaction.commit();
+                return true;
+
+            /*
             case R.id.action_search:
 
                 //Intent intent = new Intent(BrowseOffersActivity.this, CategoryActivity.class);
 
                 //overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
                 //startActivity(intent);
-                return true;
-
-
-            case R.id.action_view_list:
-                Toast.makeText(getApplicationContext(), "List view option selected", Toast.LENGTH_SHORT).show();
-                Fragment browseOfferListFragment = new BrowseOfferFragment();
-                getSupportActionBar().setTitle(getString(R.string.browse_offers));
-
-
-                editor.putString(getString(R.string.spf_view_type), "list"); // Storing User Id
-                editor.commit(); // commit changes
-
-                FragmentManager browseOfferFm = getFragmentManager();
-                FragmentTransaction browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
-                browseOfferFragmentTransaction.replace(R.id.container_body, browseOfferListFragment);
-                browseOfferFragmentTransaction.commit();
                 return true;
 
             case R.id.action_view_thumb:
@@ -858,7 +889,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 fragmentTransaction.commit();
 
                 return true;
-
+            */
 
         }
 
@@ -954,6 +985,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
     public void populateListMenuItems() {
 
+
+
         for(int i=0; i<mParentCategoryIds.size(); i++) {
             istrue=true;
             pSubItemArrayList=new ArrayList<Product.SubCategory>();
@@ -963,10 +996,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                     if(istrue) {
                         mItemListArray = new ArrayList<Product.SubCategory.ItemList>();
-                        // Main Category
 
-                        Log.d("MENU", "AA1 "+mParentCategoryIds.get(i));
-                        Log.d("MENU", "AA2 "+mParentCategoryNames.get(i));
+                        //if(i == 0)
+                        //    mItemListArray.add(new Product.SubCategory.ItemList("All", "0"));
+
+
+                        // Main Category
                         pProductArrayList.add(new Product(mParentCategoryIds.get(i), mParentCategoryNames.get(i), pSubItemArrayList, false));
                         istrue = false;
                     }
@@ -980,16 +1015,16 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                             }
 
                             // Third Category
-                            Log.d("MENU", "CC1 "+mCategoryIds.get(k));
-                            Log.d("MENU", "CC2 "+mCategoryNames.get(k));
+                            //Log.d("MENU", "CC1 "+mCategoryIds.get(k));
+                            //Log.d("MENU", "CC2 "+mCategoryNames.get(k));
                             mItemListArray.add(new Product.SubCategory.ItemList(mCategoryIds.get(k), mCategoryNames.get(k)));
                         }
                     }
                     // Sub Category
                     pSubItemArrayList.add(new Product.SubCategory(mCategoryIds.get(j), mCategoryNames.get(j), mItemListArray, false));
 
-                    Log.d("MENU", "BB1 "+mCategoryIds.get(j));
-                    Log.d("MENU", "BB2 "+mCategoryNames.get(j));
+                    //Log.d("MENU", "BB1 "+mCategoryIds.get(j));
+                    //Log.d("MENU", "BB2 "+mCategoryNames.get(j));
                     mItemListArray=new ArrayList<Product.SubCategory.ItemList>();
                 }
             }
@@ -1043,7 +1078,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     isFirstViewClick = mMainProduct.getOpened();
                     secondRowItemCount = mMainProduct.getmSubCategoryList().size();
 
-                    Log.d(LOGTAG, "A new menu clicked "+xn+" : "+isFirstViewClick+" "+secondRowItemCount);
+                    //Log.d(LOGTAG, "A new menu clicked "+xn+" : "+isFirstViewClick+" "+secondRowItemCount);
 
                     if(secondRowItemCount > 0) {
 
@@ -1135,15 +1170,16 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                             getSupportActionBar().setTitle(mSubProduct2.getpSubCatName());
                             Bundle args1 = new Bundle();
 
-                            /*editor.putString(getString(R.string.spf_category_id), String.valueOf(mSubProduct2.getpId())); // Storing Redirect Action
-                            editor.putString(getString(R.string.spf_redir_action), "CategoryOffers"); // Storing Redirect Action
-                            editor.putString(getString(R.string.spf_category_name), mSubProduct2.getpSubCatName()); // Storing Redirect Action
-                            editor.commit(); // commit changes*/
-
                             args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
                             args1.putString(getString(R.string.ext_category_id), String.valueOf(mSubProduct2.getpId()));
                             args1.putString(getString(R.string.ext_category_name), String.valueOf(mSubProduct2.getpSubCatName()));
                             browseOfferFragment1.setArguments(args1);
+
+                            editor.putString(res.getString(R.string.spf_redir_action), "CategoryOffers");
+                            editor.putString(res.getString(R.string.spf_category_name), mSubProduct2.getpSubCatName());
+                            editor.putString(res.getString(R.string.spf_category_id), mSubProduct2.getpId());
+                            editor.commit();
+
 
                             FragmentManager browseOfferFm1 = getFragmentManager();
                             FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
@@ -1209,7 +1245,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                             browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
                             browseOfferFragmentTransaction1.commit();
 
-                            Log.d(LOGTAG, "Third level menu id: "+itemId);
+                            //Log.d(LOGTAG, "Third level menu id: "+itemId);
                             mDrawerLayout.closeDrawers();
                             return false;
                             }

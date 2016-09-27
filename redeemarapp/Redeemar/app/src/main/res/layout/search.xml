@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:text="@string/search"
-                android:visibility="visible">
+                android:visibility="gone">
             </Button>
 
         </RelativeLayout>

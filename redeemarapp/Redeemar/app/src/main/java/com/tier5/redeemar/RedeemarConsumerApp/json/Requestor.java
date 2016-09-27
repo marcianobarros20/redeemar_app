@@ -282,8 +282,8 @@ public class Requestor {
 
 
 
-
-    public static JSONObject requestCategoryOffersJSON(RequestQueue requestQueue, int mType, String url, String userId, String filterId, String catLevel, String latitude, String longitude, String selfLatitude, String selfLongitude) {
+    // requestQueue, 3, Endpoints.getRequestUrlBrandOffers(30), userId, catId, catLevel,  lat, lng, selfLat, selfLon, keyword
+    public static JSONObject requestCategoryOffersJSON(RequestQueue requestQueue, int mType, String url, String userId, String filterId, String catLevel, String latitude, String longitude, String selfLatitude, String selfLongitude, String keyword) {
 
 
         URL myUrl = null;
@@ -313,20 +313,11 @@ public class Requestor {
             data.put("selflong", selfLongitude);
             data.put("radius", Constants.defaultRadius);
             data.put("user_id", userId);
+            data.put("category_id", filterId);
+            data.put("category_level", catLevel);
 
-            // Filter By Redeemar Id
-            if(mType == 1) {
-                data.put("reedemar_id", filterId);
-            }
-            // Filter By Redeemar Id
-            else if(mType == 2) {
-                data.put("campaign_id", filterId);
-            }
-            // Filter By category/Sub Category Id
-            else if(mType == 3) {
-                data.put("category_id", filterId);
-                data.put("category_level", catLevel);
-
+            if(keyword != "") {
+                data.put("keyword", keyword);
             }
 
 

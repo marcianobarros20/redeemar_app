@@ -101,7 +101,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     Activity activity;
     private ActivityCommunicator activityCommunicator;
     private ImageView imListView, imMapView, imThumbView;
-    private TextView tvCategory, tvUserLocation;
+    private TextView tvCategory;
     private AutoCompleteTextView autoComplete;
     private GPSTracker gps;
     private ArrayList<String> locationList;
@@ -179,7 +179,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         setHasOptionsMenu(true);
         Bundle args1 = getArguments();
 
-        Log.d(LOGTAG, "Size: "+args1.size());
 
         if(args1 != null && args1.size() > 0) {
 
@@ -191,24 +190,11 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             categoryName = args1.getString(getString(R.string.ext_category_name), "");
             viewType = args1.getString(getString(R.string.ext_view_type), "");
 
-            Log.d(LOGTAG, "Category Name: "+categoryName);
-
-        }
-
-
-        if (sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
-            categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "0");
-            Log.d(LOGTAG, "Search Cat Id: " + categoryId);
-
-        }
-        if (sharedpref.getString(res.getString(R.string.spf_category_name), null) != null) {
-            categoryName = sharedpref.getString(res.getString(R.string.spf_category_name), "");
         }
 
 
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
             user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
-            //sharedpref.getString(res.getString(R.string.spf_first_name), "");
         }
 
 
@@ -246,19 +232,29 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         imMapView = (ImageView) layout.findViewById(R.id.menu_map_view);
         imThumbView = (ImageView) layout.findViewById(R.id.menu_thumb_view);
         tvCategory = (TextView) layout.findViewById(R.id.search_category);
-        tvUserLocation = (TextView) layout.findViewById(R.id.current_location);
         autoComplete = (AutoCompleteTextView) layout.findViewById(R.id.autoCompleteTextView1);
         locationList = new ArrayList<String>();
         latLngList = new ArrayList<LatLng>();
         locationItems = new HashMap<String, LatLng>();
 
+
+
+        if (sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
+            categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "0");
+            Log.d(LOGTAG, "Search Cat Id: " + categoryId);
+
+        }
+
+        if(!categoryId.equals("")) {
+            if (sharedpref.getString(res.getString(R.string.spf_category_name), null) != null) {
+                categoryName = sharedpref.getString(res.getString(R.string.spf_category_name), "");
+                tvCategory.setText(categoryName);
+            }
+        }
+        else
+            tvCategory.setVisibility(View.GONE);
+
         if(imListView.getVisibility() == View.VISIBLE) {
-            Log.d(LOGTAG, "Inside ListView");
-
-            //editor.putString(res.getString(R.string.spf_view_type), "list");
-            //editor.commit();
-
-
             imListView.setVisibility(View.GONE);
             imThumbView.setVisibility(View.VISIBLE);
             imMapView.setVisibility(View.GONE);
@@ -308,7 +304,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
             if(selfLat.equals(""))
                 selfLat = String.valueOf(latitude);
-
         }
 
         if(sharedpref.getString(res.getString(R.string.spf_last_lon), null) != null) {
@@ -319,16 +314,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         }
 
 
-
         // Collect all address related keywords to be populated to the autocomplete box
         if(isInternetPresent)
             callSearchLocationTask();
 
-
-        /*autoCompleteAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, locationList);
-        autoComplete.animate();
-        autoComplete.setThreshold(1);
-        autoComplete.setAdapter(autoCompleteAdapter);*/
 
         autoCompleteList = new ArrayList<Address>();
 
@@ -338,12 +327,13 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         autoComplete.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-            /*if (hasFocus) {
+                Log.d(LOGTAG, "Focus gained");
+            if (hasFocus) {
 
                 autoComplete.setText("");
                 autoComplete.requestFocus();
 
-            }*/
+            }
             }
         });
 
@@ -407,12 +397,12 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         autoComplete.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
-                Log.d(LOGTAG, "Backspace");
-                if(keyCode == KeyEvent.KEYCODE_DEL) {
-                    autoComplete.setText("");
-                }
-                return false;
+            //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
+            Log.d(LOGTAG, "Backspace");
+            if(keyCode == KeyEvent.KEYCODE_DEL) {
+                autoComplete.setText("");
+            }
+            return false;
             }
         });
 
@@ -421,43 +411,43 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             @Override
             public void onClick(View view) {
 
-                if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
-                    viewType = sharedpref.getString(res.getString(R.string.spf_view_type), null);
-
-                    if(viewType.equals("map")) {
-                        editor.putString(res.getString(R.string.spf_view_type), "list"); // Set view type to list
-                        editor.commit();
-                    }
-                    else if(viewType.equals("thumb")) {
-                        editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to list
-                        editor.commit();
-                    }
-                    else {
-                        editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Set view type to list
-                        editor.commit();
-                    }
-                }
+            if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+                viewType = sharedpref.getString(res.getString(R.string.spf_view_type), null);
 
                 if(viewType.equals("map")) {
-                    MapViewFragment fragment3 = new MapViewFragment();
-                    FragmentManager fragmentManager = getFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.container_body, fragment3);
-                    fragmentTransaction.commit();
+                    editor.putString(res.getString(R.string.spf_view_type), "list"); // Set view type to list
+                    editor.commit();
+                }
+                else if(viewType.equals("thumb")) {
+                    editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to list
+                    editor.commit();
                 }
                 else {
-                    BrowseOfferFragment fragment2 = new BrowseOfferFragment();
-                    FragmentManager fragmentManager = getFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.container_body, fragment2);
-                    fragmentTransaction.commit();
-
+                    editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Set view type to list
+                    editor.commit();
                 }
+            }
 
-                /*Log.d(LOGTAG, "List view clicked");
-                imListView.setVisibility(View.GONE);
-                imThumbView.setVisibility(View.VISIBLE);
-                imMapView.setVisibility(View.GONE);*/
+            if(viewType.equals("map")) {
+                MapViewFragment fragment3 = new MapViewFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment3);
+                fragmentTransaction.commit();
+            }
+            else {
+                BrowseOfferFragment fragment2 = new BrowseOfferFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment2);
+                fragmentTransaction.commit();
+
+            }
+
+            /*Log.d(LOGTAG, "List view clicked");
+            imListView.setVisibility(View.GONE);
+            imThumbView.setVisibility(View.VISIBLE);
+            imMapView.setVisibility(View.GONE);*/
             }
         });
 
@@ -465,20 +455,15 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         imMapView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to map
-                editor.commit();
+            editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to map
+            editor.commit();
 
-                MapViewFragment fragment2 = new MapViewFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.container_body, fragment2);
-                fragmentTransaction.commit();
-                Log.d(LOGTAG, "Map view clicked");
-
-                /*Log.d(LOGTAG, "Thumb view clicked");
-                imListView.setVisibility(View.VISIBLE);
-                imThumbView.setVisibility(View.GONE);
-                imMapView.setVisibility(View.GONE);*/
+            MapViewFragment fragment2 = new MapViewFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container_body, fragment2);
+            fragmentTransaction.commit();
+            Log.d(LOGTAG, "Map view clicked");
 
             }
         });
@@ -499,18 +484,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             }
         });
 
-        tvCategory.setOnClickListener(new View.OnClickListener() {
+        /*tvCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Log.d(LOGTAG, "Category clicked");
 
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), CategoryActivity.class);
                 startActivity(intent);
                 activity.overridePendingTransition(R.anim.right_to_left, R.anim.left_to_right);
             }
-        });
+        });*/
 
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.my_recycler_view);
@@ -545,25 +528,13 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         //if the database is empty, trigger an AsycnTask to download movie list from the web
         if (mListOffers.isEmpty()) {
 
-            Log.d(LOGTAG, "Redirect to 102: " + redirectTo);
-            Log.d(LOGTAG, "Redeemar id 102: " + redeemarId);
-            Log.d(LOGTAG, "Campaign id 102: " + campaignId);
-            Log.d(LOGTAG, "Category id 102: " + categoryId);
 
             if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) != null) {
                 locKeyword = sharedpref.getString(res.getString(R.string.spf_last_location_keyword), "");
-                tvUserLocation.setText(locKeyword);
+                //tvUserLocation.setText(locKeyword);
                 //autoComplete.setText(locKeyword);
                 Log.d(LOGTAG, "Keyword is: "+locKeyword);
             }
-
-            /*if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
-                selfLat = sharedpref.getString(res.getString(R.string.spf_last_lat), "");
-            }
-
-            if(sharedpref.getString(res.getString(R.string.spf_last_lon), null) != null) {
-                selfLon = sharedpref.getString(res.getString(R.string.spf_last_lon), "");
-            }*/
 
             if(isInternetPresent) {
                 Log.d(LOGTAG, "My Redirect to: "+redirectTo);
@@ -575,8 +546,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 else if (redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
                     new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else if (redirectTo.equals("CategoryOffers") && !categoryId.equals("")) {
+                    Log.d(LOGTAG, "My Keywords: "+keyword);
                     if(!keyword.equals(""))
-                        new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId, keyword);
+                        new CategoryOffersAsyncTask(this).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, keyword);
                     else
                         new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId);
 
@@ -652,9 +624,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
+        /*MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) myActionMenuItem.getActionView();
-        searchView.setOnQueryTextListener(this);
+        searchView.setOnQueryTextListener(this);*/
     }
 
 
@@ -876,9 +848,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             locAddress.setCoordinates(new LatLng(Double.parseDouble(tLat), Double.parseDouble(tLon)));
 
 
-            //Log.d(LOGTAG, "After User Loaded Lat is: "+tLat);
-            //Log.d(LOGTAG, "After User Loaded Lon is: "+tLon);
-
             if(!la.equals("") && !tLat.equals("") && !tLon.equals("")) {
                 autoCompleteList.add(locAddress);
             }
@@ -956,7 +925,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
-        public void loadOffersForCategoryLocations(String tLat, String tLng, String catId, String redir) {
+    public void loadOffersForCategoryLocations(String tLat, String tLng, String catId, String redir) {
 
         // This location as selected by user from auto complete
         mRecyclerOffers.setVisibility(View.GONE);
@@ -969,7 +938,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         if(redirectTo.equals("OnDemand"))
             new OnDemandOffersAsyncTask(this).execute(user_id, tLat, tLng, selfLat,  selfLon);
         else if(!categoryId.equals(""))
-            new CategoryOffersAsyncTask(this).execute(categoryId, user_id, tLat, tLng, selfLat,  selfLon);
+            new CategoryOffersAsyncTask(this).execute(categoryId, user_id, tLat, tLng, selfLat,  selfLon, "");
         else
             new BrowseOffersAsyncTask(this).execute(user_id, tLat, tLng, selfLat, selfLon, "");
 

@@ -104,6 +104,10 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
     public void onBindViewHolder(SearchViewAdapter.ViewHolder holder, int position) {
         final Search item = keywordList.get(position);
 
+        if(position == 0)
+            holder.divider.setVisibility(View.GONE);
+
+
         Log.d(LOGTAG, "Hello "+item.getCategoryName());
         //holder.tvTitle.setTypeface(myFont);
         //holder.tvDescription.setTypeface(myFont);
@@ -146,9 +150,11 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvTitle, tvDescription;
+        private View divider;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            divider = (View) itemView.findViewById(R.id.divider);
             tvTitle = (TextView) itemView.findViewById(R.id.title);
             tvDescription = (TextView) itemView.findViewById(R.id.description);
         }

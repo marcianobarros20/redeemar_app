@@ -12,13 +12,16 @@
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="30dp"
         android:id="@+id/search_box"
-        android:textColor="@color/gray"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="5dp"
-        android:drawablePadding="5dp"
+        android:hint="Search for keywords"
         android:textSize="12sp"
+        android:textColor="@color/gray"
+        android:gravity="center_vertical"
+        android:layout_gravity="center"
+        android:paddingLeft="10dp"
+        android:layout_marginRight="30dp"
+        android:drawablePadding="10dp"
         android:drawableLeft="@drawable/ic_search_green"
         android:background="@drawable/rounded_corner_white" />
 
