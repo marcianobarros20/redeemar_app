@@ -42,11 +42,11 @@
             android:layout_gravity="center_horizontal"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="#ff000000"
+            android:textColor="#ff0000"
             android:textSize="14dp"
             android:text="Window Title"
             android:textStyle="bold"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/snippet"
@@ -54,9 +54,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="#ff7f7f7f"
+            android:textColor="#ff7f7f"
             android:text="Window Description"
             android:textSize="14dp"
-            android:visibility="gone" />
+            android:visibility="visible" />
     </LinearLayout>
 </LinearLayout>

@@ -169,10 +169,11 @@ public class Parser {
 
     public static ArrayList<Offer> parseOffersJSON(JSONObject response) {
 
-        Log.d(LOGTAG, "Inside parseOffersJSON "+response);
+        //Log.d(LOGTAG, "Inside parseOffersJSON "+response);
         //DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         ArrayList<Offer> listOffers = new ArrayList<>();
+
         int respLen = response.length();
         if (response != null && respLen > 0) {
             try {
@@ -180,7 +181,7 @@ public class Parser {
                 if (response.getString("messageCode").equals("R01001")) {
 
                     JSONArray offersArray = new JSONArray(response.getString("data"));
-                    Log.d(LOGTAG, "Data Length: " + offersArray.length());
+                    //Log.d(LOGTAG, "Data Length: " + offersArray.length());
                     int offerCnt =  offersArray.length();
 
                     //Iterate the jsonArray and print the info of JSONObjects
@@ -193,17 +194,14 @@ public class Parser {
 
                         if(!jsonObject.isNull("id") && jsonObject.optString("id").toString() != "") {
                             offer.setOfferId(jsonObject.optString("id").toString());
-                            //Log.d(LOGTAG, "Id: "+jsonObject.optString("id").toString());
                         }
 
                         if(!jsonObject.isNull("created_by") && jsonObject.optString("created_by").toString() != "") {
                             offer.setCreatedBy(jsonObject.getInt("created_by"));
-                            //Log.d(LOGTAG, "Created By: "+jsonObject.getInt("created_by"));
                         }
 
                         if(!jsonObject.isNull("offer_description") && jsonObject.getString("offer_description").toString() != "") {
                             offer.setOfferDescription(jsonObject.optString("offer_description").toString());
-                            //Log.d(LOGTAG, "Offer Description: "+jsonObject.optString("offer_description").toString());
                         }
                         else {
                             offer.setOfferDescription("");
@@ -307,6 +305,20 @@ public class Parser {
                             else
                                 offer.setBrandLogo("");
 
+
+
+                            if(!jsonLogoSettings.isNull("lat") && !jsonLogoSettings.getString("lat").equals("")) {
+                                offer.setLatitude(jsonLogoSettings.getString("lat").toString());
+                            }
+                            else
+                                offer.setLatitude("");
+
+
+                            if(!jsonLogoSettings.isNull("lng") && !jsonLogoSettings.getString("lng").equals("")) {
+                                offer.setLongitude(jsonLogoSettings.getString("lng").toString());
+                            }
+                            else
+                                offer.setLongitude("");
 
                             if(!jsonLogoSettings.isNull("location") && !jsonLogoSettings.getString("location").toString().equals("")) {
                                 offer.setLocation(jsonLogoSettings.getString("location"));

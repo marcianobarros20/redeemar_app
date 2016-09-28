@@ -237,13 +237,9 @@ public class Requestor {
 
             }
 
-
             OutputStream os = conn.getOutputStream();
-
             Log.d(LOGTAG, "URL : " + url);
-
             Log.d(LOGTAG, "Request: " + data.toString());
-
 
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
             bufferedWriter.write("data="+data.toString());

@@ -4,17 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 
-public class CrashActivity extends Activity {
+public class CrashActivity extends AppCompatActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		 //setContentView(R.layout.crashreport);
+			setContentView(R.layout.crashreport);
 		 
 	        final String stackTrace = getIntent().getStringExtra("stacktrace");
 	        final TextView reportTextView = (TextView) findViewById(R.id.txtCrash);
@@ -31,12 +32,5 @@ public class CrashActivity extends Activity {
 	        startActivity(Intent.createChooser(emailIntent, "Send error to author..."));
 	    }
 	
-		
 
-	
-
-	
-
-	
-	
 }

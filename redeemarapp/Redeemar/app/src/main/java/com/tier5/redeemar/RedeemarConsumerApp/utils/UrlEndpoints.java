@@ -5,7 +5,7 @@ package com.tier5.redeemar.RedeemarConsumerApp.utils;
  * */
 public class UrlEndpoints {
 
-    public static final String serverBaseUrl = "http://beta.redeemar.com/";
+    public static final String serverBaseUrl = "http://dev.redeemar.com/";
 
     public static final String basePathURL             = serverBaseUrl+"admin/uploads/original/";
     public static final String URL_ALL_OFFERS          =  serverBaseUrl+"admin/public/index.php/bridge/alloffers";

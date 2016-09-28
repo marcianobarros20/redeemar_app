@@ -48,6 +48,7 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
 import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
+import com.tier5.redeemar.RedeemarConsumerApp.exception.CrashActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.AboutFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.BrowseOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.ContactFragment;
@@ -55,6 +56,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.fragments.EditProfileFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.FragmentDrawer;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.HelpFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.HomeFragment;
+import com.tier5.redeemar.RedeemarConsumerApp.fragments.MapViewFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.MyOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.RateUsFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
@@ -67,7 +69,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BrowseOffersActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ActivityCommunicator {
+public class BrowseOffersActivity extends CrashActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ActivityCommunicator {
 
     /**
      * RecyclerView: The new recycler view replaces the list view. Its more modular and therefore we
@@ -650,6 +652,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         //Log.d(LOGTAG, "Category JSON: " + jsonCatText);
 
 
+
         List categories = db.getCategories(0);
         String tempCatName = "";
         final Menu menu = navigationView.getMenu();
@@ -660,7 +663,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             int catId = cat.getId();
             String catName = cat.getCatName();
             int parentId = cat.getParentId();
-
 
             if(parentId == 0) {
                 mParentCategoryIds.add(String.valueOf(catId));
@@ -792,18 +794,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             if(viewType.equals("thumb")) {
                 actionView.setIcon(R.drawable.ic_thumb_white);
             }
-
             else if(viewType.equals("map")) {
+                actionView.setIcon(R.drawable.ic_map_white);
+            }
+            else {
                 actionView.setIcon(R.drawable.ic_list_white);
             }
-
-            else {
-                actionView.setIcon(R.drawable.ic_map_white);
-
-            }
-
-
-
 
         }
 
@@ -828,19 +824,20 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
             case R.id.action_view_type:
 
-                Fragment browseOfferListFragment = new BrowseOfferFragment();
                 getSupportActionBar().setTitle(getString(R.string.browse_offers));
 
                 if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
-                    String viewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
+                    String viewType1 = sharedpref.getString(res.getString(R.string.spf_view_type), "");
+                    Log.d(LOGTAG, "Inside Action View Type: "+viewType1);
 
-                    if(viewType.equals("thumb")) {
-                        Toast.makeText(getApplicationContext(), "Map view coming soon", Toast.LENGTH_SHORT).show();
+
+                    if(viewType1.equals("thumb")) {
+                        //Toast.makeText(getApplicationContext(), "Map view coming soon", Toast.LENGTH_SHORT).show();
                         actionView.setIcon(R.drawable.ic_thumb_white);
                         editor.putString(getString(R.string.spf_view_type), "map"); // Storing View Type to Map
                     }
 
-                    else if(viewType.equals("map")) {
+                    else if(viewType1.equals("map")) {
                         //Toast.makeText(getApplicationContext(), "List view option selected", Toast.LENGTH_SHORT).show();
                         actionView.setIcon(R.drawable.ic_list_white);
                         editor.putString(getString(R.string.spf_view_type), "list"); // Storing View Type to List
@@ -852,17 +849,32 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                         editor.putString(getString(R.string.spf_view_type), "thumb"); // Storing View Type to Thumb
                     }
 
-                        editor.commit(); // commit changes
+                    editor.commit(); // commit changes
+
+
+                    if(viewType1.equals("map")) {
+
+                        Log.d(LOGTAG, "View Type: "+viewType1);
+                        Fragment mapViewFragment = new MapViewFragment();
+                        FragmentManager mapViewFm = getFragmentManager();
+                        FragmentTransaction mapViewFragmentTransaction = mapViewFm.beginTransaction();
+                        mapViewFragmentTransaction.replace(R.id.container_body, mapViewFragment);
+                        mapViewFragmentTransaction.commit();
+                    }
+                    else {
+
+                        Fragment browseOfferListFragment = new BrowseOfferFragment();
+                        FragmentManager browseOfferFm = getFragmentManager();
+                        FragmentTransaction browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
+                        browseOfferFragmentTransaction.replace(R.id.container_body, browseOfferListFragment);
+                        browseOfferFragmentTransaction.commit();
+
+                    }
+                    return true;
 
 
                 }
 
-
-                FragmentManager browseOfferFm = getFragmentManager();
-                FragmentTransaction browseOfferFragmentTransaction = browseOfferFm.beginTransaction();
-                browseOfferFragmentTransaction.replace(R.id.container_body, browseOfferListFragment);
-                browseOfferFragmentTransaction.commit();
-                return true;
 
             /*
             case R.id.action_search:
@@ -910,6 +922,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         super.onResume();
         //setUpMap();
         Log.d(LOGTAG, "Resuming the app");
+
+
     }
 
     @Override
@@ -1014,9 +1028,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 istrue1=false;
                             }
 
-                            // Third Category
-                            //Log.d("MENU", "CC1 "+mCategoryIds.get(k));
-                            //Log.d("MENU", "CC2 "+mCategoryNames.get(k));
                             mItemListArray.add(new Product.SubCategory.ItemList(mCategoryIds.get(k), mCategoryNames.get(k)));
                         }
                     }
@@ -1056,15 +1067,15 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
             if(pProd.getOpened()==false) {
                 mLinearScrollSecond.setVisibility(View.GONE);
-                mImageArrowFirst.setBackgroundResource(R.drawable.circle_plus);
+                mImageArrowFirst.setBackgroundResource(R.drawable.ic_down);
             }
             else {
                 mLinearScrollSecond.setVisibility(View.VISIBLE);
-                mImageArrowFirst.setBackgroundResource(R.drawable.circle_minus);
+                mImageArrowFirst.setBackgroundResource(R.drawable.ic_up);
             }
 
             secondRowItemCount = pProductArrayList.get(i).getmSubCategoryList().size();
-            mProductName.setOnTouchListener(new View.OnTouchListener() {
+            mLinearFirstArrow.setOnTouchListener(new View.OnTouchListener() {
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -1078,16 +1089,16 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     isFirstViewClick = mMainProduct.getOpened();
                     secondRowItemCount = mMainProduct.getmSubCategoryList().size();
 
-                    //Log.d(LOGTAG, "A new menu clicked "+xn+" : "+isFirstViewClick+" "+secondRowItemCount);
+                    Log.d(LOGTAG, "A main menu clicked "+xn+" : "+isFirstViewClick+" "+secondRowItemCount);
 
                     if(secondRowItemCount > 0) {
 
                         if (isFirstViewClick == false) {
-                            mImageArrowFirst.setBackgroundResource(R.drawable.circle_minus);
+                            mImageArrowFirst.setBackgroundResource(R.drawable.ic_up);
                             mLinearScrollSecond.setVisibility(View.VISIBLE);
                             mMainProduct.setOpened(true);
                         } else {
-                            mImageArrowFirst.setBackgroundResource(R.drawable.circle_plus);
+                            mImageArrowFirst.setBackgroundResource(R.drawable.ic_down);
                             mLinearScrollSecond.setVisibility(View.GONE);
                             mMainProduct.setOpened(false);
                         }
@@ -1102,8 +1113,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
 
             ////////////////////////////// SUB CATEGORY STARTS //////////////////////////////////
-
-
 
             final String name = pProductArrayList.get(i).getpName();
             mProductName.setText(name);
@@ -1131,12 +1140,15 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 if(isSecondViewClick==false) {
                     mLinearScrollThird.setVisibility(View.GONE);
-                    mImageArrowSecond.setBackgroundResource(R.drawable.circle_plus);
+                    mImageArrowSecond.setBackgroundResource(R.drawable.ic_down);
                 }
                 else {
                     mLinearScrollThird.setVisibility(View.VISIBLE);
-                    mImageArrowSecond.setBackgroundResource(R.drawable.circle_minus);
+                    mImageArrowSecond.setBackgroundResource(R.drawable.ic_up);
                 }
+
+
+
 
                 mSubItemName.setOnTouchListener(new View.OnTouchListener() {
 
@@ -1154,11 +1166,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                         if(thirdRowItemCount > 0) {
 
                             if(isSecondViewClick == false) {
-                                mImageArrowSecond.setBackgroundResource(R.drawable.circle_minus);
+                                mImageArrowSecond.setBackgroundResource(R.drawable.ic_up);
                                 mLinearScrollThird.setVisibility(View.VISIBLE);
                                 mSubProduct2.setOpened(true);
                             } else {
-                                mImageArrowSecond.setBackgroundResource(R.drawable.circle_plus);
+                                mImageArrowSecond.setBackgroundResource(R.drawable.ic_down);
                                 mLinearScrollThird.setVisibility(View.GONE);
                                 mSubProduct2.setOpened(false);
                             }

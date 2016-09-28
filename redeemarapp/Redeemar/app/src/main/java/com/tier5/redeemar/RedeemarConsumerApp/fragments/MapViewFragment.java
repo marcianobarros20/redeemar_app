@@ -4,19 +4,18 @@ package com.tier5.redeemar.RedeemarConsumerApp.fragments;
  * Created by Dibs on 29/07/15.
  */
 
+import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -28,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,22 +40,29 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.RecyclerItemClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.ResizeAnimation;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrandViewAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadImageTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByBrandsAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.MarkerItem;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.ObjectSerializer;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class MapViewFragment extends Fragment implements UsersLoadedListener, OnMapReadyCallback {
+public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
     private String LOGTAG = "HomeFragment";
     private double latitude = 0.0, longitude = 0.0;
@@ -65,25 +70,28 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
     GoogleMap mMap;
     MapView mMapView;
     private ClusterManager mClusterManager;
-    private ArrayList<User> brandList, dispBrandList;
+    private ArrayList<Offer> brandList, dispBrandList;
+    private ArrayList<Offer> offerList;
 
     private RecyclerView mRecyclerView;
-    private BrandViewAdapter mAdapter;
+    private BrowseOffersViewAdapter mAdapter;
     private RelativeLayout containerLayout;
     private LinearLayout innerContainerLayout;
     private LinearLayout.LayoutParams lp;
 
     private float dpHeight = 0, bHeight = 0, nHeight = 0, dpWidth= 0;
     private int pxHeight, pxHeightRev, pxWidth;
-    private static final LatLng SYDNEY = new LatLng(-33.85704, 151.21522);
     private Resources res;
     private SharedPreferences sharedpref;
     SharedPreferences.Editor editor;
     //private Double last_lat = 0.0, last_lon = 0.0;
     boolean isLocationSensetive = false;
-
-
     private boolean mMapViewExpanded = false;
+    private SuperConnectionDetector cd;
+    private boolean isInternetPresent = false;
+
+
+    String clickIndex = "", companyName="", companyLocation="" , offersJson = "";
 
 
     public MapViewFragment() {
@@ -102,9 +110,29 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
 
         res = getResources();
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-
-
         editor = sharedpref.edit();
+
+
+        cd = new SuperConnectionDetector(getActivity());
+        isInternetPresent = cd.isConnectingToInternet();
+
+        if(!isInternetPresent) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setTitle("Internet");
+            alertDialog.setMessage("Internet not enabled in your device. Do you want to enable it from settings menu");
+            alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int which) {
+                    startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 1);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+
+        }
 
 
 
@@ -128,11 +156,11 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.map_view);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.nearby_brands);
 
 
         try {
-            rootView = inflater.inflate(R.layout.fragment_map_view, container, false);
+            rootView = inflater.inflate(R.layout.fragment_home, container, false);
             MapsInitializer.initialize(this.getActivity());
             mMapView = (MapView) rootView.findViewById(R.id.map);
             mMapView.onCreate(savedInstanceState);
@@ -141,12 +169,10 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
             brandList = new ArrayList<>();
             dispBrandList = new ArrayList<>();
 
-
             containerLayout = (RelativeLayout) rootView.findViewById(R.id.mainContainer);
             innerContainerLayout = (LinearLayout) rootView.findViewById(R.id.innerContainer);
             mRecyclerView = (RecyclerView) rootView.findViewById(R.id.myRecyclerView);
             innerContainerLayout.setVisibility(View.VISIBLE);
-
 
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
 
@@ -170,6 +196,8 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
                     latitude = gps.getLatitude();
                     longitude = gps.getLongitude();
 
+
+
                     if(latitude == 0 && longitude == 0) {
 
                         gps.showSettingsAlert();
@@ -187,7 +215,7 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
             }
 
             //Toast.makeText(getActivity().getApplicationContext(), "Your last known location as per browsing the map is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-            Toast.makeText(getActivity().getApplicationContext(), "Your last known location as per browsing the map is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity().getApplicationContext(), "Your last known location as per browsing the map is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
 
 
 
@@ -220,13 +248,7 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
 
                 Log.d(LOGTAG, "Inside savedInstanceState");
             } else {
-                //if this fragment starts for the first time, load the list of movies from a database
-                //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
-                //if the database is empty, trigger an AsycnTask to download movie list from the web
-                //if (mListOffers.isEmpty()) {
-                    Log.d(LOGTAG, "HomeFragment: executing task from fragment");
-                    new GetNearByBrandsAsyncTask(this).execute(String.valueOf(latitude), String.valueOf(longitude));
-                //}
+
             }
 
         }
@@ -237,13 +259,24 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
     }
 
 
+    /*@Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        Activity a;
+
+        if (context instanceof Activity){
+            a=(Activity) context;
+        }
+
+    }*/
+
 
     @Override
     public void onPause() {
         super.onPause();
         mMapView.onPause();
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -255,29 +288,31 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
     {
         super.onSaveInstanceState(outState); mMapView.onSaveInstanceState(outState);
     }
-
     @Override
     public void onLowMemory()
     {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
-
     @Override
     public void onResume() {
         super.onResume();
         mMapView.onResume();
     }
 
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
     }
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        Log.d(LOGTAG, "Inside onmayReady");
+        //Toast.makeText(getActivity().getApplicationContext(), "My Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+        Log.d(LOGTAG, "Inside onMapReady");
 
 
         mClusterManager = new ClusterManager(getActivity(), googleMap);
@@ -290,13 +325,17 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10));
         mClusterManager = new ClusterManager(getActivity(), googleMap);
-        //googleMap.setOnCameraChangeListener(mClusterManager);
         googleMap.setOnInfoWindowClickListener(mClusterManager);
-        googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+        googleMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+
+        //googleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
         googleMap.setOnMarkerClickListener(mClusterManager);
         //mClusterManager.cluster();
 
         googleMap.moveCamera(CameraUpdateFactory.zoomTo(6.2f));
+
+
+        setupCluster();
 
 
 
@@ -304,33 +343,24 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
 
             @Override
             public void onMapClick(LatLng arg0) {
-                // TODO Auto-generated method stub
-                Log.d(LOGTAG, "OnMap Clicked "+arg0.latitude + "-" + arg0.longitude);
-
-
-                editor.putString(getString(R.string.spf_last_lat), String.valueOf(arg0.latitude)); // Storing Lat
-                editor.putString(getString(R.string.spf_last_lon), String.valueOf(arg0.longitude)); // Storing Lon
-
-
-                editor.commit(); // commit changes
-
-
-                mMapViewExpanded = true;
-
-                animateMapView();
-
-
-
+            // TODO Auto-generated method stub
+            Log.d(LOGTAG, "OnMap Clicked "+arg0.latitude + "-" + arg0.longitude);
+            //editor.putString(getString(R.string.spf_last_lat), String.valueOf(arg0.latitude)); // Storing Lat
+            //editor.putString(getString(R.string.spf_last_lon), String.valueOf(arg0.longitude)); // Storing Lon
+            //editor.commit(); // commit changes
+            mMapViewExpanded = true;
+            animateMapView();
             }
 
 
         });
 
 
-
         mClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MarkerItem>() {
             @Override
             public boolean onClusterClick(Cluster<MarkerItem> cluster) {
+                //clickedCluster = cluster; // remember for use later in the Adapter
+
                 ArrayList myItem = (ArrayList) cluster.getItems();
 
                 if(dispBrandList.size() > 0)
@@ -342,24 +372,21 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
 
                     String ind = itm.getTitle();
 
-                    User br = (User) brandList.get(Integer.parseInt(ind));
+                    Offer br = offerList.get(Integer.parseInt(ind));
 
-                    br.setLogoName(br.getLogoName());
-                    br.setTargetId(br.getTargetId());
-
+                    br.setBrandLogo(br.getBrandLogo());
+                    br.setOfferId(br.getOfferId());
 
                     dispBrandList.add(br);
 
                 }
 
 
-
-                //ArrayList usr = (ArrayList) cluster.getItems();
-
-                mAdapter = new BrandViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrandList");
+                mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrowseOffers");
                 mRecyclerView.setAdapter(mAdapter);
+
                 //mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-                Log.d(LOGTAG, "Brand List: "+dispBrandList.size());
+                //Log.d(LOGTAG, "Brand List: "+dispBrandList.size());
 
                 //innerContainerLayout.setVisibility(View.VISIBLE);
                 mMapViewExpanded = false;
@@ -369,13 +396,11 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
                     @Override
                     public void onItemClick(View view, int position) {
 
+                        Offer br = dispBrandList.get(position);
 
-                        User br = (User)dispBrandList.get(position);
-
-                        if(br.getTargetId() != null) {
-
-                            Log.d(LOGTAG, "Group Recycler Item has been clicked. Brand User Id is "+br.getId());
-                            //openFragment(br.getId());
+                        if(br.getOfferId() != null) {
+                            Log.d(LOGTAG, "Group Recycler Item has been clicked. Brand User Id is "+br.getOfferId());
+                            openFragment(br.getOfferId());
                         }
                     }
 
@@ -389,22 +414,29 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
                 return false;
             }
         });
+
+
         mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MarkerItem>() {
             @Override
             public boolean onClusterItemClick(MarkerItem item) {
-                //clickedClusterItem = item;
+
+                Log.d(LOGTAG, "MyItem: "+item.getTitle());
 
                 if(dispBrandList.size() > 0)
                     dispBrandList.clear();
 
                 String ind = item.getTitle();
+                clickIndex = ind;
 
-                User br = (User) brandList.get(Integer.parseInt(ind));
-                br.setLogoName(br.getLogoName());
+                Offer br = offerList.get(Integer.parseInt(ind));
+                br.setBrandLogo(br.getBrandLogo());
+
+                companyName = br.getCompanyName();
+                companyLocation = br.getLocation();
+
 
                 dispBrandList.add(br);
-
-                mAdapter = new BrandViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrandList");
+                mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrowseOffers");
                 mRecyclerView.setAdapter(mAdapter);
 
                 //innerContainerLayout.setVisibility(View.VISIBLE);
@@ -415,13 +447,11 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
                     public void onItemClick(View view, int position) {
                         Log.d(LOGTAG, "Recycler Item has been clicked");
 
-                        User br = (User)dispBrandList.get(position);
+                        Offer br = dispBrandList.get(position);
 
-                        if(br.getTargetId() != null) {
-
-
-                            Log.d(LOGTAG, "Single Recycler Item has been clicked. Brand User Id is "+br.getId());
-                            openFragment(br.getId());
+                        if(br.getOfferId() != null) {
+                            Log.d(LOGTAG, "Single Recycler Item has been clicked. Brand User Id is "+br.getOfferId());
+                            openFragment(br.getOfferId());
                         }
                     }
 
@@ -434,17 +464,13 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
                     animateMapView();
 
                 Log.d(LOGTAG, "Map View: "+getMapViewStatus());
-
-
                 Log.d(LOGTAG, "Cluster item clicked "+item.getTitle());
                 return false;
             }
         });
 
-
-
-
     }
+
 
 
     /** Demonstrates customizing the info window and/or its contents. */
@@ -453,8 +479,11 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
         // These a both viewgroups containing an ImageView with id "badge" and two TextViews with id
         // "title" and "snippet".
         private final View mWindow;
-
         private final View mContents;
+
+
+        private TextView tvInfoTitle, tvInfoSnippet;
+        private ImageView imStoreFrontPic;
 
         CustomInfoWindowAdapter() {
             mWindow = getActivity().getLayoutInflater().inflate(R.layout.custom_info_window, null);
@@ -482,61 +511,85 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
         }
 
         private void render(Marker marker, View view) {
-            int badge;
-            // Use the equals() method on a Marker to check for equals.  Do not use ==.
-//            if (marker.equals(mBrisbane)) {
-//                badge = R.drawable.badge_qld;
-//            } else if (marker.equals(mAdelaide)) {
-//                badge = R.drawable.badge_sa;
-//            } else if (marker.equals(mSydney)) {
-//                badge = R.drawable.badge_nsw;
-//            } else if (marker.equals(mMelbourne)) {
-//                badge = R.drawable.badge_victoria;
-//            } else if (marker.equals(mPerth)) {
-//                badge = R.drawable.badge_wa;
-//            } else {
-//                // Passing 0 to setImageResource will clear the image view.
-//                badge = 0;
-//            }
-            //((ImageView) view.findViewById(R.id.badge)).setImageResource(badge);
 
-            String title = marker.getTitle();
-            TextView titleUi = ((TextView) view.findViewById(R.id.title));
-            if (title != null) {
-                // Spannable string allows us to edit the formatting of the text.
-                SpannableString titleText = new SpannableString(title);
-                titleText.setSpan(new ForegroundColorSpan(Color.RED), 0, titleText.length(), 0);
-                titleUi.setText(titleText);
-            } else {
-                titleUi.setText("");
+            tvInfoTitle = (TextView) view.findViewById(R.id.title);
+            tvInfoSnippet = (TextView) view.findViewById(R.id.snippet);
+            imStoreFrontPic = (ImageView) view.findViewById(R.id.badge);
+
+            //String ind = marker.getTitle();
+            Log.d(LOGTAG, "Map title index: "+clickIndex);
+
+            if(clickIndex != null && !clickIndex.equals("")) {
+                Offer br = offerList.get(Integer.parseInt(clickIndex));
+                if(br.getImageUrl() != null && !br.getImageUrl().equals("")) {
+
+                    String imageUrl = br.getImageUrl();
+                    Log.d(LOGTAG, "Store Image URL: "+imageUrl);
+                    new DownloadImageTask(imStoreFrontPic).execute(imageUrl);
+
+                }
+
+
+                //new DownloadSaveImageAsyncTask(getActivity()).execute(imageUrl);
+
+                tvInfoTitle.setText(companyName);
+                tvInfoSnippet.setText(companyLocation);
+
             }
 
-            String snippet = marker.getSnippet();
-            TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
-            if (snippet != null && snippet.length() > 12) {
-                SpannableString snippetText = new SpannableString(snippet);
-                snippetText.setSpan(new ForegroundColorSpan(Color.MAGENTA), 0, 10, 0);
-                snippetText.setSpan(new ForegroundColorSpan(Color.BLUE), 12, snippet.length(), 0);
-                snippetUi.setText(snippetText);
-            } else {
-                snippetUi.setText("");
-            }
+
+
         }
     }
 
+   private void setupCluster() {
+       // Load offer List from preferences
+       if(sharedpref.getString(res.getString(R.string.spf_offers), null) != null) {
+           offersJson = sharedpref.getString(res.getString(R.string.spf_offers), "");
+
+           try {
+               offerList = (ArrayList<Offer>) ObjectSerializer.deserialize(offersJson);
+
+               for(int i=0; i < offerList.size(); i++) {
+
+                   Offer offer = (Offer) offerList.get(i);
+
+                   Log.d(LOGTAG, "Inside Lat "+offer.getLatitude());
+                   Log.d(LOGTAG, "Inside Long "+offer.getLongitude());
 
 
+                   //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
+                   MarkerOptions markerOptions = new MarkerOptions()
+                           .position(new LatLng(Double.parseDouble(offer.getLatitude()), Double.parseDouble(offer.getLongitude())))
+                           .title(String.valueOf(i))
+                           .snippet(offer.getCompanyName());
+
+                   MarkerItem markerItem = new MarkerItem(markerOptions);
+
+                   mClusterManager.addItem(markerItem);
+
+               }
+
+               mClusterManager.cluster();
+
+           } catch (IOException e) {
+               e.printStackTrace();
+           } catch (ClassNotFoundException e) {
+               e.printStackTrace();
+           }
+
+       }
+   }
+
+
+
+    /*
     @Override
     public void onUsersLoaded(ArrayList<User> listBrands) {
-
 
         brandList = listBrands;
 
         Log.d(LOGTAG, "Inside callback onOffersLoaded: "+listBrands.size());
-        /*mAdapter = new BrowseOffersViewAdapter(getActivity(), listOffers, "BrowseOffers");
-        mRecyclerOffers.setAdapter(mAdapter);
-        mRecyclerOffers.setVisibility(View.VISIBLE);
-        tvEmptyView.setVisibility(View.GONE);*/
 
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
 
@@ -546,19 +599,13 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
             if(brnd.getLat() != null && !brnd.getLat().equalsIgnoreCase("") && brnd.getLon() != null && !brnd.getLon().equalsIgnoreCase("")) {
 
                 MyItem offsetItem = new MyItem(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon()));
-                //mClusterManager.addItem(offsetItem);
-
-
-
 
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon())))
-                        .title(brnd.getCompanyName())
-                        .snippet(brnd.getAddress())
+                        .title(String.valueOf(i))
+                        .snippet(brnd.getCompanyName())
                         .icon(icon);
                 MarkerItem markerItem = new MarkerItem(markerOptions);
-
-
 
                 mClusterManager.addItem(markerItem);
 
@@ -570,16 +617,8 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
         mClusterManager.cluster();
 
 
-        //Log.d(LOGTAG, "Just after brands getting loaded");
 
-
-
-        //mAdapter = new BrandViewAdapter(getActivity().getApplicationContext(), brandList, "BrandList");
-        //mRecyclerView.setAdapter(mAdapter);
-
-
-
-    }
+    }*/
 
     private void animateMapView() {
         Log.d(LOGTAG, "CLICKED ON THE MAPVIEW");
@@ -615,20 +654,15 @@ public class MapViewFragment extends Fragment implements UsersLoadedListener, On
 
     public void openFragment(String redeemarId) {
 
-        editor.putString(getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
+        /*editor.putString(getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
+        editor.putString(getString(R.string.spf_popup_action), "1"); // Storing Last Activity
         editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
-        editor.commit(); // commit changes
+        editor.commit(); // commit changes*/
 
 
-        Bundle args = new Bundle();
-        args.putString(getString(R.string.ext_redir_to), "BrandOffers");
-        args.putString(getString(R.string.ext_redeemar_id), redeemarId);
-        Fragment fr = new BrowseOfferFragment();
-        fr.setArguments(args);
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.replace(R.id.container_body, fr);
-        fragmentTransaction.commit();
+        Intent intent = new Intent(getActivity(), BrowseOffersActivity.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
 

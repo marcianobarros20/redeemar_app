@@ -41,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.CategoryActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
@@ -62,9 +63,12 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Keys;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.ObjectSerializer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -188,7 +192,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             categoryId = args1.getString(getString(R.string.ext_category_id), "");
 
             categoryName = args1.getString(getString(R.string.ext_category_name), "");
-            viewType = args1.getString(getString(R.string.ext_view_type), "");
+            //viewType = args1.getString(getString(R.string.ext_view_type), "");
 
         }
 
@@ -600,6 +604,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public void onDestroy() {
         super.onDestroy();
 
+
     }
 
     @Override
@@ -722,14 +727,39 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public void onOffersLoaded(ArrayList<Offer> listOffers) {
 
+
+
         if (isAdded() && activity != null) {
             if (listOffers.size() > 0 && mAdapter != null) {
+
+
                 mModels = listOffers;
                 //Log.d(LOGTAG, "Inside Adapter: "+mAdapter);
                 mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), listOffers, "BrowseOffers");
                 mRecyclerOffers.setAdapter(mAdapter);
                 mRecyclerOffers.setVisibility(View.VISIBLE);
                 tvEmptyView.setVisibility(View.GONE);
+
+                /*Gson gson = new Gson();
+                List<Offer> textList = new ArrayList<Offer>();
+                textList.addAll(listOffers);
+                String jsonText = gson.toJson(textList);
+                Log.d(LOGTAG, "Offers Gson Text: "+jsonText);
+                editor.putString(getString(R.string.spf_offers), jsonText);
+                editor.commit();*/
+
+                //String jsonCatText = sharedpref.getString(getString(R.string.spf_categories), null);
+                //Log.d(LOGTAG, "Category JSON: " + jsonCatText);
+
+                try {
+
+                    editor.putString(res.getString(R.string.spf_offers), ObjectSerializer.serialize(listOffers));
+                    editor.commit();
+
+                } catch(Exception ex) {
+                    Log.d(LOGTAG, ex.toString());
+                }
+
 
                 if(redeemarId.equals("CampaignOffer")) {
 

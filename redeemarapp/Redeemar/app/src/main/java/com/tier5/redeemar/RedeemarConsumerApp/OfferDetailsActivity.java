@@ -130,6 +130,9 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.offer_details);
 
+            TextView searchBox = (TextView) findViewById(R.id.search_text);
+            searchBox.setVisibility(View.GONE);
+
             //setSupportActionBar(toolbar);
             //Your toolbar is now an action bar and you can use it like you always do, for example:
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

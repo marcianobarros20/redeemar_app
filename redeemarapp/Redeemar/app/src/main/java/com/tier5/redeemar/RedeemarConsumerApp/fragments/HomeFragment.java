@@ -72,7 +72,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 
-public class HomeFragment extends Fragment implements UsersLoadedListener,OnMapReadyCallback {
+public class HomeFragment extends Fragment implements UsersLoadedListener, OnMapReadyCallback {
 
     private String LOGTAG = "HomeFragment";
     private double latitude = 0.0, longitude = 0.0;
