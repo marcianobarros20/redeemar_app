@@ -1,4 +1,42 @@
+/*===============================================================================
+Copyright (c) 2016 PTC Inc. All Rights Reserved.
+
+Copyright (c) 2012-2014 Qualcomm Connected Experiences, Inc. All Rights Reserved.
+
+Vuforia is a trademark of PTC Inc., registered in the United States and other 
+countries.
+===============================================================================*/
+
 package com.tier5.redeemar.RedeemarConsumerApp;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
+
+import com.google.gson.Gson;
+import com.tier5.redeemar.RedeemarConsumerApp.async.BrandDetailsAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.MenuItemsAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.BrandLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.CategoriesLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+//import android.support.multidex.MultiDex;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -54,8 +92,8 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
     }
-    
-    
+
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -72,17 +110,18 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
         db = new DatabaseHelper(this);
-        
+        int cnt = db.countCategories(0);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         LayoutInflater inflater = LayoutInflater.from(this);
         RelativeLayout layout = (RelativeLayout) inflater.inflate(
-            R.layout.splash_screen, null, false);
-        
+                R.layout.splash_screen, null, false);
+
         addContentView(layout, new LayoutParams(LayoutParams.MATCH_PARENT,
-            LayoutParams.MATCH_PARENT));
+                LayoutParams.MATCH_PARENT));
 
         // Clear all saved preferences
         editor.putString(getString(R.string.spf_redir_action), ""); // Storing Redirect Action
@@ -93,17 +132,21 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         // Get the menun items from server
         new MenuItemsAsyncTask(this).execute("0");
 
-        final Handler handler = new Handler();
+
+        /*final Handler handler = new Handler();
         handler.postDelayed(new Runnable()
         {
-            
+
             @Override
             public void run()
             {
                 // DO Nothing now
+                if(cnt == 0) {
+
+                }
             }
-            
-        }, SPLASH_MILLIS);
+
+        }, SPLASH_MILLIS);*/
 
 
     }

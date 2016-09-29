@@ -106,8 +106,6 @@ public class LoginActivity extends AppCompatActivity implements
     private String loginMethod = "", offerId = "", androidId = "", noAutoLogin = "";
 
 
-
-
     private FacebookCallback<LoginResult> mCallback = new FacebookCallback<LoginResult>() {
 
         @Override
@@ -168,9 +166,7 @@ public class LoginActivity extends AppCompatActivity implements
             Log.d(LOGTAG, "Last Offer Id New: "+offerId);
         }
 
-
         Log.d(LOGTAG, "Login Method: "+loginMethod);
-
 
 
         // For Facebook
