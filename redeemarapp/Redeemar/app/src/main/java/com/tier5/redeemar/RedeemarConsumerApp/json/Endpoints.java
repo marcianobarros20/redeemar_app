@@ -103,4 +103,11 @@ public class Endpoints {
         return UrlEndpoints.URL_SEARCH_LOCATION
                 + UrlEndpoints.URL_CHAR_QUESTION;
     }
+
+
+    public static String getBeacon() {
+
+        return UrlEndpoints.URL_SEARCH_BEACON
+                + UrlEndpoints.URL_CHAR_QUESTION;
+    }
 }

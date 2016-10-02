@@ -42,6 +42,7 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
+import com.tier5.redeemar.RedeemarConsumerApp.OfferDetailsActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.RecyclerItemClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.ResizeAnimation;
@@ -652,7 +653,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics());
     }
 
-    public void openFragment(String redeemarId) {
+    public void openFragment(String offerId) {
 
         /*editor.putString(getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
         editor.putString(getString(R.string.spf_popup_action), "1"); // Storing Last Activity
@@ -660,8 +661,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         editor.commit(); // commit changes*/
 
 
-        Intent intent = new Intent(getActivity(), BrowseOffersActivity.class);
+        Intent intent = new Intent(getActivity(), OfferDetailsActivity.class);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        intent.putExtra(getActivity().getString(R.string.ext_offer_id), offerId);
         startActivity(intent);
     }
 

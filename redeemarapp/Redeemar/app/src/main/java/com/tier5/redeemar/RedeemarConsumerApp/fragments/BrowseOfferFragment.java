@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +34,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -348,24 +351,28 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-        Address selected = (Address) arg0.getAdapter().getItem(arg2);
-        //Toast.makeText(activity, "Clicked " + arg2 + " city: " + selected.getLocation(), Toast.LENGTH_SHORT).show();
+                Address selected = (Address) arg0.getAdapter().getItem(arg2);
+                //Toast.makeText(activity, "Clicked " + arg2 + " city: " + selected.getLocation(), Toast.LENGTH_SHORT).show();
 
-        //From that position we get the lat-long
-        LatLng geo = (LatLng) selected.getCoordinates();
+                //From that position we get the lat-long
+                LatLng geo = (LatLng) selected.getCoordinates();
 
-        Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
-        Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
+                Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
+                Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
 
-        // Set the geo location of the place you want to search the offers for
-        editor.putString(res.getString(R.string.spf_location_keyword), selected.getLocation()); // Set view type to list
-        editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(geo.latitude));
-        editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(geo.longitude));
-        editor.commit();
+                // Set the geo location of the place you want to search the offers for
+                editor.putString(res.getString(R.string.spf_location_keyword), selected.getLocation()); // Set view type to list
+                editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(geo.latitude));
+                editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(geo.longitude));
+                editor.commit();
 
+                final InputMethodManager inputMethodManager =
+                        (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        // Pass the latitude and longitude to fetch the location information
-        loadOffersForCategoryLocations(String.valueOf(geo.latitude),  String.valueOf(geo.longitude), categoryId, redirectTo);
+                inputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
+                // Pass the latitude and longitude to fetch the location information
+                loadOffersForCategoryLocations(String.valueOf(geo.latitude),  String.valueOf(geo.longitude), categoryId, redirectTo);
 
             }
         });

@@ -103,6 +103,8 @@
                 android:layout_width="170dp"
                 android:layout_height="130dp"
                 android:background="@color/white"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
                 android:paddingRight="8dp">
 
                 <!-- Thumbnail Image -->
@@ -158,7 +160,7 @@
                 android:lines="2"
                 android:paddingTop="4dp"
                 android:paddingBottom="12dp"
-                android:textSize="17sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="@color/darkGray" />
 

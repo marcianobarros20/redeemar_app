@@ -40,6 +40,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.estimote.sdk.Beacon;
+import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.Region;
+import com.estimote.sdk.SystemRequirementsChecker;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -48,7 +52,9 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.async.FetchLocationAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.MenuItemsAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.SearchBeaconAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.BeaconFoundListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.CategoriesLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.LocationFetchedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
@@ -66,12 +72,14 @@ import com.tier5.redeemar.RedeemarConsumerApp.fragments.RateUsFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Product;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class BrowseOffersActivity extends CrashActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ActivityCommunicator {
@@ -143,6 +151,12 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
 
+    // For Beacons
+
+    //private BeaconManager beaconManager;
+    //private Region region;
+    //private static boolean hasBeaconFound = false;
+
 
 
     /**
@@ -161,6 +175,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.offers_recycler);
+
+
 
 
         res = getResources();
@@ -224,6 +240,9 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         }
 
 
+
+
+
         setupToolbar();
 
         setupBottombar(mBottomBar, savedInstanceState);
@@ -233,6 +252,10 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+
+
+
     }
 
 
@@ -270,6 +293,9 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         /*final ActionBar ab = this.getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.list);
         ab.setDisplayHomeAsUpEnabled(true);*/
+
+
+
     }
 
     private void setupBottombar(BottomBar mBottomBar, Bundle savedInstanceState) {
@@ -822,7 +848,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
         int id = item.getItemId();
 
-        //Log.d(LOGTAG, "Inside Menu BrowseOffer "+id+" "+R.id.action_view_thumb);
+        Log.d(LOGTAG, "Inside Menu BrowseOffer "+id+" "+R.id.action_view_thumb);
 
 
 
@@ -837,7 +863,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                 getSupportActionBar().setTitle(getString(R.string.browse_offers));
 
-                if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+                //if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
                     String viewType1 = sharedpref.getString(res.getString(R.string.spf_view_type), "");
                     Log.d(LOGTAG, "Inside Action View Type: "+viewType1);
 
@@ -914,7 +940,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                 return true;
             */
 
-        }
+        //}
 
         return super.onOptionsItemSelected(item);
     }
@@ -932,9 +958,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
     protected void onResume() {
         super.onResume();
         //setUpMap();
-        Log.d(LOGTAG, "Resuming the app");
 
-
+        SystemRequirementsChecker.checkWithDefaultDialogs(this);
     }
 
     @Override
@@ -987,6 +1012,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         );
         AppIndex.AppIndexApi.start(client, viewAction);
     }
+
 
     @Override
     public void onStop() {
@@ -1303,10 +1329,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                             Fragment browseOfferFragment1 = new BrowseOfferFragment();
                             getSupportActionBar().setTitle(itemName);
-//                            Bundle args1 = new Bundle();
-//                            args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
-//                            args1.putString(getString(R.string.ext_category_id), String.valueOf(itemId));
-//                            browseOfferFragment1.setArguments(args1);
 
                             editor.putString(getString(R.string.spf_redir_action), "CategoryOffers"); // Storing Redirect Action
                             editor.putString(getString(R.string.spf_category_id), String.valueOf(String.valueOf(itemId))); // Storing Redirect Action
@@ -1344,7 +1366,14 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
     }
 
+    public void searchBeacon(UUID uuid, int major, int minor) {
+        //Log.d(LOGTAG, "AA: "+String.valueOf(major));
+        //Log.d(LOGTAG, "BB: "+String.valueOf(minor));
+        //hasBeaconFound = true;
 
+
+        //new SearchBeaconAsyncTask(this).execute(uuid.toString(), String.valueOf(major), String.valueOf(minor));
+    }
 
 
 }

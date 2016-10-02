@@ -110,12 +110,12 @@ public class BankedViewHolder extends ChildViewHolder {
             esb.append(expires_in).append(" ").append(format.format(banked.getExpires())).append(" ").append(days);
         }
 
-        tvOfferDescription.setTypeface(myFont);
+        /*tvOfferDescription.setTypeface(myFont);
         tvRetailValue.setTypeface(myFont);
         tvPayValue.setTypeface(myFont);
         //tvDistance.setTypeface(myFont);
         tvDiscount.setTypeface(myFont);
-        tvExpires.setTypeface(myFont);
+        tvExpires.setTypeface(myFont);*/
 
         int valCalc = banked.getValCalc();
         int valText = banked.getValText();
@@ -143,7 +143,7 @@ public class BankedViewHolder extends ChildViewHolder {
 
 
         // In case valCalc is 2 = then use percentage symbol, else use $ symbol
-        if(valCalc == 2) {
+        /*if(valCalc == 2) {
 
             if(valText == 3) {
                 sb.append(save).append(" ").append(discount_text).append(perc_sym);
@@ -161,7 +161,7 @@ public class BankedViewHolder extends ChildViewHolder {
 
             if(valText == 3) {
                 //sb.append(cur_sym).append(discVal).append(" ").append(off);
-                sb.append(save).append(" ").append(perc_sym).append(discount_text);
+                sb.append(save).append(" ").append(cur_sym).append(discount_text);
 
             }
             else if(valText == 2) {
@@ -170,7 +170,21 @@ public class BankedViewHolder extends ChildViewHolder {
             else {
                 sb.append(cur_sym).append(discount_text).append(" ").append(off);
             }
+        }*/
+
+        if(valCalc == 2) {
+
+            sb.append(discount_text).append(perc_sym);
+
+
+
         }
+        else {
+
+            sb.append(cur_sym).append(discount_text);
+        }
+
+
         tvExpires.setText(esb);
 
 

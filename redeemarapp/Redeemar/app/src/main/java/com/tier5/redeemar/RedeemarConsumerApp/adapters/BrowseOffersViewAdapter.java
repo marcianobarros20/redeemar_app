@@ -277,7 +277,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             if(valText == 3) {
                 //sb.append(cur_sym).append(discVal).append(" ").append(off);
-                sb.append(save).append(" ").append(discount_text).append(perc_sym);
+                sb.append(save).append(" ").append(cur_sym).append(discount_text);
 
             }
             else if(valText == 2) {
@@ -289,7 +289,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         }
 
         //Log.d(LOGTAG, "Product Name: "+item.getOfferDescription());
-        //Log.d(LOGTAG, "Product Discount: "+discount_text);
+        Log.d(LOGTAG, "String Buffer: "+sb);
 
 
 

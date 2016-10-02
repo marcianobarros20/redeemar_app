@@ -36,6 +36,8 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 
 import java.util.ArrayList;
 
+import static android.provider.MediaStore.Video.Thumbnails.VIDEO_ID;
+
 
 public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoadedListener, YouTubePlayer.OnInitializedListener {
 
@@ -49,19 +51,20 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
     String redeemarId = "", uniqueTargetId = "", lastActivity="", videoId = "", basePath = "";
     Context context;
 
-
     private YouTubePlayer youTubePlayer;
     private YouTubePlayerView youTubePlayerView;
     private YouTubeThumbnailView youTubeThumbnailView;
     private YouTubeThumbnailLoader youTubeThumbnailLoader;
     BrandVideo brandVideo;
 
-    public static final String API_KEY = "AIzaSyA4cndO4t85r0NZ-Ux9N8MzBJx06k4iNPA";
-    public static final String VIDEO_ID = "o7VVHhK9zf0";
+    //public static final String API_KEY = "AIzaSyA4cndO4t85r0NZ-Ux9N8MzBJx06k4iNPA";
+    //public static final String VIDEO_ID = "o7VVHhK9zf0";
 
     private Resources res;
     private SharedPreferences sharedpref;
     private SharedPreferences.Editor editor;
+
+    private static final int RQS_ErrorDialog = 1;
 
 
 
@@ -72,10 +75,11 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
 
         youTubePlayerView = (YouTubePlayerView)findViewById(R.id.youtubeplayerview);
-        youTubePlayerView.initialize(API_KEY, this);
+        youTubePlayerView.initialize(Constants.youtubeAPIKey, this);
 
         btnShopOffers = (Button) findViewById(R.id.shop_offers);
         btnScan = (Button)  findViewById(R.id.btnScan);
+        btnScan.setVisibility(View.GONE);
 
         tvBrandName = (TextView) findViewById(R.id.brand_name);
         imBrandLogo = (ImageView) findViewById(R.id.brand_logo_image);
@@ -106,8 +110,15 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
 
     @Override
-    public void onInitializationFailure(Provider provider,
-                                        YouTubeInitializationResult result) {
+    public void onInitializationFailure(Provider provider, YouTubeInitializationResult result) {
+
+        if (result.isUserRecoverableError()) {
+            result.getErrorDialog(this, RQS_ErrorDialog).show();
+        } else {
+            Toast.makeText(this,
+                    "YouTubePlayer.onInitializationFailure(): " + result.toString(),
+                    Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -122,7 +133,7 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
         new BrandDetailsAsyncTask(this).execute(uniqueTargetId);
 
         if (!wasRestored) {
-            player.cueVideo(VIDEO_ID);
+            player.cueVideo(Constants.defaultYoutubeVideoId);
         }
     }
 
@@ -141,15 +152,10 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
         // The first element contains brand information
         if(brandInfo.size() >= 1) {
 
-
-
             int p = 0;
             final  ArrayList videos = new ArrayList();
 
-
             for(int i = 0; i < brandInfo.size(); i++) {
-
-
                 // Because the first index contains brand information, show brand information
 
                 if (i == 0) {
@@ -204,6 +210,8 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
                                 //youTubePlayer.cueVideo("y2Ky3Wo37AY");
                                 if(youTubePlayer != null) {
                                     youTubePlayer.cueVideo(videoId);
+                                    youTubePlayer.setFullscreen(true);
+
 
                                 }
                             }

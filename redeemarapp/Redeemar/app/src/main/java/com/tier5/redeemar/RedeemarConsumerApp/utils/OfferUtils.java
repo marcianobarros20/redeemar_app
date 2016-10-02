@@ -9,6 +9,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.json.Endpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.json.Parser;
 import com.tier5.redeemar.RedeemarConsumerApp.json.Requestor;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Beacon;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
@@ -171,6 +172,13 @@ public class OfferUtils {
         ArrayList<User> locations = Parser.parseSearchLocationJSON(response);
         Log.d(LOGTAG, "Inside loadSearchLocation :"+locations.size());
         return locations;
+    }
+
+    public static Beacon loadSearchBeacon(RequestQueue requestQueue, String uuid, int major, int minor) {
+
+        JSONObject response = Requestor.requestSearchBeaconJSON(requestQueue, Endpoints.getBeacon(), uuid, major, minor);
+        Beacon beacon = Parser.parseSearchBeaconJSON(response);
+        return beacon;
     }
 }
 
