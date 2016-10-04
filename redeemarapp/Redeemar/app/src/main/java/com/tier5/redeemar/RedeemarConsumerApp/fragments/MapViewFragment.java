@@ -150,6 +150,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         }
 
 
+        editor.putString(res.getString(R.string.spf_view_type), "list"); // Storing View Type to List
+
+
 
     }
 
@@ -197,12 +200,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                     latitude = gps.getLatitude();
                     longitude = gps.getLongitude();
 
-
-
                     if(latitude == 0 && longitude == 0) {
-
                         gps.showSettingsAlert();
-
                     }
 
                     // \n is for new line
@@ -258,20 +257,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         }
         return rootView;
     }
-
-
-    /*@Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        Activity a;
-
-        if (context instanceof Activity){
-            a=(Activity) context;
-        }
-
-    }*/
-
 
     @Override
     public void onPause() {
@@ -386,10 +371,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrowseOffers");
                 mRecyclerView.setAdapter(mAdapter);
 
-                //mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-                //Log.d(LOGTAG, "Brand List: "+dispBrandList.size());
-
-                //innerContainerLayout.setVisibility(View.VISIBLE);
                 mMapViewExpanded = false;
                 animateMapView();
 

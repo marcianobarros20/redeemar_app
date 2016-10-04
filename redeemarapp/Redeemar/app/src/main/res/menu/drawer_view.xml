@@ -12,19 +12,19 @@
             android:id="@+id/nav_help"
             android:icon="@drawable/ic_help"
             android:title="@string/nav_item_help"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:visible="true" />
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_about"
             android:title="@string/nav_item_about"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:visible="true"  />
         <item
             android:id="@+id/nav_contact"
             android:icon="@drawable/ic_contact"
             android:title="@string/nav_item_contact"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:visible="true"  />
 
         <item
@@ -38,15 +38,15 @@
             android:id="@+id/nav_login"
             android:icon="@drawable/ic_logout"
             android:title="@string/nav_item_signin"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:visible="false" />
 
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:title="@string/nav_item_signout"
-            android:textSize="14sp"
-            android:visible="false" />
+            android:textSize="16sp"
+            android:visible="true" />
 
 
         <item

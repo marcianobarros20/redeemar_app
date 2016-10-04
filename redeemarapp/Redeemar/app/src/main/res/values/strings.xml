@@ -147,6 +147,7 @@
     <string name="lbl_btn_save">Save</string>
     <string name="spf_key">RedeemerSharedPref</string>
     <string name="spf_redeemer_id">spf_redeemer_id</string>
+    <string name="spf_brand_name">spf_brand_name</string>
     <string name="spf_category_id">spf_category_id</string>
     <string name="spf_category_name">spf_category_name</string>
     <string name="spf_search_keyword">spf_search_keyword</string>

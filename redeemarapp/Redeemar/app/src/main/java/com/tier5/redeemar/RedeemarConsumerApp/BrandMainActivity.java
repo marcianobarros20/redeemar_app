@@ -48,7 +48,7 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
     private TextView tvBrandName, hwTextView;
     private ImageView imBrandLogo;
     private Button btnShopOffers, btnScan;
-    String redeemarId = "", uniqueTargetId = "", lastActivity="", videoId = "", basePath = "";
+    String redeemarId = "", brandName = "", uniqueTargetId = "", lastActivity="", videoId = "", basePath = "";
     Context context;
 
     private YouTubePlayer youTubePlayer;
@@ -169,24 +169,20 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
                     redeemarId = brand.getId();
 
-
                     Log.d(LOGTAG, "My Brand name: "+brand.getCompanyName());
-
                     tvBrandName.setText(brand.getCompanyName());
+                    brandName = brand.getCompanyName();
 
                     //String defaultLogoImage =  brand.get
 
                     String logoImagePath = basePath +  brand.getLogoName();
-
                     Log.d(LOGTAG, "Logo path new: "+logoImagePath);
 
                     new DownloadImageTask(imBrandLogo).execute(logoImagePath);
 
 
-
                     if(youTubePlayer != null) {
                         youTubePlayer.cueVideo(Constants.defaultYoutubeVideoId);
-
                     }
 
 
@@ -304,6 +300,11 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
                 editor.putString(getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
                 editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
+                editor.putString(getString(R.string.spf_brand_name), brandName); // Storing Brand Name
+                //editor.putString(getString(R.string.spf_redir_action), "CategoryOffers"); // Storing Redirect Action
+                //editor.putString(getString(R.string.spf_category_id), String.valueOf(String.valueOf(itemId))); // Storing Redirect Action
+                //editor.putString(getString(R.string.spf_category_name), itemName); // Storing Redirect Action
+                editor.putString(getString(R.string.spf_search_keyword), ""); // Storing Redirect Action
                 editor.commit(); // commit changes
 
 
@@ -342,9 +343,9 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
     @Override
     public void onBackPressed()
     {
-        //Intent intent = new Intent(BrandMainActivity.this, BrowseOffersActivity.class);
-        //startActivity(intent);
-        //finish();
+        Intent intent = new Intent(BrandMainActivity.this, BrowseOffersActivity.class);
+        startActivity(intent);
+        finish();
 
     }
 

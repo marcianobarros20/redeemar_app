@@ -39,10 +39,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.estimote.sdk.Beacon;
-import com.estimote.sdk.BeaconManager;
-import com.estimote.sdk.Region;
 import com.estimote.sdk.SystemRequirementsChecker;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -50,13 +46,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
-import com.tier5.redeemar.RedeemarConsumerApp.async.FetchLocationAsyncTask;
-import com.tier5.redeemar.RedeemarConsumerApp.async.MenuItemsAsyncTask;
-import com.tier5.redeemar.RedeemarConsumerApp.async.SearchBeaconAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
-import com.tier5.redeemar.RedeemarConsumerApp.callbacks.BeaconFoundListener;
-import com.tier5.redeemar.RedeemarConsumerApp.callbacks.CategoriesLoadedListener;
-import com.tier5.redeemar.RedeemarConsumerApp.callbacks.LocationFetchedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
 import com.tier5.redeemar.RedeemarConsumerApp.exception.CrashActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.AboutFragment;
@@ -71,8 +61,6 @@ import com.tier5.redeemar.RedeemarConsumerApp.fragments.MyOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.RateUsFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Product;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
@@ -119,12 +107,10 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
     private List<Category> categories;
     private int catId = 0;
     int lastClick = 0;
-    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "", keyword = "", catName = "";
+    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "", keyword = "", catName = "", viewType  = "list";
     private final int NavGroupId = 1001;
     private SharedPreferences.Editor editor;
     private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
-
-
     // For Multilevel Category Menu
     ArrayList<String> mParentCategoryIds = new ArrayList<>();
     ArrayList<String> mParentCategoryNames = new ArrayList<>();
@@ -214,11 +200,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         }
 
 
-        Log.d(LOGTAG, "Redeemar id: " + redeemarId);
-        Log.d(LOGTAG, "Campaign id: " + campaignId);
-        Log.d(LOGTAG, "Category id: " + categoryId);
-
-
         // Get Data from Intent
         Bundle extras = getIntent().getExtras();
 
@@ -240,9 +221,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         }
 
 
-
-
-
         setupToolbar();
 
         setupBottombar(mBottomBar, savedInstanceState);
@@ -252,9 +230,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
-
-
 
     }
 
@@ -293,6 +268,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         /*final ActionBar ab = this.getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.list);
         ab.setDisplayHomeAsUpEnabled(true);*/
+
+
 
 
 
@@ -825,8 +802,11 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         getMenuInflater().inflate(R.menu.menu_main, menu);
         actionView = menu.findItem(R.id.action_view_type);
 
+
+
         if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
-            String viewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
+            viewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
+            Log.d(LOGTAG, "NEW View Type: "+viewType);
 
             if(viewType.equals("thumb")) {
                 actionView.setIcon(R.drawable.ic_thumb_white);
@@ -838,7 +818,12 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                 actionView.setIcon(R.drawable.ic_list_white);
             }
 
+
+
         }
+
+
+
 
         return true;
     }
@@ -863,42 +848,41 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                 getSupportActionBar().setTitle(getString(R.string.browse_offers));
 
-                //if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+                if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
                     String viewType1 = sharedpref.getString(res.getString(R.string.spf_view_type), "");
-                    Log.d(LOGTAG, "Inside Action View Type: "+viewType1);
+                    Log.d(LOGTAG, "Inside Action View Type: " + viewType1);
 
 
-                    if(viewType1.equals("thumb")) {
+                    if (viewType1.equals("thumb")) {
                         //Toast.makeText(getApplicationContext(), "Map view coming soon", Toast.LENGTH_SHORT).show();
-                        actionView.setIcon(R.drawable.ic_thumb_white);
+                        actionView.setIcon(R.drawable.ic_map_white);
                         editor.putString(getString(R.string.spf_view_type), "map"); // Storing View Type to Map
-                    }
-
-                    else if(viewType1.equals("map")) {
+                        actionView.setTitle("Thumb");
+                    } else if (viewType1.equals("map")) {
                         //Toast.makeText(getApplicationContext(), "List view option selected", Toast.LENGTH_SHORT).show();
                         actionView.setIcon(R.drawable.ic_list_white);
                         editor.putString(getString(R.string.spf_view_type), "list"); // Storing View Type to List
+                        actionView.setTitle("Map");
+                    } else {
+                        //Toast.makeText(getApplicationContext(), "Thumb view option selected", Toast.LENGTH_SHORT).show();
+                        actionView.setIcon(R.drawable.ic_thumb_white);
+                        editor.putString(getString(R.string.spf_view_type), "thumb"); // Storing View Type to Thumb
+                        actionView.setTitle("List");
                     }
 
-                    else {
-                        //Toast.makeText(getApplicationContext(), "Thumb view option selected", Toast.LENGTH_SHORT).show();
-                        actionView.setIcon(R.drawable.ic_map_white);
-                        editor.putString(getString(R.string.spf_view_type), "thumb"); // Storing View Type to Thumb
-                    }
 
                     editor.commit(); // commit changes
 
 
-                    if(viewType1.equals("map")) {
+                    if (viewType1.equals("thumb")) {
 
-                        Log.d(LOGTAG, "View Type: "+viewType1);
+                        Log.d(LOGTAG, "NEW View Type: " + viewType1);
                         Fragment mapViewFragment = new MapViewFragment();
                         FragmentManager mapViewFm = getFragmentManager();
                         FragmentTransaction mapViewFragmentTransaction = mapViewFm.beginTransaction();
                         mapViewFragmentTransaction.replace(R.id.container_body, mapViewFragment);
                         mapViewFragmentTransaction.commit();
-                    }
-                    else {
+                    } else {
 
                         Fragment browseOfferListFragment = new BrowseOfferFragment();
                         FragmentManager browseOfferFm = getFragmentManager();
@@ -908,39 +892,11 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                     }
                     return true;
+                }
 
 
                 }
 
-
-            /*
-            case R.id.action_search:
-
-                //Intent intent = new Intent(BrowseOffersActivity.this, CategoryActivity.class);
-
-                //overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
-                //startActivity(intent);
-                return true;
-
-            case R.id.action_view_thumb:
-                Toast.makeText(getApplicationContext(), "Thumbnail view option selected", Toast.LENGTH_SHORT).show();
-
-
-                editor.putString(getString(R.string.spf_view_type), "thumb"); // Storing User Id
-                editor.commit(); // commit changes
-
-                Fragment fr = new BrowseOfferFragment();
-                //Bundle args1 = new Bundle();
-                //fr.setArguments(args1);
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.replace(R.id.container_body, fr);
-                fragmentTransaction.commit();
-
-                return true;
-            */
-
-        //}
 
         return super.onOptionsItemSelected(item);
     }
@@ -958,6 +914,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
     protected void onResume() {
         super.onResume();
         //setUpMap();
+
+        Log.d(LOGTAG, "Resuming the app");
 
         SystemRequirementsChecker.checkWithDefaultDialogs(this);
     }
@@ -1230,20 +1188,14 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                         thirdRowItemCount = mSubProduct2.getmItemListArray().size();
                         Log.d(LOGTAG, "A new sub menu clicked "+xm+" : "+isSecondViewClick+" "+thirdRowItemCount);
 
-
                         Fragment browseOfferFragment1 = new BrowseOfferFragment();
                         getSupportActionBar().setTitle(mSubProduct2.getpSubCatName());
-//                        Bundle args1 = new Bundle();
-//                        args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
-//                        args1.putString(getString(R.string.ext_category_id), String.valueOf(mSubProduct2.getpId()));
-//                        args1.putString(getString(R.string.ext_category_name), String.valueOf(mSubProduct2.getpSubCatName()));
-//                        browseOfferFragment1.setArguments(args1);
 
                         editor.putString(res.getString(R.string.spf_redir_action), "CategoryOffers");
                         editor.putString(res.getString(R.string.spf_category_name), mSubProduct2.getpSubCatName());
                         editor.putString(res.getString(R.string.spf_category_id), mSubProduct2.getpId());
+                        editor.putString(getString(R.string.spf_search_keyword), ""); // Storing Redirect Action
                         editor.commit();
-
 
                         FragmentManager browseOfferFm1 = getFragmentManager();
                         FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
@@ -1332,7 +1284,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                             editor.putString(getString(R.string.spf_redir_action), "CategoryOffers"); // Storing Redirect Action
                             editor.putString(getString(R.string.spf_category_id), String.valueOf(String.valueOf(itemId))); // Storing Redirect Action
-                            editor.putString(getString(R.string.spf_category_name), itemName); // Storing Redirect Action
+                            editor.putString(getString(R.string.spf_category_name), itemName); // Storing Category Name
+                            editor.putString(getString(R.string.spf_search_keyword), ""); // Storing Redirect Action
                             editor.commit(); // commit changes
 
                             FragmentManager browseOfferFm1 = getFragmentManager();
@@ -1340,7 +1293,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                             browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
                             browseOfferFragmentTransaction1.commit();
 
-                            //Log.d(LOGTAG, "Third level menu id: "+itemId);
                             mDrawerLayout.closeDrawers();
                             return false;
                             }

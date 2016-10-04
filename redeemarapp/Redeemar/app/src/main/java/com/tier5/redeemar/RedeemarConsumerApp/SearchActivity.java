@@ -76,9 +76,6 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
         mRecyclerView.setAdapter( mAdapter );
 
 
-
-
-
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.search);

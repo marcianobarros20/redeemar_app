@@ -47,11 +47,11 @@ public class MyApplication extends Application {
                 //Toast.makeText(getApplicationContext(), "You entered the monitoring region.", Toast.LENGTH_LONG);
                 showNotification("Welcome to Redeemar.", "Explore our store");
 
-                String target_id = "dfadf13e7c8d431f8cdb52d9e78afa6d";
-                Intent i = new Intent(MyApplication.this, BrandMainActivity.class);
-                i.putExtra("unique_target_id", target_id);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
+//                String target_id = "dfadf13e7c8d431f8cdb52d9e78afa6d";
+//                Intent i = new Intent(MyApplication.this, BrandMainActivity.class);
+//                i.putExtra("unique_target_id", target_id);
+//                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                startActivity(i);
             }
             @Override
             public void onExitedRegion(Region region) {
@@ -66,8 +66,7 @@ public class MyApplication extends Application {
             @Override
             public void onServiceReady() {
                 Log.d("Dibs", "Inside Monitor");
-                beaconManager.startMonitoring(new Region("monitored region",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), 51845, 29961));
+                beaconManager.startMonitoring(new Region("monitored region", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), 51845, 29961));
             }
         });
     }

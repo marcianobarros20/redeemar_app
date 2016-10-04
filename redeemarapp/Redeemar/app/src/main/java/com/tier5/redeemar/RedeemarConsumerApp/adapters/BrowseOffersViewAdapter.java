@@ -65,6 +65,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
     //private ImageLoader mImageLoader;
     private Bitmap logoBmp;
     private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
     private String activityName;
     private String mViewType;
     private Resources res;
@@ -78,6 +79,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+        editor = sharedpref.edit();
 
     }
 
@@ -120,10 +122,14 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         Log.d(LOGTAG, "View type: "+mViewType);
 
         View view;
-        if(mViewType.equalsIgnoreCase("thumb"))
-            view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item_thumb, parent, false);
-        else
-            view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item, parent, false);
+        if(mViewType.equalsIgnoreCase("thumb")) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item_thumb, parent, false);
+            //editor.putString(res.getString(R.string.spf_view_type), "map"); // Storing View Type to Thumb
+        }
+        else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item, parent, false);
+            //editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Storing View Type to Thumb
+        }
 
         //view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item_thumb, parent, false);
 

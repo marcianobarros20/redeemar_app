@@ -30,7 +30,7 @@ public class BrandOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offe
 
     public BrandOffersAsyncTask(OffersLoadedListener myComponent) {
         this.myComponent = myComponent;
-        Log.d(LOGTAG, "Inside BrandOffersAsync constructor: "+myComponent);
+        Log.d(LOGTAG, "Inside BrandOffersAsync constructor");
     }
 
     @Override
@@ -61,12 +61,7 @@ public class BrandOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offe
         if (myComponent != null) {
             myComponent.onOffersLoaded(listOffers);
         }
-        //mProgress.dismiss();
     }
-
-
-
-
 }
 
 

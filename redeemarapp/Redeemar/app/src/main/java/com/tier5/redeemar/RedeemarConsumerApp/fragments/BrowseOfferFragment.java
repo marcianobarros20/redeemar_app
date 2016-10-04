@@ -22,7 +22,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,12 +40,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
-import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
-import com.tier5.redeemar.RedeemarConsumerApp.CategoryActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.SearchViewAdapter;
@@ -54,27 +49,22 @@ import com.tier5.redeemar.RedeemarConsumerApp.async.BrandOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CampaignOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.CategoryOffersAsyncTask;
-import com.tier5.redeemar.RedeemarConsumerApp.async.FetchLocationAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.OnDemandOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
-import com.tier5.redeemar.RedeemarConsumerApp.callbacks.LocationFetchedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.Keys;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.ObjectSerializer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -103,7 +93,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     //private FragmentActivity listener;
     private List<Offer> mModels;
     private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list", location = "", categoryName = "", locKeyword = "",
-            selfLat = "", selfLon = "", keyword = "", catId = "", catName = "";;
+            selfLat = "", selfLon = "", keyword = "", brandName = "";;
     private static final int VERTICAL_ITEM_SPACE = 48;
     Activity activity;
     private ActivityCommunicator activityCommunicator;
@@ -142,7 +132,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d(LOGTAG, "XXX Inside onCreateView");
+        //Log.d(LOGTAG, "XXX Inside onCreateView");
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.browse_offers);
 
         activity = getActivity();
@@ -180,43 +170,32 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         }
 
 
-
         mListOffers = new ArrayList<Offer>();
 
         setHasOptionsMenu(true);
         Bundle args1 = getArguments();
 
 
-        if(args1 != null && args1.size() > 0) {
-
-            redirectTo = args1.getString(getString(R.string.ext_redir_to), "");
-            redeemarId = args1.getString(getString(R.string.ext_redeemar_id), "");
-            campaignId = args1.getString(getString(R.string.ext_campaign_id), "");
-            categoryId = args1.getString(getString(R.string.ext_category_id), "");
-
-            categoryName = args1.getString(getString(R.string.ext_category_name), "");
-            //viewType = args1.getString(getString(R.string.ext_view_type), "");
-
-        }
-
-
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
             user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
         }
-
 
         if (sharedpref.getString(res.getString(R.string.spf_search_keyword), null) != null) {
             keyword = sharedpref.getString(res.getString(R.string.spf_search_keyword), "");
             Log.d(LOGTAG, "Search Keyword: " + keyword);
         }
 
-
         if (sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
             redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
         }
 
+        if (sharedpref.getString(res.getString(R.string.spf_brand_name), null) != null) {
+            brandName = sharedpref.getString(res.getString(R.string.spf_brand_name), "");
+        }
 
-
+        if (sharedpref.getString(res.getString(R.string.spf_redeemer_id), null) != null) {
+            redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
+        }
         if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
             latitude = Double.parseDouble(sharedpref.getString(res.getString(R.string.spf_last_lat), null));
 
@@ -224,12 +203,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 selfLat = String.valueOf(latitude);
         }
 
-
-        if(redirectTo.equals("OnDemand"))
-            ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(R.string.daily_deals);
-
-        else if(!categoryName.equals(""))
-            ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(categoryName);
 
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_offers, container, false);
@@ -244,24 +217,34 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         latLngList = new ArrayList<LatLng>();
         locationItems = new HashMap<String, LatLng>();
 
-
-
         if (sharedpref.getString(res.getString(R.string.spf_category_id), null) != null) {
             categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "0");
             Log.d(LOGTAG, "Search Cat Id: " + categoryId);
-
         }
 
-        if(!categoryId.equals("")) {
-            if (sharedpref.getString(res.getString(R.string.spf_category_name), null) != null) {
-                categoryName = sharedpref.getString(res.getString(R.string.spf_category_name), "");
-                tvCategory.setText(categoryName);
-            }
+
+        if (sharedpref.getString(res.getString(R.string.spf_category_name), null) != null) {
+            categoryName = sharedpref.getString(res.getString(R.string.spf_category_name), "");
+        }
+
+        if(redirectTo.equals("OnDemand")) {
+            //((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(R.string.daily_deals);
+            tvCategory.setText(R.string.daily_deals);
+            tvCategory.setVisibility(View.VISIBLE);
+        }
+        else if(redirectTo.equals("CategoryOffers") && !categoryId.equals("") && !categoryName.equals("")) {
+            // !categoryName.equals("") &&
+            //((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(categoryName);
+            tvCategory.setText(categoryName);
+            tvCategory.setVisibility(View.VISIBLE);
         }
         else
             tvCategory.setVisibility(View.GONE);
 
-        if(imListView.getVisibility() == View.VISIBLE) {
+
+
+        /*if(imListView.getVisibility() == View.VISIBLE) {
+            Log.d(LOGTAG, "Inside ListView");
             imListView.setVisibility(View.GONE);
             imThumbView.setVisibility(View.VISIBLE);
             imMapView.setVisibility(View.GONE);
@@ -277,7 +260,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             imListView.setVisibility(View.VISIBLE);
             imThumbView.setVisibility(View.GONE);
             imMapView.setVisibility(View.GONE);
-        }
+        }*/
 
 
         cd = new SuperConnectionDetector(activity);
@@ -357,14 +340,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 //From that position we get the lat-long
                 LatLng geo = (LatLng) selected.getCoordinates();
 
-                Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
-                Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
+                //Log.d(LOGTAG, "AutoComplete Selected Lat: "+geo.latitude);
+                //Log.d(LOGTAG, "AutoComplete Selected Lon: "+geo.longitude);
 
                 // Set the geo location of the place you want to search the offers for
                 editor.putString(res.getString(R.string.spf_location_keyword), selected.getLocation()); // Set view type to list
                 editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(geo.latitude));
                 editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(geo.longitude));
                 editor.commit();
+
+                tvEmptyView.setText(R.string.loading);
 
                 final InputMethodManager inputMethodManager =
                         (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -388,7 +373,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 shouldAutoComplete = true;
-
             }
 
             @Override
@@ -425,11 +409,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
                 viewType = sharedpref.getString(res.getString(R.string.spf_view_type), null);
 
-                if(viewType.equals("map")) {
-                    editor.putString(res.getString(R.string.spf_view_type), "list"); // Set view type to list
-                    editor.commit();
-                }
-                else if(viewType.equals("thumb")) {
+                if(viewType.equals("thumb")) {
                     editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to list
                     editor.commit();
                 }
@@ -537,8 +517,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         //if this fragment starts for the first time, load the list of movies from a database
         //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
         //if the database is empty, trigger an AsycnTask to download movie list from the web
-        if (mListOffers.isEmpty()) {
 
+        if (mListOffers.isEmpty()) {
 
             if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) != null) {
                 locKeyword = sharedpref.getString(res.getString(R.string.spf_last_location_keyword), "");
@@ -551,7 +531,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 Log.d(LOGTAG, "My Redirect to: "+redirectTo);
 
                 if (redirectTo.equals("BrandOffers") && !redeemarId.equals("")) {
-                    Log.d(LOGTAG, "Inside Brand Offers");
+                    //Log.d(LOGTAG, "Inside Brand Offers");
                     new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude));
                 }
                 else if (redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
@@ -754,11 +734,11 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 Log.d(LOGTAG, "Offers Gson Text: "+jsonText);
                 editor.putString(getString(R.string.spf_offers), jsonText);
                 editor.commit();*/
-
                 //String jsonCatText = sharedpref.getString(getString(R.string.spf_categories), null);
-                //Log.d(LOGTAG, "Category JSON: " + jsonCatText);
+
 
                 try {
+
 
                     editor.putString(res.getString(R.string.spf_offers), ObjectSerializer.serialize(listOffers));
                     editor.commit();
@@ -768,12 +748,25 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 }
 
 
-                if(redeemarId.equals("CampaignOffer")) {
 
-                    // TODO: Need to show the campaign instead of just showing the text Camapign
-                    ((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle("Campaign");
+                Log.d(LOGTAG, "Redirect To Offer JSON: " + redirectTo);
 
+                // TODO: Need to show the campaign instead of just showing the text Camapign
+                if(redirectTo.equals("CampaignOffer")) {
+
+                    Log.d(LOGTAG, "Campaign Name JSON: " + listOffers.get(0).getCampaignName());
+                    //((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(listOffers.get(0).getCampaignName());
+                    tvCategory.setText(listOffers.get(0).getCampaignName());
+                    tvCategory.setVisibility(View.VISIBLE);
                 }
+                else if (redirectTo.equals("BrandOffers") && !brandName.equals("") && !redeemarId.equals("")) {
+                    Log.d(LOGTAG, "Company Name JSON: " + listOffers.get(0).getCompanyName());
+                    //((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(listOffers.get(0).getCompanyName());
+                    tvCategory.setText(brandName);
+                    tvCategory.setVisibility(View.VISIBLE);
+                }
+
+
 
             } else {
                 tvEmptyView.setText(getString(R.string.no_records));
@@ -785,10 +778,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     }
 
 
-    private void callSearchLocationTask() {
-        // This will callback onUsersLoaded function after execution
-        new GetNearByOffersAsyncTask(this).execute(String.valueOf(latitude), String.valueOf(longitude));
-    }
 
 
     @Override
@@ -961,6 +950,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
+    private void callSearchLocationTask() {
+        // This will callback onUsersLoaded function after execution
+        new GetNearByOffersAsyncTask(this).execute(String.valueOf(latitude), String.valueOf(longitude));
+    }
 
     public void loadOffersForCategoryLocations(String tLat, String tLng, String catId, String redir) {
 

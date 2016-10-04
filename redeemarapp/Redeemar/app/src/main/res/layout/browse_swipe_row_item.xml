@@ -105,7 +105,7 @@
                 android:background="@color/white"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
-                android:paddingRight="8dp">
+                android:paddingRight="4dp">
 
                 <!-- Thumbnail Image -->
                 <com.android.volley.toolbox.NetworkImageView
@@ -193,7 +193,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="left"
                                 android:text="Discount"
-                                android:textSize="18sp"
+                                android:textSize="15sp"
                                 android:textColor="@color/green_text" />
 
                         </LinearLayout>
