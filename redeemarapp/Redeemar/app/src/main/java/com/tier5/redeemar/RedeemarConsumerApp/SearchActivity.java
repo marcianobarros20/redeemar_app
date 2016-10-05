@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.SearchViewAdapter;
@@ -37,7 +38,7 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
 
     private static final String LOGTAG = "Search";
 
-    //private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvPayValue, tvDiscount, tvRetailValue, tvExpires;
+    private TextView tvEmptyView;
     private EditText txtLocation, txtKeyword, txtSearch;
     private SharedPreferences sharedpref;
     private RecyclerView mRecyclerView;
@@ -60,10 +61,8 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
 
-
         txtSearch = (EditText) findViewById(R.id.search_box);
-
-
+        tvEmptyView = (TextView) findViewById(R.id.empty_view);
         mRecyclerView = (RecyclerView) findViewById(R.id.search_recycler_view);
 
         mListAddr = new ArrayList<Search>();
@@ -81,10 +80,7 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
             getSupportActionBar().setTitle(R.string.search);
 
             EditText searchBox = (EditText) findViewById(R.id.search_text);
-            //searchBox.setKeyListener(null);
-            //searchBox.setEnabled(false);
 
-            //setSupportActionBar(toolbar);
             //Your toolbar is now an action bar and you can use it like you always do, for example:
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -121,6 +117,8 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
                                         // TODO: do what you need here (refresh list)
                                         // you will probably need to use runOnUiThread(Runnable action) for some specific actions
                                         Log.d(LOGTAG, "Calling the async task to load after 2 seconds "+keyword);
+
+
                                         callSearchKeywordTask();
                                     }
                                 },
@@ -128,13 +126,21 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
                         );
                     }
                 }
+
+
         );
+
+
 
     }
 
     private void callSearchKeywordTask() {
 
+        //tvEmptyView.setText(R.string.loading);
+        //tvEmptyView.setVisibility(View.VISIBLE);
+
         keyword = txtSearch.getText().toString();
+
 
         if(!keyword.equals(""))
             new SearchFullAsyncTask(this, getApplicationContext()).execute(keyword);
@@ -178,6 +184,7 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
         Log.d(LOGTAG, "Inside Search Adapter: "+listKeywords.size());
 
         if (listKeywords.size() > 0) {
+            tvEmptyView.setVisibility(View.GONE);
             mAdapter = new SearchViewAdapter(this, listKeywords);
             mAdapter.setKeyword(listKeywords);
             mRecyclerView.setAdapter(mAdapter);

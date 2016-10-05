@@ -801,45 +801,34 @@ public class Parser {
 
                     if (response.getString("messageCode").equals("R01001")) {
 
-                        JSONObject json2 = new JSONObject(response.getString("data"));
+                        JSONArray resultArray = new JSONArray(response.getString("data"));
+                        //Log.d(LOGTAG, "Data Length: " + offersArray.length());
+                        int resCnt =  resultArray.length();
 
+                        //Iterate the jsonArray and print the info of JSONObjects
+                        for (int i = 0; i < resCnt; i++) {
 
-                        if(!json2.isNull("mi") && !json2.isNull("ci")  && !json2.isNull("cn") ) {
+                            JSONObject jsonObject = resultArray.getJSONObject(i);
 
-                            JSONArray keywordArray = json2.optJSONArray("mi");
-                            JSONArray catIdArray = json2.optJSONArray("ci");
-                            JSONArray catNameArray = json2.optJSONArray("cn");
+                            Search search = new Search();
 
-                            Log.d(LOGTAG, "Keywords List: " + keywordArray.length());
+                            if(!jsonObject.isNull("keyword") && jsonObject.optString("keyword").toString() != "") {
+                                search.setKeyword(jsonObject.optString("keyword").toString());
+                            }
 
+                            if(!jsonObject.isNull("id") && jsonObject.optString("id").toString() != "") {
+                                search.setId(jsonObject.optString("id").toString());
+                            }
 
-                            //Iterate the jsonArray and print the info of JSONObjects
-                            for (int j = 0; j < keywordArray.length(); j++) {
+                            if(!jsonObject.isNull("name") && jsonObject.optString("name").toString() != "") {
+                                search.setName(jsonObject.optString("name").toString());
+                            }
 
-
-                                if(catIdArray.get(j) != null && catNameArray.get(j) != null && keywordArray.get(j) != null) {
-
-                                    Search search = new Search();
-
-                                    Log.d(LOGTAG, "Keyword 1: " + keywordArray.get(j));
-                                    Log.d(LOGTAG, "Keyword 1: " + catIdArray.get(j));
-                                    Log.d(LOGTAG, "Keyword 1: " + catNameArray.get(j));
-
-                                    search.setDescription(keywordArray.get(j).toString());
-                                    search.setCategoryId(catIdArray.get(j).toString());
-                                    search.setCategoryName(catNameArray.get(j).toString());
-
-
-
-                                    listSearch.add(search);
-                                }
-
-
-
-                            } // End of for loop for categories
+                            if(!jsonObject.isNull("type") && jsonObject.optString("type").toString() != "") {
+                                search.setType(jsonObject.optString("type").toString());
+                            }
 
                         }
-
 
 
                     }

@@ -137,13 +137,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
 
-    // For Beacons
-
-    //private BeaconManager beaconManager;
-    //private Region region;
-    //private static boolean hasBeaconFound = false;
-
-
 
     /**
      * Permissions required to read and write contacts.
@@ -161,9 +154,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.offers_recycler);
-
-
-
 
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0);

@@ -1,9 +1,14 @@
 package com.tier5.redeemar.RedeemarConsumerApp.pojo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.Date;
 
-public class Offer implements Serializable {
+import static android.os.UserHandle.readFromParcel;
+
+public class Offer implements Parcelable {
 
     private static final long serialVersionUID = 1L;
 
@@ -15,6 +20,11 @@ public class Offer implements Serializable {
     public Offer() {
 
     }
+
+    public Offer(Parcel in) {
+        readFromParcel(in);
+    }
+
 
     public String getCampaignName() {
         return campaignName;
@@ -327,4 +337,28 @@ public class Offer implements Serializable {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(offerDescription);
+        dest.writeInt(campaignId);
+
+    }
+
+    public static final Parcelable.Creator CREATOR =
+            new Parcelable.Creator() {
+                public Offer createFromParcel(Parcel in) {
+                    return new Offer(in);
+                }
+
+                public Offer[] newArray(int size) {
+                    return new Offer[size];
+                }
+            };
 }

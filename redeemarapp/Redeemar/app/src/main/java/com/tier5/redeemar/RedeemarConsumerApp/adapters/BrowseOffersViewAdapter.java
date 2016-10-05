@@ -294,11 +294,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             }
         }
 
-        //Log.d(LOGTAG, "Product Name: "+item.getOfferDescription());
-        Log.d(LOGTAG, "String Buffer: "+sb);
-
-
-
         if(!discount_text.equals("")) {
             viewHolder.tvDiscount.setText(sb);
             viewHolder.tvDiscount.setVisibility(View.VISIBLE);

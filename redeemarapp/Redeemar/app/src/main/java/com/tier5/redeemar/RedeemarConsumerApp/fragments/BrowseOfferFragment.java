@@ -42,6 +42,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.SearchViewAdapter;
@@ -62,6 +66,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.ObjectSerializer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,6 +74,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.tier5.redeemar.RedeemarConsumerApp.R.string.spf_offers;
 
 public class BrowseOfferFragment extends Fragment implements OffersLoadedListener, UsersLoadedListener,  SearchView.OnQueryTextListener  {
 
@@ -546,8 +553,30 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 }
                 else if (redirectTo.equals("OnDemand"))
                     new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
-                else
-                    new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
+                else {
+                    JsonArray jasonArray = null;
+                    ArrayList myOffersList = null;
+                    if(sharedpref.getString(res.getString(R.string.spf_offers), null) != null) {
+                        String cachedOfferListJSON = sharedpref.getString(res.getString(R.string.spf_offers), "");
+                        //tvUserLocation.setText(locKeyword);
+                        //autoComplete.setText(locKeyword);
+                        Gson gson = new Gson();
+                        ArrayList<Offer> al = new ArrayList<Offer>();
+                        //gson.fromJson(cachedOfferListJSON, al);
+
+                        JsonParser parser = new JsonParser();
+                        JsonElement element = parser.parse(cachedOfferListJSON);
+                        jasonArray = element.getAsJsonArray();
+
+                        Log.d(LOGTAG, "Cached is: "+cachedOfferListJSON);
+
+
+                    }
+
+
+
+                        new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
+                }
 
             }
         }
@@ -714,11 +743,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public void onOffersLoaded(ArrayList<Offer> listOffers) {
 
-
-
         if (isAdded() && activity != null) {
             if (listOffers.size() > 0 && mAdapter != null) {
-
 
                 mModels = listOffers;
                 //Log.d(LOGTAG, "Inside Adapter: "+mAdapter);
@@ -727,21 +753,15 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 mRecyclerOffers.setVisibility(View.VISIBLE);
                 tvEmptyView.setVisibility(View.GONE);
 
-                /*Gson gson = new Gson();
-                List<Offer> textList = new ArrayList<Offer>();
-                textList.addAll(listOffers);
-                String jsonText = gson.toJson(textList);
-                Log.d(LOGTAG, "Offers Gson Text: "+jsonText);
-                editor.putString(getString(R.string.spf_offers), jsonText);
-                editor.commit();*/
+
                 //String jsonCatText = sharedpref.getString(getString(R.string.spf_categories), null);
 
 
                 try {
 
 
-                    editor.putString(res.getString(R.string.spf_offers), ObjectSerializer.serialize(listOffers));
-                    editor.commit();
+                    //editor.putString(res.getString(R.string.spf_offers), ObjectSerializer.serialize(listOffers));
+                    //editor.commit();
 
                 } catch(Exception ex) {
                     Log.d(LOGTAG, ex.toString());
@@ -764,6 +784,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     //((BrowseOffersActivity) getActivity()).getSupportActionBar().setTitle(listOffers.get(0).getCompanyName());
                     tvCategory.setText(brandName);
                     tvCategory.setVisibility(View.VISIBLE);
+                }
+                else {
+
+                    Gson gson = new Gson();
+                    List<Offer> textList = new ArrayList<Offer>();
+                    textList.addAll(listOffers);
+                    String jsonText = gson.toJson(textList);
+                    Log.d(LOGTAG, "Offers Gson Text: "+jsonText);
+                    editor.putString(getString(spf_offers), jsonText);
+                    editor.commit();
                 }
 
 
@@ -962,8 +992,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         tvEmptyView.setVisibility(View.VISIBLE);
 
         // Here latitude and longitude are the present location f the user (Self Location)
-            Log.d(LOGTAG, "My Redirection: "+redirectTo);
-            Log.d(LOGTAG, "My Category Id: "+categoryId);
+        Log.d(LOGTAG, "My Redirection: "+redirectTo);
+        Log.d(LOGTAG, "My Category Id: "+categoryId);
 
         if(redirectTo.equals("OnDemand"))
             new OnDemandOffersAsyncTask(this).execute(user_id, tLat, tLng, selfLat,  selfLon);

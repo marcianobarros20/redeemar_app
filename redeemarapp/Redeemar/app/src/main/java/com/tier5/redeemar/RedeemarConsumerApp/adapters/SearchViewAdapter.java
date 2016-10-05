@@ -52,6 +52,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static android.R.attr.id;
+
 
 public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.ViewHolder> {
 
@@ -108,27 +110,43 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
             holder.divider.setVisibility(View.GONE);
 
 
-        Log.d(LOGTAG, "Hello "+item.getCategoryName());
+        Log.d(LOGTAG, "Hello "+item.getName());
         //holder.tvTitle.setTypeface(myFont);
         //holder.tvDescription.setTypeface(myFont);
-        holder.tvTitle.setText(item.getDescription()+" in "+item.getCategoryName());
+        if(item.getType().equals("1"))
+            holder.tvTitle.setText(item.getKeyword()+" in "+item.getName());
+        else
+            holder.tvTitle.setText(item.getKeyword()+" in Brands");
+
         holder.tvDescription.setText("");
 
         holder.tvTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String id = item.getCategoryId();
+                String type = item.getType();
+
+                String id = item.getId();
                 Intent intent = new Intent(v.getContext(), BrowseOffersActivity.class);
 
-                editor.putString(res.getString(R.string.spf_redir_action), "CategoryOffers");
-                editor.putString(res.getString(R.string.spf_search_keyword), item.getDescription());
-                editor.putString(res.getString(R.string.spf_category_name), item.getCategoryName());
-                editor.putString(res.getString(R.string.spf_category_id), id);
-                editor.commit();
+                if(type.equals("1")) {
+                    editor.putString(res.getString(R.string.spf_redir_action), "CategoryOffers");
+                    editor.putString(res.getString(R.string.spf_search_keyword), item.getKeyword());
+                    editor.putString(res.getString(R.string.spf_category_name), item.getName());
+                    editor.putString(res.getString(R.string.spf_category_id), id);
+                    editor.commit();
+                }
+                else {
+                    editor.putString(res.getString(R.string.spf_redir_action), "BrandOffers");
+                    editor.putString(res.getString(R.string.spf_search_keyword), item.getKeyword());
+                    editor.putString(res.getString(R.string.spf_brand_name), item.getId());
+                    editor.putString(res.getString(R.string.spf_redeemer_id), id);
+                    editor.commit();
+                }
 
-                intent.putExtra(v.getContext().getString(R.string.ext_redir_to), "CategoryOffers");
-                /*intent.putExtra(v.getContext().getString(R.string.spf_search_keyword), item.getDescription());
+
+                /*intent.putExtra(v.getContext().getString(R.string.ext_redir_to), "CategoryOffers");
+                intent.putExtra(v.getContext().getString(R.string.spf_search_keyword), item.getDescription());
                 intent.putExtra(v.getContext().getString(R.string.spf_category_name), item.getCategoryName());
                 intent.putExtra(v.getContext().getString(R.string.spf_category_id), id);*/
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
