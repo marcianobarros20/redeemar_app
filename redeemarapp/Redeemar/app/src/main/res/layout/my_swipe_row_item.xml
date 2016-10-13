@@ -174,16 +174,6 @@
                     android:weightSum="2"
                     android:orientation="horizontal">
 
-
-                    <LinearLayout
-                        android:id="@+id/retail_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:layout_weight="1"
-                        android:paddingRight="5dp"
-                        android:orientation="horizontal">
-
                         <TextView
                             android:id="@+id/retail_value"
                             android:layout_width="wrap_content"
@@ -192,41 +182,33 @@
                             android:gravity="left"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/darkGray" />
 
-                    </LinearLayout>
+                </LinearLayout>
 
 
+                <LinearLayout
+                    android:id="@+id/validity_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:id="@+id/validity_layout"
+                    <TextView
+                        android:id="@+id/expires"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:layout_weight="1"
-                        android:orientation="horizontal">
-
-
-                        <TextView
-                            android:id="@+id/expires"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="* Expires in days"
-                            android:gravity="left"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/black" />
-
-                    </LinearLayout>
-
+                        android:text="@string/expires_in"
+                        android:gravity="left"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black" />
 
                 </LinearLayout>
 
 
             </LinearLayout>
-
-
-
 
 
         </RelativeLayout>

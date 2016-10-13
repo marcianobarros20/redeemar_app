@@ -1,5 +1,6 @@
 package com.tier5.redeemar.RedeemarConsumerApp.adapters;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,7 +11,10 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +29,8 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.BrandOfferActivity;
+import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
 import com.tier5.redeemar.RedeemarConsumerApp.LoginActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.OfferDetailsActivity;
@@ -33,6 +39,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadBitmapTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ImageDownloadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.fragments.BrowseOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
@@ -483,41 +490,36 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                 sharedpref = view.getContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
                 SharedPreferences.Editor editor = sharedpref.edit();
-                editor.putString(res.getString(R.string.spf_redir_action), "BANK_OFFER"); // Storing Email
-
-                Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
 
-                if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {
 
-                    Intent intent = new Intent(view.getContext(), LoginActivity.class);
-                    intent.putExtra(res.getString(R.string.ext_activity), activityName); // Settings the activty name where it will be redirected to
-                    view.getContext().startActivity(intent);
-
-                }
-                else {
-
-                    String offerId = String.valueOf(item.getOfferId());
-                    String userId = sharedpref.getString(res.getString(R.string.spf_user_id), null);
-
-                    Log.d(LOGTAG, "View Adapter Offer Id: "+offerId);
-                    Log.d(LOGTAG, "View Adapter User Id: "+userId);
+                /* Intent intent = new Intent(view.getContext(), BrandOfferActivity.class);
+                Log.d(LOGTAG, "My Brand Id: "+item.getCreatedBy());
+                intent.putExtra(view.getContext().getString(R.string.ext_offer_id), item.getCreatedBy());
+                view.getContext().startActivity(intent);
 
 
-                    new SaveOfferAsyncTask().execute("pass", userId, offerId);
+                editor.putString(res.getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
+                editor.putString(res.getString(R.string.spf_popup_action), "1"); // Storing Last Activity
+                editor.putString(res.getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
+                editor.commit(); // commit changes*/
 
-                    if(position < offerList.size()) {
 
-                        mItemManger.removeShownLayouts(viewHolder.swipeLayout);
-                        offerList.remove(position);
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, offerList.size());
+                /*Bundle args = new Bundle();
+                args.putString(res.getString(R.string.ext_redir_to), "BrandOffers");
+                args.putString(getString(R.string.ext_redeemar_id), item.getCreatedBy());
+                Fragment fr = new BrowseOfferFragment();
+                fr.setArguments(args);
+                FragmentManager fm = res.getFragmentManager();
+                FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fr);
+                fragmentTransaction.commit();*/
 
-                    }
-                    mItemManger.closeAllItems();
-                    //Toast.makeText(view.getContext(), "Offer passed!", Toast.LENGTH_SHORT).show();
-                }
 
+                Log.d(LOGTAG, "My Brand Id: "+item.getCreatedBy());
+
+
+                openFragment(String.valueOf(item.getCreatedBy()), item.getCompanyName());
 
 
             }
@@ -733,5 +735,43 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
 
     }
+
+    public void openFragment(String redeemarId, String brandName) {
+
+
+        res = mContext.getResources();
+        sharedpref = mContext.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+        editor = sharedpref.edit();
+
+        editor.putString(res.getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
+        editor.putString(res.getString(R.string.spf_popup_action), "1"); // Storing Last Activity
+        editor.putString(res.getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
+        editor.putString(res.getString(R.string.spf_brand_name), brandName); // Storing Redeemar Partner Name
+        editor.commit(); // commit changes*/
+
+
+        /*Bundle args = new Bundle();
+        args.putString(getString(R.string.ext_redir_to), "BrandOffers");
+        args.putString(getString(R.string.ext_redeemar_id), redeemarId);
+        Fragment fr = new BrowseOfferFragment();
+        fr.setArguments(args);
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.container_body, fr);
+        fragmentTransaction.commit();*/
+
+        Intent intent = new Intent(mContext, BrowseOffersActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(res.getString(R.string.ext_redir_to), "BrandOffers");
+        intent.putExtra(res.getString(R.string.ext_redeemar_id), redeemarId);
+        intent.putExtra(res.getString(R.string.ext_redeemar_id), redeemarId);
+
+        mContext.startActivity(intent);
+
+        //mContext.startActivity(new Intent(mContext, BrowseOffersActivity.class));
+    }
+
 
 }

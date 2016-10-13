@@ -197,7 +197,7 @@
     <string name="price_range_id">$$$</string>
     <string name="expires">Expire in</string>
     <string name="expired">Expired</string>
-    <string name="expires_in">*Expires in</string>
+    <string name="expires_in">*EXPIRES in</string>
     <string name="days">days</string>
     <string name="currency_symbol">$</string>
     <string name="distance_unit">Km.</string>
@@ -212,6 +212,8 @@
     <string name="active">Active</string>
     <string name="bank_it">BANK</string>
     <string name="pass_it">PASS</string>
+    <string name="more_from_brand">MORE</string>
+    <string name="more_brand_offers">MORE BRAND OFFERS</string>
     <string name="scan_offer">Scan</string>
     <string name="no_rec">No Records</string>
     <string name="showing_all">All Offers</string>

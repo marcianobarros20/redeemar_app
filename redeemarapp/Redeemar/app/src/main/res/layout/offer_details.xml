@@ -301,7 +301,7 @@
                     android:padding="@dimen/button_padding_med"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
-                    android:text="@string/pass"
+                    android:text="@string/more_brand_offers"
                     android:textColor="@color/white"
                     android:visibility="visible" />
 

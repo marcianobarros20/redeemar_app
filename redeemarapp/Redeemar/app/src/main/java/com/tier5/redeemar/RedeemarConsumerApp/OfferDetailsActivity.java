@@ -60,11 +60,12 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
     private ImageLoader mImageLoader;
     private Button btnBank,  btnPass,  btnRedeem;
     private SharedPreferences sharedpref;
+    SharedPreferences.Editor editor;
     private GoogleMap mMap;
     private Toolbar toolbar;
     private ProgressDialog pd;
     int valCalc;
-    String offerId, perc_sym, cur_sym;
+    String offerId, perc_sym, cur_sym, redeemarId = "", brandName = "";
     Double lat, lon, payValue = 0.0, retailValue = 0.0 ;
     String discount_text = "";
     Typeface myFont;
@@ -99,6 +100,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
         tvExpires = (TextView) findViewById(R.id.expires);
         btnBank = (Button) findViewById(R.id.btn_bank_offer);
         btnPass = (Button) findViewById(R.id.btn_pass_offer);
+        btnPass.setVisibility(View.GONE);
 
         tvAddress.setTypeface(myFont);
         tvOfferTitle.setTypeface(myFont);
@@ -190,9 +192,30 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
                 Resources res = view.getResources();
                 sharedpref = view.getContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+
+                editor = sharedpref.edit();
                 Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
-                if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {
+
+
+                editor.putString(getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
+                editor.putString(getString(R.string.spf_popup_action), "1"); // Storing Last Activity
+                editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
+                editor.putString(getString(R.string.spf_brand_name), brandName); // Storing Redeemar Id
+
+                editor.commit(); // commit changes
+
+
+                Intent intent = new Intent(view.getContext(), BrowseOffersActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                //intent.putExtra(res.getString(R.string.ext_redir_to), "BrandOffers");
+                //intent.putExtra(res.getString(R.string.ext_redeemar_id), redeemarId);
+                view.getContext().startActivity(intent);
+
+
+                /*if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {
 
                     SharedPreferences.Editor editor = sharedpref.edit();
                     editor.putString(res.getString(R.string.spf_redir_action), "PASS_OFFER");
@@ -211,7 +234,8 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
                     new SaveOfferAsyncTask().execute("pass", userId, offerId);
 
-                }
+                }*/
+
             }
         });
 
@@ -442,6 +466,15 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                             }
 
 
+
+                            if(jsonObject.getString("created_by") != null && jsonObject.getString("created_by").toString() != "") {
+                                redeemarId = jsonObject.getString("created_by").toString();
+                                Log.d(LOGTAG, "Redeemar Id: "+jsonObject.getString("created_by").toString());
+                                btnPass.setVisibility(View.VISIBLE);
+                            }
+
+
+
                             if(jsonObject.getString("offer_large_image_path") != null && jsonObject.getString("offer_large_image_path").toString() != "") {
 
 
@@ -511,6 +544,13 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                                 JSONObject jsonCompanyObject = jsonCompanyArray.getJSONObject(0);
 
                                 Address addr = new Address();
+
+
+
+                                if (!jsonCompanyObject.isNull("company_name") && jsonCompanyObject.getString("company_name").toString() != "") {
+                                    Log.d(LOGTAG, "company_name: " + jsonCompanyObject.getString("company_name").toString());
+                                    brandName  = jsonCompanyObject.getString("company_name").toString();
+                                }
 
 
                                 if (!jsonCompanyObject.isNull("address") && jsonCompanyObject.getString("address").toString() != "") {

@@ -101,11 +101,13 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
 
         // Check internet connectivity
         cd = new SuperConnectionDetector(this);
-        isInternetPresent = cd.isConnectingToInternet();
 
+        // Check if Internet is available
+        isInternetPresent = cd.isConnectingToInternet();
         Log.d(LOGTAG, "Internet enabled: "+isInternetPresent);
 
 
+        // Define Resources
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
@@ -186,8 +188,6 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         editor.commit();*/
 
 
-
-
         //check permission in marshmallow
         if(Utils.checkLocationPermissions(this, getApplicationContext())){
             // Fetch location
@@ -265,6 +265,8 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
 
 
         if(!curLoc.equals("")) {
+
+            Log.d(LOGTAG, "My Location Point: "+curLoc);
 
             editor.putString(res.getString(R.string.spf_last_lat), String.valueOf(latitude));
             editor.putString(res.getString(R.string.spf_last_lon), String.valueOf(longitude));

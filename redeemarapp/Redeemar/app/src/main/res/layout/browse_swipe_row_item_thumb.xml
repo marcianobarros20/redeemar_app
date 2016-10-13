@@ -43,7 +43,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
                 android:gravity="left|center_vertical"
-                android:text="@string/pass_it"
+                android:text="@string/more_from_brand"
                 style="@style/WhiteLargeText" />
 
         </LinearLayout>

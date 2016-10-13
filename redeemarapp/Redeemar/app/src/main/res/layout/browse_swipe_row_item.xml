@@ -49,7 +49,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
                     android:gravity="left|center_vertical"
-                    android:text="@string/pass_it"
+                    android:text="@string/more_from_brand"
                     style="@style/WhiteLargeText" />
 
             </LinearLayout>
@@ -121,7 +121,7 @@
 
                 <com.android.volley.toolbox.NetworkImageView
                     android:id="@+id/logo_image"
-                    android:layout_width="60dp"
+                    android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"

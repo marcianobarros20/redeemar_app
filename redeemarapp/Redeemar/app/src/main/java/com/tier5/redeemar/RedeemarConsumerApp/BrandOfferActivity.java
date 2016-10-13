@@ -1,54 +1,22 @@
 package com.tier5.redeemar.RedeemarConsumerApp;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.SearchViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class BrandOfferActivity extends AppCompatActivity implements OffersLoadedListener {
@@ -79,16 +47,14 @@ public class BrandOfferActivity extends AppCompatActivity implements OffersLoade
         setContentView(R.layout.offer_details);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-
-
         myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
-
-
-
 
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
+
+        selfLat = "";
+        selfLon = "";
 
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
             userId = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
@@ -125,7 +91,8 @@ public class BrandOfferActivity extends AppCompatActivity implements OffersLoade
                 selfLon = String.valueOf(longitude);
         }
 
-        getSupportActionBar().setTitle(R.string.browse_offers);
+        if(getSupportActionBar() != null)
+            getSupportActionBar().setTitle(R.string.browse_offers);
 
 
 

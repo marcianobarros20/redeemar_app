@@ -802,7 +802,7 @@ public class Parser {
                     if (response.getString("messageCode").equals("R01001")) {
 
                         JSONArray resultArray = new JSONArray(response.getString("data"));
-                        //Log.d(LOGTAG, "Data Length: " + offersArray.length());
+                        Log.d(LOGTAG, "Search Data Length: " + resultArray.length());
                         int resCnt =  resultArray.length();
 
                         //Iterate the jsonArray and print the info of JSONObjects
@@ -815,18 +815,28 @@ public class Parser {
                             if(!jsonObject.isNull("keyword") && jsonObject.optString("keyword").toString() != "") {
                                 search.setKeyword(jsonObject.optString("keyword").toString());
                             }
+                            else
+                                search.setKeyword("");
 
                             if(!jsonObject.isNull("id") && jsonObject.optString("id").toString() != "") {
                                 search.setId(jsonObject.optString("id").toString());
                             }
+                            else
+                                search.setId("");
 
                             if(!jsonObject.isNull("name") && jsonObject.optString("name").toString() != "") {
                                 search.setName(jsonObject.optString("name").toString());
                             }
+                            else
+                                search.setName("");
 
                             if(!jsonObject.isNull("type") && jsonObject.optString("type").toString() != "") {
                                 search.setType(jsonObject.optString("type").toString());
                             }
+                            else
+                                search.setType("0");
+
+                            listSearch.add(search);
 
                         }
 
@@ -954,19 +964,9 @@ public class Parser {
 
                 if (response.getString("messageCode").equals("R01001")) {
 
-                    //JSONArray beaconArray = new JSONArray(response.getString("data"));
-
-
-                    //Log.d(LOGTAG, "Data Length: " + beaconArray.length());
-
-                    //int cnt =  beaconArray.length();
-
-
                     //Iterate the jsonArray and print the info of JSONObjects
 
                     JSONObject jsonObject = new JSONObject(response.getString("data"));
-
-
 
                     if(!jsonObject.isNull("id") && jsonObject.optString("id").toString() != "") {
                         beacon.setId(jsonObject.optInt("id"));

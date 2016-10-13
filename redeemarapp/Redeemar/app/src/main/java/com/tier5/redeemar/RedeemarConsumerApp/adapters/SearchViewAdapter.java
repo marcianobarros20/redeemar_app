@@ -139,7 +139,7 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
                 else {
                     editor.putString(res.getString(R.string.spf_redir_action), "BrandOffers");
                     editor.putString(res.getString(R.string.spf_search_keyword), item.getKeyword());
-                    editor.putString(res.getString(R.string.spf_brand_name), item.getId());
+                    editor.putString(res.getString(R.string.spf_brand_name), item.getName());
                     editor.putString(res.getString(R.string.spf_redeemer_id), id);
                     editor.commit();
                 }
