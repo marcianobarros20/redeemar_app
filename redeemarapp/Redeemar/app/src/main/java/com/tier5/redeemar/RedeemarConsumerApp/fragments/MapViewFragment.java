@@ -91,6 +91,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
 
+    private static final String STATE_OFFERS = "state_offers";
 
     String clickIndex = "", companyName="", companyLocation="" , offersJson = "";
 
@@ -108,6 +109,14 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        offerList = new ArrayList<Offer>();
+
+        if (savedInstanceState != null) {
+            //if this fragment starts after a rotation or configuration change, load the existing movies from a parcelable
+            offerList = savedInstanceState.getParcelableArrayList(STATE_OFFERS);
+        }
+
 
         res = getResources();
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
@@ -213,11 +222,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                     gps.showSettingsAlert();
                 }
             }
-
-            //Toast.makeText(getActivity().getApplicationContext(), "Your last known location as per browsing the map is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-            //Toast.makeText(getActivity().getApplicationContext(), "Your last known location as per browsing the map is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-
-
 
 
             DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
@@ -507,7 +511,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
                     String imageUrl = br.getImageUrl();
                     Log.d(LOGTAG, "Store Image URL: "+imageUrl);
-                    new DownloadImageTask(imStoreFrontPic).execute(imageUrl);
+                    //new DownloadImageTask(imStoreFrontPic).execute(imageUrl);
 
                 }
 
@@ -526,7 +530,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
    private void setupCluster() {
        // Load offer List from preferences
-       if(sharedpref.getString(res.getString(R.string.spf_offers), null) != null) {
+       /*if(sharedpref.getString(res.getString(R.string.spf_offers), null) != null) {
            offersJson = sharedpref.getString(res.getString(R.string.spf_offers), "");
            Log.d(LOGTAG, "Offers JSON: "+offersJson);
 
@@ -563,47 +567,33 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
        }
        else {
            Log.d(LOGTAG, "No JSON Data for offers found");
+       }*/
+
+
+       for(int i=0; i < offerList.size(); i++) {
+
+           Offer offer = (Offer) offerList.get(i);
+
+           Log.d(LOGTAG, "Inside Lat "+offer.getLatitude());
+           Log.d(LOGTAG, "Inside Long "+offer.getLongitude());
+
+           //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
+           MarkerOptions markerOptions = new MarkerOptions()
+                   .position(new LatLng(Double.parseDouble(offer.getLatitude()), Double.parseDouble(offer.getLongitude())))
+                   .title(String.valueOf(i))
+                   .snippet(offer.getCompanyName());
+
+           MarkerItem markerItem = new MarkerItem(markerOptions);
+
+           mClusterManager.addItem(markerItem);
+
        }
+
+       mClusterManager.cluster();
+
+
    }
 
-
-
-    /*
-    @Override
-    public void onUsersLoaded(ArrayList<User> listBrands) {
-
-        brandList = listBrands;
-
-        Log.d(LOGTAG, "Inside callback onOffersLoaded: "+listBrands.size());
-
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
-
-        for (int i = 0; i < brandList.size(); i++) {
-            User brnd = brandList.get(i);
-
-            if(brnd.getLat() != null && !brnd.getLat().equalsIgnoreCase("") && brnd.getLon() != null && !brnd.getLon().equalsIgnoreCase("")) {
-
-                MyItem offsetItem = new MyItem(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon()));
-
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(brnd.getLat()), Double.parseDouble(brnd.getLon())))
-                        .title(String.valueOf(i))
-                        .snippet(brnd.getCompanyName())
-                        .icon(icon);
-                MarkerItem markerItem = new MarkerItem(markerOptions);
-
-                mClusterManager.addItem(markerItem);
-
-            }
-
-
-        }
-
-        mClusterManager.cluster();
-
-
-
-    }*/
 
     private void animateMapView() {
         Log.d(LOGTAG, "CLICKED ON THE MAPVIEW");

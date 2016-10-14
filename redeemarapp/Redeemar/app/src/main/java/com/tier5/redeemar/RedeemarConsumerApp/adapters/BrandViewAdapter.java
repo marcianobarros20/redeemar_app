@@ -66,27 +66,33 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
 
         String imageUrl = "", brandImageUrl = "";
 
-        if(item.getLogoName() != null && item.getLogoName() != "") {
-            imageUrl = item.getLogoName();
-        }
 
-        if(item.getStoreBrandPic() != null && item.getStoreBrandPic() != "") {
-            brandImageUrl = item.getStoreBrandPic();
-        }
+
+
 
         try {
 
+            if(item.getLogoName() != null && item.getLogoName() != "") {
+                imageUrl = item.getLogoName();
 
-            Picasso.with(mContext)
-                    .load(imageUrl)
-                    .fit()
-                    .into(viewHolder.thumbnail);
+                Picasso.with(mContext)
+                        .load(imageUrl)
+                        .fit()
+                        .into(viewHolder.thumbnail);
+            }
 
 
-            Picasso.with(mContext)
-                    .load(brandImageUrl)
-                    .fit()
-                    .into(viewHolder.thumbnailBrandPic);
+
+            if(item.getStoreBrandPic() != null && item.getStoreBrandPic() != "") {
+                brandImageUrl = item.getStoreBrandPic();
+
+                Picasso.with(mContext)
+                        .load(brandImageUrl)
+                        .fit()
+                        .into(viewHolder.thumbnailBrandPic);
+            }
+
+
 
 
         } catch(Exception e) {

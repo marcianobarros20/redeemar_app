@@ -1036,16 +1036,12 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         for(int i=0; i<mParentCategoryIds.size(); i++) {
             istrue=true;
             pSubItemArrayList=new ArrayList<Product.SubCategory>();
-            for(int j=0;j<mSubCategoryIds.size();j++){
+            for(int j=0;j<mSubCategoryIds.size();j++) {
                 istrue1=true;
                 if(mParentCategoryIds.get(i).equals(mSubCategoryIds.get(j))) {
 
                     if(istrue) {
                         mItemListArray = new ArrayList<Product.SubCategory.ItemList>();
-
-                        //if(i == 0)
-                        //    mItemListArray.add(new Product.SubCategory.ItemList("All", "0"));
-
 
                         // Main Category
                         pProductArrayList.add(new Product(mParentCategoryIds.get(i), mParentCategoryNames.get(i), pSubItemArrayList, false));
@@ -1088,7 +1084,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
             LayoutInflater inflater = null;
             inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View mLinearView = inflater.inflate(R.layout.row_cat_first, null);
+            final View mLinearView = inflater.inflate(R.layout.row_cat_first, null);
 
             final TextView mProductName = (TextView) mLinearView.findViewById(R.id.textViewName);
             final RelativeLayout mLinearFirstArrow=(RelativeLayout)mLinearView.findViewById(R.id.linearFirst);
@@ -1117,10 +1113,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                 public void onClick(View v) {
 
                     int xn = mLinearFirstArrow.getId();
-
+                    //Log.d(LOGTAG, "Main Cat Opened: "+mLinearView);
                     lastClick = mMenuCtr;
-
-
                     mMainProduct = pProductArrayList.get(xn);
                     isFirstViewClick = mMainProduct.getOpened();
                     secondRowItemCount = mMainProduct.getmSubCategoryList().size();
@@ -1129,7 +1123,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                     if(secondRowItemCount > 0) {
 
-                        for (int k=0; k<pos.size(); k++){
+                        for (int k = 0; k < pos.size(); k++){
                             //isFirstViewClick=false;
                             View vi = mLinearCategoryListView.getChildAt(k);
                             final ImageView mImageArrowFirst=(ImageView)vi.findViewById(R.id.imageFirstArrow);
@@ -1165,6 +1159,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
             for (int j = 0; j < secondRowItemCount; j++) {
 
                 mSubMenuCtr = j;
+                Log.d(LOGTAG, "Sub Menu Item Sl No. : "+mSubMenuCtr);
 
                 LayoutInflater inflater2 = null;
                 inflater2 = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1193,12 +1188,17 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                 }
 
                 // Second level item clicked
-                mSubItemName.setOnClickListener(new View.OnClickListener() {
+                mLinearSecondArrow.setOnClickListener(new View.OnClickListener() {
+
+
 
                     @Override
                     public void onClick(View v) {
 
+                        Log.d(LOGTAG, "Sub Menu Item Just Clicked");
+
                         int xm = mLinearSecondArrow.getId();
+
 
                         mSubProduct2 = pProductArrayList.get(mMenuCtr).getmSubCategoryList().get(xm);
 
@@ -1206,19 +1206,27 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                         thirdRowItemCount = mSubProduct2.getmItemListArray().size();
                         Log.d(LOGTAG, "A new sub menu clicked "+xm+" : "+isSecondViewClick+" "+thirdRowItemCount);
 
+
+
                         //Fragment browseOfferFragment1 = new BrowseOfferFragment();
                         //getSupportActionBar().setTitle(mSubProduct2.getpSubCatName());
 
-                        editor.putString(res.getString(R.string.spf_redir_action), "CategoryOffers");
+                        /*editor.putString(res.getString(R.string.spf_redir_action), "CategoryOffers");
                         editor.putString(res.getString(R.string.spf_category_name), mSubProduct2.getpSubCatName());
                         editor.putString(res.getString(R.string.spf_category_id), mSubProduct2.getpId());
                         editor.putString(getString(R.string.spf_search_keyword), ""); // Storing Redirect Action
-                        editor.commit();
+                        editor.commit();*/
 
                         /*FragmentManager browseOfferFm1 = getFragmentManager();
                         FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
                         browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
                         browseOfferFragmentTransaction1.commit();*/
+
+                        //mImageArrowSecond.setBackgroundResource(R.drawable.ic_up);
+                        //mLinearScrollThird.setVisibility(View.VISIBLE);
+                        //mSubProduct2.setOpened(true);
+
+
 
                         if(thirdRowItemCount > 0) {
 
@@ -1235,14 +1243,9 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                         }
                         else {
 
-                            /*Fragment browseOfferFragment1 = new BrowseOfferFragment();
+                            Fragment browseOfferFragment1 = new BrowseOfferFragment();
                             getSupportActionBar().setTitle(mSubProduct2.getpSubCatName());
                             Bundle args1 = new Bundle();
-
-                            args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
-                            args1.putString(getString(R.string.ext_category_id), String.valueOf(mSubProduct2.getpId()));
-                            args1.putString(getString(R.string.ext_category_name), String.valueOf(mSubProduct2.getpSubCatName()));
-                            browseOfferFragment1.setArguments(args1);
 
                             editor.putString(res.getString(R.string.spf_redir_action), "CategoryOffers");
                             editor.putString(res.getString(R.string.spf_category_name), mSubProduct2.getpSubCatName());
@@ -1253,11 +1256,11 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                             FragmentManager browseOfferFm1 = getFragmentManager();
                             FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
                             browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
-                            browseOfferFragmentTransaction1.commit();*/
+                            browseOfferFragmentTransaction1.commit();
 
-                            if(thirdRowItemCount == 0) {
-                                mDrawerLayout.closeDrawers();
-                            }
+                            mDrawerLayout.closeDrawers();
+
+
                         }
 
                     }
@@ -1267,6 +1270,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
 
                 final String catName = pProductArrayList.get(i).getmSubCategoryList().get(j).getpSubCatName();
+                Log.d(LOGTAG, "Sub Item: "+catName);
                 mSubItemName.setText(catName);
 
                 if(thirdRowItemCount == 0)
@@ -1317,12 +1321,14 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                         });*/
 
 
-                        mSubItemName.setOnClickListener(new View.OnClickListener() {
+                        mItemName.setOnClickListener(new View.OnClickListener() {
 
                                 @Override
                                 public void onClick(View v) {
 
                                     int xp = mLinearThirdArrow.getId();
+
+                                    Log.d(LOGTAG, "Sub Sub Clicked: "+xp+" "+itemName);
 
                                     Fragment browseOfferFragment1 = new BrowseOfferFragment();
                                     getSupportActionBar().setTitle(itemName);

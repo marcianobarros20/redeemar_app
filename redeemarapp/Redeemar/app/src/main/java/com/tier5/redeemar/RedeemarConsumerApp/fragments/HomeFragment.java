@@ -49,6 +49,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.BrandOfferActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
@@ -325,10 +326,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener, OnMap
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        //Toast.makeText(getActivity().getApplicationContext(), "My Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-
         Log.d(LOGTAG, "Inside onMapReady");
-
 
         mClusterManager = new ClusterManager(getActivity(), googleMap);
 
@@ -540,12 +538,16 @@ public class HomeFragment extends Fragment implements UsersLoadedListener, OnMap
 
                     String imageUrl = br.getStoreFrontImage();
                     Log.d(LOGTAG, "Store Image URL: "+imageUrl);
-                    new DownloadImageTask(imStoreFrontPic).execute(imageUrl);
+                    //new DownloadImageTask(imStoreFrontPic).execute(imageUrl);
+
+
+                    Picasso.with(getActivity())
+                            .load(imageUrl)
+                            .fit()
+                            .into(imStoreFrontPic);
+
 
                 }
-
-
-                //new DownloadSaveImageAsyncTask(getActivity()).execute(imageUrl);
 
                 tvInfoTitle.setText(companyName);
                 tvInfoSnippet.setText(companyLocation);
@@ -638,17 +640,6 @@ public class HomeFragment extends Fragment implements UsersLoadedListener, OnMap
         editor.putString(getString(R.string.spf_popup_action), "1"); // Storing Last Activity
         editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
         editor.commit(); // commit changes
-
-
-        /*Bundle args = new Bundle();
-        args.putString(getString(R.string.ext_redir_to), "BrandOffers");
-        args.putString(getString(R.string.ext_redeemar_id), redeemarId);
-        Fragment fr = new BrowseOfferFragment();
-        fr.setArguments(args);
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.replace(R.id.container_body, fr);
-        fragmentTransaction.commit();*/
 
         Intent intent = new Intent(getActivity(), BrowseOffersActivity.class);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -98,7 +98,9 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
 
         txtSearch.addTextChangedListener(
                 new TextWatcher() {
-                    @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+                    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        tvEmptyView.setText(R.string.loading);
+                    }
                     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
                     private Timer timer=new Timer();
@@ -189,6 +191,8 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
             mAdapter.setKeyword(listKeywords);
             mRecyclerView.setAdapter(mAdapter);
         }
+        else
+            tvEmptyView.setText(R.string.no_search_result);
 
     }
 }

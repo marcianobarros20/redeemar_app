@@ -110,6 +110,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private boolean isInternetPresent = false;
     private Map<String, LatLng> locationItems;
     private Toolbar toolbar;
+    private View layout;
+
+    private static final String STATE_OFFERS = "state_offers";
 
     public BrowseOfferFragment() {
         // Required empty public constructor
@@ -206,7 +209,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
         // Inflate the layout for this fragment
-        View layout = inflater.inflate(R.layout.fragment_offers, container, false);
+        layout = inflater.inflate(R.layout.fragment_offers, container, false);
 
         layout.findViewById(R.id.mainOfferListLayout).requestFocus();
         imListView = (ImageView) layout.findViewById(R.id.menu_list_view);
@@ -353,6 +356,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 tvEmptyView.setText(R.string.loading);
                 tvCategory.setText("");
                 tvCategory.setVisibility(View.GONE);
+
+                layout.findViewById(R.id.mainOfferListLayout).requestFocus();
 
                 final InputMethodManager inputMethodManager =
                         (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -505,6 +510,12 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         mListOffers = new ArrayList<>();
 
+        if (savedInstanceState != null) {
+            //if this fragment starts after a rotation or configuration change, load the existing movies from a parcelable
+            mListOffers = savedInstanceState.getParcelableArrayList(STATE_OFFERS);
+            Log.d(LOGTAG, "COUNT OFFERS ON LOAD: "+mListOffers.size());
+        }
+
         mAdapter = new BrowseOffersViewAdapter(getActivity(), "BrowseOffers");
         mRecyclerOffers.setAdapter(mAdapter);
 
@@ -557,25 +568,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 else if (redirectTo.equals("OnDemand"))
                     new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else {
-                    /*JsonArray jasonArray = null;
-                    ArrayList myOffersList = null;
-                    if(sharedpref.getString(res.getString(R.string.spf_offers), null) != null) {
-                        String cachedOfferListJSON = sharedpref.getString(res.getString(R.string.spf_offers), "");
-                        //tvUserLocation.setText(locKeyword);
-                        //autoComplete.setText(locKeyword);
-                        Gson gson = new Gson();
-                        ArrayList<Offer> al = new ArrayList<Offer>();
-                        //gson.fromJson(cachedOfferListJSON, al);
-
-                        JsonParser parser = new JsonParser();
-                        JsonElement element = parser.parse(cachedOfferListJSON);
-                        jasonArray = element.getAsJsonArray();
-
-                        Log.d(LOGTAG, "Cached is: "+cachedOfferListJSON);
-
-
-                    }*/
-
 
 
                     new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
@@ -596,7 +588,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //save the movie list to a parcelable prior to rotation or configuration change
-        //outState.putParcelableArrayList(STATE_OFFERS, mListOffers);
+
+        Log.d(LOGTAG, "COUNT OFFERS: "+mListOffers.size());
+        outState.putParcelableArrayList(STATE_OFFERS, mListOffers);
     }
 
 
