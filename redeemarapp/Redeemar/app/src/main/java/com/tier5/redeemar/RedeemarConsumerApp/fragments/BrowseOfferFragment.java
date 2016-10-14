@@ -58,6 +58,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.ObjectSerializer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
@@ -762,8 +763,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 try {
 
 
-                    //editor.putString(res.getString(R.string.spf_offers), ObjectSerializer.serialize(listOffers));
-                    //editor.commit();
+                    editor.putString(res.getString(R.string.spf_offers), ObjectSerializer.serialize(listOffers));
+                    editor.commit();
 
                 } catch(Exception ex) {
                     Log.d(LOGTAG, ex.toString());

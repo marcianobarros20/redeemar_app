@@ -10,18 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.daimajia.swipe.SwipeLayout;
-import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
+import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -62,28 +61,8 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
     @Override
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
         final User item = userList.get(position);
-        //viewHolder.tvBrandName.setText(item.getCompanyName());
 
-        /*Address address = new Address();
-
-        address.setStreet(item.getAddress());
-        address.setCity(item.getCity());
-        address.setState(item.getState());
-        address.setZip(item.getZipcode());
-
-
-        String fullAddr = Utils.getFullAddress(address);*/
-
-
-
-        //viewHolder.tvAddress.setText(fullAddr);
-
-        //viewHolder.tvBrandName.setTypeface(myFont);
-        //viewHolder.tvAddress.setTypeface(myFont);
-        //viewHolder.tvNumOffers.setTypeface(myFont);
-
-
-        viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
+        //viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
 
         String imageUrl = "", brandImageUrl = "";
 
@@ -97,14 +76,17 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
 
         try {
 
-            viewHolder.mImageLoader.get(imageUrl, ImageLoader.getImageListener(viewHolder.thumbnail,
-                    R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
-            viewHolder.thumbnail.setImageUrl(imageUrl, viewHolder.mImageLoader);
+
+            Picasso.with(mContext)
+                    .load(imageUrl)
+                    .fit()
+                    .into(viewHolder.thumbnail);
 
 
-            viewHolder.mImageLoader.get(brandImageUrl, ImageLoader.getImageListener(viewHolder.thumbnailBrandPic,
-                    R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
-            viewHolder.thumbnailBrandPic.setImageUrl(brandImageUrl, viewHolder.mImageLoader);
+            Picasso.with(mContext)
+                    .load(brandImageUrl)
+                    .fit()
+                    .into(viewHolder.thumbnailBrandPic);
 
 
         } catch(Exception e) {
@@ -147,8 +129,8 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
         private SwipeLayout swipeLayout;
         private TextView tvBrandName, tvAddress, tvNumOffers;
-        private NetworkImageView thumbnail;
-        private NetworkImageView thumbnailBrandPic;
+        private ImageView thumbnail;
+        private ImageView thumbnailBrandPic;
         private ImageLoader mImageLoader;
 
 
@@ -157,12 +139,8 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
 
         public SimpleViewHolder(View itemView) {
             super(itemView);
-            /*tvBrandName = (TextView) itemView.findViewById(R.id.brand_name);
-            tvAddress = (TextView) itemView.findViewById(R.id.address);
-            tvNumOffers = (TextView) itemView.findViewById(R.id.num_offers);*/
-
-            thumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
-            thumbnailBrandPic = (NetworkImageView) itemView.findViewById(R.id.thumbnailBrandPic);
+            thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+            thumbnailBrandPic = (ImageView) itemView.findViewById(R.id.thumbnailBrandPic);
 
         }
     }

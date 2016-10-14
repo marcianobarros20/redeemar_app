@@ -20,7 +20,7 @@
             android:weightSum="1">
 
 
-            <com.android.volley.toolbox.NetworkImageView
+            <ImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
@@ -29,7 +29,7 @@
 
 
             <!-- Brand Name -->
-            <com.android.volley.toolbox.NetworkImageView
+            <ImageView
                 android:id="@+id/thumbnailBrandPic"
                 android:layout_width="0dp"
                 android:layout_height="120dp"

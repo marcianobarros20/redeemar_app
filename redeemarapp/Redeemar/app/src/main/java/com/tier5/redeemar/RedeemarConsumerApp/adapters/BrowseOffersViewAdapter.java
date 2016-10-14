@@ -29,6 +29,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
+import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.BrandOfferActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
@@ -310,21 +311,28 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         }
 
 
-        viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
-        viewHolder.mLogoImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
+        //viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
+        //viewHolder.mLogoImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
 
 
         // Instantiate the RequestQueue.
         if(imageUrl != null && !imageUrl.equalsIgnoreCase("")) {
 
             imageUrl = UrlEndpoints.serverBaseUrl + imageUrl;
-            viewHolder.mImageLoader.get(imageUrl, ImageLoader.getImageListener(viewHolder.thumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
-            viewHolder.thumbnail.setImageUrl(imageUrl, viewHolder.mImageLoader);
-            viewHolder.thumbnail.setAdjustViewBounds(false);
+            //viewHolder.mImageLoader.get(imageUrl, ImageLoader.getImageListener(viewHolder.thumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
+            //viewHolder.thumbnail.setImageUrl(imageUrl, viewHolder.mImageLoader);
+            //viewHolder.thumbnail.setAdjustViewBounds(false);
+
+            Picasso.with(mContext)
+                    .load(imageUrl)
+                    .fit()
+                    .centerCrop()
+                    .into(viewHolder.thumbnail);
+
         }
         else {
-            viewHolder.thumbnail.setDefaultImageResId(R.drawable.icon_watermark);
-            viewHolder.thumbnail.setErrorImageResId(R.drawable.icon_watermark);
+            //viewHolder.thumbnail.setDefaultImageResId(R.drawable.icon_watermark);
+            //viewHolder.thumbnail.setErrorImageResId(R.drawable.icon_watermark);
         }
 
 
@@ -337,9 +345,10 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             Log.d(LOGTAG, "Logo URL: "+logoUrl);
 
-            viewHolder.mImageLoader.get(logoUrl, ImageLoader.getImageListener(viewHolder.logoThumbnail, 0, 0));
-            viewHolder.logoThumbnail.setImageUrl(logoUrl, viewHolder.mImageLoader);
-            viewHolder.logoThumbnail.setAdjustViewBounds(false);
+            Picasso.with(mContext)
+                    .load(logoUrl)
+                    .fit()
+                    .into(viewHolder.logoThumbnail);
         }
 
 
@@ -378,11 +387,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                         editor.putString(res.getString(R.string.spf_last_offer_id), offerId); // Storing Last Offer Id
                         editor.commit();
 
-                        //Log.d(LOGTAG, "Last Offer Id: "+offerId);
-
-                        //Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
-
-                        //Log.d(LOGTAG, "No. of Items: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
                     }
                 }
@@ -557,8 +561,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         private SwipeLayout swipeLayout;
         //private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvPriceRangeId, tvDiscount, tvExpires;
         private TextView tvBankOffer, tvPassOffer, tvOfferDescription, tvRetailValue, tvDiscount, tvPayValue, tvDistance, tVOnDemand;
-        private NetworkImageView thumbnail;
-        private NetworkImageView logoThumbnail;
+        private ImageView thumbnail, logoThumbnail;
         private ImageView mapIcon;
         private ImageLoader mImageLoader, mLogoImageLoader;
         private LinearLayout distanceLayout, discountLayout;
@@ -577,8 +580,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             tvDistance = (TextView) itemView.findViewById(R.id.distance);
             mapIcon = (ImageView) itemView.findViewById(R.id.map_icon);
             tVOnDemand = (TextView) itemView.findViewById(R.id.on_demand);
-            thumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
-            logoThumbnail = (NetworkImageView) itemView.findViewById(R.id.logo_image);
+            thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+            logoThumbnail = (ImageView) itemView.findViewById(R.id.logo_image);
 
             distanceLayout = (LinearLayout) itemView.findViewById(R.id.distance_layout);
             discountLayout = (LinearLayout) itemView.findViewById(R.id.discount_layout);

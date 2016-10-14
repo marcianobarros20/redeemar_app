@@ -49,6 +49,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
                     android:gravity="left|center_vertical"
+                    android:textSize="12sp"
                     android:text="@string/more_from_brand"
                     style="@style/WhiteLargeText" />
 
@@ -81,6 +82,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
                     android:gravity="left|center_vertical"
+                    android:textSize="12sp"
                     android:text="@string/bank_it"
                     style="@style/WhiteLargeText"  />
 
@@ -108,7 +110,7 @@
                 android:paddingRight="4dp">
 
                 <!-- Thumbnail Image -->
-                <com.android.volley.toolbox.NetworkImageView
+                <ImageView
                     android:id="@+id/thumbnail"
                     android:layout_width="170dp"
                     android:layout_height="130dp"
@@ -119,17 +121,15 @@
                     android:layout_marginRight="6dp"
                     android:src="@drawable/icon_watermark"/>
 
-                <com.android.volley.toolbox.NetworkImageView
+                <ImageView
                     android:id="@+id/logo_image"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="60dp"
+                    android:layout_height="45dp"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
                     android:padding="4dp"
                     android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    android:maxWidth="140dp"
-                    android:maxHeight="100dp" />
+                    android:adjustViewBounds="true" />
 
                 <TextView
                     android:id="@+id/on_demand"

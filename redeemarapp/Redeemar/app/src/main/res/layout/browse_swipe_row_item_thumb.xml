@@ -90,7 +90,7 @@
         android:background="@drawable/list_row_selector"
         android:paddingTop="10dp">
 
-        <com.android.volley.toolbox.NetworkImageView
+        <ImageView
             android:id="@+id/thumbnail"
             android:layout_width="fill_parent"
             android:layout_height="160dp"
@@ -100,17 +100,15 @@
             android:layout_alignParentTop="true"
             android:src="@drawable/icon_watermark"/>
 
-        <com.android.volley.toolbox.NetworkImageView
+        <ImageView
             android:id="@+id/logo_image"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:padding="4dp"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:maxWidth="100dp"
-            android:maxHeight="80dp"
             android:src="@drawable/icon_watermark" />
 
         <LinearLayout

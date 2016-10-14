@@ -13,46 +13,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.daimajia.swipe.SwipeLayout;
-import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
-import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
-import com.tier5.redeemar.RedeemarConsumerApp.LoginActivity;
-import com.tier5.redeemar.RedeemarConsumerApp.OfferDetailsActivity;
-import com.tier5.redeemar.RedeemarConsumerApp.OfferListActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
-import com.tier5.redeemar.RedeemarConsumerApp.SearchResultActivity;
-import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ImageDownloadedListener;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
-import static android.R.attr.id;
 
 
 public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.ViewHolder> {
@@ -61,11 +27,8 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
     private Context mContext;
     private ArrayList<Search> keywordList;
     private Resources res;
-    //Typeface myFont;
-
     private SharedPreferences sharedpref;
     private SharedPreferences.Editor editor;
-
 
 
     public SearchViewAdapter(Context context) {

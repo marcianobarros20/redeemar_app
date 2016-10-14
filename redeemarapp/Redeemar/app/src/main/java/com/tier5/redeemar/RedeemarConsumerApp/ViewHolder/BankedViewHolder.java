@@ -13,6 +13,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
 import com.daimajia.swipe.SwipeLayout;
+import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.ValidateOfferActivity;
@@ -29,7 +30,7 @@ public class BankedViewHolder extends ChildViewHolder {
     private TextView mIngredientTextView;
     private SwipeLayout swipeLayout;
     private TextView tvValidateOffer, tvOfferDescription, tvRetailValue, tvDiscount, tvPayValue, tvDistance, tvOnDemand, tvExpires;
-    private NetworkImageView tvThumbnail;
+    private ImageView thumbnail;
     private ImageView mapIcon;
     private ImageLoader mImageLoader;
     private LinearLayout distanceLayout, discountLayout;
@@ -50,7 +51,7 @@ public class BankedViewHolder extends ChildViewHolder {
         tvDiscount = (TextView) itemView.findViewById(R.id.discount);
         tvPayValue = (TextView) itemView.findViewById(R.id.pay_value);
         tvOnDemand = (TextView) itemView.findViewById(R.id.on_demand);
-        tvThumbnail = (NetworkImageView) itemView.findViewById(R.id.thumbnail);
+        thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
         tvExpires = (TextView) itemView.findViewById(R.id.expires);
         discountLayout = (LinearLayout) itemView.findViewById(R.id.discount_layout);
 
@@ -205,8 +206,17 @@ public class BankedViewHolder extends ChildViewHolder {
         // Instantiate the RequestQueue.
         if(!imageUrlVal.equalsIgnoreCase("")) {
             imageUrlVal = UrlEndpoints.serverBaseUrl + imageUrlVal;
-            mImageLoader.get(imageUrlVal, ImageLoader.getImageListener(tvThumbnail, R.drawable.icon_watermark, 0));
-            tvThumbnail.setImageUrl(imageUrlVal, mImageLoader);
+            //mImageLoader.get(imageUrlVal, ImageLoader.getImageListener(tvThumbnail, R.drawable.icon_watermark, 0));
+            //tvThumbnail.setImageUrl(imageUrlVal, mImageLoader);
+
+
+            Picasso.with(mContext)
+                    .load(imageUrlVal)
+                    .fit()
+                    .centerCrop()
+                    .into(thumbnail);
+
+
         }
 
     }

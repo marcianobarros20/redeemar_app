@@ -210,9 +210,9 @@
     <string name="no_records">No record found.</string>
     <string name="unable_to_get_records">Unable to get record found.</string>
     <string name="active">Active</string>
-    <string name="bank_it">BANK</string>
+    <string name="bank_it">BANK OFFER</string>
     <string name="pass_it">PASS</string>
-    <string name="more_from_brand">MORE</string>
+    <string name="more_from_brand">MORE OFFERS</string>
     <string name="more_brand_offers">MORE BRAND OFFERS</string>
     <string name="scan_offer">Scan</string>
     <string name="no_rec">No Records</string>

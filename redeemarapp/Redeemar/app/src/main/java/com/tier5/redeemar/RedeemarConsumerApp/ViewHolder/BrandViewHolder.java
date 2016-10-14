@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
+import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadImageTask;
@@ -27,10 +28,9 @@ public class BrandViewHolder extends ParentViewHolder {
     private static final float ROTATED_POSITION = 180f;
 
     private TextView name;
-    private NetworkImageView thumbnailBrand;
+    private ImageView thumbnailBrand;
     private TextView tvActive, tvNumOffers, tvNumOnDemand, tvDistance, tvBrandInfo;
 
-    private ImageLoader mImageLoader;
 
     private Typeface myFont;
 
@@ -40,7 +40,7 @@ public class BrandViewHolder extends ParentViewHolder {
 
         myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
 
-        thumbnailBrand = (NetworkImageView) itemView.findViewById(R.id.thumbnailBrand);
+        thumbnailBrand = (ImageView) itemView.findViewById(R.id.thumbnailBrand);
         tvNumOffers = (TextView) itemView.findViewById(R.id.numOffers);
         tvActive = (TextView) itemView.findViewById(R.id.numActive);
         tvNumOnDemand = (TextView) itemView.findViewById(R.id.numOnDemand);
@@ -55,24 +55,10 @@ public class BrandViewHolder extends ParentViewHolder {
             String brandUrl = UrlEndpoints.basePathURL + brand.getBrandLogo();
             Log.d(LOGTAG, "Brand Logo: "+brandUrl);
 
-            /*try {
-                thumbnailBrand.setImageDrawable(null);
-                new DownloadImageTask(thumbnailBrand).execute(brandUrl);
-                thumbnailBrand.setAdjustViewBounds(false);
-
-            } catch(Exception ex) {
-                Log.d(LOGTAG, "Exception: "+ex.toString());
-            }*/
-
-
-            mImageLoader = CustomVolleyRequestQueue.getInstance(context).getImageLoader();
-
-
-            //String LogoImageUrlVal = UrlEndpoints.serverBaseUrl + brand.getBrandLogo();
-
-            mImageLoader.get(brand.getBrandLogo(), ImageLoader.getImageListener(thumbnailBrand, R.drawable.icon_watermark, 0));
-            thumbnailBrand.setImageUrl(brandUrl, mImageLoader);
-            thumbnailBrand.setAdjustViewBounds(false);
+            Picasso.with(context)
+                    .load(brandUrl)
+                    .fit()
+                    .into(thumbnailBrand);
 
 
         }
@@ -83,48 +69,5 @@ public class BrandViewHolder extends ParentViewHolder {
         tvActive.setText(String.valueOf(brand.getCountBankedOffers()));
         tvDistance.setText(brand.getDistanceVal());
 
-    }
-
-    @SuppressLint("NewApi")
-    @Override
-    public void setExpanded(boolean expanded) {
-        super.setExpanded(expanded);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            if (expanded) {
-                //thumbnailBrand.setRotation(ROTATED_POSITION);
-
-                //thumbnailBrand.setBackgroundColor(Color.GRAY);
-            } else {
-                //thumbnailBrand.setRotation(INITIAL_POSITION);
-
-                //thumbnailBrand.setBackgroundColor(Color.WHITE);
-            }
-        }
-    }
-
-    @Override
-    public void onExpansionToggled(boolean expanded) {
-        super.onExpansionToggled(expanded);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            /*RotateAnimation rotateAnimation;
-            if (expanded) { // rotate clockwise
-                 rotateAnimation = new RotateAnimation(ROTATED_POSITION,
-                        INITIAL_POSITION,
-                        RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-                        RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-            } else { // rotate counterclockwise
-                rotateAnimation = new RotateAnimation(-1 * ROTATED_POSITION,
-                        INITIAL_POSITION,
-                        RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-                        RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-            }
-
-            rotateAnimation.setDuration(200);
-            rotateAnimation.setFillAfter(true);
-            thumbnailBrand.startAnimation(rotateAnimation);*/
-
-
-
-        }
     }
 }

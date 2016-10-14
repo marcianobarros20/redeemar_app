@@ -13,7 +13,7 @@
 		android:padding="0dp">
 
 		<!-- Thumbnail Image -->
-		<com.android.volley.toolbox.NetworkImageView
+		<ImageView
 			android:id="@+id/thumbnailBrand"
 			android:src="@drawable/icon_watermark"
 			android:layout_width="120dp"

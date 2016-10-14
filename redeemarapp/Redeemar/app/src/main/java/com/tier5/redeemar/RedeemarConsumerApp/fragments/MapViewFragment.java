@@ -528,6 +528,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
        // Load offer List from preferences
        if(sharedpref.getString(res.getString(R.string.spf_offers), null) != null) {
            offersJson = sharedpref.getString(res.getString(R.string.spf_offers), "");
+           Log.d(LOGTAG, "Offers JSON: "+offersJson);
 
            try {
                offerList = (ArrayList<Offer>) ObjectSerializer.deserialize(offersJson);
@@ -538,7 +539,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
                    Log.d(LOGTAG, "Inside Lat "+offer.getLatitude());
                    Log.d(LOGTAG, "Inside Long "+offer.getLongitude());
-
 
                    //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
                    MarkerOptions markerOptions = new MarkerOptions()
@@ -560,6 +560,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                e.printStackTrace();
            }
 
+       }
+       else {
+           Log.d(LOGTAG, "No JSON Data for offers found");
        }
    }
 
