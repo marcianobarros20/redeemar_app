@@ -569,27 +569,31 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
            Log.d(LOGTAG, "No JSON Data for offers found");
        }*/
 
+       if(offerList.size() > 0) {
 
-       for(int i=0; i < offerList.size(); i++) {
+           for (int i = 0; i < offerList.size(); i++) {
 
-           Offer offer = (Offer) offerList.get(i);
+               Offer offer = (Offer) offerList.get(i);
 
-           Log.d(LOGTAG, "Inside Lat "+offer.getLatitude());
-           Log.d(LOGTAG, "Inside Long "+offer.getLongitude());
+               Log.d(LOGTAG, "Inside Lat " + offer.getLatitude());
+               Log.d(LOGTAG, "Inside Long " + offer.getLongitude());
 
-           //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
-           MarkerOptions markerOptions = new MarkerOptions()
-                   .position(new LatLng(Double.parseDouble(offer.getLatitude()), Double.parseDouble(offer.getLongitude())))
-                   .title(String.valueOf(i))
-                   .snippet(offer.getCompanyName());
+               //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
+               MarkerOptions markerOptions = new MarkerOptions()
+                       .position(new LatLng(Double.parseDouble(offer.getLatitude()), Double.parseDouble(offer.getLongitude())))
+                       .title(String.valueOf(i))
+                       .snippet(offer.getCompanyName());
 
-           MarkerItem markerItem = new MarkerItem(markerOptions);
+               MarkerItem markerItem = new MarkerItem(markerOptions);
 
-           mClusterManager.addItem(markerItem);
+               mClusterManager.addItem(markerItem);
+
+           }
+           mClusterManager.cluster();
 
        }
 
-       mClusterManager.cluster();
+
 
 
    }
