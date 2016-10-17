@@ -22,10 +22,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader;
+import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
+import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.LoginActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BankedOffersAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.adapters.BigramHeaderAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.adapters.InitialHeaderAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.async.MyOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Banked;
@@ -60,6 +63,8 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
     private View layout;
+    private StickyHeadersItemDecoration top;
+    private StickyHeadersItemDecoration overlay;
 
 
 
@@ -83,12 +88,23 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
         super.onCreate(savedInstanceState);
 
-
-
-
         layout = inflater.inflate(R.layout.fragment_banked, container, false);
         Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.main_recycler);
+
+        top = new StickyHeadersBuilder()
+                .setAdapter(adapter)
+                .setRecyclerView(mRecyclerOffers)
+                .setStickyHeadersAdapter(new BigramHeaderAdapter(mListOffers))
+                //.setOnHeaderClickListener(this)
+                .build();
+
+
+        /*overlay = new StickyHeadersBuilder()
+                .setAdapter(adapter)
+                .setRecyclerView(mRecyclerOffers)
+                //.setStickyHeadersAdapter(new InitialHeaderAdapter(personDataProvider.getItems()), true)
+                .build();*/
 
 
 

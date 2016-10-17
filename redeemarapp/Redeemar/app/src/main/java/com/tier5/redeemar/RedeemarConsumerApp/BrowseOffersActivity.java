@@ -945,7 +945,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
         Log.d(LOGTAG, "Resuming the app");
 
-        SystemRequirementsChecker.checkWithDefaultDialogs(this);
+        //SystemRequirementsChecker.checkWithDefaultDialogs(this);
     }
 
     @Override
@@ -1389,14 +1389,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                                 }
                         });
-
-
-
-
-
-
-
-
 
                         mLinearScrollThird.addView(mLinearView3);
                         nctr++;
