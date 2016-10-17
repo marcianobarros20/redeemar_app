@@ -145,6 +145,8 @@
     <string name="lbl_no_grid_columns">Number of grid columns</string>
     <string name="lbl_gallery_name">Gallery directory name</string>
     <string name="lbl_btn_save">Save</string>
+
+
     <string name="spf_key">RedeemerSharedPref</string>
     <string name="spf_redeemer_id">spf_redeemer_id</string>
     <string name="spf_brand_name">spf_brand_name</string>
@@ -171,6 +173,8 @@
     <string name="spf_category_level">spf_category_level</string>
     <string name="spf_location_keyword">spf_location_keyword</string>
     <string name="spf_offers">spf_offers</string>
+    <string name="spf_current_fragment">spf_current_fragment</string>
+
     <string name="ext_redeemar_id">REDEEMAR_ID</string>
     <string name="ext_offer_id">OFFER_ID</string>
     <string name="ext_user_id">USER_ID</string>

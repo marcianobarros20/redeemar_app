@@ -350,8 +350,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
     {
         // Inflates the Overlay Layout to be displayed above the Camera View
         LayoutInflater inflater = LayoutInflater.from(this);
-        mUILayout = (RelativeLayout) inflater.inflate(R.layout.camera_overlay,
-            null, false);
+        mUILayout = (RelativeLayout) inflater.inflate(R.layout.camera_overlay, null, false);
         
         mUILayout.setVisibility(View.VISIBLE);
         mUILayout.setBackgroundColor(Color.BLACK);
@@ -595,12 +594,11 @@ public class CloudReco extends Activity implements SampleApplicationControl,
         TargetFinder targetFinder = objectTracker.getTargetFinder();
 
 
-        if(MyApplication.getAppEnvironment().equalsIgnoreCase("beta")) {
+        if(MyApplication.getAppEnvironment().equalsIgnoreCase("beta") || MyApplication.getAppEnvironment().equalsIgnoreCase("www")) {
             vuforiaAccessKey = Constants.kAccessKeyBeta;
             vuforiaSecretKey = Constants.kSecretKeyBeta;
         }
         else {
-
             vuforiaAccessKey = Constants.kAccessKeyDev;
             vuforiaSecretKey = Constants.kSecretKeyDev;
         }

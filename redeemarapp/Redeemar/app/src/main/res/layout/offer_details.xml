@@ -296,7 +296,7 @@
                     android:layout_centerHorizontal="true"
                     android:gravity="center"
                     android:textSize="@dimen/button_title_large"
-                    android:background="@color/deep_red"
+                    android:background="@color/md_blue_400"
                     android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:padding="@dimen/button_padding_med"
                     android:paddingLeft="20dp"

@@ -9,7 +9,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/fragment_banked" tools:context=".BrowseOffersActivity">
 
-    <android.support.v7.widget.RecyclerView
+    <ListView
         android:id="@+id/main_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -207,6 +207,11 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         }
 
 
+        Log.d(LOGTAG, "Redirect To Inside Fragment: "+redirectTo);
+
+
+
+
 
         // Inflate the layout for this fragment
         layout = inflater.inflate(R.layout.fragment_offers, container, false);
@@ -354,8 +359,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 editor.commit();
 
                 tvEmptyView.setText(R.string.loading);
-                tvCategory.setText("");
-                tvCategory.setVisibility(View.GONE);
+                //tvCategory.setText("");
+                //tvCategory.setVisibility(View.GONE);
 
                 layout.findViewById(R.id.mainOfferListLayout).requestFocus();
 

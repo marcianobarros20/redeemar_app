@@ -95,7 +95,9 @@ public class MyApplication extends Application {
         String word = "beta";
         String severBase = UrlEndpoints.serverBaseUrl;
 
-        if(severBase.contains(word))
+        if(severBase.contains("www"))
+            return "www";
+        else if(severBase.contains("beta"))
             return "beta";
         else
             return "dev";

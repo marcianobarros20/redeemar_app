@@ -21,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader;
 import com.tier5.redeemar.RedeemarConsumerApp.LoginActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BankedOffersAdapter;
@@ -57,6 +59,7 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
     double latitude = 0.0, longitude = 0.0;
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
+    private View layout;
 
 
 
@@ -80,9 +83,14 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
         super.onCreate(savedInstanceState);
 
-        View layout = inflater.inflate(R.layout.fragment_banked, container, false);
+
+
+
+        layout = inflater.inflate(R.layout.fragment_banked, container, false);
         Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.main_recycler);
+
+
 
         cd = new SuperConnectionDetector(getActivity());
         isInternetPresent = cd.isConnectingToInternet();
@@ -108,12 +116,12 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
         //mRecyclerOffers.setAdapter(adapter);
         //adapter = new BankedOfferAdapter(getActivity());
-
         //adapter = new BankedOffersAdapter();
         //adapter.setMode(ExpandableRecyclerAdapter.MODE_ACCORDION);
 
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerOffers.setAdapter(adapter);
+
 
 
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
@@ -133,9 +141,28 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
             //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
             //if the database is empty, trigger an AsycnTask to download movie list from the web
 
+
+
             Log.d(LOGTAG, "List Offers Before Async: "+mListOffers.isEmpty());
             if (mListOffers.isEmpty()) {
-                new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude));
+
+                String currFragment = sharedpref.getString(res.getString(R.string.spf_current_fragment), "");
+
+
+                /*if(currFragment.equals("Banked")) {
+
+                    String redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
+                    String categoryName = sharedpref.getString(res.getString(R.string.spf_category_name), "");
+                    String categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
+
+
+                    new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), categoryId);
+                }
+                else
+                    new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), "");*/
+
+                new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), "");
+
             }
         }
         //update your Adapter to containg the retrieved movies

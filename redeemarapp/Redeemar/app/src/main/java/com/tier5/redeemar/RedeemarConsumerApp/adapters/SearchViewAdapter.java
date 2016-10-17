@@ -90,6 +90,9 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
                 String type = item.getType();
 
                 String id = item.getId();
+                Log.d(LOGTAG, "Type Id: "+type);
+                Log.d(LOGTAG, "Item Id: "+id);
+
                 Intent intent = new Intent(v.getContext(), BrowseOffersActivity.class);
 
                 if(type.equals("1")) {
@@ -112,6 +115,7 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
                 intent.putExtra(v.getContext().getString(R.string.spf_search_keyword), item.getDescription());
                 intent.putExtra(v.getContext().getString(R.string.spf_category_name), item.getCategoryName());
                 intent.putExtra(v.getContext().getString(R.string.spf_category_id), id);*/
+
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 v.getContext().startActivity(intent);
 

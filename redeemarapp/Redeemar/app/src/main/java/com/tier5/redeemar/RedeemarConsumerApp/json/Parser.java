@@ -303,9 +303,11 @@ public class Parser {
                                 if(!jsonLogoSettings.isNull("logo_name")) {
                                     offer.setBrandLogo(jsonLogoSettings.getString("logo_name").toString());
                                     String logoUrl = UrlEndpoints.baseLogoMediumURL + jsonLogoSettings.getString("logo_name");
-                                    //Log.d(LOGTAG, "My Logo URL 1: "+logoUrl);
-                                    Bitmap myBitmap = BitmapFactory.decodeFile(logoUrl);
-                                    Utils.saveToInternalStorage(myBitmap, jsonLogoSettings.getString("logo_name"));
+                                    Log.d(LOGTAG, "My Logo URL 1: "+logoUrl);
+
+                                    // Saving image to local disk for caching
+                                    //Bitmap myBitmap = BitmapFactory.decodeFile(logoUrl);
+                                    //Utils.saveToInternalStorage(myBitmap, jsonLogoSettings.getString("logo_name"));
                                 }
                                 else
                                     offer.setBrandLogo("");

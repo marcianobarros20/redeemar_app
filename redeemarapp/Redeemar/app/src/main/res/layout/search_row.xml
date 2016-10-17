@@ -27,6 +27,7 @@
                 android:background="@color/white"
                 android:textColor="@color/darkGray"
                 android:padding="8dp"
+                android:textSize="14sp"
                 android:gravity="left|center_vertical"/>
 
             <TextView
@@ -38,6 +39,7 @@
                 android:background="@color/white"
                 android:textColor="@color/darkGray"
                 android:padding="8dp"
+                android:textSize="14sp"
                 android:gravity="left|center_vertical"/>
 
 

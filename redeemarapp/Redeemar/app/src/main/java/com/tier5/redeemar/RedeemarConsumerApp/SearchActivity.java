@@ -101,7 +101,7 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
                     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                         tvEmptyView.setText(R.string.loading);
                     }
-                    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+                    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { tvEmptyView.setText(R.string.loading); }
 
                     private Timer timer=new Timer();
                     private final long DELAY = 500; // milliseconds
@@ -119,8 +119,6 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
                                         // TODO: do what you need here (refresh list)
                                         // you will probably need to use runOnUiThread(Runnable action) for some specific actions
                                         Log.d(LOGTAG, "Calling the async task to load after 2 seconds "+keyword);
-
-
                                         callSearchKeywordTask();
                                     }
                                 },
