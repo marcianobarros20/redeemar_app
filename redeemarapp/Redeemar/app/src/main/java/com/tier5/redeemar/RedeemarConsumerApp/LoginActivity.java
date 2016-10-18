@@ -344,21 +344,18 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d(LOGTAG, "Data: "+String.valueOf(data));
         Log.d(LOGTAG, "RC_SIGN_IN: "+String.valueOf(RC_SIGN_IN));
 
-
-        if(loginMethod.equalsIgnoreCase("facebook")) {
-            Log.d(LOGTAG, "Successfully logged in from Facebook");
-            callbackManager.onActivityResult(requestCode, resultCode, data);
-        }
-
-        else if(loginMethod.equalsIgnoreCase("google")) {
+        /*else if(loginMethod.equalsIgnoreCase("google")) {*/
 
             // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
             if (requestCode == RC_SIGN_IN) {
 
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                handleSignInResult(result);
+
 
                 // Check which request we're responding to
 
-                mRequestCode = requestCode;
+                /*mRequestCode = requestCode;
 
                 if (resultCode != RESULT_OK) {
                     mSignInClicked = false;
@@ -371,11 +368,34 @@ public class LoginActivity extends AppCompatActivity implements
 
                 if (!mGoogleApiClient.isConnecting()) {
                     mGoogleApiClient.connect();
-                }
+                }*/
 
             }
-        }
 
+            else
+            {
+
+                    Log.d(LOGTAG, "Successfully logged in from Facebook");
+                    callbackManager.onActivityResult(requestCode, resultCode, data);
+
+            }
+        /*}*/
+
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(LOGTAG, "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            Log.i(LOGTAG,acct.getDisplayName());
+            new RegisterSocialAsyncTask().execute(acct.getEmail(), androidId, "", acct.getId(), offerId);
+            hideProgressDialog();
+
+
+        } else {
+            Toast.makeText(getApplicationContext(),"Cannot do google SignIn right now!",Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -400,7 +420,7 @@ public class LoginActivity extends AppCompatActivity implements
 
         btnGoogleSignIn = (SignInButton) findViewById(R.id.btn_sign_in_google);
         btnGoogleSignIn.setSize(SignInButton.SIZE_STANDARD);
-        btnGoogleSignIn.setScopes(new Scope[]{Plus.SCOPE_PLUS_LOGIN});
+        btnGoogleSignIn.setScopes(gso.getScopeArray());
 
     }
 
@@ -408,11 +428,11 @@ public class LoginActivity extends AppCompatActivity implements
     protected synchronized void buildGoogleApiClient() {
 
 
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Plus.API,Plus.PlusOptions.builder().build())
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
         Log.d(LOGTAG, "Finished building API Client");
@@ -554,8 +574,8 @@ public class LoginActivity extends AppCompatActivity implements
 
         }
 
-        //Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        //startActivityForResult(signInIntent, RC_SIGN_IN);
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
     // [END signIn]
 
