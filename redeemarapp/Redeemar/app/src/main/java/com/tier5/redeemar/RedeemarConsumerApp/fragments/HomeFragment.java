@@ -50,16 +50,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.squareup.picasso.Picasso;
-import com.tier5.redeemar.RedeemarConsumerApp.BrandOfferActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
-import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
 import com.tier5.redeemar.RedeemarConsumerApp.DividerItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.RecyclerItemClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.ResizeAnimation;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrandViewAdapter;
-import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadImageTask;
-import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadSaveImageAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByBrandsAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
@@ -67,11 +63,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.MarkerItem;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
-
-import java.net.MalformedURLException;
 import java.util.ArrayList;
-
 
 public class HomeFragment extends Fragment implements UsersLoadedListener, OnMapReadyCallback {
 

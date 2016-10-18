@@ -20,15 +20,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
-import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.tier5.redeemar.RedeemarConsumerApp.LoginActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BankedOffersAdapter;
-import com.tier5.redeemar.RedeemarConsumerApp.adapters.BigramHeaderAdapter;
-import com.tier5.redeemar.RedeemarConsumerApp.adapters.InitialHeaderAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.adapters.StickyTestAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.async.MyOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Banked;
@@ -36,8 +32,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Brand;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
-
-import org.json.JSONArray;
+import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,26 +41,19 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
     private static final String LOGTAG = "BrowseOfferFragment";
 
-    //The key used to store arraylist of movie objects to and from parcelable
     private static final String STATE_OFFERS = "state_offers";
     private ArrayList<Offer> mListOffers;
-    //private BankedOfferAdapter adapter;
     private BankedOffersAdapter adapter;
     private TextView tvEmptyView;
     private RecyclerView mRecyclerOffers;
-    //the arraylist containing our list of box office his
-    private String redeemerId = "";
-    private JSONArray offersArray;
     private Resources res;
     private SharedPreferences sharedpref;
     private String user_id = "";
-    double latitude = 0.0, longitude = 0.0;
+    private double latitude = 0.0, longitude = 0.0;
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
     private View layout;
-    private StickyHeadersItemDecoration top;
-    private StickyHeadersItemDecoration overlay;
-
+    private StickyHeaderDecoration decor;
 
 
     public MyOfferFragment() {
@@ -84,34 +72,19 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
+        // Inflate the layout for this fragment
         super.onCreate(savedInstanceState);
 
         layout = inflater.inflate(R.layout.fragment_banked, container, false);
         Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.main_recycler);
 
-        top = new StickyHeadersBuilder()
-                .setAdapter(adapter)
-                .setRecyclerView(mRecyclerOffers)
-                .setStickyHeadersAdapter(new BigramHeaderAdapter(mListOffers))
-                //.setOnHeaderClickListener(this)
-                .build();
-
-
-        /*overlay = new StickyHeadersBuilder()
-                .setAdapter(adapter)
-                .setRecyclerView(mRecyclerOffers)
-                //.setStickyHeadersAdapter(new InitialHeaderAdapter(personDataProvider.getItems()), true)
-                .build();*/
-
-
-
         cd = new SuperConnectionDetector(getActivity());
         isInternetPresent = cd.isConnectingToInternet();
 
         if(!isInternetPresent) {
+
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
             alertDialog.setTitle("Internet");
             alertDialog.setMessage("Internet not enabled in your device. Do you want to enable it from settings menu");
@@ -137,14 +110,9 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerOffers.setAdapter(adapter);
-
-
-
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
         tvEmptyView.setVisibility(View.VISIBLE);
-
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         mListOffers = new ArrayList<>();
 
         if (savedInstanceState != null) {
@@ -156,6 +124,14 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
             //if this fragment starts for the first time, load the list of movies from a database
             //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
             //if the database is empty, trigger an AsycnTask to download movie list from the web
+
+            //final StickyTestAdapter adapter = new StickyTestAdapter(this.getActivity());
+            //decor = new StickyHeaderDecoration(adapter);
+            //setHasOptionsMenu(true);
+
+            //mRecyclerOffers.setAdapter(adapter);
+            //mRecyclerOffers.addItemDecoration(decor, 0);
+            //mRecyclerOffers.addOnItemTouchListener();
 
 
 
@@ -185,7 +161,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         //mAdapter.setOffers(mListOffers);
         return layout;
     }
-
 
 
     // This event fires 2nd, before views are created for the fragment
@@ -249,14 +224,13 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
 
 
+
+
     @Override
     public void onOffersLoaded(ArrayList<Offer> listOffers) {
 
         if(listOffers.size() > 0) {
             Log.d(LOGTAG, "Inside callback onMyOffersLoaded: " + listOffers.size());
-            //adapter.setOffers(listOffers);
-            //mRecyclerOffers.setVisibility(View.VISIBLE);
-
 
             if (listOffers != null) {
 
@@ -312,7 +286,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
                                 ingr.setOnDemand(item1.getOnDemand());
                                 ingr.setExpires(item1.getExpiredInDays());
                                 ingredients.add(ingr);
-                                Log.d(LOGTAG, "Count Ingredients: " + ingredients.size());
                                 countBanked++;
 
                             }
@@ -331,8 +304,7 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
                         //ingredients.clear();
                         d++;
                     }
-                    Log.d(LOGTAG, "My Redeemar Temp Id: " + tempRedeemarId);
-                    Log.d(LOGTAG, "My Redeemar Id: " + mRedeemarId);
+
 
                     groupOffer.add(d);
                     tempRedeemarId = mRedeemarId;

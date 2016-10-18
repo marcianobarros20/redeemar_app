@@ -37,7 +37,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Log.d("Dibs", "Inside MyApplication onCreate()");
+        Log.d("LOG", "Inside MyApplication onCreate()");
 
         beaconManager = new BeaconManager(getApplicationContext());
         beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
