@@ -389,8 +389,11 @@ public class LoginActivity extends AppCompatActivity implements
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             Log.i(LOGTAG,acct.getDisplayName());
-            new RegisterSocialAsyncTask().execute(acct.getEmail(), androidId, "", acct.getId(), offerId);
+
             hideProgressDialog();
+
+            showProgressDialog();
+            new RegisterSocialAsyncTask().execute(acct.getEmail(), androidId, "", acct.getId(), offerId);
 
 
         } else {
@@ -806,12 +809,14 @@ public class LoginActivity extends AppCompatActivity implements
                             //showProgressDialog();
 
                             if(isFBLoginSuccess) {
+                                showProgressDialog();
                                 new RegisterSocialAsyncTask().execute(object.getString("email"), androidId, object.getString("id"), "", offerId);
                             }
 
                             //tvWelcome.setText("Welcome "+firstName+" "+lastName);
 
                         }catch (Exception e){
+                            Log.i(LOGTAG,"error in facebook login "+e.toString());
                             e.printStackTrace();
                             hideProgressDialog();
 
@@ -916,6 +921,7 @@ public class LoginActivity extends AppCompatActivity implements
         @Override
         protected void onPostExecute(String resp) {
             //do what ever you want with the response
+            Log.d(LOGTAG, "Total Response: " + resp);
 
             if (resp != null) {
 
@@ -1030,6 +1036,7 @@ public class LoginActivity extends AppCompatActivity implements
 
 
                 } catch (JSONException e) {
+                    Log.i(LOGTAG,"exception in response "+e.toString());
                     e.printStackTrace();
                     hideProgressDialog();
                 }
@@ -1133,14 +1140,15 @@ public class LoginActivity extends AppCompatActivity implements
                 inputStream.close();
                 conn.disconnect();
                 os.close();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                Log.i(LOGTAG,"Eroor in sending social data "+e.toString());
+                /*e.printStackTrace();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace();*/
             }
 
             return response;
