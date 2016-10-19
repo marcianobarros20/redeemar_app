@@ -217,4 +217,8 @@
         <item name="android:windowDisablePreview">true</item>
     </style>
 
+    <style name="BigText.Drawer" parent="AppBaseTheme">
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>
