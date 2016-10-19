@@ -118,9 +118,9 @@ public class OfferUtils {
     }
 
 
-    public static ArrayList<Offer> loadMyOffers(RequestQueue requestQueue, String userId, String lat, String lon) {
+    public static ArrayList<Offer> loadMyOffers(RequestQueue requestQueue, String userId, String lat, String lon, String catId) {
 
-        JSONObject response = Requestor.requestMyOffersJSON(requestQueue, Endpoints.getRequestUrlMyOffers(30), userId, lat, lon);
+        JSONObject response = Requestor.requestMyOffersJSON(requestQueue, Endpoints.getRequestUrlMyOffers(30), userId, lat, lon, catId);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadMyOffers :"+listOffers.size());
         return listOffers;

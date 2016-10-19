@@ -283,6 +283,12 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                     getSupportActionBar().setTitle(R.string.my_banked);
 
+                    editor.putString(getString(R.string.spf_redir_action), ""); // Storing Redirect Action
+                    editor.putString(getString(R.string.spf_category_id), ""); // Storing Category Id
+                    editor.putString(getString(R.string.spf_category_name), ""); // Storing Category Name
+                    editor.putString(getString(R.string.spf_current_fragment), "Banked"); // Storing Category Name
+                    editor.commit(); // commit changes
+
                     Fragment fr = new MyOfferFragment();
                     //fr.setArguments(args);
                     FragmentManager fm = getFragmentManager();
@@ -290,8 +296,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                     fragmentTransaction.replace(R.id.container_body, fr);
                     fragmentTransaction.commit();
 
-                    editor.putString(getString(R.string.spf_current_fragment), "Banked"); // Storing Category Name
-                    editor.commit(); // commit changes
+                    Log.d(LOGTAG, "Inside bank offers 2");
 
 
 
@@ -369,11 +374,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                         editor.putString(getString(R.string.spf_current_fragment), "Browse"); // Storing Category Name
                         editor.commit(); // commit changes
 
-                        /*editor.putString(getString(R.string.spf_search_keyword), ""); // Storing Search Keyword
-                        editor.putString(getString(R.string.spf_category_id), ""); // Storing Category Id
-                        editor.putString(getString(R.string.spf_category_name), ""); // Storing Category Name
-                        editor.commit(); // commit changes*/
-
                         fr.setArguments(args1);
                         FragmentManager fm = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fm.beginTransaction();
@@ -410,15 +410,20 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                     getSupportActionBar().setTitle(R.string.my_banked);
 
+                    editor.putString(getString(R.string.spf_redir_action), ""); // Storing Redirect Action
+                    editor.putString(getString(R.string.spf_category_id), ""); // Storing Category Id
+                    editor.putString(getString(R.string.spf_category_name), ""); // Storing Category Name
+                    editor.putString(getString(R.string.spf_current_fragment), "Banked"); // Storing Category Name
+                    editor.commit();
+
+                    Log.d(LOGTAG, "Inside bank offers 1");
+
                     Fragment fr = new MyOfferFragment();
                     fr.setArguments(args);
                     FragmentManager fm = getFragmentManager();
                     FragmentTransaction fragmentTransaction = fm.beginTransaction();
                     fragmentTransaction.replace(R.id.container_body, fr);
                     fragmentTransaction.commit();
-
-                    //Intent intent = new Intent(MyOffersActivity.this, MyOffersActivity.class);
-                    //startActivity(intent);
 
                 } else if (menuItemId == R.id.bottom_nearby) {
 
@@ -648,13 +653,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                                 editor.putInt(res.getString(R.string.spf_category_level), 1); // Storing category Level
                                 editor.commit(); // commit changes
 
-                               /* Intent catIntent = new Intent(BrowseOffersActivity.this, CategoryActivity.class);
-                                catIntent.putExtra(getString(R.string.ext_redir_to), "CategoryOffers");
-                                catIntent.putExtra(getString(R.string.ext_category_id), catId);
-                                catIntent.putExtra(getString(R.string.ext_category_name), menuItem.getTitle());
-                                startActivity(catIntent);*/
-
-                                //Log.d(LOGTAG, "Category Name: "+menuItem.getTitle());
 
                                 Fragment browseOfferFragment1 = new BrowseOfferFragment();
                                 getSupportActionBar().setTitle(menuItem.getTitle());
@@ -663,11 +661,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                                 args1.putString(getString(R.string.ext_category_id), String.valueOf(menuItem.getItemId()));
                                 browseOfferFragment1.setArguments(args1);
                                 break;
-
-                                /*FragmentManager browseOfferFm1 = getFragmentManager();
-                                FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
-                                browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
-                                browseOfferFragmentTransaction1.commit();*/
 
 
                         }
@@ -680,13 +673,9 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
     private void addItemsRunTime(NavigationView navigationView) {
 
-
         List categories = db.getCategories(0);
-
         String tempCatName = "";
         final Menu menu = navigationView.getMenu();
-
-
 
         for (int i = 0; i < categories.size(); i++) {
 
@@ -699,6 +688,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                 mParentCategoryIds.add(String.valueOf(catId));
                 mParentCategoryNames.add(catName);
             }
+
             mCategoryIds.add(String.valueOf(catId));
             mSubCategoryIds.add(String.valueOf(parentId));
             mCategoryNames.add(catName);
@@ -903,7 +893,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                 editor.commit(); // commit changes
 
-                //Log.d(LOGTAG, "NEW View Type: " + viewType1);
                 if (viewType1.equals("thumb")) {
                     Fragment mapViewFragment = new MapViewFragment();
                     FragmentManager mapViewFm = getFragmentManager();
@@ -1021,27 +1010,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
     }
 
     public void populateListMenuItems() {
-
-
-        /*if(categories.size() > 0) {
-
-            for (int i = 0; i < categories.size(); i++) {
-
-                Category cat = (Category) categories.get(i);
-                int catId = cat.getId();
-                String catName = cat.getCatName();
-                int parentId = cat.getParentId();
-
-                if(parentId == 0) {
-                    mParentCategoryIds.add(String.valueOf(catId));
-                    mParentCategoryNames.add(catName);
-                }
-                mCategoryIds.add(String.valueOf(catId));
-                mSubCategoryIds.add(String.valueOf(parentId));
-                mCategoryNames.add(catName);
-
-            }
-        }*/
 
 
         for(int i=0; i<mParentCategoryIds.size(); i++) {
@@ -1367,25 +1335,25 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                                 @Override
                                 public void onClick(View v) {
 
-                                    int xp = mLinearThirdArrow.getId();
+                            int xp = mLinearThirdArrow.getId();
 
-                                    Log.d(LOGTAG, "Sub Sub Clicked: "+xp+" "+itemName);
+                            Log.d(LOGTAG, "Sub Sub Clicked: "+xp+" "+itemName);
 
-                                    Fragment browseOfferFragment1 = new BrowseOfferFragment();
-                                    getSupportActionBar().setTitle(itemName);
+                            Fragment browseOfferFragment1 = new BrowseOfferFragment();
+                            getSupportActionBar().setTitle(itemName);
 
-                                    editor.putString(getString(R.string.spf_redir_action), "CategoryOffers"); // Storing Redirect Action
-                                    editor.putString(getString(R.string.spf_category_id), String.valueOf(String.valueOf(itemId))); // Storing Redirect Action
-                                    editor.putString(getString(R.string.spf_category_name), itemName); // Storing Category Name
-                                    editor.putString(getString(R.string.spf_search_keyword), ""); // Storing Redirect Action
-                                    editor.commit(); // commit changes
+                            editor.putString(getString(R.string.spf_redir_action), "CategoryOffers"); // Storing Redirect Action
+                            editor.putString(getString(R.string.spf_category_id), String.valueOf(String.valueOf(itemId))); // Storing Redirect Action
+                            editor.putString(getString(R.string.spf_category_name), itemName); // Storing Category Name
+                            editor.putString(getString(R.string.spf_search_keyword), ""); // Storing Redirect Action
+                            editor.commit(); // commit changes
 
-                                    FragmentManager browseOfferFm1 = getFragmentManager();
-                                    FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
-                                    browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
-                                    browseOfferFragmentTransaction1.commit();
+                            FragmentManager browseOfferFm1 = getFragmentManager();
+                            FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();
+                            browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
+                            browseOfferFragmentTransaction1.commit();
 
-                                    mDrawerLayout.closeDrawers();
+                            mDrawerLayout.closeDrawers();
 
                                 }
                         });

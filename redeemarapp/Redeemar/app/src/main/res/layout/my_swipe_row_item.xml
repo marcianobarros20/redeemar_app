@@ -48,8 +48,8 @@
 
             <ImageView
                 android:id="@+id/thumbnail"
-                android:layout_width="160dp"
-                android:layout_height="120dp"
+                android:layout_width="170dp"
+                android:layout_height="130dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:adjustViewBounds="true"
@@ -141,7 +141,6 @@
                         android:layout_weight="1"
                         android:orientation="horizontal">
 
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -185,7 +184,6 @@
                             android:textColor="@color/darkGray" />
 
                 </LinearLayout>
-
 
                 <LinearLayout
                     android:id="@+id/validity_layout"

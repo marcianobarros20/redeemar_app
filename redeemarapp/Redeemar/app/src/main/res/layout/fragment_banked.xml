@@ -21,8 +21,6 @@
             android:paddingLeft="0dp">
 
 
-
-
             <!-- Row 1 with single column -->
             <TableRow
                 android:id="@+id/tableRow1"
@@ -38,15 +36,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
+
                     <TextView
                         android:id="@+id/tvCategory"
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/category"
+                        android:gravity="left|center_vertical"
+                        android:text=""
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textColor="@color/white"
                         android:visibility="visible" />
 
@@ -56,7 +55,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
-
                     <TextView
                         android:id="@+id/tvActive"
                         android:layout_width="wrap_content"
@@ -65,7 +63,7 @@
                         android:text="@string/active"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textColor="@color/white"
                         android:visibility="visible" />
 
@@ -84,7 +82,7 @@
                         android:text="@string/offers"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textColor="@color/white"
                         android:visibility="visible" />
 
@@ -103,7 +101,7 @@
                         android:text="@string/daily_deals"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textColor="@color/white"
                         android:visibility="visible" />
 
@@ -122,7 +120,7 @@
                         android:text="@string/miles"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textColor="@color/white"
                         android:visibility="visible" />
 
@@ -134,16 +132,14 @@
             <!-- Row 2 with 3 columns -->
 
         </TableLayout>
+
     </LinearLayout>
-
-
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/main_recycler"
         android:layout_width="wrap_content"
-        android:layout_height="400dp"
+        android:layout_height="wrap_content"
         android:visibility="visible">
-
     </android.support.v7.widget.RecyclerView>
 
     <TextView

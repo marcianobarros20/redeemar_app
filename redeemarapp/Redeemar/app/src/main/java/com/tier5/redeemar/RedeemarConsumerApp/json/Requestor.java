@@ -360,7 +360,7 @@ public class Requestor {
     }
 
 
-    public static JSONObject requestMyOffersJSON(RequestQueue requestQueue, String url, String userId, String latitude, String longitude) {
+    public static JSONObject requestMyOffersJSON(RequestQueue requestQueue, String url, String userId, String latitude, String longitude, String catId) {
 
 
         URL myUrl = null;
@@ -386,6 +386,7 @@ public class Requestor {
             data.put("user_id", userId);
             data.put("lat", latitude);
             data.put("long", longitude);
+            data.put("category_id", catId);
             data.put("radius", Constants.defaultRadius);
 
 

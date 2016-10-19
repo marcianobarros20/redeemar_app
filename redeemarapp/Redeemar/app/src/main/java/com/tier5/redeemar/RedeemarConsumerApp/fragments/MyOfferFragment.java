@@ -39,12 +39,12 @@ import java.util.List;
 
 public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
-    private static final String LOGTAG = "BrowseOfferFragment";
+    private static final String LOGTAG = "BankedOfferFragment";
 
     private static final String STATE_OFFERS = "state_offers";
     private ArrayList<Offer> mListOffers;
     private BankedOffersAdapter adapter;
-    private TextView tvEmptyView;
+    private TextView tvEmptyView, tvCategory;
     private RecyclerView mRecyclerOffers;
     private Resources res;
     private SharedPreferences sharedpref;
@@ -79,6 +79,7 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         layout = inflater.inflate(R.layout.fragment_banked, container, false);
         Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.main_recycler);
+        tvCategory = (TextView) layout.findViewById(R.id.tvCategory);
 
         cd = new SuperConnectionDetector(getActivity());
         isInternetPresent = cd.isConnectingToInternet();
@@ -103,11 +104,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         }
 
 
-        //mRecyclerOffers.setAdapter(adapter);
-        //adapter = new BankedOfferAdapter(getActivity());
-        //adapter = new BankedOffersAdapter();
-        //adapter.setMode(ExpandableRecyclerAdapter.MODE_ACCORDION);
-
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerOffers.setAdapter(adapter);
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
@@ -115,50 +111,49 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
         mListOffers = new ArrayList<>();
 
+        tvCategory.setText("");
+
         if (savedInstanceState != null) {
             //if this fragment starts after a rotation or configuration change, load the existing movies from a parcelable
             //mListOffers = savedInstanceState.getParcelableArrayList(STATE_OFFERS);
 
             Log.d(LOGTAG, "Inside savedInstanceState");
         } else {
-            //if this fragment starts for the first time, load the list of movies from a database
-            //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
-            //if the database is empty, trigger an AsycnTask to download movie list from the web
-
-            //final StickyTestAdapter adapter = new StickyTestAdapter(this.getActivity());
-            //decor = new StickyHeaderDecoration(adapter);
-            //setHasOptionsMenu(true);
-
-            //mRecyclerOffers.setAdapter(adapter);
-            //mRecyclerOffers.addItemDecoration(decor, 0);
-            //mRecyclerOffers.addOnItemTouchListener();
-
-
 
             Log.d(LOGTAG, "List Offers Before Async: "+mListOffers.isEmpty());
             if (mListOffers.isEmpty()) {
 
                 String currFragment = sharedpref.getString(res.getString(R.string.spf_current_fragment), "");
 
+                if(currFragment.equals("Banked")) {
 
-                /*if(currFragment.equals("Banked")) {
+                    mListOffers.clear();
+                    tvEmptyView.setVisibility(View.VISIBLE);
+                    tvEmptyView.setText(R.string.loading);
 
                     String redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
                     String categoryName = sharedpref.getString(res.getString(R.string.spf_category_name), "");
                     String categoryId = sharedpref.getString(res.getString(R.string.spf_category_id), "");
 
+                    tvCategory.setText(categoryName);
 
-                    new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), categoryId);
+                    Log.d(LOGTAG, "Redirected To: "+redirectTo);
+                    Log.d(LOGTAG, "Category Name: "+categoryName);
+                    Log.d(LOGTAG, "Category Id: "+categoryId);
+
+                    if(categoryId.equals(""))
+                        new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), "");
+                    else
+                        new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), categoryId);
                 }
-                else
-                    new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), "");*/
-
-                new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude),  String.valueOf(longitude), "");
+                else {
+                    tvCategory.setText("");
+                    new MyOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), "");
+                }
 
             }
         }
-        //update your Adapter to containg the retrieved movies
-        //mAdapter.setOffers(mListOffers);
+
         return layout;
     }
 
@@ -202,9 +197,6 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
                 gps.showSettingsAlert();
             }
 
-            // \n is for new line
-            //Toast.makeText(getActivity().getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-
         } else {
             // can't get location
             // GPS or Network is not enabled
@@ -242,12 +234,10 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
                 int d = 0;
 
                 List<Brand> brands = new ArrayList();
-                //List<Banked> ingredients = new ArrayList();
 
                 // This ArrayList is required to get all counters of banked offers
                 ArrayList<Integer> listBanked = new ArrayList();
                 ArrayList<Integer> groupOffer = new ArrayList();
-
 
                 for (int p = 0; p < listOffers.size(); p++) {
 

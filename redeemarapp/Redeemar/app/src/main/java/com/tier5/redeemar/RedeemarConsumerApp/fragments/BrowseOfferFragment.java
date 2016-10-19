@@ -448,10 +448,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
             }
 
-            /*Log.d(LOGTAG, "List view clicked");
-            imListView.setVisibility(View.GONE);
-            imThumbView.setVisibility(View.VISIBLE);
-            imMapView.setVisibility(View.GONE);*/
             }
         });
 
@@ -573,8 +569,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 else if (redirectTo.equals("OnDemand"))
                     new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else {
-
-
                     new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
                 }
 

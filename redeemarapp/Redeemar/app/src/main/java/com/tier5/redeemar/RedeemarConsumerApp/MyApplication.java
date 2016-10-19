@@ -47,6 +47,8 @@ public class MyApplication extends Application {
                 //Toast.makeText(getApplicationContext(), "You entered the monitoring region.", Toast.LENGTH_LONG);
                 showNotification("Welcome to Redeemar.", "Explore our store");
 
+
+
 //                String target_id = "dfadf13e7c8d431f8cdb52d9e78afa6d";
 //                Intent i = new Intent(MyApplication.this, BrandMainActivity.class);
 //                i.putExtra("unique_target_id", target_id);

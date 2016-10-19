@@ -13,7 +13,16 @@
 		android:padding="0dp">
 
 		<!-- Thumbnail Image -->
-
+		<ImageView
+			android:id="@+id/thumbnailBrand"
+			android:src="@drawable/icon_watermark"
+			android:layout_width="120dp"
+			android:layout_height="120dp"
+			android:padding="4dp"
+			android:adjustViewBounds="false"
+			android:layout_centerVertical="true"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true" />
 
 		<TableLayout
 			android:id="@+id/LeftHeaderLayout"
@@ -21,62 +30,21 @@
 			android:layout_height="wrap_content"
 			android:shrinkColumns="*"
 			android:stretchColumns="*"
-			android:paddingTop="5dp"
-			android:paddingLeft="0dp">
+			android:paddingTop="10dp"
+			android:paddingLeft="120dp">
 
 
+			<!-- Row 2 with 3 columns -->
 			<TableRow
 				android:id="@+id/tableRow2"
 				android:layout_height="wrap_content"
 				android:layout_width="match_parent">
 
 				<LinearLayout
-					android:id="@+id/thumbLayout"
-					android:layout_width="120dp"
-					android:layout_height="wrap_content"
-					android:padding="0dp"
-					android:orientation="vertical"
-					android:gravity="center">
-
-
-					<TextView
-						android:id="@+id/brandInfo"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:paddingTop="16dp"
-						android:paddingLeft="12dp"
-						android:paddingRight="4dp"
-						android:gravity="left|center_vertical"
-						android:color="@color/white"
-						android:textStyle="bold"
-						android:text="Redeemar Partner"
-						android:textSize="14sp"
-						android:layout_alignParentBottom="true"
-						android:layout_toRightOf="@+id/thumbnailBrand"
-						android:layout_toEndOf="@+id/thumbnailBrand"
-						android:visibility="gone"/>
-
-
-
-					<ImageView
-						android:id="@+id/thumbnailBrand"
-						android:src="@drawable/icon_watermark"
-						android:layout_width="120dp"
-						android:layout_height="120dp"
-						android:padding="4dp"
-						android:adjustViewBounds="true" />
-
-
-				</LinearLayout>
-
-
-
-				<LinearLayout
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:padding="0dp"
 					android:gravity="center">
-
 
 					<TextView
 						android:id="@+id/numActive"
@@ -173,6 +141,34 @@
 		</TableLayout>
 
 
+		<LinearLayout
+			android:id="@+id/RightTopLayout"
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_toEndOf="@+id/thumbnailBrand"
+			android:layout_toRightOf="@+id/thumbnailBrand"
+			android:layout_below="@+id/LeftHeaderLayout"
+			android:gravity="center_horizontal|top">
+
+
+			<TextView
+				android:id="@+id/brandInfo"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingTop="16dp"
+				android:paddingLeft="12dp"
+				android:paddingRight="4dp"
+				android:gravity="left|center_vertical"
+				android:color="@color/white"
+				android:textStyle="bold"
+				android:text=""
+				android:textSize="14sp"
+				android:layout_alignParentBottom="true"
+				android:layout_toRightOf="@+id/thumbnailBrand"
+				android:layout_toEndOf="@+id/thumbnailBrand" />
+
+		</LinearLayout>
 
 
 	</RelativeLayout>

@@ -36,9 +36,7 @@ public class MyOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offer>>
     @Override
     protected void onPreExecute() {
 
-
     }
-
 
     @Override
     protected ArrayList<Offer> doInBackground(String... params) {
@@ -47,9 +45,9 @@ public class MyOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offer>>
         String user_id      = params[0];
         String lat          = params[1];
         String lon          = params[2];
-        //String categoryId   = params[3];
+        String categoryId   = params[3];
 
-        ArrayList<Offer> listOffers = OfferUtils.loadMyOffers(requestQueue, user_id, lat, lon);
+        ArrayList<Offer> listOffers = OfferUtils.loadMyOffers(requestQueue, user_id, lat, lon, categoryId);
         return listOffers;
     }
 
