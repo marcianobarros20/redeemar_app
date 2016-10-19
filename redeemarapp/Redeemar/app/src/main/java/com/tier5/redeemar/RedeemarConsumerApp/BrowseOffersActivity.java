@@ -537,6 +537,23 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
         addItemsRunTime(navigationView);
 
+        /*res = getResources();
+        sharedpref = getApplicationContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+
+        SharedPreferences.Editor editor = sharedpref.edit();*/
+
+        if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
+            user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
+            Log.d(LOGTAG, "User Id is: "+user_id);
+        }
+
+        else {
+            navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
+            navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
+        }
+
+
+
         //setting up selected item listener
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -546,7 +563,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                         Log.d(LOGTAG, "Menu Item clicked " + menuItem.getItemId());
 
                         MenuItem mPreviousMenuItem = null;
-
 
                         switch (menuItem.getItemId()) {
 
@@ -635,6 +651,11 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                                 String logText = Utils.extractLogToFileAndWeb();
                                 exportLog(logText);
+                                break;
+
+                            case R.id.nav_login:
+                                Intent loginIntent = new Intent(BrowseOffersActivity.this, LoginActivity.class);
+                                startActivity(loginIntent);
                                 break;
 
 
