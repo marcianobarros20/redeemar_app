@@ -1,6 +1,7 @@
 package com.tier5.redeemar.RedeemarConsumerApp.ViewHolder;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 
@@ -64,6 +65,7 @@ public class ParentViewHolder extends RecyclerView.ViewHolder implements View.On
      * @return true if expanded, false if not
      */
     public boolean isExpanded() {
+        Log.d("Dibs", "Layout is expanded");
         return mExpanded;
     }
 
@@ -74,6 +76,8 @@ public class ParentViewHolder extends RecyclerView.ViewHolder implements View.On
      * @param expanded true if expanded, false if not
      */
     public void setExpanded(boolean expanded) {
+
+        Log.d("Dibs", "Layout set expanded");
         mExpanded = expanded;
     }
 
@@ -87,6 +91,8 @@ public class ParentViewHolder extends RecyclerView.ViewHolder implements View.On
      *                 false if not
      */
     public void onExpansionToggled(boolean expanded) {
+
+        Log.d("Dibs", "Layout setting expanded");
 
     }
 

@@ -273,6 +273,18 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
     public void onMapReady(GoogleMap googleMap) {
         Log.d(LOGTAG, "Inside onMapReady");
         mMap = googleMap;
+
+        if(mMap != null) {
+
+            Log.d(LOGTAG, "MAP: "+lat);
+            Log.d(LOGTAG, "MAP: "+lon);
+
+            LatLng point = new LatLng(lat, lon);
+
+           mMap.addMarker(new MarkerOptions().position(point).title(getString(R.string.brand_location)));
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 16));
+        }
     }
 
     private void callValidationTask() {
@@ -628,12 +640,12 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
 
 
-                        if(mMap != null) {
+                        /*if(mMap != null) {
 
                             Log.d(LOGTAG, "MAP: "+lat);
-                            Log.d(LOGTAG, "MAP: "+lat);
+                            Log.d(LOGTAG, "MAP: "+lon);
 
-                            LatLng point = new LatLng(lat, lat);
+                            LatLng point = new LatLng(lat, lon);
 
                             if(address != "")
                                 mMap.addMarker(new MarkerOptions().position(point).title(address));
@@ -641,7 +653,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                                 mMap.addMarker(new MarkerOptions().position(point).title(getString(R.string.brand_location)));
 
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 16));
-                        }
+                        }*/
 
 
                         JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));

@@ -38,6 +38,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.tier5.redeemar.RedeemarConsumerApp.BrowseOffersActivity;
@@ -59,7 +61,10 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.MarkerItem;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.ObjectSerializer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 
@@ -141,8 +146,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 }
             });
             alertDialog.show();
-
         }
+
+
+
+
+
+
 
 
 
@@ -244,8 +254,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
             Log.d(LOGTAG, "Width px: "+pxWidth);
 
 
-
-
             if (savedInstanceState != null) {
                 //if this fragment starts after a rotation or configuration change, load the existing movies from a parcelable
                 //mListOffers = savedInstanceState.getParcelableArrayList(STATE_OFFERS);
@@ -300,10 +308,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        //Toast.makeText(getActivity().getApplicationContext(), "My Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-
         Log.d(LOGTAG, "Inside onMapReady");
-
 
         mClusterManager = new ClusterManager(getActivity(), googleMap);
 
@@ -478,20 +483,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         public View getInfoWindow(Marker marker) {
-//            if (mOptions.getCheckedRadioButtonId() != R.id.custom_info_window) {
-//                // This means that getInfoContents will be called.
-//                return null;
-//            }
             render(marker, mWindow);
             return mWindow;
         }
 
         @Override
         public View getInfoContents(Marker marker) {
-//            if (mOptions.getCheckedRadioButtonId() != R.id.custom_info_contents) {
-//                // This means that the default info contents will be used.
-//                return null;
-//            }
+
             render(marker, mContents);
             return mContents;
         }
@@ -515,9 +513,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
                 }
 
-
-                //new DownloadSaveImageAsyncTask(getActivity()).execute(imageUrl);
-
                 tvInfoTitle.setText(companyName);
                 tvInfoSnippet.setText(companyLocation);
 
@@ -530,44 +525,30 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
    private void setupCluster() {
        // Load offer List from preferences
-       /*if(sharedpref.getString(res.getString(R.string.spf_offers), null) != null) {
-           offersJson = sharedpref.getString(res.getString(R.string.spf_offers), "");
-           Log.d(LOGTAG, "Offers JSON: "+offersJson);
+       //Bundle b = this.getArguments();
+       //ArrayList<Offer> offerList = b.getParcelableArrayList("KEY_PARCEL_OFFERS");
 
-           try {
-               offerList = (ArrayList<Offer>) ObjectSerializer.deserialize(offersJson);
+       /*Gson gson = new Gson();
 
-               for(int i=0; i < offerList.size(); i++) {
+       ArrayList<Offer> offerObj = new ArrayList<Offer>();
+       offerList = gson.fromJson(json, offerObj.getClass());*/
 
-                   Offer offer = (Offer) offerList.get(i);
+       try {
 
-                   Log.d(LOGTAG, "Inside Lat "+offer.getLatitude());
-                   Log.d(LOGTAG, "Inside Long "+offer.getLongitude());
+           Gson gson = new Gson();
+           String json = sharedpref.getString(res.getString(R.string.spf_offers), "");
+           JSONObject jsonObj = new JSONObject(json);
+           Type type = new TypeToken<ArrayList<Offer>>() {}.getType();
+           offerList = gson.fromJson(jsonObj.toString(), type);
 
-                   //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
-                   MarkerOptions markerOptions = new MarkerOptions()
-                           .position(new LatLng(Double.parseDouble(offer.getLatitude()), Double.parseDouble(offer.getLongitude())))
-                           .title(String.valueOf(i))
-                           .snippet(offer.getCompanyName());
 
-                   MarkerItem markerItem = new MarkerItem(markerOptions);
-
-                   mClusterManager.addItem(markerItem);
-
-               }
-
-               mClusterManager.cluster();
-
-           } catch (IOException e) {
-               e.printStackTrace();
-           } catch (ClassNotFoundException e) {
-               e.printStackTrace();
-           }
+       } catch(Exception ex) {
+           Log.d(LOGTAG, "Exception occured in parsing: "+ex.toString());
 
        }
-       else {
-           Log.d(LOGTAG, "No JSON Data for offers found");
-       }*/
+
+       Log.d(LOGTAG, "Retrieving from Offer List: "+offerList.size());
+
 
        if(offerList.size() > 0) {
 

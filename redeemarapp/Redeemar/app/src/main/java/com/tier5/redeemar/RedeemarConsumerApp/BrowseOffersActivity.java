@@ -138,6 +138,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
     private boolean doubleBackToExitPressedOnce = false;
+    private TextView searchBox;
 
 
 
@@ -233,7 +234,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        TextView searchBox = (TextView) findViewById(R.id.search_text);
+        searchBox = (TextView) findViewById(R.id.search_text);
         //searchBox.setKeyListener(null);
         //searchBox.setEnabled(false);
 
@@ -241,10 +242,10 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         searchBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Log.d(LOGTAG, "Inside New Menu Browse Offer..");
-            Intent intent = new Intent(BrowseOffersActivity.this, SearchActivity.class);
-            startActivity(intent);
-            //finish();
+                Log.d(LOGTAG, "Inside New Menu Browse Offer..");
+                Intent intent = new Intent(BrowseOffersActivity.this, SearchActivity.class);
+                startActivity(intent);
+                //finish();
             }
 
         });
@@ -345,7 +346,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                             Toast.makeText(getApplicationContext(), "Campaign Offers offers selected", Toast.LENGTH_SHORT).show();
                             getSupportActionBar().setTitle(R.string.offers_by_campaign);
                             args1.putString(getString(R.string.ext_redir_to), "CampaignOffers");
-                            args1.putString(getString(R.string.ext_redeemar_id), redeemarId);
                             args1.putString(getString(R.string.ext_campaign_id), campaignId);
 
                         } else if (redirectTo.equalsIgnoreCase("OnDemand")) {
@@ -361,6 +361,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                             args1.putString(getString(R.string.ext_redir_to), "CategoryOffers");
                         }
                         else {
+
                             getSupportActionBar().setTitle(R.string.browse_offers);
                             args1.putString(getString(R.string.ext_redir_to), "BrowseOffers");
 
@@ -1159,7 +1160,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
             for (int j = 0; j < secondRowItemCount; j++) {
 
                 mSubMenuCtr = j;
-                Log.d(LOGTAG, "Sub Menu Item Sl No. : "+mSubMenuCtr);
+                //Log.d(LOGTAG, "Sub Menu Item Sl No. : "+mSubMenuCtr);
 
                 LayoutInflater inflater2 = null;
                 inflater2 = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1191,7 +1192,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                     @Override
                     public void onClick(View v) {
 
-                        Log.d(LOGTAG, "Sub Menu Item Just Clicked");
+                        //Log.d(LOGTAG, "Sub Menu Item Just Clicked");
 
                         int xm = mLinearSecondArrow.getId();
 

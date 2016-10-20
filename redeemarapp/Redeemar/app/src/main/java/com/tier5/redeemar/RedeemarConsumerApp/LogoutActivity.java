@@ -44,6 +44,7 @@ public class LogoutActivity extends Activity implements
         editor.remove(getString(R.string.spf_mobile));
         editor.remove(getString(R.string.spf_facebook_id));
         editor.remove(getString(R.string.spf_google_id));
+        editor.remove(getString(R.string.spf_last_offer_id));
 
 
         editor.putString(res.getString(R.string.spf_no_auto_login), "1"); // Storing login method

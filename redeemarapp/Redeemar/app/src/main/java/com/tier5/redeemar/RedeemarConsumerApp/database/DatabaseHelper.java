@@ -130,35 +130,68 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean addCategory(Category category) {
 
         boolean exists = categoryExists(category.getId());
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        int _id = category.getId();
+
+        contentValues.put(KEY_ID, _id);
+        contentValues.put(KEY_PARENT_ID, category.getParentId());
+        contentValues.put(KEY_CAT_NAME, category.getCatName());
+        contentValues.put(KEY_CAT_STATUS, category.getStatus());
+        contentValues.put(KEY_CAT_VISIBILITY, category.getVisibility());
+        long res = 0;
+
 
         if(!exists) {
 
+            res = db.insert(TABLE_CATEGORIES, null, contentValues);
+            db.close();
 
+
+        }
+        else {
+            res = db.update(TABLE_CATEGORIES, contentValues, KEY_ID+"="+_id, null);
+            Log.d(LOGTAG, "Category "+category.getCatName()+" updated");
+
+        }
+
+
+        if (res == -1)
+            return false;
+        else {
+            Log.d(LOGTAG, "Category "+category.getCatName()+" added");
+            return true;
+        }
+    }
+
+    public boolean updateCategory(Category category) {
+
+        //boolean exists = categoryExists(category.getId());
+
+        //if(exists) {
 
             SQLiteDatabase db = this.getWritableDatabase();
 
+            int _id = category.getId();
+
             ContentValues contentValues = new ContentValues();
-            contentValues.put(KEY_ID, category.getId());
+            //contentValues.put(KEY_ID, category.getId());
             contentValues.put(KEY_PARENT_ID, category.getParentId());
             contentValues.put(KEY_CAT_NAME, category.getCatName());
             contentValues.put(KEY_CAT_STATUS, category.getStatus());
             contentValues.put(KEY_CAT_VISIBILITY, category.getVisibility());
-
-            long res = db.insert(TABLE_CATEGORIES, null, contentValues);
+            long res = db.update(TABLE_CATEGORIES, contentValues, KEY_ID+"="+_id, null);
             db.close();
 
             if (res == -1)
                 return false;
             else {
-                Log.d(LOGTAG, "Category "+category.getCatName()+" added");
+                Log.d(LOGTAG, "Category "+category.getCatName()+" updated");
                 return true;
             }
 
-        }
-        else {
-            Log.d(LOGTAG, "Category "+category.getCatName()+" exists");
-            return false;
-        }
+
+
     }
 
     public boolean categoryExists(int id) {

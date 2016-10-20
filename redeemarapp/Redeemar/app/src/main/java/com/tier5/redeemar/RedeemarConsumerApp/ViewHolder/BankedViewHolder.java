@@ -174,17 +174,11 @@ public class BankedViewHolder extends ChildViewHolder {
         }*/
 
         if(valCalc == 2) {
-
             sb.append(discount_text).append(perc_sym);
-
-
-
         }
         else {
-
             sb.append(cur_sym).append(discount_text);
         }
-
 
         tvExpires.setText(esb);
 
@@ -204,18 +198,14 @@ public class BankedViewHolder extends ChildViewHolder {
         mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
 
         // Instantiate the RequestQueue.
-        if(!imageUrlVal.equalsIgnoreCase("")) {
+        if(imageUrlVal != null && !imageUrlVal.equalsIgnoreCase("")) {
             imageUrlVal = UrlEndpoints.serverBaseUrl + imageUrlVal;
-            //mImageLoader.get(imageUrlVal, ImageLoader.getImageListener(tvThumbnail, R.drawable.icon_watermark, 0));
-            //tvThumbnail.setImageUrl(imageUrlVal, mImageLoader);
-
 
             Picasso.with(mContext)
                     .load(imageUrlVal)
                     .fit()
                     .centerCrop()
                     .into(thumbnail);
-
 
         }
 

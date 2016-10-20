@@ -217,11 +217,6 @@ public class LoginActivity extends AppCompatActivity implements
 
 
 
-        // If using in a fragment
-        //loginButton.setFragment(this);
-        // Other app specific specialization
-
-
 
         // Callback registration
 

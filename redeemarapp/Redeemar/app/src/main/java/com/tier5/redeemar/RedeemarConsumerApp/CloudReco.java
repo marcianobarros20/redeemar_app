@@ -1114,7 +1114,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                                     Log.d(LOGTAG, "Inside action id 2: "+campaign_id);
 
                                     editor.putString(getString(R.string.spf_redir_action), "CampaignOffers"); // Storing Last Activity
-                                    editor.putString(getString(R.string.spf_redeemer_id), campaign_id); // Storing Redeemar Id
+                                    editor.putString(getString(R.string.spf_campaign_id), campaign_id); // Storing Redeemar Id
                                     editor.commit(); // commit changes
 
                                     Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
@@ -1254,13 +1254,10 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
     private class ValidateOfferAsyncTask extends AsyncTask<String, Void, String> {
 
-
         String url = "";
 
         public ValidateOfferAsyncTask() {
-
             url = UrlEndpoints.redemptionURL;
-
         }
 
         @Override

@@ -248,15 +248,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney, Australia, and move the camera.
-
-        /*LatLng point = new LatLng(40.758896, -73.985130);
-
-        mMap.addMarker(new MarkerOptions().position(point).title("Brand Location"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(point, 10));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 16));*/
-
-
+        Log.d(LOGTAG, "Offer Id Validation: "+offerId);
         new GetOffeDetailsAsyncTask().execute(offerId);
 
     }
@@ -606,7 +598,6 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 16));
                             }
-
 
                             JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));
 

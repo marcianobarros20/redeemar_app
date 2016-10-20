@@ -15,7 +15,6 @@ import com.tier5.redeemar.RedeemarConsumerApp.ViewHolder.BankedViewHolder;
 import com.tier5.redeemar.RedeemarConsumerApp.ViewHolder.BrandViewHolder;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Banked;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Brand;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,9 +23,6 @@ import java.util.List;
 public class BankedOffersAdapter extends ExpandableRecyclerAdapter<BrandViewHolder, BankedViewHolder> {
 
     private static final String LOGTAG = "BankedOfferAdapter";
-    public static final int TYPE_PERSON = 1001;
-    private ArrayList<Offer> offerList;
-    private Typeface myFont;
     private LayoutInflater mInflator;
     private Context mContext;
 
@@ -69,10 +65,4 @@ public class BankedOffersAdapter extends ExpandableRecyclerAdapter<BrandViewHold
         bankedViewHolder.bind(banked, mContext);
     }
 
-    /*public void setOffers(ArrayList<Offer> listOffers) {
-
-        Log.d(LOGTAG, "Offer lists now: "+listOffers.size());
-        this.offerList = listOffers;
-
-    }*/
 }

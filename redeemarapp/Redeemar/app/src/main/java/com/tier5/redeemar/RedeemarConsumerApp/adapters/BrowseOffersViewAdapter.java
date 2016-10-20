@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -121,6 +122,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item, parent, false);
             //editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Storing View Type to Thumb
         }
+
+
 
         //view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item_thumb, parent, false);
 
@@ -367,7 +370,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
                         SharedPreferences.Editor editor = sharedpref.edit();
                         editor.putString(res.getString(R.string.spf_redir_action), "BANK_OFFER"); // Storing action
-                        editor.putString(res.getString(R.string.spf_last_offer_id), offerId); // Storing Last Offer Id
+                        //editor.putString(res.getString(R.string.spf_last_offer_id), offerId); // Storing Last Offer Id
                         editor.commit();
 
 
@@ -433,8 +436,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
                     Intent intent = new Intent(view.getContext(), LoginActivity.class);
                     intent.putExtra(res.getString(R.string.ext_activity), activityName); // Settings the activty name where it will be redirected to
-
-
                     view.getContext().startActivity(intent);
 
                 }
@@ -499,8 +500,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                 fragmentTransaction.commit();*/
 
 
-                Log.d(LOGTAG, "My Brand Id: "+item.getCreatedBy());
 
+                Log.d(LOGTAG, "My Brand Id: "+item.getCreatedBy());
 
                 openFragment(String.valueOf(item.getCreatedBy()), item.getCompanyName());
 
@@ -564,6 +565,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             distanceLayout = (LinearLayout) itemView.findViewById(R.id.distance_layout);
             discountLayout = (LinearLayout) itemView.findViewById(R.id.discount_layout);
+
+
 
         }
     }
@@ -729,15 +732,15 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         editor.putString(res.getString(R.string.spf_popup_action), "1"); // Storing Last Activity
         editor.putString(res.getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
         editor.putString(res.getString(R.string.spf_brand_name), brandName); // Storing Redeemar Partner Name
-        editor.commit(); // commit changes*/
+        editor.putString(res.getString(R.string.spf_more_offers), "1"); // Set More Offers to 1
+        editor.commit();
 
         Intent intent = new Intent(mContext, BrowseOffersActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(res.getString(R.string.ext_redir_to), "BrandOffers");
         intent.putExtra(res.getString(R.string.ext_redeemar_id), redeemarId);
-        intent.putExtra(res.getString(R.string.ext_redeemar_id), redeemarId);
+        intent.putExtra(res.getString(R.string.ext_more_offers), "1");
 
         mContext.startActivity(intent);
 

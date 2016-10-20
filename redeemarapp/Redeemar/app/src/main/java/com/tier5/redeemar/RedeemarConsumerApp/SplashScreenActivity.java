@@ -32,44 +32,13 @@ import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-//import android.support.multidex.MultiDex;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.model.LatLng;
 import com.tier5.redeemar.RedeemarConsumerApp.async.FetchLocationAsyncTask;
-import com.tier5.redeemar.RedeemarConsumerApp.async.MenuItemsAsyncTask;
-import com.tier5.redeemar.RedeemarConsumerApp.callbacks.CategoriesLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.LocationFetchedListener;
-import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
-import java.util.ArrayList;
 
 public class SplashScreenActivity extends Activity implements CategoriesLoadedListener, LocationFetchedListener
 {
@@ -134,23 +103,6 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         // Get the menun items from server
         new MenuItemsAsyncTask(this).execute("0");
 
-
-        /*final Handler handler = new Handler();
-        handler.postDelayed(new Runnable()
-        {
-
-            @Override
-            public void run()
-            {
-                // DO Nothing now
-                if(cnt == 0) {
-
-                }
-            }
-
-        }, SPLASH_MILLIS);*/
-
-
     }
 
     @Override
@@ -178,6 +130,7 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
             //Log.d(LOGTAG, "Cat Name: "+cat.getCatName());
             db.addCategory(cat);
         }
+
 
         /*Gson gson = new Gson();
         List<Category> textList = new ArrayList<Category>();

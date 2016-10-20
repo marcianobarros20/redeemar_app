@@ -56,6 +56,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.OfferParcel;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.ObjectSerializer;
@@ -198,6 +199,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
         if (sharedpref.getString(res.getString(R.string.spf_redeemer_id), null) != null) {
             redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
+        }
+        if (sharedpref.getString(res.getString(R.string.spf_campaign_id), null) != null) {
+            campaignId = sharedpref.getString(res.getString(R.string.spf_campaign_id), "");
         }
         if(sharedpref.getString(res.getString(R.string.spf_last_lat), null) != null) {
             latitude = Double.parseDouble(sharedpref.getString(res.getString(R.string.spf_last_lat), null));
@@ -419,6 +423,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             @Override
             public void onClick(View view) {
 
+
+                Log.d(LOGTAG, "List Type Icon clicking");
+
             if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
                 viewType = sharedpref.getString(res.getString(R.string.spf_view_type), null);
 
@@ -433,7 +440,19 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             }
 
             if(viewType.equals("map")) {
+
+                Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
+
                 MapViewFragment fragment3 = new MapViewFragment();
+                if(mListOffers != null && mListOffers.size() > 0) {
+                    Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
+                    Intent intent = new Intent(getActivity(), MapViewFragment.class);
+                    Bundle b = new Bundle();
+                    b.putParcelableArrayList("KEY_PARCEL_OFFERS", mListOffers);
+                    intent.putExtras(b);
+                    fragment3.setArguments(intent.getExtras());
+                }
+
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.container_body, fragment3);
@@ -441,6 +460,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             }
             else {
                 BrowseOfferFragment fragment2 = new BrowseOfferFragment();
+
+                if(mListOffers != null && mListOffers.size() > 0) {
+                    Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
+                    Intent intent = new Intent(getActivity(), MapViewFragment.class);
+                    Bundle b = new Bundle();
+                    b.putParcelableArrayList("KEY_PARCEL_OFFERS", mListOffers);
+                    intent.putExtras(b);
+                    fragment2.setArguments(intent.getExtras());
+                }
+
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.container_body, fragment2);
@@ -484,16 +513,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             }
         });
 
-        /*tvCategory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), CategoryActivity.class);
-                startActivity(intent);
-                activity.overridePendingTransition(R.anim.right_to_left, R.anim.left_to_right);
-            }
-        });*/
 
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.my_recycler_view);
@@ -517,11 +536,20 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             Log.d(LOGTAG, "COUNT OFFERS ON LOAD: "+mListOffers.size());
         }
 
+
+        /*
+        Bundle b = this.getArguments();
+        mListOffers = b.getParcelableArrayList("KEY_PARCEL_OFFERS");
+        */
+
+
         mAdapter = new BrowseOffersViewAdapter(getActivity(), "BrowseOffers");
+
         mRecyclerOffers.setAdapter(mAdapter);
 
         //update your Adapter to containg the retrieved movies
-        mAdapter.setOffers(mListOffers);
+        if(mListOffers != null)
+            mAdapter.setOffers(mListOffers);
         return layout;
     }
 
@@ -529,11 +557,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        //if this fragment starts for the first time, load the list of movies from a database
-        //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
-        //if the database is empty, trigger an AsycnTask to download movie list from the web
-
-        if (mListOffers.isEmpty()) {
+        if (mListOffers != null && mListOffers.isEmpty()) {
 
             if(sharedpref.getString(res.getString(R.string.spf_location_keyword), null) != null) {
                 locKeyword = sharedpref.getString(res.getString(R.string.spf_last_location_keyword), "");
@@ -600,11 +624,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        //mAdapter = new BrowseOffersViewAdapter(getActivity(), mDataSet, "BrowseOffers");
     }
-
 
 
     @Override
@@ -615,8 +635,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-
     }
 
     @Override
@@ -635,15 +653,12 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         if(isInternetPresent)
             getMyLocation();
 
-
     }
 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        /*MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) myActionMenuItem.getActionView();
-        searchView.setOnQueryTextListener(this);*/
+
     }
 
 
@@ -657,11 +672,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
            case R.id.action_search:
                Log.d(LOGTAG, "Inside BrowseOfferFragment");
-
-               //Toast.makeText(getActivity().getApplicationContext(), "Search option selected", Toast.LENGTH_SHORT).show();
-               //searchView.setVisibility(View.VISIBLE);
-
-
                final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
                searchView.setOnQueryTextListener(this);
                return true;
@@ -749,6 +759,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 mRecyclerOffers.setVisibility(View.VISIBLE);
                 tvEmptyView.setVisibility(View.GONE);
 
+                //Bundle b = new Bundle();
+                //b.putParcelableArrayList("KEY_PARCEL_OFFERS", mListOffers);
+
+
 
                 //String jsonCatText = sharedpref.getString(getString(R.string.spf_categories), null);
 
@@ -756,8 +770,31 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 try {
 
 
-                    editor.putString(res.getString(R.string.spf_offers), ObjectSerializer.serialize(listOffers));
+                    //editor.putString(res.getString(R.string.spf_offers), ObjectSerializer.serialize(listOffers));
+                    //editor.commit();
+
+                    //Gson gson = new Gson();
+                    //String json = gson.toJson(listOffers);
+                    //editor.putString(res.getString(R.string.spf_offers), json);
+                    //editor.commit();
+
+                    Gson gson = new Gson();
+                    List<Offer> textList = new ArrayList<Offer>();
+                    textList.addAll(listOffers);
+                    String jsonText = gson.toJson(textList);
+                    Log.d(LOGTAG, "Offers Gson Text: "+jsonText);
+                    editor.putString(getString(R.string.spf_offers), jsonText);
                     editor.commit();
+
+
+                    //String json = sharedpref.getString(res.getString(R.string.spf_offers), "");
+                    //ArrayList<Offer> offerList = gson.fromJson(json, ArrayList.class);
+
+                    //Log.d(LOGTAG, "Retrieving from JSON: "+offerList.size());
+
+
+
+
 
                 } catch(Exception ex) {
                     Log.d(LOGTAG, ex.toString());
@@ -781,7 +818,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     tvCategory.setText(brandName);
                     tvCategory.setVisibility(View.VISIBLE);
                 }
-                else {
+                /*else {
 
                     Gson gson = new Gson();
                     List<Offer> textList = new ArrayList<Offer>();
@@ -791,7 +828,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     editor.putString(getString(R.string.spf_offers), jsonText);
                     editor.commit();
 
-                }
+                }*/
 
 
 
@@ -811,11 +848,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public void onUsersLoaded(ArrayList<User> listAddresses) {
 
         Set<User> setAddress = new LinkedHashSet<>(listAddresses);
-
-        /*Iterator it = setAddress.iterator();
-        while(it.hasNext()) {
-            Log.d(LOGTAG, "ITEM: "+it.next().toString());
-        }*/
 
         location = location.toLowerCase();
 
@@ -850,16 +882,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             if(addr.getLon() != null)
                 tLon = addr.getLon().trim();
 
-
-            /*if(tAddress.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tAddress) && !Utils.findDuplicate(locationList, tAddress+", "+tState.toUpperCase())) {
-                found = true;
-                if(!tState.equals(""))
-                    locationList.add(tAddress+", "+tState.toUpperCase());
-                else
-                    locationList.add(tAddress);
-                p++;
-            }*/
-
             Address locAddress = new Address();
             String la = "";
 
@@ -870,7 +892,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     la = tCity+", "+tState.toUpperCase();
                 else
                     la = tCity;
-
 
                 p++;
             }
@@ -886,7 +907,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
             if(tLoc.toLowerCase().contains(location) && !Utils.findDuplicate(locationList, tLoc) && !Utils.findDuplicate(locationList, tLoc+", "+tState)) {
                 found = true;
-                //locationList.add(tLoc);
+
                 if(!tState.equals(""))
                    la = tLoc+", "+tState;
                 else

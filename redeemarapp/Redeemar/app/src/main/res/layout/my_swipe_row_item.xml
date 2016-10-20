@@ -41,15 +41,15 @@
         <!-- Top View,  Row itemView of RecyclerView -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="130dp"
             android:background="@drawable/list_row_selector"
             android:padding="0dp">
             <!-- Thumbnail Image -->
 
             <ImageView
                 android:id="@+id/thumbnail"
-                android:layout_width="170dp"
-                android:layout_height="130dp"
+                android:layout_width="182dp"
+                android:layout_height="140dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:adjustViewBounds="true"
@@ -127,7 +127,7 @@
                             android:paddingLeft="5dp"
                             android:text="$"
                             android:gravity="start"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/green_text" />
 
@@ -156,7 +156,7 @@
                             android:text="$"
                             android:paddingLeft="5dp"
                             android:gravity="start"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/green_text" />
 
@@ -179,7 +179,7 @@
                             android:layout_height="wrap_content"
                             android:text="$ Value"
                             android:gravity="left"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/darkGray" />
 
@@ -191,6 +191,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
                     android:layout_weight="1"
+                    android:layout_alignParentBottom="true"
                     android:orientation="horizontal">
 
                     <TextView
@@ -209,7 +210,11 @@
             </LinearLayout>
 
 
+
+
         </RelativeLayout>
+
+
 
 
     </com.daimajia.swipe.SwipeLayout>
