@@ -555,7 +555,7 @@ public class OfferListActivity extends AppCompatActivity {
 
 
                     // Creating Adapter object
-                    BrowseOffersViewAdapter mAdapter = new BrowseOffersViewAdapter(getApplicationContext(), mDataSet, "OfferList");
+                    BrowseOffersViewAdapter mAdapter = new BrowseOffersViewAdapter(getApplicationContext(), mDataSet, "OfferList",  "0");
 
 
 

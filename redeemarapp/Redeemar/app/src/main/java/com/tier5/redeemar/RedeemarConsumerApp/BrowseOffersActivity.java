@@ -63,6 +63,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.fragments.RateUsFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Category;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Product;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Keys;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
@@ -207,7 +208,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                 categoryId = extras.getString(getString(R.string.ext_category_id));
             }
 
-
             if (redirectTo.equalsIgnoreCase("BrandOffers")) {
                 redeemarId = extras.getString(getString(R.string.ext_redeemar_id));
             }
@@ -290,6 +290,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                     editor.putString(getString(R.string.spf_current_fragment), "Banked"); // Storing Category Name
                     editor.commit(); // commit changes
 
+                    Keys.moreOffers = 0;
+
                     Fragment fr = new MyOfferFragment();
                     //fr.setArguments(args);
                     FragmentManager fm = getFragmentManager();
@@ -302,6 +304,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
 
                 } else if (menuItemId == R.id.bottom_nearby) {
+
+                    Keys.moreOffers = 0;
 
                     //Toast.makeText(getApplicationContext(), "Neaby offers selected", Toast.LENGTH_SHORT).show();
 
@@ -325,6 +329,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                     getSupportActionBar().setTitle(R.string.browse_offers);
 
                     if (redirectTo.equalsIgnoreCase("EditProfile")) {
+
+
 
                         getSupportActionBar().setTitle(R.string.nav_item_edit_profile);
                         Fragment editProfileFragment = new EditProfileFragment();
@@ -419,6 +425,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                     Log.d(LOGTAG, "Inside bank offers 1");
 
+
+
                     Fragment fr = new MyOfferFragment();
                     fr.setArguments(args);
                     FragmentManager fm = getFragmentManager();
@@ -454,6 +462,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                     editor.putString(getString(R.string.spf_category_name), "");    // Storing Category Name
                     editor.commit(); // commit changes
 
+                    Keys.moreOffers = 0;
+
                     Fragment fr = new BrowseOfferFragment();
                     FragmentManager fm = getFragmentManager();
                     FragmentTransaction fragmentTransaction = fm.beginTransaction();
@@ -467,6 +477,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                     //startActivity(i);
                     editor.putString(getString(R.string.spf_redir_action), "OnDemand"); // Storing Redirect Action
                     editor.commit(); // commit changes
+
+                    Keys.moreOffers = 0;
 
                     getSupportActionBar().setTitle(R.string.offers_on_demand);
                     Fragment fr = new BrowseOfferFragment();
@@ -1270,7 +1282,10 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                         String currFragment = sharedpref.getString(res.getString(R.string.spf_current_fragment), "");
 
+                        Keys.moreOffers = 0;
+
                         if(currFragment.equals("Banked")) {
+
                             Fragment bankOfferFragment1 = new MyOfferFragment();
                             FragmentManager OfferFm1 = getFragmentManager();
                             FragmentTransaction browseOfferFragmentTransaction1 = OfferFm1.beginTransaction();
@@ -1279,6 +1294,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                             mDrawerLayout.closeDrawers();
                         }
                         else {
+
                             Fragment browseOfferFragment1 = new BrowseOfferFragment();
                             FragmentManager OfferFm1 = getFragmentManager();
                             FragmentTransaction browseOfferFragmentTransaction1 = OfferFm1.beginTransaction();
@@ -1369,6 +1385,10 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                             editor.putString(getString(R.string.spf_category_name), itemName); // Storing Category Name
                             editor.putString(getString(R.string.spf_search_keyword), ""); // Storing Redirect Action
                             editor.commit(); // commit changes
+
+
+
+                            Keys.moreOffers = 0;
 
                             FragmentManager browseOfferFm1 = getFragmentManager();
                             FragmentTransaction browseOfferFragmentTransaction1 = browseOfferFm1.beginTransaction();

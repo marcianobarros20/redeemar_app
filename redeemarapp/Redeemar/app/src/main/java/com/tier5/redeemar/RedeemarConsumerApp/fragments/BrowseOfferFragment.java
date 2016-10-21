@@ -94,7 +94,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     //private FragmentActivity listener;
     private List<Offer> mModels;
     private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", viewType = "list", location = "", categoryName = "", locKeyword = "",
-            selfLat = "", selfLon = "", keyword = "", brandName = "";;
+            selfLat = "", selfLon = "", keyword = "", brandName = "", more_offers = "0";
     private static final int VERTICAL_ITEM_SPACE = 48;
     Activity activity;
     private ActivityCommunicator activityCommunicator;
@@ -118,6 +118,21 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public BrowseOfferFragment() {
         // Required empty public constructor
 
+
+        Bundle args1 = getArguments();
+
+        //Bundle extras= getArguments();;
+
+        // Need to comment out
+        if (args1 != null) {
+            more_offers = args1.getString(getString(R.string.ext_more_offers));
+        }
+
+
+        Log.d(LOGTAG, "AA MORE OFFERS AA"+more_offers);
+
+
+
     }
 
     public static BrowseOfferFragment newInstance(String param1) {
@@ -135,6 +150,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+
+
 
         //Log.d(LOGTAG, "XXX Inside onCreateView");
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.browse_offers);
@@ -177,7 +196,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         mListOffers = new ArrayList<Offer>();
 
         setHasOptionsMenu(true);
-        Bundle args1 = getArguments();
 
 
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
@@ -211,10 +229,9 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         }
 
 
-        Log.d(LOGTAG, "Redirect To Inside Fragment: "+redirectTo);
 
 
-
+        Log.d(LOGTAG, "More Offers: "+more_offers);
 
 
         // Inflate the layout for this fragment
@@ -254,26 +271,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         else
             tvCategory.setVisibility(View.GONE);
 
-
-
-        /*if(imListView.getVisibility() == View.VISIBLE) {
-            Log.d(LOGTAG, "Inside ListView");
-            imListView.setVisibility(View.GONE);
-            imThumbView.setVisibility(View.VISIBLE);
-            imMapView.setVisibility(View.GONE);
-        }
-        else if(imThumbView.getVisibility() == View.VISIBLE) {
-            Log.d(LOGTAG, "Inside ThumbView");
-            imListView.setVisibility(View.GONE);
-            imThumbView.setVisibility(View.GONE);
-            imMapView.setVisibility(View.VISIBLE);
-        }
-        else if(imMapView.getVisibility() == View.VISIBLE) {
-            Log.d(LOGTAG, "Inside MapView");
-            imListView.setVisibility(View.VISIBLE);
-            imThumbView.setVisibility(View.GONE);
-            imMapView.setVisibility(View.GONE);
-        }*/
 
 
         cd = new SuperConnectionDetector(activity);
@@ -443,11 +440,14 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
                 Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
 
+
+
                 MapViewFragment fragment3 = new MapViewFragment();
                 if(mListOffers != null && mListOffers.size() > 0) {
                     Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
                     Intent intent = new Intent(getActivity(), MapViewFragment.class);
                     Bundle b = new Bundle();
+                    b.putSerializable("MVOfferListing", mListOffers);
                     b.putParcelableArrayList("KEY_PARCEL_OFFERS", mListOffers);
                     intent.putExtras(b);
                     fragment3.setArguments(intent.getExtras());
@@ -543,7 +543,10 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         */
 
 
-        mAdapter = new BrowseOffersViewAdapter(getActivity(), "BrowseOffers");
+        Log.d(LOGTAG, "IS MORE OFFERS: "+more_offers);
+
+
+        mAdapter = new BrowseOffersViewAdapter(getActivity(), "BrowseOffers", more_offers);
 
         mRecyclerOffers.setAdapter(mAdapter);
 
@@ -754,7 +757,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
                 mModels = listOffers;
                 //Log.d(LOGTAG, "Inside Adapter: "+mAdapter);
-                mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), listOffers, "BrowseOffers");
+                mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), listOffers, "BrowseOffers", more_offers);
                 mRecyclerOffers.setAdapter(mAdapter);
                 mRecyclerOffers.setVisibility(View.VISIBLE);
                 tvEmptyView.setVisibility(View.GONE);
@@ -994,9 +997,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             alertDialog.show();
         }
     }
-
-
-
 
     private void callSearchLocationTask() {
         // This will callback onUsersLoaded function after execution

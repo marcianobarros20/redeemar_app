@@ -1,6 +1,7 @@
 package com.tier5.redeemar.RedeemarConsumerApp.ViewHolder;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -43,9 +44,57 @@ public class BrandViewHolder extends ParentViewHolder {
             String brandUrl = UrlEndpoints.baseLogoMediumURL + brand.getBrandLogo();
             Log.d(LOGTAG, "Brand Logo: "+brandUrl);
 
+            int width = 120;
+            int height = 75;
+            int maxWidth = 153;
+
+            double newWidth = 0;
+            double newHeight = 0;
+
+            int nw = 110;
+            int nh = 110;
+
+            Log.d(LOGTAG, "Modified Image dimension: "+newWidth+" x "+newHeight);
+
+
+
+            /*try {
+
+                final Bitmap image = Picasso.with(context).load(brandUrl).get();
+                width = image.getWidth();
+                height = image.getHeight();
+                double ratio = 1.6;
+
+                if(height > 0)
+                    ratio = width/height;
+
+
+                if(width > maxWidth)
+                    newWidth = maxWidth;
+                else
+                    newWidth = width;
+
+                newHeight = newWidth / ratio;
+
+                Double d1 = new Double(newWidth);
+                nw = d1.intValue();
+
+                Double d2 = new Double(newHeight);
+                nh = d2.intValue();
+
+
+                Log.d(LOGTAG, "Original Image dimension: "+width+" x "+height);
+                Log.d(LOGTAG, "Modified Image dimension: "+newWidth+" x "+newHeight);
+
+
+
+            } catch(Exception ex) {
+                Log.d(LOGTAG, "Exception occured "+ex.toString());
+            }*/
+
             Picasso.with(context)
                     .load(brandUrl)
-                    .fit()
+                    .fit() // resizes the image to these dimensions (in pixel)
                     .into(thumbnailBrand);
 
 

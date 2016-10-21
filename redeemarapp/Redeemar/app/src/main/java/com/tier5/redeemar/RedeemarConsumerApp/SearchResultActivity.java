@@ -65,7 +65,7 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
         mRecyclerView = (RecyclerView) findViewById(R.id.search_recycler_view);
         tvEmptyView = (TextView) findViewById(R.id.empty_view);
 
-        mAdapter = new BrowseOffersViewAdapter(this, "BrowseOffers");
+        mAdapter = new BrowseOffersViewAdapter(this, "BrowseOffers", "0");
         //mRecyclerView.setAdapter(mAdapter);
 
         Bundle extras = getIntent().getExtras();
@@ -129,16 +129,6 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
             //Your toolbar is now an action bar and you can use it like you always do, for example:
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-//            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                // back button pressed
-//                finish();
-//                overridePendingTransition(R.anim.right_to_left, R.anim.left_to_right);
-//                }
-//            });
-
         }
 
     }
@@ -180,7 +170,7 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
     public void onOffersLoaded(ArrayList<Offer> listOffers) {
 
         if (listOffers.size() > 0 && mAdapter != null) {
-            mAdapter = new BrowseOffersViewAdapter(getApplicationContext(), listOffers, "BrowseOffers");
+            mAdapter = new BrowseOffersViewAdapter(getApplicationContext(), listOffers, "BrowseOffers", "0");
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.setVisibility(View.VISIBLE);
             tvEmptyView.setVisibility(View.GONE);

@@ -15,8 +15,6 @@ import com.tier5.redeemar.RedeemarConsumerApp.ViewHolder.BankedViewHolder;
 import com.tier5.redeemar.RedeemarConsumerApp.ViewHolder.BrandViewHolder;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Banked;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Brand;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 

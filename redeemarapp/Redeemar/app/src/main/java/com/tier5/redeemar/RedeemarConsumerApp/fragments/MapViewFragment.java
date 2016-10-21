@@ -50,8 +50,15 @@ import com.tier5.redeemar.RedeemarConsumerApp.RecyclerItemClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.ResizeAnimation;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrandViewAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BrowseOffersViewAdapter;
+import com.tier5.redeemar.RedeemarConsumerApp.async.BrandOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.BrowseOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.CampaignOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.CategoryOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadImageTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByBrandsAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.async.OnDemandOffersAsyncTask;
+import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
@@ -68,7 +75,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 
-public class MapViewFragment extends Fragment implements OnMapReadyCallback {
+public class MapViewFragment extends Fragment implements OffersLoadedListener, OnMapReadyCallback {
 
     private String LOGTAG = "HomeFragment";
     private double latitude = 0.0, longitude = 0.0;
@@ -89,16 +96,21 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     private int pxHeight, pxHeightRev, pxWidth;
     private Resources res;
     private SharedPreferences sharedpref;
-    SharedPreferences.Editor editor;
+    private SharedPreferences.Editor editor;
     //private Double last_lat = 0.0, last_lon = 0.0;
     boolean isLocationSensetive = false;
     private boolean mMapViewExpanded = false;
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
+    private GPSTracker gps;
+
+
+    private static final int LOCATION_SETTINGS_REQUEST = 1;
 
     private static final String STATE_OFFERS = "state_offers";
 
-    String clickIndex = "", companyName="", companyLocation="" , offersJson = "";
+    String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", keyword = "", clickIndex = "", companyName="", companyLocation="" , user_id = "",
+            selfLat = "", selfLon = "";
 
 
     public MapViewFragment() {
@@ -117,12 +129,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
         offerList = new ArrayList<Offer>();
 
-        if (savedInstanceState != null) {
-            //if this fragment starts after a rotation or configuration change, load the existing movies from a parcelable
-            offerList = savedInstanceState.getParcelableArrayList(STATE_OFFERS);
-        }
-
-
         res = getResources();
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
@@ -132,6 +138,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         isInternetPresent = cd.isConnectingToInternet();
 
         if(!isInternetPresent) {
+            getMyLocation();
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
             alertDialog.setTitle("Internet");
             alertDialog.setMessage("Internet not enabled in your device. Do you want to enable it from settings menu");
@@ -149,9 +156,25 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         }
 
 
+        if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
+            user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
+        }
 
+        if (sharedpref.getString(res.getString(R.string.spf_search_keyword), null) != null) {
+            keyword = sharedpref.getString(res.getString(R.string.spf_search_keyword), "");
+            Log.d(LOGTAG, "Search Keyword: " + keyword);
+        }
 
+        if (sharedpref.getString(res.getString(R.string.spf_redir_action), null) != null) {
+            redirectTo = sharedpref.getString(res.getString(R.string.spf_redir_action), "");
+        }
 
+        if (sharedpref.getString(res.getString(R.string.spf_redeemer_id), null) != null) {
+            redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
+        }
+        if (sharedpref.getString(res.getString(R.string.spf_campaign_id), null) != null) {
+            campaignId = sharedpref.getString(res.getString(R.string.spf_campaign_id), "");
+        }
 
 
 
@@ -209,31 +232,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
             }
 
 
-            if(!isLocationSensetive) {
-                // create class object
-                GPSTracker gps = new GPSTracker(getActivity());
-
-                // check if GPS enabled
-                if(gps.canGetLocation()) {
-
-                    latitude = gps.getLatitude();
-                    longitude = gps.getLongitude();
-
-                    if(latitude == 0 && longitude == 0) {
-                        gps.showSettingsAlert();
-                    }
-
-                    // \n is for new line
-
-                } else {
-                    // can't get location
-                    // GPS or Network is not enabled
-                    // Ask user to enable GPS/network in settings
-                    gps.showSettingsAlert();
-                }
-            }
-
-
             DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
             dpHeight = displayMetrics.heightPixels / displayMetrics.density;
             dpWidth = displayMetrics.widthPixels / displayMetrics.density;
@@ -270,6 +268,12 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         return rootView;
     }
 
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -296,6 +300,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+
+        if(isInternetPresent)
+            getMyLocation();
     }
 
 
@@ -377,7 +384,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                 }
 
 
-                mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrowseOffers");
+                mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrowseOffers", "0");
                 mRecyclerView.setAdapter(mAdapter);
 
                 mMapViewExpanded = false;
@@ -427,7 +434,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
 
                 dispBrandList.add(br);
-                mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrowseOffers");
+                mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), dispBrandList, "BrowseOffers", "0");
                 mRecyclerView.setAdapter(mAdapter);
 
                 //innerContainerLayout.setVisibility(View.VISIBLE);
@@ -462,6 +469,38 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    @Override
+    public void onOffersLoaded(ArrayList<Offer> listOffers) {
+
+
+        Log.d(LOGTAG, "Retrieving from Offer List: "+offerList.size());
+
+        if(offerList.size() > 0) {
+
+            for (int i = 0; i < offerList.size(); i++) {
+
+                Offer offer = (Offer) offerList.get(i);
+
+                Log.d(LOGTAG, "Inside Lat " + offer.getLatitude());
+                Log.d(LOGTAG, "Inside Long " + offer.getLongitude());
+
+                //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(offer.getLatitude()), Double.parseDouble(offer.getLongitude())))
+                        .title(String.valueOf(i))
+                        .snippet(offer.getCompanyName());
+
+                MarkerItem markerItem = new MarkerItem(markerOptions);
+
+                mClusterManager.addItem(markerItem);
+
+            }
+            mClusterManager.cluster();
+
+        }
+
+
+    }
 
 
     /** Demonstrates customizing the info window and/or its contents. */
@@ -525,7 +564,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
    private void setupCluster() {
        // Load offer List from preferences
-       //Bundle b = this.getArguments();
+       Bundle b = this.getArguments();
        //ArrayList<Offer> offerList = b.getParcelableArrayList("KEY_PARCEL_OFFERS");
 
        /*Gson gson = new Gson();
@@ -533,51 +572,38 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
        ArrayList<Offer> offerObj = new ArrayList<Offer>();
        offerList = gson.fromJson(json, offerObj.getClass());*/
 
-       try {
 
-           Gson gson = new Gson();
-           String json = sharedpref.getString(res.getString(R.string.spf_offers), "");
-           JSONObject jsonObj = new JSONObject(json);
-           Type type = new TypeToken<ArrayList<Offer>>() {}.getType();
-           offerList = gson.fromJson(jsonObj.toString(), type);
+       Log.d(LOGTAG, "My Redirect to: "+redirectTo);
 
+       if (redirectTo.equals("BrandOffers") && !redeemarId.equals("")) {
+           //Log.d(LOGTAG, "Inside Brand Offers");
+           new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude));
 
-       } catch(Exception ex) {
-           Log.d(LOGTAG, "Exception occured in parsing: "+ex.toString());
 
        }
-
-       Log.d(LOGTAG, "Retrieving from Offer List: "+offerList.size());
-
-
-       if(offerList.size() > 0) {
-
-           for (int i = 0; i < offerList.size(); i++) {
-
-               Offer offer = (Offer) offerList.get(i);
-
-               Log.d(LOGTAG, "Inside Lat " + offer.getLatitude());
-               Log.d(LOGTAG, "Inside Long " + offer.getLongitude());
-
-               //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_deals);
-               MarkerOptions markerOptions = new MarkerOptions()
-                       .position(new LatLng(Double.parseDouble(offer.getLatitude()), Double.parseDouble(offer.getLongitude())))
-                       .title(String.valueOf(i))
-                       .snippet(offer.getCompanyName());
-
-               MarkerItem markerItem = new MarkerItem(markerOptions);
-
-               mClusterManager.addItem(markerItem);
-
-           }
-           mClusterManager.cluster();
+       else if (redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
+           new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+       else if (redirectTo.equals("CategoryOffers") && !categoryId.equals("")) {
+           Log.d(LOGTAG, "My Keywords: "+keyword);
+           if(!keyword.equals(""))
+               new CategoryOffersAsyncTask(this).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, keyword);
+           else
+               new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId);
 
        }
+       else if (redirectTo.equals("OnDemand"))
+           new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+       else {
+           new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
+       }
+
 
 
 
 
    }
+
+
 
 
     private void animateMapView() {
@@ -625,6 +651,60 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
         intent.putExtra(getActivity().getString(R.string.ext_offer_id), offerId);
         startActivity(intent);
+    }
+
+
+    public void getMyLocation() {
+        // Initialize GPSTracker
+        gps = new GPSTracker(getActivity());
+
+        // If GPSTracker can get the location
+        if(gps.canGetLocation()) {
+
+            // Your current location (Self Location)
+            selfLat = String.valueOf(gps.getLatitude());
+            selfLon = String.valueOf(gps.getLongitude());
+
+            Log.d(LOGTAG, "My Lat Values: "+selfLat);
+            Log.d(LOGTAG, "My Long Values: "+selfLon);
+
+
+
+            // CHeck if internet is enabled in device
+            if(!isInternetPresent) {
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                alertDialog.setTitle("Internet");
+                alertDialog.setMessage("Internet not enabled in your device. Do you want to enable it from settings menu");
+                alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which) {
+                        startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), LOCATION_SETTINGS_REQUEST);
+                    }
+                });
+                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.show();
+
+            }
+        } else {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setTitle("GPS settings");
+            alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+            alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int which) {
+                    startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), LOCATION_SETTINGS_REQUEST);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+        }
     }
 
 

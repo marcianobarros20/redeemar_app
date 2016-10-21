@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.OfferDetailsActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ImageDownloadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Keys;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
@@ -63,25 +65,36 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
     private Resources res;
     private String offerId, userId, offerImageFileName, LogoFileName;
     Typeface myFont, myFontBold;
+    public String more_offers = "0";
 
 
-    public BrowseOffersViewAdapter(Context context, String actName) {
+    public BrowseOffersViewAdapter(Context context, String actName, String moreOffers) {
         this.mContext = context;
         this.activityName = actName;
+        this.more_offers = moreOffers;
 
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
 
+
+        Log.d(LOGTAG, "SimpleViewHolder More Offers 1: "+more_offers);
+
+
+
+
     }
 
 
-    public BrowseOffersViewAdapter(Context context, ArrayList<Offer> objects, String actName) {
+    public BrowseOffersViewAdapter(Context context, ArrayList<Offer> objects, String actName, String moreOffers) {
         this.mContext = context;
         this.offerList = objects;
         this.activityName = actName;
+        this.more_offers = moreOffers;
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+
+        Log.d(LOGTAG, "SimpleViewHolder More Offers 2: "+more_offers);
 
     }
 
@@ -104,7 +117,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
     @Override
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        Log.d(LOGTAG, "View Type: "+viewType);
         mViewType = "list";
 
         if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
@@ -123,15 +135,11 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             //editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Storing View Type to Thumb
         }
 
+        Log.d(LOGTAG, "SimpleViewHolder More Offers: "+more_offers);
 
 
-        //view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.browse_swipe_row_item_thumb, parent, false);
 
-        //myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
-
-        //myFontBold = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font_bold));
-
-        return new SimpleViewHolder(view);
+        return new SimpleViewHolder(view, more_offers);
     }
 
     @Override
@@ -238,6 +246,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         Double discVal = item.getDiscount();
 
 
+
+
         if(item.getRetailvalue() > 0 && item.getPayValue() > 0) {
             discount_text = Utils.calculateDiscount(item.getRetailvalue(), item.getPayValue(), valCalc);
         }
@@ -296,18 +306,11 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             viewHolder.tvDiscount.setVisibility(View.GONE);
         }
 
-
-        //viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
-        //viewHolder.mLogoImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
-
-
         // Instantiate the RequestQueue.
         if(imageUrl != null && !imageUrl.equalsIgnoreCase("")) {
 
             imageUrl = UrlEndpoints.serverBaseUrl + imageUrl;
-            //viewHolder.mImageLoader.get(imageUrl, ImageLoader.getImageListener(viewHolder.thumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
-            //viewHolder.thumbnail.setImageUrl(imageUrl, viewHolder.mImageLoader);
-            //viewHolder.thumbnail.setAdjustViewBounds(false);
+
 
             Picasso.with(mContext)
                     .load(imageUrl)
@@ -316,13 +319,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                     .into(viewHolder.thumbnail);
 
         }
-        else {
-            //viewHolder.thumbnail.setDefaultImageResId(R.drawable.icon_watermark);
-            //viewHolder.thumbnail.setErrorImageResId(R.drawable.icon_watermark);
-        }
-
-
-        //Log.d(LOGTAG, "Logo URL: "+item.getBrandLogo());
 
         // Instantiate the RequestQueue.
         if(item.getBrandLogo() != null && !item.getBrandLogo().equalsIgnoreCase("")) {
@@ -353,8 +349,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             @Override
             public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-
-                //Log.d(LOGTAG, "Swipe Top: "+topOffset);
 
                 if(leftOffset <= -600) {
 
@@ -544,11 +538,19 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         private ImageView thumbnail, logoThumbnail;
         private ImageView mapIcon;
         private ImageLoader mImageLoader, mLogoImageLoader;
-        private LinearLayout distanceLayout, discountLayout;
+        private LinearLayout distanceLayout, discountLayout, passLayout, bottomWrapper;
+
+
+        private SharedPreferences sharedpref;
+        private Resources res;
+
+        private Context mContext;
+
+        //private String more_offers = "0";
 
         LinearLayout rating;
 
-        public SimpleViewHolder(View itemView) {
+        public SimpleViewHolder(View itemView, String showMore) {
             super(itemView);
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
             tvBankOffer = (TextView) itemView.findViewById(R.id.bank_offer);
@@ -565,7 +567,33 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             distanceLayout = (LinearLayout) itemView.findViewById(R.id.distance_layout);
             discountLayout = (LinearLayout) itemView.findViewById(R.id.discount_layout);
+            passLayout = (LinearLayout) itemView.findViewById(R.id.passLayout);
 
+
+            bottomWrapper = (LinearLayout) itemView.findViewById(R.id.bottom_wrapper);
+
+            Resources res = itemView.getResources();
+            sharedpref = itemView.getContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+            res = itemView.getResources();
+
+
+            /*if(sharedpref.getString(res.getString(R.string.spf_more_offers), null) != null) {
+                more_offers = sharedpref.getString(res.getString(R.string.spf_more_offers), "0");
+            }*/
+
+
+            if(Keys.moreOffers == 1) {
+
+                View view_instance = (View) itemView.findViewById(R.id.bottom_wrapper);
+                ViewGroup.LayoutParams params=bottomWrapper.getLayoutParams();
+                params.width=400;
+                view_instance.setLayoutParams(params);
+
+                passLayout.setVisibility(View.GONE);
+            }
+            else {
+                passLayout.setVisibility(View.VISIBLE);
+            }
 
 
         }
@@ -574,15 +602,11 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
     // Either pass or bank offers using this service
     private class SaveOfferAsyncTask extends AsyncTask<String, Void, String> {
 
-
         String bankUrl = "", passUrl = "", action = "";
-        //private ArrayList<Offer> mDataSet;
 
         public SaveOfferAsyncTask() {
-
             bankUrl = UrlEndpoints.bankOffersURL;
             passUrl = UrlEndpoints.passOffersURL;
-
         }
 
         @Override
@@ -594,8 +618,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             action = params[0];
             String user_id = params[1];
             String offer_id = params[2];
-
-
 
             try {
                 if(action.equalsIgnoreCase("pass"))
@@ -611,8 +633,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                 conn.setDoOutput(true);
 
                 JSONObject data = new JSONObject();
-                //JSONObject auth=new JSONObject();
-                //JSONObject parent=new JSONObject();
+
                 if(action.equalsIgnoreCase("bank")) {
                     data.put("webservice_name", "bankoffer");
                 }
@@ -674,15 +695,10 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                     if (reader.getString("messageCode").equals("R01001")) {
 
                         if(action.equalsIgnoreCase("bank")) {
-
                             Toast.makeText(mContext, "Offer successfully banked!", Toast.LENGTH_SHORT).show();
-
-
                         }
                         else if(action.equalsIgnoreCase("pass")) {
-
                             Toast.makeText(mContext, "Offer successfully passed!", Toast.LENGTH_SHORT).show();
-
                         }
 
                         // TODO: Return value
@@ -696,11 +712,9 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                         // TODO: Return value
 
                         if(action.equalsIgnoreCase("pass")) {
-
                             Toast.makeText(mContext.getApplicationContext(), "You have already passed this offer", Toast.LENGTH_SHORT).show();
                         }
                         else {
-
                             Toast.makeText(mContext.getApplicationContext(), "You have already banked this offer", Toast.LENGTH_SHORT).show();
                         }
 
@@ -741,6 +755,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         intent.putExtra(res.getString(R.string.ext_redir_to), "BrandOffers");
         intent.putExtra(res.getString(R.string.ext_redeemar_id), redeemarId);
         intent.putExtra(res.getString(R.string.ext_more_offers), "1");
+
+        Keys.moreOffers=1;
 
         mContext.startActivity(intent);
 

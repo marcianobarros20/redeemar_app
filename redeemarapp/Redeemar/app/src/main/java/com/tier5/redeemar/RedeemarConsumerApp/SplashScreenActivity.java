@@ -91,8 +91,7 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         RelativeLayout layout = (RelativeLayout) inflater.inflate(
                 R.layout.splash_screen, null, false);
 
-        addContentView(layout, new LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT));
+        addContentView(layout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         // Clear all saved preferences
         editor.putString(getString(R.string.spf_redir_action), ""); // Storing Redirect Action

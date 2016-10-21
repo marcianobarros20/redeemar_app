@@ -7,6 +7,7 @@ public class Keys {
 
     public static Double latitude = 0.0;
     public static Double longitude = 0.0;
+    public static int moreOffers = 0;
 
 
 }

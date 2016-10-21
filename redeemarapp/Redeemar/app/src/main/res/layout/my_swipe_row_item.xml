@@ -41,7 +41,7 @@
         <!-- Top View,  Row itemView of RecyclerView -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="130dp"
+            android:layout_height="140dp"
             android:background="@drawable/list_row_selector"
             android:padding="0dp">
             <!-- Thumbnail Image -->
