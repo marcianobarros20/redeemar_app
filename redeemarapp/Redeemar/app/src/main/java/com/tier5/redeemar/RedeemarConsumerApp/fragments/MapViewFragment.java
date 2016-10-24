@@ -472,7 +472,6 @@ public class MapViewFragment extends Fragment implements OffersLoadedListener, O
     @Override
     public void onOffersLoaded(ArrayList<Offer> listOffers) {
 
-
         Log.d(LOGTAG, "Retrieving from Offer List: "+offerList.size());
 
         if(offerList.size() > 0) {

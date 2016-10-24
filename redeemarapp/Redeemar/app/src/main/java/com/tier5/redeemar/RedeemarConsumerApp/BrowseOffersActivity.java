@@ -22,14 +22,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -40,7 +38,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.estimote.sdk.SystemRequirementsChecker;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -857,8 +854,6 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         getMenuInflater().inflate(R.menu.menu_main, menu);
         actionView = menu.findItem(R.id.action_view_type);
 
-
-
         if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
             viewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
             Log.d(LOGTAG, "NEW View Type: "+viewType);
@@ -873,11 +868,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                 actionView.setIcon(R.drawable.ic_list_white);
             }
 
-
-
         }
-
-
 
 
         return true;

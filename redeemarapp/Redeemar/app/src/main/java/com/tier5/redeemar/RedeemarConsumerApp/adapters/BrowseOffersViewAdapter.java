@@ -98,6 +98,21 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
     }
 
+
+
+    public BrowseOffersViewAdapter(Context context, ArrayList<Offer> objects, String actName, String moreOffers, String viewType) {
+        this.mContext = context;
+        this.offerList = objects;
+        this.activityName = actName;
+        this.more_offers = moreOffers;
+        this.more_offers = viewType;
+        res = context.getResources();
+        sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+
+        Log.d(LOGTAG, "SimpleViewHolder More Offers 2: "+more_offers);
+
+    }
+
     public void setOffers(ArrayList<Offer> listOffers) {
         this.offerList = listOffers;
 

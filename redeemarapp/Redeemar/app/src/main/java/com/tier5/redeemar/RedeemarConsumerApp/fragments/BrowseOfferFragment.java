@@ -56,10 +56,8 @@ import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
-import com.tier5.redeemar.RedeemarConsumerApp.pojo.OfferParcel;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
-import com.tier5.redeemar.RedeemarConsumerApp.utils.ObjectSerializer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
@@ -112,6 +110,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     private Map<String, LatLng> locationItems;
     private Toolbar toolbar;
     private View layout;
+    private MenuItem actionView;
 
     private static final String STATE_OFFERS = "state_offers";
 
@@ -150,8 +149,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
 
 
 
@@ -662,6 +659,25 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
+        inflater.inflate(R.menu.menu_main, menu);
+        actionView = menu.findItem(R.id.action_view_type);
+
+        if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+            viewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
+            Log.d(LOGTAG, "Fragment View Type: "+viewType);
+
+            if(viewType.equals("thumb")) {
+                actionView.setIcon(R.drawable.ic_thumb_white);
+            }
+            else if(viewType.equals("map")) {
+                actionView.setIcon(R.drawable.ic_map_white);
+            }
+            else {
+                actionView.setIcon(R.drawable.ic_list_white);
+            }
+
+        }
+
     }
 
 
@@ -674,10 +690,14 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         switch (id) {
 
            case R.id.action_search:
-               Log.d(LOGTAG, "Inside BrowseOfferFragment");
+               Log.d(LOGTAG, "Inside Search BrowseOfferFragment");
                final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
                searchView.setOnQueryTextListener(this);
                return true;
+
+            case R.id.action_view_type:
+                Log.d(LOGTAG, "Inside View Type  BrowseOfferFragment");
+                return true;
 
 
         }
