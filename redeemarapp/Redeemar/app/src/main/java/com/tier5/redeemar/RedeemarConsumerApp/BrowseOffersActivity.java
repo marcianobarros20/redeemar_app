@@ -960,7 +960,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         //setUpMap();
 
         Log.d(LOGTAG, "Resuming the app");
-        BeaconStatics.beaconTriggred = true;
+        BeaconStatics.beaconTriggred = false;
 
 
         //SystemRequirementsChecker.checkWithDefaultDialogs(this);

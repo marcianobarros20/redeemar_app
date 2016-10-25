@@ -129,9 +129,9 @@ public class MyApplication extends Application implements AsyncResponse.Response
                         //Log.d(LOGTAG, "Nearest beacon: " + nearestBeacon);
                         try
                         {
-                            if(!callingTheApi)
+                            if(!BeaconStatics.beaconTriggred)
                             {
-                                callingTheApi = true;
+                                BeaconStatics.beaconTriggred = true;
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("webservice_name","findbeacon");
                                 jsonObject.put("uuid",nearestBeacon.getProximityUUID().toString().toUpperCase());
@@ -208,7 +208,7 @@ public class MyApplication extends Application implements AsyncResponse.Response
     @Override
     public void processFinish(String output) {
         Log.i(LOGTAG,"Response is : "+output);
-        callingTheApi = false;
+        //callingTheApi = false;
         if (output != null) {
 
 
