@@ -9,11 +9,11 @@ import java.util.HashMap;
 /**
  * Created by root on 15/7/16.
  */
-public class RegisterUser {
+public class CallApi {
     String method;
     public AsyncResponse.Response delegate = null;
 
-    public RegisterUser(String method)
+    public CallApi(String method)
     {
         this.method = method;
     }

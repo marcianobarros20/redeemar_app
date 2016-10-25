@@ -63,6 +63,8 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Keys;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
+import com.tier5.redeemar.RedeemarConsumerApp.utils2.BeaconStatics;
+
 import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
@@ -958,6 +960,8 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         //setUpMap();
 
         Log.d(LOGTAG, "Resuming the app");
+        BeaconStatics.beaconTriggred = true;
+
 
         //SystemRequirementsChecker.checkWithDefaultDialogs(this);
     }
@@ -1417,6 +1421,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
         //new SearchBeaconAsyncTask(this).execute(uuid.toString(), String.valueOf(major), String.valueOf(minor));
     }
+
 
 
 }

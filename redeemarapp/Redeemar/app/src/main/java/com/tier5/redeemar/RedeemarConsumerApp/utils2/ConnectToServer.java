@@ -57,7 +57,7 @@ public class ConnectToServer {
                 response = br.readLine();
             }
             else {
-                response="Response Error";
+                response="Response Error, error is "+conn.getResponseMessage();
 
             }
         } catch (Exception e) {

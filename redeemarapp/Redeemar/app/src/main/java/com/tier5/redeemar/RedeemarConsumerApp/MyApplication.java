@@ -9,13 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
 import com.estimote.sdk.Utils;
-import com.estimote.sdk.repackaged.gson_v2_3_1.com.google.gson.JsonObject;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils2.*;
@@ -53,7 +51,7 @@ public class MyApplication extends Application implements AsyncResponse.Response
 
     //server connectivity
     HashMap<String,String> data = new HashMap<>();
-    RegisterUser registerUser = new RegisterUser("POST");
+    CallApi registerUser = new CallApi("POST");
     String route = "admin/public/index.php/bridge/findbeacon";
 
 
@@ -243,11 +241,9 @@ public class MyApplication extends Application implements AsyncResponse.Response
                         Log.d(LOGTAG, "Redeemar Id: "+redeemar_id);
 
 
+                        // Redirect the user to appropriate activity based on the action id
 
-
-// Redirect the user to appropriate activity based on the action id
-
-// If 2 = Show list of offers for a particular campaign
+                        // If 2 = Show list of offers for a particular campaign
                         if (action_id.equals("2")) {
 
                             if(!json2.isNull("campaign_id")) {
@@ -266,6 +262,10 @@ public class MyApplication extends Application implements AsyncResponse.Response
                                 sIntent.putExtra(getString(R.string.ext_campaign_id), campaign_id);
                                 startActivity(sIntent);
 
+                            }
+                            else
+                            {
+                                Log.i(LOGTAG,"campaign id is null");
                             }
 
                         }
@@ -349,13 +349,14 @@ startActivity(intent);*/
                         else {
 
 
-                            String unique_target_id = json2.get("redeemar_id").toString();
+                            String r_id = json2.get("redeemar_id").toString();
 
                             Log.d(LOGTAG, "Inside action id 1 or default");
 
                             Intent sIntent = new Intent(getApplicationContext(), BrandMainActivity.class);
                             sIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            sIntent.putExtra("unique_target_id", unique_target_id);
+                            sIntent.putExtra("unique_target_id", "");
+                            sIntent.putExtra("redeemar_id", r_id);
                             startActivity(sIntent);
 
                         }
@@ -392,6 +393,7 @@ startActivity(intent);*/
                 }
 
             } catch (JSONException e) {
+                Log.i(LOGTAG,"error in parsing respopnse: "+e.toString());
                 e.printStackTrace();
 //Utils.redirectToError(getApplicationContext());
 

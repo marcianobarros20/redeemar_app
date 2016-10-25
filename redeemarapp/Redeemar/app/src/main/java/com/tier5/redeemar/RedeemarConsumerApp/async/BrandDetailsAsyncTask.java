@@ -52,7 +52,8 @@ public class BrandDetailsAsyncTask extends AsyncTask<String, Void, ArrayList<Obj
     protected ArrayList<Object> doInBackground(String... params) {
 
         String target_id = params[0];
-        ArrayList<Object> brandInfo = OfferUtils.loadBrandDetails(requestQueue, target_id);
+        String redeemar_id = params[1];
+        ArrayList<Object> brandInfo = OfferUtils.loadBrandDetails(requestQueue, target_id, redeemar_id);
         return brandInfo;
     }
 
