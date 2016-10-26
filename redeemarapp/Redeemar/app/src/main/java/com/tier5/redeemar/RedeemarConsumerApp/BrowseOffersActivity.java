@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -22,6 +23,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -66,6 +68,8 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import com.tier5.redeemar.RedeemarConsumerApp.utils2.BeaconStatics;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -225,6 +229,36 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        if(BeaconStatics.callingFromBeaconPage)
+        {
+            BeaconStatics.callingFromBeaconPage = false;
+            removeRadio();
+        }
+
+    }
+
+    public void removeRadio()
+    {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setTitle("Continue seeing beacon triggers?")
+                .setMessage("It will show you offers, brand-info etc whenever you are around Beacon.")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        BeaconStatics.beaconTriggred = false;
+                    }
+                })
+                .setNegativeButton("Not Now", new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        BeaconStatics.beaconTriggred = true;
+                    }
+                })						//Do nothing on no
+                .show();
 
     }
 
@@ -670,6 +704,10 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
                                 startActivity(loginIntent);
                                 break;
 
+                            case R.id.nav_beacon_switch:
+                                Toast.makeText(getApplicationContext(),"Beacon Switch",Toast.LENGTH_SHORT).show();
+                                break;
+
 
                             default:
 
@@ -960,7 +998,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
         //setUpMap();
 
         Log.d(LOGTAG, "Resuming the app");
-        BeaconStatics.beaconTriggred = false;
+        //BeaconStatics.beaconTriggred = false;
 
 
         //SystemRequirementsChecker.checkWithDefaultDialogs(this);

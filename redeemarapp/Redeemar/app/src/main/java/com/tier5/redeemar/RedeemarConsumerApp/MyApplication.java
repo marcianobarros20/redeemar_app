@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.Nearable;
 import com.estimote.sdk.Region;
 import com.estimote.sdk.Utils;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
@@ -26,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class MyApplication extends Application implements AsyncResponse.Response{
+public class MyApplication extends Application implements AsyncResponse.Response,AsyncResponse2.Response2{
 
     private static final String LOGTAG = "MyApplication";
 
@@ -36,6 +37,7 @@ public class MyApplication extends Application implements AsyncResponse.Response
     private Resources res;
     private SharedPreferences sharedpref;
     private SharedPreferences.Editor editor;
+    private String scanId;
 
     private static MyApplication sInstance;
 
@@ -54,6 +56,11 @@ public class MyApplication extends Application implements AsyncResponse.Response
     CallApi registerUser = new CallApi("POST");
     String route = "admin/public/index.php/bridge/findbeacon";
 
+    HashMap<String,String> data2 = new HashMap<>();
+    CallApi2 registerUser2 = new CallApi2("POST");
+    String route2 = "admin/public/index.php/bridge/findsticker";
+
+
 
     @Override
     public void onCreate() {
@@ -62,6 +69,7 @@ public class MyApplication extends Application implements AsyncResponse.Response
         Log.d("LOG", "Inside MyApplication onCreate()");
 
         registerUser.delegate = this;
+        registerUser2.delegate = this;
 
 
         res = getResources();
@@ -75,6 +83,7 @@ public class MyApplication extends Application implements AsyncResponse.Response
             @Override
             public void onServiceReady() {
                 beaconManager.startRanging(region);
+                scanId = beaconManager.startNearableDiscovery();
             }
         });
         /*beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
@@ -114,6 +123,42 @@ public class MyApplication extends Application implements AsyncResponse.Response
             }
         });*/
 
+        beaconManager.setNearableListener(new BeaconManager.NearableListener() {
+            @Override
+            public void onNearablesDiscovered(List<Nearable> list) {
+                if(list.size()>0)
+                {
+                    Nearable nearestNearable = list.get(0);
+
+                    Utils.Proximity nearestNearableDistance = Utils.computeProximity(nearestNearable);
+
+                    //Log.i(LOGTAG,"nearest nearable is moving : "+nearestNearableDistance);
+                    if(nearestNearableDistance.toString().equals("IMMEDIATE"))
+                    {
+                        try
+                        {
+                            if(!BeaconStatics.beaconTriggred)
+                            {
+                                BeaconStatics.beaconTriggred = true;
+                                JSONObject jsonObject2 = new JSONObject();
+                                jsonObject2.put("webservice_name","findsticker");
+                                jsonObject2.put("identifier",nearestNearable.identifier);
+
+                                data2.put("data",jsonObject2.toString());
+
+                                Log.i(LOGTAG,"total data(NEARABLE) is: "+data2.toString());
+                                registerUser2.register(data2,route2);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+                }
+            }
+        });
+
 
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
@@ -139,14 +184,11 @@ public class MyApplication extends Application implements AsyncResponse.Response
                                 jsonObject.put("minor",nearestBeacon.getMinor());
 
                                 //demo beacon
-                            /*jsonObject.put("webservice_name","findbeacon");
-                            jsonObject.put("uuid","B9407F30-F5F8-466E-AFF9-25556B57FE6D");
-                            jsonObject.put("major","51845");
-                            jsonObject.put("minor","29961");*/
+
 
                                 data.put("data",jsonObject.toString());
 
-                                Log.i(LOGTAG,"total data is: "+data.toString());
+                                Log.i(LOGTAG,"total data(BEACON) is: "+data.toString());
 
                                 registerUser.register(data,route);
                             }
@@ -209,7 +251,20 @@ public class MyApplication extends Application implements AsyncResponse.Response
     public void processFinish(String output) {
         Log.i(LOGTAG,"Response is : "+output);
         //callingTheApi = false;
+        beaconResponseHandler(output);
+
+    }
+
+    @Override
+    public void processFinish2(String output) {
+        Log.i(LOGTAG,"OUTPUT of NEARABLE : "+output);
+        beaconResponseHandler(output);
+    }
+
+    public void beaconResponseHandler(String output)
+    {
         if (output != null) {
+            BeaconStatics.callingFromBeaconPage = true;
 
 
             try {
@@ -376,7 +431,7 @@ startActivity(intent);*/
                     errIntent.putExtra(getString(R.string.ext_scan_err), "R01002");
                     startActivity(errIntent);
 
-                //tvBrandName.setText(getString(R.string.brand_not_found));
+                    //tvBrandName.setText(getString(R.string.brand_not_found));
                     // tvBrandName.setTextSize(12);
 
                 }
@@ -404,6 +459,5 @@ startActivity(intent);*/
 
 
         }
-
     }
 }
