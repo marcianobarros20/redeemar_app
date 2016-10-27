@@ -346,7 +346,7 @@
     <string name="enter_location_or_keyword">Please enter search location or keyword</string>
 
     <string name="key_parcel_offers">KEY_PARCEL_OFFERS</string>
-
+    <string name="beacon_triggers">Beacon Triggers</string>
 
 
 </resources>

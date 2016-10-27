@@ -10,13 +10,19 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
+
 import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.Nearable;
 import com.estimote.sdk.Region;
+
 import com.estimote.sdk.repackaged.okhttp_v2_2_0.com.squareup.okhttp.Cache;
 import com.estimote.sdk.repackaged.okhttp_v2_2_0.com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
+
+import com.estimote.sdk.Utils;
+
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils2.*;
@@ -26,7 +32,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class MyApplication extends MultiDexApplication implements AsyncResponse.Response{
+
+
+public class MyApplication extends Application implements AsyncResponse.Response,AsyncResponse2.Response2{
 
     private static final String LOGTAG = "MyApplication";
 
@@ -36,6 +44,7 @@ public class MyApplication extends MultiDexApplication implements AsyncResponse.
     private Resources res;
     private SharedPreferences sharedpref;
     private SharedPreferences.Editor editor;
+    private String scanId;
 
     private static MyApplication sInstance;
 
@@ -51,8 +60,13 @@ public class MyApplication extends MultiDexApplication implements AsyncResponse.
 
     //server connectivity
     HashMap<String,String> data = new HashMap<>();
-    RegisterUser registerUser = new RegisterUser("POST");
+    CallApi registerUser = new CallApi("POST");
     String route = "admin/public/index.php/bridge/findbeacon";
+
+    HashMap<String,String> data2 = new HashMap<>();
+    CallApi2 registerUser2 = new CallApi2("POST");
+    String route2 = "admin/public/index.php/bridge/findsticker";
+
 
 
     @Override
@@ -62,6 +76,7 @@ public class MyApplication extends MultiDexApplication implements AsyncResponse.
         Log.d("LOG", "Inside MyApplication onCreate()");
 
         registerUser.delegate = this;
+        registerUser2.delegate = this;
 
         Picasso.Builder builder = new Picasso.Builder(getApplicationContext());
         LruCache picassoCache = new LruCache(getApplicationContext());
@@ -79,13 +94,51 @@ public class MyApplication extends MultiDexApplication implements AsyncResponse.
         beaconManager = new BeaconManager(getApplicationContext());
         region = new Region("ranged region",
                 UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);
+
         /*beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
                 beaconManager.startRanging(region);
+                scanId = beaconManager.startNearableDiscovery();
             }
         });
 
+
+        beaconManager.setNearableListener(new BeaconManager.NearableListener() {
+            @Override
+            public void onNearablesDiscovered(List<Nearable> list) {
+                if(list.size()>0)
+                {
+                    Nearable nearestNearable = list.get(0);
+
+                    Utils.Proximity nearestNearableDistance = Utils.computeProximity(nearestNearable);
+
+                    //Log.i(LOGTAG,"nearest nearable is moving : "+nearestNearableDistance);
+                    if(nearestNearableDistance.toString().equals("IMMEDIATE"))
+                    {
+                        try
+                        {
+                            if(!BeaconStatics.beaconTriggred)
+                            {
+                                BeaconStatics.beaconTriggred = true;
+                                JSONObject jsonObject2 = new JSONObject();
+                                jsonObject2.put("webservice_name","findsticker");
+                                jsonObject2.put("identifier",nearestNearable.identifier);
+
+                                data2.put("data",jsonObject2.toString());
+
+                                Log.i(LOGTAG,"total data(NEARABLE) is: "+data2.toString());
+                                registerUser2.register(data2,route2);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+                }
+            }
+        });
 
 
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
@@ -102,9 +155,9 @@ public class MyApplication extends MultiDexApplication implements AsyncResponse.
                         //Log.d(LOGTAG, "Nearest beacon: " + nearestBeacon);
                         try
                         {
-                            if(!callingTheApi)
+                            if(!BeaconStatics.beaconTriggred)
                             {
-                                callingTheApi = true;
+                                BeaconStatics.beaconTriggred = true;
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("webservice_name","findbeacon");
                                 jsonObject.put("uuid",nearestBeacon.getProximityUUID().toString().toUpperCase());
@@ -116,7 +169,7 @@ public class MyApplication extends MultiDexApplication implements AsyncResponse.
 
                                 data.put("data",jsonObject.toString());
 
-                                Log.i(LOGTAG,"total data is: "+data.toString());
+                                Log.i(LOGTAG,"total data(BEACON) is: "+data.toString());
 
                                 registerUser.register(data,route);
                             }
@@ -178,8 +231,21 @@ public class MyApplication extends MultiDexApplication implements AsyncResponse.
     @Override
     public void processFinish(String output) {
         Log.i(LOGTAG,"Response is : "+output);
-        callingTheApi = false;
+        //callingTheApi = false;
+        beaconResponseHandler(output);
+
+    }
+
+    @Override
+    public void processFinish2(String output) {
+        Log.i(LOGTAG,"OUTPUT of NEARABLE : "+output);
+        beaconResponseHandler(output);
+    }
+
+    public void beaconResponseHandler(String output)
+    {
         if (output != null) {
+            BeaconStatics.callingFromBeaconPage = true;
 
 
             try {
@@ -211,11 +277,9 @@ public class MyApplication extends MultiDexApplication implements AsyncResponse.
                         Log.d(LOGTAG, "Redeemar Id: "+redeemar_id);
 
 
+                        // Redirect the user to appropriate activity based on the action id
 
-
-// Redirect the user to appropriate activity based on the action id
-
-// If 2 = Show list of offers for a particular campaign
+                        // If 2 = Show list of offers for a particular campaign
                         if (action_id.equals("2")) {
 
                             if(!json2.isNull("campaign_id")) {
@@ -234,6 +298,10 @@ public class MyApplication extends MultiDexApplication implements AsyncResponse.
                                 sIntent.putExtra(getString(R.string.ext_campaign_id), campaign_id);
                                 startActivity(sIntent);
 
+                            }
+                            else
+                            {
+                                Log.i(LOGTAG,"campaign id is null");
                             }
 
                         }
@@ -317,13 +385,14 @@ startActivity(intent);*/
                         else {
 
 
-                            String unique_target_id = json2.get("redeemar_id").toString();
+                            String r_id = json2.get("redeemar_id").toString();
 
                             Log.d(LOGTAG, "Inside action id 1 or default");
 
                             Intent sIntent = new Intent(getApplicationContext(), BrandMainActivity.class);
                             sIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            sIntent.putExtra("unique_target_id", unique_target_id);
+                            sIntent.putExtra("unique_target_id", "");
+                            sIntent.putExtra("redeemar_id", r_id);
                             startActivity(sIntent);
 
                         }
@@ -343,7 +412,7 @@ startActivity(intent);*/
                     errIntent.putExtra(getString(R.string.ext_scan_err), "R01002");
                     startActivity(errIntent);
 
-                //tvBrandName.setText(getString(R.string.brand_not_found));
+                    //tvBrandName.setText(getString(R.string.brand_not_found));
                     // tvBrandName.setTextSize(12);
 
                 }
@@ -360,6 +429,7 @@ startActivity(intent);*/
                 }
 
             } catch (JSONException e) {
+                Log.i(LOGTAG,"error in parsing respopnse: "+e.toString());
                 e.printStackTrace();
 //Utils.redirectToError(getApplicationContext());
 
@@ -370,7 +440,6 @@ startActivity(intent);*/
 
 
         }
-
     }
 
 }

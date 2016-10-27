@@ -7,13 +7,13 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import java.util.HashMap;
 
 /**
- * Created by root on 15/7/16.
+ * Created by root on 25/8/16.
  */
-public class RegisterUser {
+public class CallApi2 {
     String method;
-    public AsyncResponse.Response delegate = null;
+    public AsyncResponse2.Response2 delegate = null;
 
-    public RegisterUser(String method)
+    public CallApi2(String method)
     {
         this.method = method;
     }
@@ -36,7 +36,7 @@ public class RegisterUser {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
 
-                delegate.processFinish(s);
+                delegate.processFinish2(s);
             }
 
             @Override

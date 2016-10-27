@@ -26,10 +26,7 @@ public class Requestor {
     private static final String LOGTAG = "Requestor";
 
 
-
-
-    public static JSONObject requestBrandDetailsJSON(RequestQueue requestQueue, String url, String targetId) {
-
+    public static JSONObject requestBrandDetailsJSON(RequestQueue requestQueue, String url, String targetId, String redeemarId) {
         URL myUrl = null;
         HttpURLConnection conn = null;
         String response = "";
@@ -50,6 +47,8 @@ public class Requestor {
 
             data.put("webservice_name", "check_target");
             data.put("target_id", targetId);
+            data.put("redeemar_id", redeemarId);
+
 
 
             OutputStream os = conn.getOutputStream();

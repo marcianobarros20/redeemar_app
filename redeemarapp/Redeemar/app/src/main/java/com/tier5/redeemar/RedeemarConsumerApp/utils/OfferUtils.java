@@ -27,9 +27,9 @@ public class OfferUtils {
     private static final String LOGTAG = "OfferUtils";
 
 
-    public static ArrayList<Object> loadBrandDetails(RequestQueue requestQueue, String targetId) {
+    public static ArrayList<Object> loadBrandDetails(RequestQueue requestQueue, String targetId, String redeemarId) {
 
-        JSONObject response = Requestor.requestBrandDetailsJSON(requestQueue, Endpoints.getRequestUrlBrandDetails(), targetId);
+        JSONObject response = Requestor.requestBrandDetailsJSON(requestQueue, Endpoints.getRequestUrlBrandDetails(), targetId, redeemarId);
         ArrayList<Object> brandInfo = Parser.parseBrandDetailsJSON(response);
         Log.d(LOGTAG, "Inside loadBrandDetails :"+brandInfo.size());
         return brandInfo;

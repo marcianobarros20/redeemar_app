@@ -71,7 +71,8 @@
             android:layout_margin="@dimen/activity_vertical_margin_small"
             android:background="@drawable/button_green"
             android:textColor="@color/white"
-            android:text="@string/scan_again" />
+            android:text="@string/scan_again"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

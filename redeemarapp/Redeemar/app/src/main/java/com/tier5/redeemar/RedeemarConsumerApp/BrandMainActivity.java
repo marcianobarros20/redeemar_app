@@ -95,6 +95,8 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
         if (extras != null) {
             uniqueTargetId = extras.getString("unique_target_id");
+            redeemarId = extras.getString("redeemar_id");
+
             lastActivity = extras.getString(getString(R.string.ext_activity));
             Log.d(LOGTAG, "Brand Main Unique Target Id: " + uniqueTargetId);
             Log.d(LOGTAG, "Brand Main Last Activity: " + lastActivity);
@@ -129,8 +131,10 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
 
         youTubePlayer = player;
 
+        Log.i("MyAppp",uniqueTargetId);
 
-        new BrandDetailsAsyncTask(this).execute(uniqueTargetId);
+
+        new BrandDetailsAsyncTask(this).execute(uniqueTargetId, redeemarId);
 
         if (!wasRestored) {
             player.cueVideo(Constants.defaultYoutubeVideoId);
@@ -146,6 +150,7 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int hheight = displaymetrics.heightPixels;
         int wwidth = displaymetrics.widthPixels;
+
 
 
         // The first element contains brand information
