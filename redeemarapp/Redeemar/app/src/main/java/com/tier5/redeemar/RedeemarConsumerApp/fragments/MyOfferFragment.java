@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tier5.redeemar.RedeemarConsumerApp.LoginActivity;
+import com.tier5.redeemar.RedeemarConsumerApp.Model.ParentListItem;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.BankedOffersAdapter;
 import com.tier5.redeemar.RedeemarConsumerApp.adapters.StickyTestAdapter;
@@ -80,6 +81,8 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.main_recycler);
         tvCategory = (TextView) layout.findViewById(R.id.tvCategory);
+
+
 
         cd = new SuperConnectionDetector(getActivity());
         isInternetPresent = cd.isConnectingToInternet();
@@ -305,6 +308,7 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
                 mRecyclerOffers.setVisibility(View.VISIBLE);
                 tvEmptyView.setVisibility(View.GONE);
 
+
             }
             else
                 tvEmptyView.setText(getString(R.string.no_records));
@@ -312,4 +316,8 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         else
             tvEmptyView.setText(getString(R.string.no_records));
     }
+
+
+
+
 }

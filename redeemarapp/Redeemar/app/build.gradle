@@ -6,7 +6,7 @@ def JAR_DIR = 'build/java/vuforia'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "24.0.1"
 
     sourceSets.main {
         jni.srcDirs = []
@@ -54,7 +54,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile files("$VUFORIA_SDK_DIR/$JAR_DIR/Vuforia.jar")
-    //compile 'com.google.firebase:firebase-core:9.2.0'
 
     compile project(':volley')
     //compile 'com.google.android.gms:play-services:8.3.0'
@@ -89,6 +88,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.bartoszlipinski:recyclerviewheader2:2.0.1'
     compile 'ca.barrenechea.header-decor:header-decor:0.2.8@aar'
+    compile 'me.grantland:autofittextview:0.2.+'
 }
 
 

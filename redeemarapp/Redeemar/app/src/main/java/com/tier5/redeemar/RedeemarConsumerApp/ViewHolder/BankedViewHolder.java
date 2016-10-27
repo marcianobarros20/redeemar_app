@@ -2,7 +2,9 @@ package com.tier5.redeemar.RedeemarConsumerApp.ViewHolder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,6 +36,8 @@ public class BankedViewHolder extends ChildViewHolder {
     private ImageView mapIcon;
     private ImageLoader mImageLoader;
     private LinearLayout distanceLayout, discountLayout;
+
+    String imageUrlVal = "";
 
     private Typeface myFont;
 
@@ -77,8 +81,12 @@ public class BankedViewHolder extends ChildViewHolder {
         double dcRetail = 0, dcPay = 0, discVal = 0;
 
 
+
+
         offer_id = banked.getOfferId();
         String offer_desc = banked.getOfferDesc();
+
+        imageUrlVal = banked.getImageUrl();
 
         if(offer_desc.length() > 75)
             tvOfferDescription.setText(offer_desc.substring(0, 75)+"...");
@@ -96,11 +104,16 @@ public class BankedViewHolder extends ChildViewHolder {
         tvValidateOffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 Intent intent = new Intent(view.getContext(), ValidateOfferActivity.class);
+
+
                 Log.d(LOGTAG, "My Offer Id: "+offer_id);
                 intent.putExtra(view.getContext().getString(R.string.ext_offer_id), offer_id);
                 view.getContext().startActivity(intent);
                 swipeLayout.close();
+
             }
         });
 
@@ -133,7 +146,6 @@ public class BankedViewHolder extends ChildViewHolder {
         }
 
 
-        String imageUrlVal = banked.getImageUrl();
 
         if(!discount_text.equals("")) {
             discountLayout.setVisibility(View.VISIBLE);
@@ -194,20 +206,25 @@ public class BankedViewHolder extends ChildViewHolder {
         }
 
 
-
-        mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
-
         // Instantiate the RequestQueue.
         if(imageUrlVal != null && !imageUrlVal.equalsIgnoreCase("")) {
             imageUrlVal = UrlEndpoints.serverBaseUrl + imageUrlVal;
 
+
             Picasso.with(mContext)
                     .load(imageUrlVal)
+                    .placeholder(R.drawable.icon_watermark)
                     .fit()
                     .centerCrop()
                     .into(thumbnail);
 
+
         }
 
+
+
     }
+
+
+
 }

@@ -304,7 +304,7 @@
     <string name="invalid_user_pass">Invalid username and password</string>
     <string name="duplicate_email">User with this email id already exists in our records</string>
     <string name="unknown_reg_err">Unknown error occured. Please try again.</string>
-    <string name="validate">Validate Offer</string>
+    <string name="validate">REDEEM THIS OFFER</string>
     <string name="validate_offer">VALIDATE OFFER</string>
     <string name="offer_starts">Valid from</string>
     <string name="redeem_before">Redeem before</string>

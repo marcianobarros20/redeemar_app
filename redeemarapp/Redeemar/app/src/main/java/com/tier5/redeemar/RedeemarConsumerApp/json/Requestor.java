@@ -1,16 +1,14 @@
 package com.tier5.redeemar.RedeemarConsumerApp.json;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.util.Log;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.RequestFuture;
+import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
-
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -22,25 +20,20 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 
 public class Requestor {
     private static final String LOGTAG = "Requestor";
 
 
-    public static JSONObject requestBrandDetailsJSON(RequestQueue requestQueue, String url, String targetId) {
 
+
+    public static JSONObject requestBrandDetailsJSON(RequestQueue requestQueue, String url, String targetId) {
 
         URL myUrl = null;
         HttpURLConnection conn = null;
         String response = "";
         JSONObject reader = null;
-
 
 
         try {
@@ -100,7 +93,7 @@ public class Requestor {
     }
 
 
-    public static JSONObject requestOffersJSON(RequestQueue requestQueue, int mType, String url, String userId, String filterId, String catLevel, String latitude, String longitude, String selfLatitude, String selfLongitude) {
+    public static JSONObject requestOffersJSON(Context ctx, RequestQueue requestQueue, int mType, String url, String userId, String filterId, String catLevel, String latitude, String longitude, String selfLatitude, String selfLongitude) {
 
 
         URL myUrl = null;
@@ -109,8 +102,20 @@ public class Requestor {
         JSONObject reader = null;
 
 
+        Resources resource = ctx.getResources();
+
+        //Resources resource = Resources.getSystem();
+
+
+
+        SharedPreferences sharedpref = ctx.getSharedPreferences(resource.getString(R.string.spf_key), 0); // 0 - for private mode
+        SharedPreferences.Editor editor = sharedpref.edit();
+
+
+
 
         try {
+
             myUrl = new URL(url);
             conn = (HttpURLConnection) myUrl.openConnection();
             conn.setReadTimeout(10000);
@@ -150,7 +155,6 @@ public class Requestor {
             OutputStream os = conn.getOutputStream();
 
             Log.d(LOGTAG, "URL : " + url);
-
             Log.d(LOGTAG, "Request: " + data.toString());
 
 
@@ -172,6 +176,11 @@ public class Requestor {
             inputStream.close();
             conn.disconnect();
             os.close();
+
+            editor.putString("spf_offers", response);
+            editor.commit();
+
+
             reader = new JSONObject(response);
 
         } catch (MalformedURLException e) {
@@ -392,6 +401,7 @@ public class Requestor {
 
             OutputStream os = conn.getOutputStream();
 
+            Log.d(LOGTAG, "URL: " + data.toString());
             Log.d(LOGTAG, "Request: " + data.toString());
 
 

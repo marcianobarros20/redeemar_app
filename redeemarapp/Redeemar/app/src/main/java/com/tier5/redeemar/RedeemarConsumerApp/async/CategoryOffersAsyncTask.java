@@ -28,8 +28,9 @@ public class CategoryOffersAsyncTask extends AsyncTask<String, Void, ArrayList<O
     private ProgressDialog mProgress;
     private Context context;
 
-    public CategoryOffersAsyncTask(OffersLoadedListener myComponent) {
+    public CategoryOffersAsyncTask(OffersLoadedListener myComponent, Context ctx) {
         this.myComponent = myComponent;
+        this.context = ctx;
         Log.d(LOGTAG, "Inside CategoryOffersAsync constructor");
     }
 

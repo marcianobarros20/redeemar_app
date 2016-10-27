@@ -7,9 +7,14 @@ import java.util.List;
 public class Brand implements ParentListItem {
 
     private String companyName, brandInfo, brandLogo, distanceVal;
-    private int countOffers, countOnDemand, countBankedOffers;
+    private int countOffers, countOnDemand, countBankedOffers, expanded;
 
     private List<Banked> mBankeds;
+
+
+    public Brand() {
+
+    }
 
 
     public String getCompanyName() {
@@ -34,6 +39,14 @@ public class Brand implements ParentListItem {
 
     public void setBrandLogo(String brandLogo) {
         this.brandLogo = brandLogo;
+    }
+
+    public int getExpanded() {
+        return expanded;
+    }
+
+    public void setExpanded(int expanded) {
+        this.expanded = expanded;
     }
 
     public String getDistanceVal() {

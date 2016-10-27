@@ -27,7 +27,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
@@ -47,8 +46,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class OfferDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -89,7 +86,6 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
         myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
 
-
         tvAddress = (TextView) findViewById(R.id.address);
         tvOfferTitle = (TextView) findViewById(R.id.offer_title);
         tvWhatYouGet = (TextView) findViewById(R.id.what_you_get);
@@ -102,7 +98,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
         btnPass = (Button) findViewById(R.id.btn_pass_offer);
         btnPass.setVisibility(View.GONE);
 
-        tvAddress.setTypeface(myFont);
+        /*tvAddress.setTypeface(myFont);
         tvOfferTitle.setTypeface(myFont);
         tvWhatYouGet.setTypeface(myFont);
         tvPriceRangeId.setTypeface(myFont);
@@ -110,7 +106,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
         tvDiscount.setTypeface(myFont);
         tvRetailValue.setTypeface(myFont);
         tvExpires.setTypeface(myFont);
-        tvPayValue.setTypeface(myFont);
+        tvPayValue.setTypeface(myFont);*/
 
 
         thumbnail = (NetworkImageView) findViewById(R.id.thumbnail);
@@ -118,7 +114,6 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
 
         perc_sym = getResources().getString(R.string.percentage_symbol);
         cur_sym = getResources().getString(R.string.currency_symbol);
-
 
         Bundle extras = getIntent().getExtras();
 
@@ -196,22 +191,15 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                 editor = sharedpref.edit();
                 Log.d(LOGTAG, "User Id: "+sharedpref.getString(res.getString(R.string.spf_user_id), null));
 
-
-
                 editor.putString(getString(R.string.spf_redir_action), "BrandOffers"); // Storing Last Activity
                 editor.putString(getString(R.string.spf_popup_action), "1"); // Storing Last Activity
                 editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
                 editor.putString(getString(R.string.spf_brand_name), brandName); // Storing Redeemar Id
-
                 editor.commit(); // commit changes
-
 
                 Intent intent = new Intent(view.getContext(), BrowseOffersActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                //intent.putExtra(res.getString(R.string.ext_redir_to), "BrandOffers");
-                //intent.putExtra(res.getString(R.string.ext_redeemar_id), redeemarId);
                 view.getContext().startActivity(intent);
 
 
@@ -415,17 +403,17 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                             if(jsonObject.getString("retails_value") != "" && jsonObject.getString("retails_value").toString() != "") {
 
                                 retailValue = jsonObject.getDouble("retails_value");
-
                                 tvRetailValue.setText(getString(R.string.currency_symbol).concat(jsonObject.getString("retails_value").toString()));
                                 Log.d(LOGTAG, "retails_value: "+jsonObject.getString("retails_value").toString());
+
+                                tvPayValue.setTextSize(14);
                             }
 
 
                             if(jsonObject.getString("pay_value") != null && jsonObject.getString("pay_value").toString() != "") {
-
                                 payValue = jsonObject.getDouble("pay_value");
-
                                 tvPayValue.setText(getString(R.string.currency_symbol).concat(jsonObject.getString("pay_value").toString()));
+                                //tvPayValue.setTextSize(14);
                                 Log.d(LOGTAG, "pay_value: "+jsonObject.getString("pay_value").toString());
                             }
 
@@ -442,13 +430,10 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                             }
 
 
-
                             if(valCalc == 2)
                                 tvDiscount.setText(discount_text.concat(perc_sym));
                             else
                                 tvDiscount.setText(cur_sym.concat(discount_text));
-
-
 
 
                             if(jsonObject.getString("expires") != null && jsonObject.getString("expires").toString() != "") {
@@ -605,11 +590,8 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                             if(!json_partner_settings.isNull("price_range_id") && json_partner_settings.getString("price_range_id").toString() != "") {
                                 tvPriceRangeId.setText(json_partner_settings.getString("price_range_id"));
                                 Log.d(LOGTAG, "price_range_id: "+json_partner_settings.getString("price_range_id").toString());
-
                             }
-
                         }
-
                     } // End of if
 
 

@@ -628,11 +628,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
             Log.e(LOGTAG, "Failed to initialize target finder.");
             return false;
         }
-        
-        // Use the following calls if you would like to customize the color of
-        // the UI
-        // targetFinder->setUIScanlineColor(1.0, 0.0, 0.0);
-        // targetFinder->setUIPointColor(0.0, 0.0, 1.0);
+
         
         return true;
     }

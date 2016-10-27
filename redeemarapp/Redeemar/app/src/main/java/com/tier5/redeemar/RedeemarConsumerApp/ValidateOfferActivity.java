@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
 import com.tier5.redeemar.RedeemarConsumerApp.async.ValidatePassCodeAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
@@ -59,14 +63,16 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
     private static final String LOGTAG = "ValidateOffer";
 
     SupportMapFragment mapFragment;
-    private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvDiscount, tvValidateAfter, tvValidateWithin;
-    private NetworkImageView thumbnail, logoThumbnail;
+    private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvDiscount, tvValidateAfter, tvValidateWithin, tvExpires;
+    private ImageView thumbnail, logoThumbnail;
     private ImageLoader mImageLoader;
     private EditText etRedeemCode;
     private Button btnRedeemScan, btnRedeemPassCode;
 
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
+
+
 
     private GoogleMap mMap;
     private Resources res;
@@ -105,17 +111,19 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
         //btnBank = (Button) findViewById(R.id.btn_bank_offer);
         btnRedeemPassCode = (Button) findViewById(R.id.btn_redeem_by_passcode);
         btnRedeemScan = (Button) findViewById(R.id.btn_redeem_by_scan);
+        tvExpires = (TextView) findViewById(R.id.expires);
 
-        tvAddress.setTypeface(myFont);
+        /*tvAddress.setTypeface(myFont);
         tvOfferTitle.setTypeface(myFont);
         tvWhatYouGet.setTypeface(myFont);
         tvPriceRangeId.setTypeface(myFont);
         tvDiscount.setTypeface(myFont);
         tvValidateWithin.setTypeface(myFont);
-        tvValidateAfter.setTypeface(myFont);
+        tvValidateAfter.setTypeface(myFont);*/
 
-        thumbnail = (NetworkImageView) findViewById(R.id.thumbnail);
-        logoThumbnail = (NetworkImageView) findViewById(R.id.logo_image);
+
+        thumbnail = (ImageView) findViewById(R.id.thumbnail);
+        logoThumbnail = (ImageView) findViewById(R.id.logo_image);
 
         perc_sym = getResources().getString(R.string.percentage_symbol);
         cur_sym = getResources().getString(R.string.currency_symbol);
@@ -129,8 +137,13 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
             getSupportActionBar().setTitle(R.string.validate);
             //getSupportActionBar().hide();
 
+
             //Your toolbar is now an action bar and you can use it like you always do, for example:
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+            TextView searchBox = (TextView) findViewById(R.id.search_text);
+            searchBox.setVisibility(View.GONE);
 
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -272,17 +285,17 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(LOGTAG, "Inside onMapReady");
+
         mMap = googleMap;
 
         if(mMap != null) {
 
-            Log.d(LOGTAG, "MAP: "+lat);
-            Log.d(LOGTAG, "MAP: "+lon);
+            Log.d(LOGTAG, "MAP:"+lat);
+            Log.d(LOGTAG, "MAP:"+lon);
 
             LatLng point = new LatLng(lat, lon);
 
-           mMap.addMarker(new MarkerOptions().position(point).title(getString(R.string.brand_location)));
-
+            mMap.addMarker(new MarkerOptions().position(point).title(getString(R.string.brand_location)));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 16));
         }
     }
@@ -293,15 +306,9 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
     }
 
 
-
-
-
     private class GetOffeDetailsAsyncTask extends AsyncTask<String, Void, String> {
 
-
         String url = "";
-        //private ArrayList<Offer> mDataSet;
-
         public GetOffeDetailsAsyncTask() {
 
             url = UrlEndpoints.validateOfferDetailsURL;
@@ -323,8 +330,6 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
-
-
 
                 JSONObject data = new JSONObject();
 
@@ -427,6 +432,13 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                         }
 
 
+                        if(jsonObject.getString("expires") != null && jsonObject.getString("expires").toString() != "") {
+                            String expiredIn = jsonObject.getString("expires").concat(" ").concat(getString(R.string.days));
+                            tvExpires.setText(expiredIn);
+                            Log.d(LOGTAG, "Expires: "+jsonObject.getString("expires").toString());
+                        }
+
+
                         if(retailValue > 0 && payValue > 0) {
                             discount_text = Utils.calculateDiscount(retailValue, payValue, valCalc);
                             Log.d(LOGTAG, "My Discount Value: "+discount_text);
@@ -456,8 +468,8 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                         else {
 
                             if(valText == 3) {
-                                //sb.append(cur_sym).append(discVal).append(" ").append(off);
-                                sDisc.append(save).append(" ").append(perc_sym).append(discount_text);
+
+                                sDisc.append(save).append(" ").append(cur_sym).append(discount_text);
 
                             }
                             else if(valText == 2) {
@@ -473,9 +485,6 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                         if(!jsonObject.isNull("myoffer_details") && jsonObject.getString("myoffer_details").trim() != "") {
 
-
-
-                            //JSONArray jsonMyOfferArray = new JSONArray(jsonObject.getString("myoffer_details"));
 
                             JSONObject jsonMyOfferObject = new JSONObject(jsonObject.getString("myoffer_details"));
 
@@ -522,11 +531,16 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                             Log.d(LOGTAG, "offer_image_path: "+imageUrl);
 
+                            //mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
+                            //mImageLoader.get(imageUrl, ImageLoader.getImageListener(thumbnail, R.drawable.ic_placeholder, R.drawable.ic_placeholder));
+                            //thumbnail.setImageUrl(imageUrl, mImageLoader);
 
-                            mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
 
-                            mImageLoader.get(imageUrl, ImageLoader.getImageListener(thumbnail, R.drawable.ic_placeholder, R.drawable.ic_placeholder));
-                            thumbnail.setImageUrl(imageUrl, mImageLoader);
+
+                            Picasso.with(getApplicationContext())
+                                    .load(imageUrl)
+                                    .into(thumbnail);
+
 
 
                         }
@@ -543,8 +557,14 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                                 String logoImageUrl = UrlEndpoints.baseLogoMediumURL+ jsonLogoSettings.getString("logo_name");
                                 mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
                                 //mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
-                                mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail, 0, 0));
-                                logoThumbnail.setImageUrl(logoImageUrl, mImageLoader);
+                                //mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail, 0, 0));
+                                //logoThumbnail.setImageUrl(logoImageUrl, mImageLoader);
+
+
+                                Picasso.with(getApplicationContext())
+                                        .load(logoImageUrl)
+                                        .placeholder(R.drawable.icon_watermark)
+                                        .into(logoThumbnail);
                             }
 
 
@@ -638,12 +658,10 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                         }
 
+                        Log.d(LOGTAG, "MAP: "+lat);
+                        Log.d(LOGTAG, "MAP: "+lon);
 
-
-                        /*if(mMap != null) {
-
-                            Log.d(LOGTAG, "MAP: "+lat);
-                            Log.d(LOGTAG, "MAP: "+lon);
+                        if(mMap != null) {
 
                             LatLng point = new LatLng(lat, lon);
 
@@ -653,7 +671,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                                 mMap.addMarker(new MarkerOptions().position(point).title(getString(R.string.brand_location)));
 
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 16));
-                        }*/
+                        }
 
 
                         JSONObject json_partner_settings = new JSONObject(jsonObject.getString("partner_settings"));

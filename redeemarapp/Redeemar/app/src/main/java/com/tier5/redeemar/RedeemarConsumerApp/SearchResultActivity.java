@@ -111,7 +111,7 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
 
         if(!catId.equals("")) {
 
-            new CategoryOffersAsyncTask(this).execute(catId, userId, String.valueOf(latitude), String.valueOf(longitude));
+            new CategoryOffersAsyncTask(this, getApplicationContext()).execute(catId, userId, String.valueOf(latitude), String.valueOf(longitude));
         }
 
         Log.d(LOGTAG, "Cat Id: " + catId);
@@ -126,6 +126,7 @@ public class SearchResultActivity extends AppCompatActivity implements OffersLoa
                 getSupportActionBar().setTitle(R.string.category);
 
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
             //Your toolbar is now an action bar and you can use it like you always do, for example:
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

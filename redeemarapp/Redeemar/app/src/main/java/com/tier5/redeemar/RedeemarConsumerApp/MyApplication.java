@@ -8,27 +8,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
-import com.estimote.sdk.Utils;
-import com.estimote.sdk.repackaged.gson_v2_3_1.com.google.gson.JsonObject;
+import com.estimote.sdk.repackaged.okhttp_v2_2_0.com.squareup.okhttp.Cache;
+import com.estimote.sdk.repackaged.okhttp_v2_2_0.com.squareup.okhttp.OkHttpClient;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils2.*;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
-public class MyApplication extends Application implements AsyncResponse.Response{
+public class MyApplication extends MultiDexApplication implements AsyncResponse.Response{
 
     private static final String LOGTAG = "MyApplication";
 
@@ -65,6 +63,14 @@ public class MyApplication extends Application implements AsyncResponse.Response
 
         registerUser.delegate = this;
 
+        Picasso.Builder builder = new Picasso.Builder(getApplicationContext());
+        LruCache picassoCache = new LruCache(getApplicationContext());
+        builder.memoryCache(picassoCache);
+        Picasso.setSingletonInstance(builder.build());
+
+        picassoCache.clear();
+
+
 
         res = getResources();
         sharedpref = getApplicationContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
@@ -73,48 +79,13 @@ public class MyApplication extends Application implements AsyncResponse.Response
         beaconManager = new BeaconManager(getApplicationContext());
         region = new Region("ranged region",
                 UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);
-        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+        /*beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
                 beaconManager.startRanging(region);
             }
         });
-        /*beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
-            @Override
-            public void onEnteredRegion(Region region, List<Beacon> list) {
-                Log.d("Dibs", "Your gate closes in 47 minutes");
-                //Toast.makeText(getApplicationContext(), "You entered the monitoring region.", Toast.LENGTH_LONG);
-                showNotification("Welcome to Redeemar.", "Explore our store");
 
-                Beacon nearestBeacon = list.get(0);
-                //List<String> places = placesNearBeacon(nearestBeacon);
-                // TODO: update the UI here
-                Log.d(LOGTAG, "Nearest beacon: " + nearestBeacon);
-
-
-
-//                String target_id = "dfadf13e7c8d431f8cdb52d9e78afa6d";
-//                Intent i = new Intent(MyApplication.this, BrandMainActivity.class);
-//                i.putExtra("unique_target_id", target_id);
-//                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                startActivity(i);
-            }
-            @Override
-            public void onExitedRegion(Region region) {
-                // could add an "exit" notification too if you want (-:
-                Toast.makeText(getApplicationContext(), "Your exited the monitoring region", Toast.LENGTH_LONG);
-
-                showNotification("Goodbye from Redeemar.",  "Visit us again soon!");
-
-            }
-        });*/
-        /*beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
-            @Override
-            public void onServiceReady() {
-                Log.d("Dibs", "Inside Monitor");
-                beaconManager.startMonitoring(new Region("monitored region", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), 51845, 29961));
-            }
-        });*/
 
 
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
@@ -141,10 +112,7 @@ public class MyApplication extends Application implements AsyncResponse.Response
                                 jsonObject.put("minor",nearestBeacon.getMinor());
 
                                 //demo beacon
-                            /*jsonObject.put("webservice_name","findbeacon");
-                            jsonObject.put("uuid","B9407F30-F5F8-466E-AFF9-25556B57FE6D");
-                            jsonObject.put("major","51845");
-                            jsonObject.put("minor","29961");*/
+
 
                                 data.put("data",jsonObject.toString());
 
@@ -170,7 +138,7 @@ public class MyApplication extends Application implements AsyncResponse.Response
                     }
                 }
             }
-        });
+        });*/
 
     }
 
@@ -404,4 +372,5 @@ startActivity(intent);*/
         }
 
     }
+
 }

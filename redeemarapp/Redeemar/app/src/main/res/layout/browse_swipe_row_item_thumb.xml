@@ -107,7 +107,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:padding="4dp"
-            android:scaleType="fitCenter"
+            android:scaleType="fitStart"
             android:adjustViewBounds="true"
             android:src="@drawable/icon_watermark" />
 
@@ -181,7 +181,7 @@
                         android:layout_height="wrap_content"
                         android:text="Discount"
                         android:layout_gravity="center"
-                        android:textSize="19sp"
+                        android:textSize="17sp"
                         android:textColor="@color/green_text" />
 
 

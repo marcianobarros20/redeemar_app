@@ -1,33 +1,46 @@
 package com.tier5.redeemar.RedeemarConsumerApp.ViewHolder;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
 import com.squareup.picasso.Picasso;
+import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
+import com.tier5.redeemar.RedeemarConsumerApp.Model.ParentListItem;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
+import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadImageTask;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Brand;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 
 public class BrandViewHolder extends ParentViewHolder {
 
     private static final String LOGTAG = "BrandViewHolder";
+    private static final float INITIAL_POSITION = 0.0f;
+    private static final float ROTATED_POSITION = 180f;
 
+    private TextView name;
     private ImageView thumbnailBrand;
     private TextView tvActive, tvNumOffers, tvNumOnDemand, tvDistance, tvBrandInfo;
 
 
-    //private Typeface myFont;
+    private Typeface myFont;
 
 
     public BrandViewHolder(View view) {
         super(view);
 
-        //myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
+        myFont = Typeface.createFromAsset(view.getResources().getAssets(),  view.getResources().getString(R.string.default_font));
 
         thumbnailBrand = (ImageView) itemView.findViewById(R.id.thumbnailBrand);
         tvNumOffers = (TextView) itemView.findViewById(R.id.numOffers);
@@ -41,10 +54,10 @@ public class BrandViewHolder extends ParentViewHolder {
 
         if(brand.getBrandLogo() != null && !brand.getBrandLogo().equalsIgnoreCase("")) {
 
-            String brandUrl = UrlEndpoints.baseLogoMediumURL + brand.getBrandLogo();
+            String brandUrl = UrlEndpoints.basePathURL + brand.getBrandLogo();
             Log.d(LOGTAG, "Brand Logo: "+brandUrl);
 
-            int width = 120;
+            /*int width = 120;
             int height = 75;
             int maxWidth = 153;
 
@@ -54,11 +67,8 @@ public class BrandViewHolder extends ParentViewHolder {
             int nw = 110;
             int nh = 110;
 
-            Log.d(LOGTAG, "Modified Image dimension: "+newWidth+" x "+newHeight);
 
-
-
-            /*try {
+            try {
 
                 final Bitmap image = Picasso.with(context).load(brandUrl).get();
                 width = image.getWidth();
@@ -92,11 +102,12 @@ public class BrandViewHolder extends ParentViewHolder {
                 Log.d(LOGTAG, "Exception occured "+ex.toString());
             }*/
 
+
+
             Picasso.with(context)
                     .load(brandUrl)
-                    .fit() // resizes the image to these dimensions (in pixel)
+                    .placeholder(R.drawable.icon_watermark)
                     .into(thumbnailBrand);
-
 
         }
 
@@ -106,5 +117,46 @@ public class BrandViewHolder extends ParentViewHolder {
         tvActive.setText(String.valueOf(brand.getCountBankedOffers()));
         tvDistance.setText(brand.getDistanceVal());
 
+
     }
+
+
+    /*
+    @SuppressLint("NewApi")
+    @Override
+    public void setExpanded(boolean expanded) {
+        super.setExpanded(expanded);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            if (expanded) {
+                thumbnailBrand.setRotation(ROTATED_POSITION);
+            } else {
+                thumbnailBrand.setRotation(INITIAL_POSITION);
+            }
+        }
+    }
+
+    @Override
+    public void onExpansionToggled(boolean expanded) {
+        super.onExpansionToggled(expanded);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            RotateAnimation rotateAnimation;
+            if (expanded) { // rotate clockwise
+                rotateAnimation = new RotateAnimation(ROTATED_POSITION,
+                        INITIAL_POSITION,
+                        RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+                        RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+            } else { // rotate counterclockwise
+                rotateAnimation = new RotateAnimation(-1 * ROTATED_POSITION,
+                        INITIAL_POSITION,
+                        RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+                        RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+            }
+
+            rotateAnimation.setDuration(200);
+            rotateAnimation.setFillAfter(true);
+            thumbnailBrand.startAnimation(rotateAnimation);
+        }
+    }*/
+
+
 }

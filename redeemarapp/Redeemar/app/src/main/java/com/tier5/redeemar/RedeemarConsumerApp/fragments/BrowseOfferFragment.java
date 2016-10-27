@@ -227,10 +227,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
-
-        Log.d(LOGTAG, "More Offers: "+more_offers);
-
-
         // Inflate the layout for this fragment
         layout = inflater.inflate(R.layout.fragment_offers, container, false);
 
@@ -336,8 +332,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
 
 
-    // When any location is selected from the drop-down
-    autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // When any location is selected from the drop-down
+        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -362,10 +358,17 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
                 layout.findViewById(R.id.mainOfferListLayout).requestFocus();
 
+
+
+
                 final InputMethodManager inputMethodManager =
                         (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
                 inputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
+
+                Log.d(LOGTAG, "Inside click location "+redirectTo+" "+redeemarId);
+
 
                 // Pass the latitude and longitude to fetch the location information
                 loadOffersForCategoryLocations(String.valueOf(geo.latitude),  String.valueOf(geo.longitude), categoryId, redirectTo);
@@ -578,22 +581,22 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     else
                         tvCategory.setVisibility(View.GONE);
 
-                    new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude));
+                    new BrandOffersAsyncTask(this, getActivity().getApplicationContext()).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude));
                 }
                 else if (redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
-                    new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+                    new CampaignOffersAsyncTask(this,  getActivity().getApplicationContext()).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else if (redirectTo.equals("CategoryOffers") && !categoryId.equals("")) {
                     Log.d(LOGTAG, "My Keywords: "+keyword);
                     if(!keyword.equals(""))
-                        new CategoryOffersAsyncTask(this).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, keyword);
+                        new CategoryOffersAsyncTask(this,  getActivity().getApplicationContext()).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, keyword);
                     else
-                        new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId);
+                        new BrowseOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId);
 
                 }
                 else if (redirectTo.equals("OnDemand"))
-                    new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+                    new OnDemandOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else {
-                    new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
+                    new BrowseOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
                 }
 
             }
@@ -602,9 +605,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         activityCommunicator.passDataToActivity(redirectTo);
 
     }
-
-
-
 
 
     @Override
@@ -659,7 +659,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        inflater.inflate(R.menu.menu_main, menu);
+        /*inflater.inflate(R.menu.menu_main, menu);
         actionView = menu.findItem(R.id.action_view_type);
 
         if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
@@ -676,7 +676,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 actionView.setIcon(R.drawable.ic_list_white);
             }
 
-        }
+        }*/
 
     }
 
@@ -1032,13 +1032,16 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
         // Here latitude and longitude are the present location f the user (Self Location)
         Log.d(LOGTAG, "My Redirection: "+redirectTo);
         Log.d(LOGTAG, "My Category Id: "+categoryId);
+        Log.d(LOGTAG, "Inside loadOffersForCategoryLocations");
 
         if(redirectTo.equals("OnDemand"))
-            new OnDemandOffersAsyncTask(this).execute(user_id, tLat, tLng, selfLat,  selfLon);
+            new OnDemandOffersAsyncTask(this,  getActivity().getApplicationContext()).execute(user_id, tLat, tLng, selfLat,  selfLon);
+        else if (redirectTo.equals("BrandOffers") && !redeemarId.equals(""))
+            new BrandOffersAsyncTask(this, getActivity().getApplicationContext()).execute(redeemarId, user_id, tLat, tLng);
         else if(!categoryId.equals(""))
-            new CategoryOffersAsyncTask(this).execute(categoryId, user_id, tLat, tLng, selfLat,  selfLon, "");
+            new CategoryOffersAsyncTask(this,  getActivity().getApplicationContext()).execute(categoryId, user_id, tLat, tLng, selfLat,  selfLon, "");
         else
-            new BrowseOffersAsyncTask(this).execute(user_id, tLat, tLng, selfLat, selfLon, "");
+            new BrowseOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, tLat, tLng, selfLat, selfLon, "");
 
     }
 }

@@ -29,8 +29,9 @@ public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Off
     private ProgressDialog mProgress;
     private Context context;
 
-    public BrowseOffersAsyncTask(OffersLoadedListener myComponent) {
+    public BrowseOffersAsyncTask(OffersLoadedListener myComponent, Context ctx) {
         this.myComponent = myComponent;
+        this.context = ctx;
         Log.d(LOGTAG, "Inside BrowseOffersAsyncTask constructor");
     }
 
@@ -52,7 +53,7 @@ public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Off
         String sLng = params[4];
         String catId = params[5];
 
-        ArrayList<Offer> listOffers = OfferUtils.loadBrowseOffers(requestQueue, user_id, lat, lng, sLat, sLng, catId);
+        ArrayList<Offer> listOffers = OfferUtils.loadBrowseOffers(context, requestQueue, user_id, lat, lng, sLat, sLng, catId);
         return listOffers;
     }
 

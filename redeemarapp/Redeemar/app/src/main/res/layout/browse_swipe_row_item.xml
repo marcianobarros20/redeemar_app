@@ -129,7 +129,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
                     android:padding="4dp"
-                    android:scaleType="fitCenter"
+                    android:scaleType="fitStart"
                     android:adjustViewBounds="true" />
 
                 <TextView
@@ -216,8 +216,9 @@
                                 android:layout_height="wrap_content"
                                 android:text="Retail value"
                                 android:gravity="center_horizontal"
-                                android:textSize="16sp"
                                 android:textStyle="bold"
+                                android:paddingRight="4dp"
+                                android:textSize="@dimen/text_title_med"
                                 android:textColor="@color/gray" />
 
                             <TextView
@@ -227,9 +228,10 @@
                                 android:layout_height="wrap_content"
                                 android:text="Pay Value"
                                 android:gravity="center_horizontal"
-                                android:paddingBottom="4dp"
+                                android:paddingBottom="2dp"
+                                android:paddingRight="4dp"
                                 android:textStyle="bold"
-                                android:textSize="18sp"
+                                android:textSize="@dimen/button_title_larger"
                                 android:textColor="@color/green_text" />
 
                         </LinearLayout>

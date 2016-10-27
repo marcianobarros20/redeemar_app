@@ -60,12 +60,14 @@ import com.tier5.redeemar.RedeemarConsumerApp.async.GetNearByOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.async.OnDemandOffersAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.OffersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
+import com.tier5.redeemar.RedeemarConsumerApp.json.Parser;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.MarkerItem;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.ObjectSerializer;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.OfferUtils;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 
 import org.json.JSONObject;
@@ -110,7 +112,7 @@ public class MapViewFragment extends Fragment implements OffersLoadedListener, O
     private static final String STATE_OFFERS = "state_offers";
 
     String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", keyword = "", clickIndex = "", companyName="", companyLocation="" , user_id = "",
-            selfLat = "", selfLon = "";
+            selfLat = "", selfLon = "", offerJson = "";
 
 
     public MapViewFragment() {
@@ -192,9 +194,24 @@ public class MapViewFragment extends Fragment implements OffersLoadedListener, O
         }
 
 
+
+        if(sharedpref.getString(res.getString(R.string.spf_offers), null) != null) {
+            offerJson = sharedpref.getString(res.getString(R.string.spf_offers), "");
+            Log.d(LOGTAG, "Offers JSON: "+offerJson);
+        }
+
+        try {
+
+            JSONObject response = new JSONObject(offerJson);
+            offerList = Parser.parseOffersJSON(response);
+            Log.d(LOGTAG, "Parsed Offer List: "+offerList);
+
+
+        } catch (Exception ex) {
+            Log.d(LOGTAG, "Exception occured in JSON Parsing: "+ex.toString());
+        }
+
         editor.putString(res.getString(R.string.spf_view_type), "list"); // Storing View Type to List
-
-
 
     }
 
@@ -566,34 +583,35 @@ public class MapViewFragment extends Fragment implements OffersLoadedListener, O
        Bundle b = this.getArguments();
        //ArrayList<Offer> offerList = b.getParcelableArrayList("KEY_PARCEL_OFFERS");
 
-       /*Gson gson = new Gson();
+       //Gson gson = new Gson();
 
-       ArrayList<Offer> offerObj = new ArrayList<Offer>();
-       offerList = gson.fromJson(json, offerObj.getClass());*/
+       //ArrayList<Offer> offerObj = new ArrayList<Offer>();
+       //offerList = gson.fromJson(offerJson, offerObj.getClass());
+
 
 
        Log.d(LOGTAG, "My Redirect to: "+redirectTo);
 
        if (redirectTo.equals("BrandOffers") && !redeemarId.equals("")) {
            //Log.d(LOGTAG, "Inside Brand Offers");
-           new BrandOffersAsyncTask(this).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude));
+           new BrandOffersAsyncTask(this, getActivity().getApplicationContext()).execute(redeemarId, user_id, String.valueOf(latitude), String.valueOf(longitude));
 
 
        }
        else if (redirectTo.equals("CampaignOffers") && !campaignId.equals(""))
-           new CampaignOffersAsyncTask(this).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+           new CampaignOffersAsyncTask(this, getActivity().getApplicationContext()).execute(campaignId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
        else if (redirectTo.equals("CategoryOffers") && !categoryId.equals("")) {
            Log.d(LOGTAG, "My Keywords: "+keyword);
            if(!keyword.equals(""))
-               new CategoryOffersAsyncTask(this).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, keyword);
+               new CategoryOffersAsyncTask(this, getActivity().getApplicationContext()).execute(categoryId, user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, keyword);
            else
-               new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId);
+               new BrowseOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, categoryId);
 
        }
        else if (redirectTo.equals("OnDemand"))
-           new OnDemandOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
+           new OnDemandOffersAsyncTask(this,  getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
        else {
-           new BrowseOffersAsyncTask(this).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
+           new BrowseOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
        }
 
 

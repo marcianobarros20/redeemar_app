@@ -1,5 +1,6 @@
 package com.tier5.redeemar.RedeemarConsumerApp.utils;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
@@ -34,7 +35,7 @@ public class OfferUtils {
         return brandInfo;
     }
 
-    public static ArrayList<Offer> loadBrowseOffers(RequestQueue requestQueue, String userId, String lat, String lng, String sLat, String sLng, String catId) {
+    public static ArrayList<Offer> loadBrowseOffers(Context ctx, RequestQueue requestQueue, String userId, String lat, String lng, String sLat, String sLng, String catId) {
 
         Log.d(LOGTAG, "Self Cat: "+catId);
 
@@ -43,9 +44,9 @@ public class OfferUtils {
 
         // Currently catLevel value is not used in web service
         if(!catId.equals(""))
-            response = Requestor.requestOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrowseOffers(30), userId, catId, "0", lat, lng, sLat, sLng);
+            response = Requestor.requestOffersJSON(ctx, requestQueue, 3, Endpoints.getRequestUrlBrowseOffers(30), userId, catId, "0", lat, lng, sLat, sLng);
         else
-            response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "", "0", lat, lng, sLat, sLng);
+            response = Requestor.requestOffersJSON(ctx, requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "", "0", lat, lng, sLat, sLng);
 
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
 
@@ -53,7 +54,7 @@ public class OfferUtils {
         return listOffers;
     }
 
-    public static ArrayList<Offer> loadBrowseOffers(RequestQueue requestQueue, String userId, String lat, String lng, String sLat, String sLng, String catId, String keyword) {
+    public static ArrayList<Offer> loadBrowseOffers(Context ctx, RequestQueue requestQueue, String userId, String lat, String lng, String sLat, String sLng, String catId, String keyword) {
 
         Log.d(LOGTAG, "Self Cat: "+catId);
 
@@ -65,13 +66,13 @@ public class OfferUtils {
             if(!keyword.equals(""))
                 response = Requestor.requestSearchOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrowseOffers(30), userId, catId, "0", lat, lng, sLat, sLng, keyword);
             else
-                response = Requestor.requestOffersJSON(requestQueue, 3, Endpoints.getRequestUrlBrowseOffers(30), userId, catId, "0", lat, lng, sLat, sLng);
+                response = Requestor.requestOffersJSON(ctx, requestQueue, 3, Endpoints.getRequestUrlBrowseOffers(30), userId, catId, "0", lat, lng, sLat, sLng);
         }
         else {
             if(!keyword.equals(""))
                 response = Requestor.requestSearchOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "", "0", lat, lng, sLat, sLng, keyword);
             else
-                response = Requestor.requestOffersJSON(requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "", "0", lat, lng, sLat, sLng);
+                response = Requestor.requestOffersJSON(ctx, requestQueue, 0, Endpoints.getRequestUrlBrowseOffers(30), userId, "", "0", lat, lng, sLat, sLng);
         }
 
 
@@ -82,18 +83,18 @@ public class OfferUtils {
     }
 
 
-    public static ArrayList<Offer> loadBrandOffers(RequestQueue requestQueue, String redeemarId, String userId, String lat, String lng) {
+    public static ArrayList<Offer> loadBrandOffers(Context ctx, RequestQueue requestQueue, String redeemarId, String userId, String lat, String lng) {
 
-        JSONObject response = Requestor.requestOffersJSON(requestQueue, 1, Endpoints.getRequestUrlBrandOffers(30), userId, redeemarId, "0", lat, lng, lat, lng);
+        JSONObject response = Requestor.requestOffersJSON(ctx, requestQueue, 1, Endpoints.getRequestUrlBrandOffers(30), userId, redeemarId, "0", lat, lng, lat, lng);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadBrandOffers :"+listOffers.size());
         return listOffers;
     }
 
 
-    public static ArrayList<Offer> loadCampaignOffers(RequestQueue requestQueue, String campaignId, String userId, String lat, String lng) {
+    public static ArrayList<Offer> loadCampaignOffers(Context ctx, RequestQueue requestQueue, String campaignId, String userId, String lat, String lng) {
 
-        JSONObject response = Requestor.requestOffersJSON(requestQueue, 2, Endpoints.getRequestUrlCamapignOffers(30), userId, campaignId, "0", lat, lng, lat, lng);
+        JSONObject response = Requestor.requestOffersJSON(ctx, requestQueue, 2, Endpoints.getRequestUrlCamapignOffers(30), userId, campaignId, "0", lat, lng, lat, lng);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadCampaignOffers :"+listOffers.size());
         return listOffers;
@@ -109,9 +110,9 @@ public class OfferUtils {
     }
 
 
-    public static ArrayList<Offer> loadOnDemandOffers(RequestQueue requestQueue, String userId, String lat, String lng, String selfLat, String selfLon) {
+    public static ArrayList<Offer> loadOnDemandOffers(Context ctx,RequestQueue requestQueue, String userId, String lat, String lng, String selfLat, String selfLon) {
 
-        JSONObject response = Requestor.requestOffersJSON(requestQueue, 4, Endpoints.getRequestUrlBrandOffers(30), userId, "0", "0", lat, lng, selfLat, selfLon);
+        JSONObject response = Requestor.requestOffersJSON(ctx, requestQueue, 4, Endpoints.getRequestUrlBrandOffers(30), userId, "0", "0", lat, lng, selfLat, selfLon);
         ArrayList<Offer> listOffers = Parser.parseOffersJSON(response);
         Log.d(LOGTAG, "Inside loadOnDemandOffers :"+listOffers.size());
         return listOffers;

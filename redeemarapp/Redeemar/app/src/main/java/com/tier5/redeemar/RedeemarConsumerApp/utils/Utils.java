@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.DisplayFailureActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.async.DownloadBitmapTask;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ImageDownloadedListener;
@@ -26,6 +28,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +50,7 @@ public class Utils {
     private static final String LOGTAG = "Utils";
     private final int TYPE_LOGO = 1;
     private final int TYPE_OFFER = 2;
-
+    private static final String text10="OOOOOOOOOO";
 
     public static void CopyStream(InputStream is, OutputStream os)
     {
@@ -400,6 +403,76 @@ public class Utils {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static Paint adjustTextSize(Paint paint, int numCharacters, int widthPixels, int heightPixels) {
+        float width = paint.measureText(text10)*numCharacters/text10.length();
+        float newSize = (int)((widthPixels/width)*paint.getTextSize());
+        paint.setTextSize(newSize);
+
+        // remeasure with font size near our desired result
+        width = paint.measureText(text10)*numCharacters/text10.length();
+        newSize = (int)((widthPixels/width)*paint.getTextSize());
+        paint.setTextSize(newSize);
+
+        // Check height constraints
+        Paint.FontMetricsInt metrics = paint.getFontMetricsInt();
+        float textHeight = metrics.descent-metrics.ascent;
+        if (textHeight > heightPixels) {
+            newSize = (int)(newSize * (heightPixels/textHeight));
+            paint.setTextSize(newSize);
+        }
+
+        return paint;
+    }
+
+    public static boolean urlExists(String url){
+
+        try {
+            HttpURLConnection.setFollowRedirects(false);
+            HttpURLConnection con =  (HttpURLConnection) new URL(url).openConnection();
+            con.setRequestMethod("HEAD");
+            System.out.println(con.getResponseCode());
+            return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    private Bitmap decodeFile(File f){
+        Bitmap b = null;
+
+        //Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+
+        try {
+
+            FileInputStream fis = new FileInputStream(f);
+            BitmapFactory.decodeStream(fis, null, o);
+            fis.close();
+
+            int scale = 1;
+            if (o.outHeight > 250 || o.outWidth > 500) {
+                scale = (int)Math.pow(2, (int) Math.ceil(Math.log(500 /
+                        (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+            }
+
+            //Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            fis = new FileInputStream(f);
+            b = BitmapFactory.decodeStream(fis, null, o2);
+            fis.close();
+
+        } catch(Exception ex) {
+            Log.d(LOGTAG, "");
+        }
+
+        return b;
     }
 
 }

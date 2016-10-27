@@ -28,11 +28,11 @@ public class OnDemandOffersAsyncTask extends AsyncTask<String, Void, ArrayList<O
     private ProgressDialog mProgress;
     private Context context;
 
-    public OnDemandOffersAsyncTask(OffersLoadedListener myComponent) {
+    public OnDemandOffersAsyncTask(OffersLoadedListener myComponent,  Context ctx) {
         this.myComponent = myComponent;
         Log.d(LOGTAG, "Inside OnDemandOffersAsyncTask constructor");
 
-        //this.context = ctx;
+        this.context = ctx;
 
     }
 
@@ -57,7 +57,7 @@ public class OnDemandOffersAsyncTask extends AsyncTask<String, Void, ArrayList<O
         String sLng = params[4];
 
 
-        ArrayList<Offer> listOffers = OfferUtils.loadOnDemandOffers(requestQueue, user_id, lat, lng, sLat, sLng);
+        ArrayList<Offer> listOffers = OfferUtils.loadOnDemandOffers(context, requestQueue, user_id, lat, lng, sLat, sLng);
         return listOffers;
     }
 

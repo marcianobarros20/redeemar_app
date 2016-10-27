@@ -66,6 +66,11 @@
     <dimen name="element_height_4x">40dp</dimen>
     <dimen name="toolbar_height">40dp</dimen>
     <dimen name="nav_drawer_width">260dp</dimen>
+    <dimen name="retail_value_list">16sp</dimen>
+    <dimen name="pay_value_list">18sp</dimen>
+    <dimen name="retail_value_thumb">19sp</dimen>
+    <dimen name="pay_value_thumb">26sp</dimen>
+
 
 
     <dimen name="item_padding">4dp</dimen>

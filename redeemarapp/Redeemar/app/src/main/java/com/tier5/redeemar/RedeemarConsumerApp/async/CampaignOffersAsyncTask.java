@@ -28,8 +28,9 @@ public class CampaignOffersAsyncTask extends AsyncTask<String, Void, ArrayList<O
     private ProgressDialog mProgress;
     private Context context;
 
-    public CampaignOffersAsyncTask(OffersLoadedListener myComponent) {
+    public CampaignOffersAsyncTask(OffersLoadedListener myComponent, Context ctx) {
         this.myComponent = myComponent;
+        this.context = ctx;
         Log.d(LOGTAG, "Inside CampaignOffersAsync constructor: "+myComponent);
 
         //this.context = ctx;
@@ -56,7 +57,7 @@ public class CampaignOffersAsyncTask extends AsyncTask<String, Void, ArrayList<O
         String lat = params[2];
         String lng = params[3];
 
-        ArrayList<Offer> listOffers = OfferUtils.loadCampaignOffers(requestQueue, campaign_id, user_id, lat, lng);
+        ArrayList<Offer> listOffers = OfferUtils.loadCampaignOffers(context, requestQueue, campaign_id, user_id, lat, lng);
         return listOffers;
     }
 

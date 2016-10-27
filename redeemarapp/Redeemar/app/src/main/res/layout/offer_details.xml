@@ -51,319 +51,327 @@
                 android:orientation="vertical" >
 
 
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_row_selector"
-                android:padding="0dp">
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/list_row_selector"
+                    android:padding="0dp">
 
-                <com.android.volley.toolbox.NetworkImageView
-                    android:id="@+id/thumbnail"
+                    <com.android.volley.toolbox.NetworkImageView
+                        android:id="@+id/thumbnail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
+                        android:padding="0dp"
+                        android:layout_alignParentTop="true" />
+
+                    <com.android.volley.toolbox.NetworkImageView
+                        android:id="@+id/logo_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:padding="4dp"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true"
+                        android:maxWidth="100dp"
+                        android:maxHeight="80dp"/>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerCrop"
-                    android:padding="0dp"
-                    android:layout_alignParentTop="true" />
-
-                <com.android.volley.toolbox.NetworkImageView
-                    android:id="@+id/logo_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:padding="4dp"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    android:maxWidth="100dp"
-                    android:maxHeight="80dp"/>
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/offer_image"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="@string/address"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:gravity="center"
-                android:textSize="20sp"
-                style="@style/DarkBgTitle" />
+                    android:layout_below="@+id/offer_image"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/address"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    style="@style/DarkBgTitle" />
 
 
-            <TextView
-                android:id="@+id/offer_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/address"
-                android:text="@string/offer_title"
-                android:layout_marginLeft="@dimen/content_padding_small"
-                android:layout_marginRight="@dimen/content_padding_small"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:textSize="26sp"
-                android:gravity="center"
-                style="@style/GreenLargerText" />
-
-            <LinearLayout
-                android:id="@+id/offer_ratings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/offer_title"
-                android:gravity="center|center_vertical"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:orientation="horizontal"
-                android:visibility="gone" >
-
-                <!-- Price Range -->
                 <TextView
-                    android:id="@+id/price_range_id"
+                    android:id="@+id/offer_title"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="@string/price_range_id"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:layout_marginRight="@dimen/button_padding"
-                    android:textStyle="bold"
-                    android:textColor="@color/midmgray1"
-                    android:textSize="@dimen/text28" />
-                <!-- Star rating -->
+                    android:layout_below="@+id/address"
+                    android:text="@string/offer_title"
+                    android:layout_marginLeft="@dimen/content_padding_small"
+                    android:layout_marginRight="@dimen/content_padding_small"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:textSize="26sp"
+                    android:gravity="center"
+                    style="@style/GreenLargerText" />
 
                 <LinearLayout
-
-                    android:id="@+id/rating"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/offer_ratings"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:orientation="horizontal" >
+                    android:layout_below="@id/offer_title"
+                    android:gravity="center|center_vertical"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:orientation="horizontal"
+                    android:visibility="gone" >
 
-                    <ImageView
-                        android:layout_height="40dp"
-                        android:layout_width="40dp"
-                        android:layout_gravity="left"
-                        android:src="@drawable/star_1"/>
+                    <!-- Price Range -->
+                    <TextView
+                        android:id="@+id/price_range_id"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="@string/price_range_id"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:layout_marginRight="@dimen/button_padding"
+                        android:textStyle="bold"
+                        android:textColor="@color/midmgray1"
+                        android:textSize="@dimen/text28" />
+                    <!-- Star rating -->
 
-                    <ImageView
-                        android:layout_height="40dp"
-                        android:layout_width="40dp"
-                        android:layout_gravity="left"
-                        android:src="@drawable/star_1"/>
+                    <LinearLayout
 
-                    <ImageView
-                        android:layout_height="40dp"
-                        android:layout_width="40dp"
-                        android:layout_gravity="left"
-                        android:src="@drawable/star_1"/>
+                        android:id="@+id/rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:orientation="horizontal" >
+
+                        <ImageView
+                            android:layout_height="40dp"
+                            android:layout_width="40dp"
+                            android:layout_gravity="left"
+                            android:src="@drawable/star_1"/>
+
+                        <ImageView
+                            android:layout_height="40dp"
+                            android:layout_width="40dp"
+                            android:layout_gravity="left"
+                            android:src="@drawable/star_1"/>
+
+                        <ImageView
+                            android:layout_height="40dp"
+                            android:layout_width="40dp"
+                            android:layout_gravity="left"
+                            android:src="@drawable/star_1"/>
 
 
-                    <ImageView
-                        android:layout_height="40dp"
-                        android:layout_width="40dp"
-                        android:layout_gravity="left"
-                        android:src="@drawable/star_2" />
+                        <ImageView
+                            android:layout_height="40dp"
+                            android:layout_width="40dp"
+                            android:layout_gravity="left"
+                            android:src="@drawable/star_2" />
+
+                    </LinearLayout>
+
+
 
                 </LinearLayout>
 
 
 
-            </LinearLayout>
-
-
-
-            <TextView
-                android:id="@+id/what_you_get"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/offer_ratings"
-                android:text="@string/what_you_get"
-                android:layout_marginLeft="@dimen/content_padding"
-                android:layout_marginRight="@dimen/content_padding"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:textSize="17sp"
-                android:gravity="center"
-                style="@style/MedText" />
-
-
-            <LinearLayout
-
-                android:id="@+id/pay_content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal" >
-
-                <TableLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="center|center_horizontal"
-                    android:gravity="center">
-
-                    <TableRow
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/value"
-                            android:gravity="center"
-                            android:layout_marginLeft="@dimen/button_padding"
-                            android:layout_marginRight="@dimen/button_padding"
-                            style="@style/GreenXLargeText" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/pay"
-                            android:gravity="center"
-                            android:layout_marginLeft="@dimen/button_padding"
-                            android:layout_marginRight="@dimen/button_padding"
-                            style="@style/GreenXLargeText" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/save"
-                            android:gravity="center"
-                            android:layout_marginLeft="@dimen/button_padding"
-                            android:layout_marginRight="@dimen/button_padding"
-                            style="@style/GreenXLargeText" />
-
-                    </TableRow>
-
-
-                    <TableRow
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent">
-
-                        <TextView
-                            android:id="@+id/retail_value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/activity_vertical_margin_small"
-                            android:layout_marginBottom="@dimen/activity_vertical_margin"
-                            android:text=""
-                            android:textSize="26sp"
-                            android:gravity="center"
-                            style="@style/GreenXLargeText" />
-
-                        <TextView
-                            android:id="@+id/pay_value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/activity_vertical_margin_small"
-                            android:layout_marginBottom="@dimen/activity_vertical_margin"
-                            android:text=""
-                            android:textSize="26sp"
-                            android:gravity="center"
-                            style="@style/GreenXLargeText" />
-
-                        <TextView
-                            android:id="@+id/discount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/activity_vertical_margin_small"
-                            android:layout_marginBottom="@dimen/activity_vertical_margin"
-                            android:text=""
-                            android:textSize="26sp"
-                            android:gravity="center"
-                            style="@style/GreenXLargeText" />
-
-                    </TableRow>
-
-                </TableLayout>
-
-            </LinearLayout>
-
-
-            <LinearLayout
-
-                android:id="@+id/buttons"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_margin="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="6dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn_pass_offer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_centerHorizontal="true"
+                <TextView
+                    android:id="@+id/what_you_get"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/offer_ratings"
+                    android:text="@string/what_you_get"
+                    android:layout_marginLeft="@dimen/content_padding"
+                    android:layout_marginRight="@dimen/content_padding"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:textSize="17sp"
                     android:gravity="center"
-                    android:textSize="@dimen/button_title_large"
-                    android:background="@color/md_blue_400"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:padding="@dimen/button_padding_med"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:text="@string/more_brand_offers"
-                    android:textColor="@color/white"
-                    android:visibility="visible" />
+                    style="@style/MedText" />
 
 
-                <Button
-                    android:id="@+id/btn_bank_offer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_centerHorizontal="true"
+                <LinearLayout
+
+                    android:id="@+id/pay_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp">
+
+                    <TableLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:stretchColumns="*">
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/value"
+                                android:gravity="center"
+                                android:layout_marginLeft="@dimen/button_padding"
+                                android:layout_marginRight="@dimen/button_padding"
+                                android:layout_weight="1"
+                                android:textSize="18sp"
+                                android:textColor="@color/green_text" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/pay"
+                                android:gravity="center"
+                                android:layout_marginLeft="@dimen/button_padding"
+                                android:layout_marginRight="@dimen/button_padding"
+                                android:layout_weight="1"
+                                android:textSize="18sp"
+                                android:textColor="@color/green_text"  />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/save"
+                                android:gravity="center"
+                                android:textSize="18sp"
+                                android:layout_marginLeft="@dimen/button_padding"
+                                android:layout_marginRight="@dimen/button_padding"
+                                android:layout_weight="1"
+                                android:textColor="@color/green_text"  />
+
+                        </TableRow>
+
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+                            <TextView
+                                android:id="@+id/retail_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="16.99"
+                                android:layout_weight="1"
+                                android:textSize="18sp"
+                                android:gravity="center"
+                                android:textColor="@color/green_text"  />
+
+                            <TextView
+                                android:id="@+id/pay_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="12.90"
+                                android:textSize="20sp"
+                                android:gravity="center"
+                                android:textColor="@color/green_text"  />
+
+                            <TextView
+                                android:id="@+id/discount"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="15%"
+                                android:textSize="18sp"
+                                android:gravity="center"
+                                android:textColor="@color/green_text"  />
+
+                        </TableRow>
+
+                    </TableLayout>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+
+                    android:id="@+id/buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="6dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_pass_offer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:textSize="@dimen/button_title_large"
+                        android:background="@color/md_blue_400"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:padding="@dimen/button_padding_med"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:text="@string/more_brand_offers"
+                        android:textColor="@color/white"
+                        android:visibility="visible" />
+
+
+                    <Button
+                        android:id="@+id/btn_bank_offer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:textSize="@dimen/button_title_large"
+                        android:background="@color/green_header"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:text="@string/bank"
+                        android:padding="@dimen/button_padding_med"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:textColor="@color/white"
+                        android:visibility="visible" />
+
+
+                </LinearLayout>
+
+
+                <fragment
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp"
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+                <LinearLayout
+                    android:id="@+id/expiry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/map"
+                    android:paddingBottom="5dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_alignParentBottom="true"
                     android:gravity="center"
-                    android:textSize="@dimen/button_title_large"
                     android:background="@color/green_header"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:text="@string/bank"
-                    android:padding="@dimen/button_padding_med"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:textColor="@color/white"
-                    android:visibility="visible" />
+                    android:orientation="horizontal"
+                    android:visibility="visible">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:text="@string/expires_in"
+                        android:gravity="center"
+                        android:paddingRight="@dimen/button_padding_small"
+                        style="@style/WhiteMidText" />
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/expires"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:text="@string/countdown"
+                        android:gravity="center"
+                        style="@style/WhiteLargeText"/>
 
-
-            <fragment
-                android:layout_width="match_parent"
-                android:layout_height="320dp"
-                android:id="@+id/map"
-                android:name="com.google.android.gms.maps.SupportMapFragment" />
-
-            <LinearLayout
-                android:id="@+id/expiry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/map"
-                android:paddingBottom="5dp"
-                android:layout_marginBottom="2dp"
-                android:layout_alignParentBottom="true"
-                android:gravity="center"
-                android:background="@color/green_header"
-                android:orientation="horizontal"
-                android:visibility="visible">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="@string/expires_in"
-                    android:gravity="center"
-                    android:paddingRight="@dimen/button_padding_small"
-                    style="@style/WhiteMidText" />
-
-                <TextView
-                    android:id="@+id/expires"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="@string/countdown"
-                    android:gravity="center"
-                    style="@style/WhiteLargeText"/>
-
-            </LinearLayout>
+                </LinearLayout>
 
             </LinearLayout>
         </ScrollView>

@@ -45,7 +45,7 @@
         android:padding="0dp">
 
 
-        <com.android.volley.toolbox.NetworkImageView
+        <ImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
             android:padding="0dp"
             android:layout_alignParentTop="true" />
 
-        <com.android.volley.toolbox.NetworkImageView
+        <ImageView
             android:id="@+id/logo_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -333,18 +333,51 @@
             android:visibility="visible"
             android:layout_gravity="center_horizontal" />
 
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment" />
+
 
 
     </LinearLayout>
 
 
-
-    <fragment
+    <LinearLayout
+        android:id="@+id/expiryArea"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/map"
+        android:paddingBottom="5dp"
+        android:layout_marginBottom="2dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:background="@color/green_header"
+        android:orientation="horizontal"
+        android:visibility="visible">
 
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/expires_in"
+            android:gravity="center"
+            android:paddingRight="@dimen/button_padding_small"
+            style="@style/WhiteMidText" />
+
+        <TextView
+            android:id="@+id/expires"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/countdown"
+            android:gravity="center"
+            style="@style/WhiteLargeText"/>
+
+    </LinearLayout>
 
 
 

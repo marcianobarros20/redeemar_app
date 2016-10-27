@@ -140,7 +140,6 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
     @Override
     public void onBrandLoaded(ArrayList<Object> brandInfo) {
 
-
         Log.d(LOGTAG, "Items inside Brand Info: "+brandInfo.size());
 
         DisplayMetrics displaymetrics = new DisplayMetrics();

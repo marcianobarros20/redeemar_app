@@ -9,6 +9,8 @@
         android:id="@+id/linearSecond"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:paddingLeft="15dp"
         android:paddingRight="15dp" >
 
@@ -20,8 +22,9 @@
             android:layout_marginLeft="10dp"
             android:text="@string/category"
             android:textColor="@color/black"
-            android:layout_marginTop="8dp"
-            android:textSize="16sp" />
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/imageSecondArrow"

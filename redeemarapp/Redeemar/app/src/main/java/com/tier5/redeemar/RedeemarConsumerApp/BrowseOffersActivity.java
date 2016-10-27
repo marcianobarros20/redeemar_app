@@ -22,6 +22,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -69,7 +70,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class BrowseOffersActivity extends CrashActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ActivityCommunicator {
+public class BrowseOffersActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ActivityCommunicator {
 
     /**
      * RecyclerView: The new recycler view replaces the list view. Its more modular and therefore we
@@ -867,9 +868,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
             else {
                 actionView.setIcon(R.drawable.ic_list_white);
             }
-
         }
-
 
         return true;
     }
@@ -1106,6 +1105,7 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
             else {
                 mLinearScrollSecond.setVisibility(View.VISIBLE);
                 mImageArrowFirst.setBackgroundResource(R.drawable.ic_up);
+
             }
 
             secondRowItemCount = pProductArrayList.get(i).getmSubCategoryList().size();
@@ -1242,7 +1242,48 @@ public class BrowseOffersActivity extends CrashActivity implements ActivityCompa
 
                         }
                         else {
-                            mDrawerLayout.closeDrawers();
+                            //mDrawerLayout.closeDrawers();
+
+                            //xm = mLinearSecondArrow.getId();
+
+                            //mSubProduct2 = pProductArrayList.get(mMenuCtr).getmSubCategoryList().get(xm);
+
+                            //isSecondViewClick = mSubProduct2.getOpened();
+                            //thirdRowItemCount = mSubProduct2.getmItemListArray().size();
+                            //Log.d(LOGTAG, "A new sub menu clicked "+xm+" : "+isSecondViewClick+" "+thirdRowItemCount);
+
+
+                            getSupportActionBar().setTitle(mSubProduct2.getpSubCatName());
+
+                            editor.putString(res.getString(R.string.spf_redir_action), "CategoryOffers");
+                            editor.putString(res.getString(R.string.spf_category_name), mSubProduct2.getpSubCatName());
+                            editor.putString(res.getString(R.string.spf_category_id), mSubProduct2.getpId());
+                            editor.commit();
+
+                            String currFragment = sharedpref.getString(res.getString(R.string.spf_current_fragment), "");
+
+                            Keys.moreOffers = 0;
+
+                            if(currFragment.equals("Banked")) {
+
+                                Fragment bankOfferFragment1 = new MyOfferFragment();
+                                FragmentManager OfferFm1 = getFragmentManager();
+                                FragmentTransaction browseOfferFragmentTransaction1 = OfferFm1.beginTransaction();
+                                browseOfferFragmentTransaction1.replace(R.id.container_body, bankOfferFragment1);
+                                browseOfferFragmentTransaction1.commit();
+                                mDrawerLayout.closeDrawers();
+                            }
+                            else {
+
+                                Fragment browseOfferFragment1 = new BrowseOfferFragment();
+                                FragmentManager OfferFm1 = getFragmentManager();
+                                FragmentTransaction browseOfferFragmentTransaction1 = OfferFm1.beginTransaction();
+                                browseOfferFragmentTransaction1.replace(R.id.container_body, browseOfferFragment1);
+                                browseOfferFragmentTransaction1.commit();
+                                mDrawerLayout.closeDrawers();
+
+                            }
+
                         }
 
                     }

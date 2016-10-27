@@ -28,9 +28,11 @@ public class BrandOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offe
     //private ProgressDialog mProgress;
     private Context context;
 
-    public BrandOffersAsyncTask(OffersLoadedListener myComponent) {
+    public BrandOffersAsyncTask(OffersLoadedListener myComponent, Context ctx) {
         this.myComponent = myComponent;
+        this.context = ctx;
         Log.d(LOGTAG, "Inside BrandOffersAsync constructor");
+
     }
 
     @Override
@@ -52,7 +54,7 @@ public class BrandOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Offe
         String lat = params[2];
         String lng = params[3];
 
-        ArrayList<Offer> listOffers = OfferUtils.loadBrandOffers(requestQueue, redeemar_id, user_id, lat, lng);
+        ArrayList<Offer> listOffers = OfferUtils.loadBrandOffers(context, requestQueue, redeemar_id, user_id, lat, lng);
         return listOffers;
     }
 

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,12 +77,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
         editor = sharedpref.edit();
-
-
         Log.d(LOGTAG, "SimpleViewHolder More Offers 1: "+more_offers);
-
-
-
 
     }
 
@@ -93,9 +89,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         this.more_offers = moreOffers;
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-
         Log.d(LOGTAG, "SimpleViewHolder More Offers 2: "+more_offers);
-
     }
 
 
@@ -110,6 +104,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
         Log.d(LOGTAG, "SimpleViewHolder More Offers 2: "+more_offers);
+
+
 
     }
 
@@ -198,7 +194,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         }*/
 
         if(!item.getLocation().equals("")) {
-            Log.d(LOGTAG, "Browse Location: "+item.getLocation());
+            //Log.d(LOGTAG, "Browse Location: "+item.getLocation());
             address_distance = item.getLocation();
         }
 
@@ -215,6 +211,138 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         dcRetail = item.getRetailvalue();
         dcPay = item.getPayValue();
 
+
+        //viewHolder.tvPayValue.getMeasuredWidth();
+
+        Log.d(LOGTAG, "Offer Desc: " + viewHolder.tvPayValue.getMeasuredWidth());
+
+        /*
+
+        boolean pvFlag = false;
+        boolean rvFlag = false;
+
+        float pvSize = 0;
+        float rvSize = 0;
+
+        int pvOffset = 0;
+        int rvOffset = 0;
+
+        int cnt1 = 0, cnt2 = 0;
+
+
+        int pvLen = String.valueOf(dcPay).length();
+        int rvLen = String.valueOf(dcRetail).length();
+
+
+
+        int maxLimit = 5;
+
+        Log.d(LOGTAG, "Offer Desc: " + offer_desc);
+        Log.d(LOGTAG, "Pay Value Length: " + pvLen);
+        Log.d(LOGTAG, "Retails Value Length: " + rvLen);
+
+        if(mViewType.equalsIgnoreCase("thumb")) {
+
+            pvOffset = 8;
+            rvOffset = 6;
+
+            //pvSize = viewHolder.tvPayValue.getTextSize();
+            //rvSize = viewHolder.tvRetailValue.getTextSize();
+
+            //textView.setTextSize(getResources().getDimension(R.dimen.textsize));
+
+            pvSize = res.getDimension(R.dimen.pay_value_thumb);
+            rvSize = res.getDimension(R.dimen.retail_value_thumb);
+
+            Log.d(LOGTAG, "Pay Value Size: " + pvSize);
+            Log.d(LOGTAG, "Pay Value Len: " + pvLen);
+
+            if(pvLen > maxLimit) {
+
+                for (int a = pvLen; a > maxLimit; a--) {
+                    pvSize = pvSize - pvOffset;
+                    pvFlag = true;
+                    cnt1++;
+                }
+
+            }
+
+
+            if(rvLen >  6) {
+                for (int a = rvLen; a > maxLimit; a--) {
+                    rvSize = rvSize - rvOffset;
+                    rvFlag = true;
+                    Log.d(LOGTAG, "Retail Value New Size: " + rvSize);
+                }
+            }
+
+
+            if(rvSize >= pvSize) {
+                pvFlag = true;
+                rvSize = pvSize-pvOffset;
+            }
+
+
+        }
+        else {
+
+            pvOffset = 6;
+            rvOffset = 4;
+
+            pvSize = res.getDimension(R.dimen.pay_value_list);
+            rvSize = res.getDimension(R.dimen.retail_value_list);
+
+            Log.d(LOGTAG, "Pay Value Size: " + pvSize);
+            Log.d(LOGTAG, "Pay Value Len: " + pvLen);
+            Log.d(LOGTAG, "Retail Value Size: " + rvSize);
+            Log.d(LOGTAG, "Retail Value Len: " + rvLen);
+
+
+            if(pvLen > maxLimit) {
+
+                for (int a = pvLen; a > maxLimit; a--) {
+                    pvSize = pvSize - pvOffset;
+                    pvFlag = true;
+                    //Log.d(LOGTAG, "Pay Value New Size: " + pvSize);
+
+                }
+            }
+
+            if(rvLen >  maxLimit) {
+
+                for (int a = rvLen; a > maxLimit; a--) {
+                    rvSize = rvSize - rvOffset;
+                    pvFlag = true;
+                    //Log.d(LOGTAG, "Retail Value New Size: " + pvSize);
+
+                }
+
+            }
+
+
+
+            if(rvSize >= pvSize) {
+                pvFlag = true;
+                rvSize = pvSize-pvOffset;
+            }
+
+        }
+
+
+
+        Log.d(LOGTAG, "PAY Value New Size: " + pvSize);
+        Log.d(LOGTAG, "RETAIL Value New Size: " + rvSize);
+
+
+        if (pvFlag) {
+            viewHolder.tvPayValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, pvSize);
+        }
+
+
+        if (rvFlag) {
+            viewHolder.tvRetailValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, rvSize);
+        }
+        */
 
 
         if(offer_desc.length() > 75)
@@ -344,7 +472,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             Picasso.with(mContext)
                     .load(logoUrl)
-                    .fit()
                     .into(viewHolder.logoThumbnail);
         }
 
