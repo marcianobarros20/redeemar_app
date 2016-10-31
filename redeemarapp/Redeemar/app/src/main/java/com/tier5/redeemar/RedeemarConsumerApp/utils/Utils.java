@@ -237,7 +237,7 @@ public class Utils {
     public static String formatPrice(Double price) {
 
         String sPrice = "";
-        DecimalFormat precision = new DecimalFormat("#.00");
+        DecimalFormat precision = new DecimalFormat("#.##");
         sPrice = precision.format(price);
         return sPrice;
     }

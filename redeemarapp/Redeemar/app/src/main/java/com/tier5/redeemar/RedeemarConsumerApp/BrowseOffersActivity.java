@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -27,6 +29,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,17 +47,14 @@ import android.widget.Toast;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.GoogleMap;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.tier5.redeemar.RedeemarConsumerApp.callbacks.ActivityCommunicator;
 import com.tier5.redeemar.RedeemarConsumerApp.database.DatabaseHelper;
-import com.tier5.redeemar.RedeemarConsumerApp.exception.CrashActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.AboutFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.BrowseOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.ContactFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.EditProfileFragment;
-import com.tier5.redeemar.RedeemarConsumerApp.fragments.FragmentDrawer;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.HelpFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.HomeFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.MapViewFragment;
@@ -68,10 +68,9 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import com.tier5.redeemar.RedeemarConsumerApp.utils2.BeaconStatics;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -88,34 +87,20 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
      */
 
     private static final String LOGTAG = "BrowseOffer";
-    private Toolbar mToolbar;
-    private TextView tvEmptyView;
-    private RecyclerView mRecyclerView;
-    private String redeemerId = "";
-    private JSONArray offersArray;
     private BottomBar mBottomBar;
     private double latitude = 0.0, longitude = 0.0;
     private Resources res;
     private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
     private String user_id = "0", curFragment = "";
-    private int REQUEST_COARSE_LOCATION = 0;
-    private int REQUEST_FINE_LOCATION = 0;
-    private View mLayout;
-    private ProgressDialog pd;
-    private Fragment fr;
     private Bundle args;
-    private ViewGroup mContainerToolbar;
-    private FragmentDrawer mDrawerFragment;
-    private GoogleMap mMap;
     protected ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
-    private List<Category> categories;
-    private int catId = 0;
     int lastClick = 0;
-    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "", keyword = "", catName = "", viewType  = "list";
+    private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "", keyword = "",
+            catName = "", viewType  = "list", loggedIn = "0";
     private final int NavGroupId = 1001;
-    private SharedPreferences.Editor editor;
     private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
     // For Multilevel Category Menu
     ArrayList<String> mParentCategoryIds = new ArrayList<>();
@@ -144,6 +129,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private boolean isInternetPresent = false;
     private boolean doubleBackToExitPressedOnce = false;
     private TextView searchBox;
+    private int activeCatId = 0;
 
 
 
@@ -168,6 +154,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0);
         editor = sharedpref.edit();
         db = new DatabaseHelper(this);
+
 
         pProductArrayList = new ArrayList<Product>();
         pSubItemArrayList2 = new ArrayList<Product.SubCategory>();
@@ -195,6 +182,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             redeemarId = sharedpref.getString(res.getString(R.string.spf_redeemer_id), "");
         }
 
+        if (sharedpref.getString(res.getString(R.string.spf_logged_in), null) != null) {
+            loggedIn = sharedpref.getString(res.getString(R.string.spf_logged_in), "");
+        }
+
 
         // Get Data from Intent
         Bundle extras = getIntent().getExtras();
@@ -220,7 +211,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         Log.d(LOGTAG, "Redirect To Page: "+redirectTo);
 
-
         setupToolbar();
 
         setupBottombar(mBottomBar, savedInstanceState);
@@ -236,6 +226,25 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             BeaconStatics.callingFromBeaconPage = false;
             removeRadio();
         }
+
+        Log.d(LOGTAG, "Hey: "+Keys.loggedIn);
+
+        if(loggedIn.equals("1")) {
+
+            searchBox.setVisibility(View.GONE);
+            getSupportActionBar().setTitle(R.string.my_banked);
+            //actionView.setVisible(false);
+            //mBottomBar.mapColorForTab(0, R.color.md_orange_500);
+
+            Fragment fr = new MyOfferFragment();
+            //fr.setArguments(args);
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fm.beginTransaction();
+            fragmentTransaction.replace(R.id.container_body, fr);
+            fragmentTransaction.commit();
+
+        }
+
 
     }
 
@@ -302,12 +311,18 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.setMaxFixedTabs(5);
         mBottomBar.setDefaultTabPosition(3);
+
+
         mBottomBar.noNavBarGoodness();
         //mBottomBar.useFixedMode();
+
+        //mBottomBar.mapColorForTab(0, ContextCompat.getColor(this, R.color.md_deep_orange_500));
 
         mBottomBar.setItemsFromMenu(R.menu.bottombar_menu, new OnMenuTabClickListener() {
             @Override
             public void onMenuTabSelected(@IdRes int menuItemId) {
+
+
 
                 if (menuItemId == R.id.bottom_scan_offer) {
 
@@ -316,7 +331,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 } else if (menuItemId == R.id.bottom_my_offers) {
 
+                    searchBox.setVisibility(View.GONE);
                     getSupportActionBar().setTitle(R.string.my_banked);
+                    //actionView.setVisible(false);
+
 
                     editor.putString(getString(R.string.spf_redir_action), ""); // Storing Redirect Action
                     editor.putString(getString(R.string.spf_category_id), ""); // Storing Category Id
@@ -344,6 +362,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     //Toast.makeText(getApplicationContext(), "Neaby offers selected", Toast.LENGTH_SHORT).show();
 
                     getSupportActionBar().setTitle(R.string.nearby_brands);
+                    actionView.setVisible(false);
 
                     Fragment fr = new HomeFragment();
                     args = new Bundle();
@@ -364,8 +383,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                     if (redirectTo.equalsIgnoreCase("EditProfile")) {
 
-
-
                         getSupportActionBar().setTitle(R.string.nav_item_edit_profile);
                         Fragment editProfileFragment = new EditProfileFragment();
                         FragmentManager editProfileFm = getFragmentManager();
@@ -374,6 +391,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                         editProfileFragmentTransaction.commit();
 
                     } else {
+
+                        searchBox.setVisibility(View.VISIBLE);
+                        //getSupportActionBar().setTitle(R.string.my_banked);
+                        //actionView.setVisible(true);
+
                         Fragment fr = new BrowseOfferFragment();
                         Bundle args1 = new Bundle();
 
@@ -425,6 +447,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                 } else if (menuItemId == R.id.bottom_daily_deals) {
 
+                    searchBox.setVisibility(View.VISIBLE);
+                    //actionView.setVisible(true);
+
                     editor.putString(getString(R.string.spf_redir_action), "OnDemand"); // Storing Redirect Action
                     editor.commit(); // commit changes
 
@@ -449,7 +474,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     startActivity(intent);
                 } else if (menuItemId == R.id.bottom_my_offers) {
 
+                    searchBox.setVisibility(View.GONE);
                     getSupportActionBar().setTitle(R.string.my_banked);
+                    actionView.setVisible(false);
 
                     editor.putString(getString(R.string.spf_redir_action), ""); // Storing Redirect Action
                     editor.putString(getString(R.string.spf_category_id), ""); // Storing Category Id
@@ -458,7 +485,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     editor.commit();
 
                     Log.d(LOGTAG, "Inside bank offers 1");
-
 
 
                     Fragment fr = new MyOfferFragment();
@@ -488,7 +514,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 } else if (menuItemId == R.id.bottom_browse_offers) {
 
                     // Open BrowseOffer
+
+                    searchBox.setVisibility(View.VISIBLE);
                     getSupportActionBar().setTitle(R.string.browse_offers);
+                    //actionView.setVisible(false);
 
                     editor.putString(getString(R.string.spf_redir_action), "BrowseOffers"); // Storing Redirect Action
                     editor.putString(getString(R.string.spf_search_keyword), "");   // Storing Search Keyword
@@ -506,6 +535,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
 
                 } else if (menuItemId == R.id.bottom_daily_deals) {
+
+                    searchBox.setVisibility(View.VISIBLE);
+                    getSupportActionBar().setTitle(R.string.browse_offers);
+                    actionView.setVisible(true);
+
                     //Toast.makeText(getApplicationContext(), "You have logged out.", Toast.LENGTH_SHORT).show();
                     //Intent i = new Intent(getApplicationContext(), LogoutActivity.class);
                     //startActivity(i);
@@ -614,7 +648,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                         switch (menuItem.getItemId()) {
 
                             case R.id.nav_my_offers:
-                                getSupportActionBar().setTitle(R.string.nav_item_my_offers);
+
+                                searchBox.setVisibility(View.GONE);
+                                getSupportActionBar().setTitle(R.string.my_banked);
+                                actionView.setVisible(false);
+
                                 Fragment myOfferFragment = new MyOfferFragment();
                                 FragmentManager myOfferFm = getFragmentManager();
                                 FragmentTransaction myOfferFragmentTransaction = myOfferFm.beginTransaction();
@@ -795,7 +833,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
             closeNavDrawer();
 
-            getSupportActionBar().setTitle(R.string.nav_item_my_offers);
+            searchBox.setVisibility(View.GONE);
+            getSupportActionBar().setTitle(R.string.my_banked);
+            actionView.setVisible(false);
+
             Fragment myOfferFragment = new MyOfferFragment();
             FragmentManager myOfferFm = getFragmentManager();
             FragmentTransaction myOfferFragmentTransaction = myOfferFm.beginTransaction();
@@ -895,6 +936,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         getMenuInflater().inflate(R.menu.menu_main, menu);
         actionView = menu.findItem(R.id.action_view_type);
 
+        if(loggedIn.equals("1")) {
+
+            //searchBox.setVisibility(View.GONE);
+            getSupportActionBar().setTitle(R.string.my_banked);
+            //actionView.setVisible(false);
+        }
         if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
             viewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
             Log.d(LOGTAG, "NEW View Type: "+viewType);
@@ -1119,7 +1166,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
     public void setupListMenu() {
 
-        int nctr = 0; int pctr = 0;
+        int nctr = 0, pctr = 0;
 
         for (int i = 0; i < pProductArrayList.size(); i++) {
 
@@ -1161,11 +1208,19 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     int xn = mLinearFirstArrow.getId();
                     //Log.d(LOGTAG, "Main Cat Opened: "+mLinearView);
                     lastClick = mMenuCtr;
+
                     mMainProduct = pProductArrayList.get(xn);
                     isFirstViewClick = mMainProduct.getOpened();
                     secondRowItemCount = mMainProduct.getmSubCategoryList().size();
 
-                    Log.d(LOGTAG, "A main menu clicked "+xn+" : "+isFirstViewClick+" "+secondRowItemCount);
+                    ArrayList<Product.SubCategory> list = mMainProduct.getmSubCategoryList();
+                    Iterator it = list.iterator();
+                    while(it.hasNext()) {
+                        Product.SubCategory subcat = (Product.SubCategory) it.next();
+                        Log.d(LOGTAG, "My Subcategory: " + subcat.getpId() + " == " + subcat.getpSubCatName() + " == " + subcat.getOpened());
+                    }
+
+                    Log.d(LOGTAG, "A main menu clicked "+xn+" : "+ mMenuCtr + " " + isFirstViewClick+" "+secondRowItemCount);
 
                     if(secondRowItemCount > 0) {
 
@@ -1176,10 +1231,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                             final LinearLayout mLinearScrollSecond=(LinearLayout)vi.findViewById(R.id.linear_scroll);
                             mImageArrowFirst.setBackgroundResource(R.drawable.ic_down);
                             mLinearScrollSecond.setVisibility(View.GONE);
-                            //pProductArrayList.clear();
                         }
 
-                        if (isFirstViewClick == false) {
+                        if (activeCatId != xn || activeCatId == 0) {
                             mImageArrowFirst.setBackgroundResource(R.drawable.ic_up);
                             mLinearScrollSecond.setVisibility(View.VISIBLE);
                             mMainProduct.setOpened(true);
@@ -1188,7 +1242,13 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                             mLinearScrollSecond.setVisibility(View.GONE);
                             mMainProduct.setOpened(false);
                         }
-                        pProductArrayList.set(mMenuCtr, mMainProduct);
+
+
+                        pProductArrayList.set(xn, mMainProduct);
+                        //pProductArrayList.set(mMenuCtr, mMainProduct);
+
+                        activeCatId = xn;
+
                     }
                     else {
                         Log.d(LOGTAG, "First level menu clicked");
@@ -1242,11 +1302,14 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                         int xm = mLinearSecondArrow.getId();
 
 
-                        mSubProduct2 = pProductArrayList.get(mMenuCtr).getmSubCategoryList().get(xm);
+                        mSubProduct2 = pProductArrayList.get(activeCatId).getmSubCategoryList().get(xm);
 
                         isSecondViewClick = mSubProduct2.getOpened();
                         thirdRowItemCount = mSubProduct2.getmItemListArray().size();
-                        Log.d(LOGTAG, "A new sub menu clicked "+xm+" : "+isSecondViewClick+" "+thirdRowItemCount);
+
+
+
+                        Log.d(LOGTAG, "A new sub menu clicked "+xm+" : "+isSecondViewClick+" "+thirdRowItemCount+" ");
 
 
 
@@ -1308,6 +1371,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                             if(currFragment.equals("Banked")) {
 
+                                getSupportActionBar().setTitle(R.string.my_banked);
+                                actionView.setVisible(false);
+
+
                                 Fragment bankOfferFragment1 = new MyOfferFragment();
                                 FragmentManager OfferFm1 = getFragmentManager();
                                 FragmentTransaction browseOfferFragmentTransaction1 = OfferFm1.beginTransaction();
@@ -1333,7 +1400,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
 
                 // Second level item clicked
-                mSubItemName.setOnClickListener(new View.OnClickListener() {
+                /*mSubItemName.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
@@ -1383,7 +1450,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                     }
 
-                });
+                });*/
 
 
 
@@ -1461,7 +1528,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                             editor.commit(); // commit changes
 
 
-
                             Keys.moreOffers = 0;
 
                             FragmentManager browseOfferFm1 = getFragmentManager();
@@ -1496,8 +1562,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         //Log.d(LOGTAG, "AA: "+String.valueOf(major));
         //Log.d(LOGTAG, "BB: "+String.valueOf(minor));
         //hasBeaconFound = true;
-
-
         //new SearchBeaconAsyncTask(this).execute(uuid.toString(), String.valueOf(major), String.valueOf(minor));
     }
 

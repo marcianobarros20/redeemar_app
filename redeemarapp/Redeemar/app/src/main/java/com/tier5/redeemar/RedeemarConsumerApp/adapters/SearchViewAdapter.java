@@ -73,7 +73,7 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.Vi
             holder.divider.setVisibility(View.GONE);
 
 
-        Log.d(LOGTAG, "Hello "+item.getName());
+        //Log.d(LOGTAG, "Hello "+item.getName());
         //holder.tvTitle.setTypeface(myFont);
         //holder.tvDescription.setTypeface(myFont);
         if(item.getType().equals("1"))

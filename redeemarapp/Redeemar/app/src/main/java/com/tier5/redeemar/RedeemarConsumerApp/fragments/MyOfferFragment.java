@@ -17,6 +17,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -32,6 +35,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.Banked;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Brand;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Keys;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderDecoration;
 
@@ -49,12 +53,13 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
     private RecyclerView mRecyclerOffers;
     private Resources res;
     private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
     private String user_id = "";
     private double latitude = 0.0, longitude = 0.0;
     private SuperConnectionDetector cd;
     private boolean isInternetPresent = false;
     private View layout;
-    private StickyHeaderDecoration decor;
+    private MenuItem actionView;
 
 
     public MyOfferFragment() {
@@ -81,8 +86,15 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
         Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
         mRecyclerOffers = (RecyclerView) layout.findViewById(R.id.main_recycler);
         tvCategory = (TextView) layout.findViewById(R.id.tvCategory);
+        Keys.loggedIn = 0;
 
+        res = getResources();
+        sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0);
+        editor = sharedpref.edit();
+        editor.putString(getString(R.string.spf_logged_in), "0"); // Storing Mobile
+        editor.commit(); // commit changes
 
+        //  editor.putString(getString(R.string.spf_logged_in), "0"); // Storing Logged IN Status
 
         cd = new SuperConnectionDetector(getActivity());
         isInternetPresent = cd.isConnectingToInternet();
@@ -106,14 +118,12 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
 
         }
 
-
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerOffers.setAdapter(adapter);
         tvEmptyView = (TextView) layout.findViewById(R.id.empty_view);
         tvEmptyView.setVisibility(View.VISIBLE);
         mRecyclerOffers.setLayoutManager(new LinearLayoutManager(getActivity()));
         mListOffers = new ArrayList<>();
-
         tvCategory.setText("");
 
         if (savedInstanceState != null) {
@@ -168,11 +178,14 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
+        getActivity().setTitle(R.string.my_banked);
 
         res = getResources();
         sharedpref = getActivity().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
-        SharedPreferences.Editor editor = sharedpref.edit();
+        //SharedPreferences.Editor editor = sharedpref.edit();
 
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
             user_id = sharedpref.getString(res.getString(R.string.spf_user_id), "0");
@@ -207,18 +220,61 @@ public class MyOfferFragment extends Fragment implements OffersLoadedListener {
             gps.showSettingsAlert();
         }
 
-
-
         Log.d(LOGTAG, "Lat Values: "+latitude);
         Log.d(LOGTAG, "Long Values: "+longitude);
-
 
         mListOffers = new ArrayList<Offer>();
     }
 
 
+    @Override
+    public void onPause() {
+        super.onPause();
 
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
+    @Override
+    public void onLowMemory()
+    {
+        super.onLowMemory();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        Log.d(LOGTAG, "This is test");
+        actionView = menu.findItem(R.id.action_view_type);
+        actionView.setVisible(false);
+
+        /*inflater.inflate(R.menu.menu_main, menu);
+        actionView = menu.findItem(R.id.action_view_type);
+
+        if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+            viewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
+            Log.d(LOGTAG, "Fragment View Type: "+viewType);
+
+            if(viewType.equals("thumb")) {
+                actionView.setIcon(R.drawable.ic_thumb_white);
+            }
+            else if(viewType.equals("map")) {
+                actionView.setIcon(R.drawable.ic_map_white);
+            }
+            else {
+                actionView.setIcon(R.drawable.ic_list_white);
+            }
+        }*/
+
+    }
 
 
     @Override

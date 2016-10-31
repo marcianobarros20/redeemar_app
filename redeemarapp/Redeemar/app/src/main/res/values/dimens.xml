@@ -15,7 +15,7 @@
 
     <dimen name="menu_entries_title">16sp</dimen>
     <dimen name="menu_entries_text">20sp</dimen>
-    <dimen name="text_title_med">15sp</dimen>
+    <dimen name="text_title_med">14sp</dimen>
     <dimen name="text28">28sp</dimen>
 
     <dimen name="button_title_larger">18sp</dimen>

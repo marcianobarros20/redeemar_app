@@ -57,13 +57,16 @@ import com.tier5.redeemar.RedeemarConsumerApp.callbacks.UsersLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.CustomComparator;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.GPSTracker;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -423,59 +426,57 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
                 Log.d(LOGTAG, "List Type Icon clicking");
 
-            if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
-                viewType = sharedpref.getString(res.getString(R.string.spf_view_type), null);
+                if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+                    viewType = sharedpref.getString(res.getString(R.string.spf_view_type), null);
 
-                if(viewType.equals("thumb")) {
-                    editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to list
-                    editor.commit();
+                    if(viewType.equals("thumb")) {
+                        editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to list
+                        editor.commit();
+                    }
+                    else {
+                        editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Set view type to list
+                        editor.commit();
+                    }
+                }
+
+                if(viewType.equals("map")) {
+
+                    Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
+
+                    MapViewFragment fragment3 = new MapViewFragment();
+                    if(mListOffers != null && mListOffers.size() > 0) {
+                        Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
+                        Intent intent = new Intent(getActivity(), MapViewFragment.class);
+                        Bundle b = new Bundle();
+                        b.putSerializable("MVOfferListing", mListOffers);
+                        b.putParcelableArrayList("KEY_PARCEL_OFFERS", mListOffers);
+                        intent.putExtras(b);
+                        fragment3.setArguments(intent.getExtras());
+                    }
+
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.container_body, fragment3);
+                    fragmentTransaction.commit();
                 }
                 else {
-                    editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Set view type to list
-                    editor.commit();
+                    BrowseOfferFragment fragment2 = new BrowseOfferFragment();
+
+                    if(mListOffers != null && mListOffers.size() > 0) {
+                        Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
+                        Intent intent = new Intent(getActivity(), MapViewFragment.class);
+                        Bundle b = new Bundle();
+                        b.putParcelableArrayList("KEY_PARCEL_OFFERS", mListOffers);
+                        intent.putExtras(b);
+                        fragment2.setArguments(intent.getExtras());
+                    }
+
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.container_body, fragment2);
+                    fragmentTransaction.commit();
+
                 }
-            }
-
-            if(viewType.equals("map")) {
-
-                Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
-
-
-
-                MapViewFragment fragment3 = new MapViewFragment();
-                if(mListOffers != null && mListOffers.size() > 0) {
-                    Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
-                    Intent intent = new Intent(getActivity(), MapViewFragment.class);
-                    Bundle b = new Bundle();
-                    b.putSerializable("MVOfferListing", mListOffers);
-                    b.putParcelableArrayList("KEY_PARCEL_OFFERS", mListOffers);
-                    intent.putExtras(b);
-                    fragment3.setArguments(intent.getExtras());
-                }
-
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.container_body, fragment3);
-                fragmentTransaction.commit();
-            }
-            else {
-                BrowseOfferFragment fragment2 = new BrowseOfferFragment();
-
-                if(mListOffers != null && mListOffers.size() > 0) {
-                    Log.d(LOGTAG, "Adding parcel counter "+mListOffers.size());
-                    Intent intent = new Intent(getActivity(), MapViewFragment.class);
-                    Bundle b = new Bundle();
-                    b.putParcelableArrayList("KEY_PARCEL_OFFERS", mListOffers);
-                    intent.putExtras(b);
-                    fragment2.setArguments(intent.getExtras());
-                }
-
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.container_body, fragment2);
-                fragmentTransaction.commit();
-
-            }
 
             }
         });
@@ -624,6 +625,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
 
@@ -641,8 +643,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
     public void onLowMemory()
     {
         super.onLowMemory();
-
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -658,6 +660,8 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        actionView = menu.findItem(R.id.action_view_type);
 
         /*inflater.inflate(R.menu.menu_main, menu);
         actionView = menu.findItem(R.id.action_view_type);
@@ -675,7 +679,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             else {
                 actionView.setIcon(R.drawable.ic_list_white);
             }
-
         }*/
 
     }
@@ -777,6 +780,17 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
 
                 mModels = listOffers;
                 //Log.d(LOGTAG, "Inside Adapter: "+mAdapter);
+                if(sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
+                    String nViewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
+
+                    if(nViewType.equalsIgnoreCase("thumb"))
+                        actionView.setIcon(R.drawable.ic_thumb_white);
+                    else
+                        actionView.setIcon(R.drawable.ic_list_white);
+
+                }
+
+
                 mAdapter = new BrowseOffersViewAdapter(getActivity().getApplicationContext(), listOffers, "BrowseOffers", more_offers);
                 mRecyclerOffers.setAdapter(mAdapter);
                 mRecyclerOffers.setVisibility(View.VISIBLE);
@@ -801,13 +815,13 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     //editor.putString(res.getString(R.string.spf_offers), json);
                     //editor.commit();
 
-                    Gson gson = new Gson();
+                    /*Gson gson = new Gson();
                     List<Offer> textList = new ArrayList<Offer>();
                     textList.addAll(listOffers);
                     String jsonText = gson.toJson(textList);
                     Log.d(LOGTAG, "Offers Gson Text: "+jsonText);
                     editor.putString(getString(R.string.spf_offers), jsonText);
-                    editor.commit();
+                    editor.commit();*/
 
 
                     //String json = sharedpref.getString(res.getString(R.string.spf_offers), "");
@@ -816,7 +830,39 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     //Log.d(LOGTAG, "Retrieving from JSON: "+offerList.size());
 
 
+                    Gson gson = new Gson();
+                    String json = gson.toJson(listOffers);
+                    editor.putString(res.getString(R.string.spf_offers), json);
+                    editor.commit();
 
+                    Collections.sort(listOffers, new CustomComparator());
+
+                    Log.d(LOGTAG, "List Size: "+listOffers.size());
+
+                    ArrayList<User> brands = new ArrayList<User>();
+
+                    Iterator it = listOffers.iterator();
+                    while(it.hasNext()) {
+                        Offer anOffer = (Offer) it.next();
+                        Log.d(LOGTAG, "Compare Offer Id: "+anOffer.getOfferId());
+
+                        User brand = new User();
+                        brand.setId(String.valueOf(anOffer.getCreatedBy()));
+                        brand.setCompanyName(anOffer.getCompanyName());
+                        brand.setLat(anOffer.getLatitude());
+                        brand.setLon(anOffer.getLongitude());
+
+                        brands.add(brand);
+
+                    }
+
+                    //Gson gson = new Gson();
+                    List<User> textList = new ArrayList<User>();
+                    textList.addAll(brands);
+                    String jsonText = gson.toJson(textList);
+                    Log.d(LOGTAG, "Offers Gson Text: "+jsonText);
+                    editor.putString(getString(R.string.spf_brands), jsonText);
+                    editor.commit();
 
 
                 } catch(Exception ex) {

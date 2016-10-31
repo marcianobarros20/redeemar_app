@@ -13,9 +13,11 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.BrandVideo;
 
 public class DisplayFailureActivity extends Activity {
 
-    TextView tvSuccessMessage, tvErrorCode;
-    Button btnContinue, btnScan;
-    Typeface myFont;
+    private TextView tvSuccessMessage, tvErrorCode;
+    private Button btnContinue, btnScan;
+    private Typeface myFont;
+    private String current_activity = "scan", scan_err ="";
+
 
 
     @Override
@@ -36,7 +38,9 @@ public class DisplayFailureActivity extends Activity {
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
-            String scan_err = extras.getString(getString(R.string.ext_scan_err));
+            scan_err = extras.getString(getString(R.string.ext_scan_err), "");
+            current_activity = extras.getString(getString(R.string.ext_activity), "");
+
 
             if(scan_err.equalsIgnoreCase("R01002"))
                 tvSuccessMessage.setText(getString(R.string.brand_not_associated));
@@ -70,8 +74,16 @@ public class DisplayFailureActivity extends Activity {
             else if(scan_err.equalsIgnoreCase("R02010"))
                 tvSuccessMessage.setText(getString(R.string.error_cgi_animation));
 
-            //else
-            //    tvSuccessMessage.setText(scan_err);
+            else if(scan_err.equalsIgnoreCase("R02011"))
+                tvSuccessMessage.setText(getString(R.string.offer_not_found));
+
+            else if(scan_err.equalsIgnoreCase("R02012"))
+                tvSuccessMessage.setText(getString(R.string.error_timeout));
+
+            else
+                tvSuccessMessage.setText(getString(R.string.error_validation_failure));
+
+
 
             tvErrorCode.setVisibility(View.VISIBLE);
 
@@ -80,12 +92,12 @@ public class DisplayFailureActivity extends Activity {
         }
 
         btnContinue.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View arg0) {
-            Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
-            startActivity(sIntent);
-            finish();
+
+                Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
+                startActivity(sIntent);
+                finish();
             }
         });
 
@@ -94,10 +106,11 @@ public class DisplayFailureActivity extends Activity {
             @Override
             public void onClick(View arg0) {
                 Intent sIntent = new Intent(getApplicationContext(), CloudReco.class);
+                sIntent.putExtra(getString(R.string.ext_activity), current_activity);
                 startActivity(sIntent);
                 finish();
             }
-        });
+    });
     }
 
 

@@ -116,6 +116,7 @@ public class SearchActivity extends AppCompatActivity implements SearchLoadedLis
                                     public void run() {
 
                                         keyword = txtSearch.getText().toString();
+                                        tvEmptyView.setText(R.string.loading);
                                         // TODO: do what you need here (refresh list)
                                         // you will probably need to use runOnUiThread(Runnable action) for some specific actions
                                         Log.d(LOGTAG, "Calling the async task to load after 2 seconds "+keyword);

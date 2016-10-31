@@ -195,7 +195,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="left"
                                 android:text="Discount"
-                                android:textSize="15sp"
+                                android:textSize="14sp"
                                 android:textColor="@color/green_text" />
 
                         </LinearLayout>
@@ -231,7 +231,7 @@
                                 android:paddingBottom="2dp"
                                 android:paddingRight="4dp"
                                 android:textStyle="bold"
-                                android:textSize="@dimen/button_title_larger"
+                                android:textSize="@dimen/button_title_med"
                                 android:textColor="@color/green_text" />
 
                         </LinearLayout>

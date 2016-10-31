@@ -155,6 +155,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
     private Resources res;
     private SharedPreferences sharedpref;
     private SharedPreferences.Editor editor;
+    private String activityName = "", offerId = "", userId = "";
 
 
 
@@ -179,8 +180,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
         mTextures = new Vector<Texture>();
         loadTextures();
 
-        mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
-            "droid");
+        mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith("droid");
 
 
         res = getResources();
@@ -188,6 +188,15 @@ public class CloudReco extends Activity implements SampleApplicationControl,
         editor = sharedpref.edit();
 
 
+        if (sharedpref.getString(res.getString(R.string.spf_offer_id), null) != null) {
+            offerId = sharedpref.getString(res.getString(R.string.spf_offer_id), "");
+            Log.d(LOGTAG, "Offer Id is: " + offerId);
+        }
+
+        if (sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
+            userId = sharedpref.getString(res.getString(R.string.spf_user_id), "");
+            Log.d(LOGTAG, "User Id is: " + userId);
+        }
 
 
     }
@@ -244,8 +253,19 @@ public class CloudReco extends Activity implements SampleApplicationControl,
     protected void onResume()
     {
         Log.d(LOGTAG, "onResume");
+
         cnt = 0;
         super.onResume();
+
+        if (sharedpref.getString(res.getString(R.string.spf_offer_id), null) != null) {
+            offerId = sharedpref.getString(res.getString(R.string.spf_offer_id), "");
+            Log.d(LOGTAG, "Offer Id is: " + offerId);
+        }
+
+        if (sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
+            userId = sharedpref.getString(res.getString(R.string.spf_user_id), "");
+            Log.d(LOGTAG, "User Id is: " + userId);
+        }
 
         // This is needed for some Droid devices to force portrait
         if (mIsDroidDevice)
@@ -334,9 +354,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
             .getTracker(ObjectTracker.getClassType());
         if (objectTracker == null)
         {
-            Log.e(LOGTAG,
-                "Failed to destroy the tracking data set because the ObjectTracker has not"
-                    + " been initialized.");
+            Log.e(LOGTAG, "Failed to destroy the tracking data set because the ObjectTracker has not been initialized.");
             return;
         }
         
@@ -748,6 +766,8 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                 String uniqueTargetId = result.getUniqueTargetId();
                 Log.d(LOGTAG, "Cloud Reco Unique Target Id: " + uniqueTargetId);
 
+
+
                 if(!uniqueTargetId.equalsIgnoreCase("")) {
 
 
@@ -758,24 +778,41 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                     // Check whether the usre is validating the
                     if (extras != null) {
 
-                        String activityName = extras.getString(getString(R.string.ext_activity));
-                        String user_id = extras.getString(getString(R.string.ext_user_id));
-                        String offer_id = extras.getString(getString(R.string.ext_offer_id));
+                        activityName = extras.getString(getString(R.string.ext_activity), "");
+                        //String user_id = extras.getString(getString(R.string.ext_user_id), "");
+                        //offerId = extras.getString(getString(R.string.ext_offer_id), "");
 
                         Log.d(LOGTAG, "After Recognition Activity Name: "+activityName);
-                        Log.d(LOGTAG, "After Recognition User Id: "+user_id);
-                        Log.d(LOGTAG, "After Recognition Offer Id: "+offer_id);
+                        Log.d(LOGTAG, "After Recognition User Id: "+userId);
+                        Log.d(LOGTAG, "After Recognition Offer Id: "+offerId);
 
 
-                        if(activityName.equals("Validation") && user_id != "" && offer_id != "" && targetFound == false) {
+                        if(activityName.equals("Validation") && userId != "" && offerId != "" && targetFound == false) {
+
                             targetFound = true;
+                            //vuforiaAppSession.stopAR();
                             doStopTrackers();
                             doDeinitTrackers();
-                            new ValidateOfferAsyncTask().execute(offer_id, user_id, uniqueTargetId);
+
+                            new ValidateOfferAsyncTask().execute(offerId, userId, uniqueTargetId);
 
                         }
                         else {
-                            Log.d(LOGTAG, "Logo validation failed, user id or offer id missing");
+                            Log.d(LOGTAG, "Logo validation failed, user id or offer id missing: "+activityName);
+
+                            doStopTrackers();
+                            doDeinitTrackers();
+
+                            Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                            //intent.putExtra(getString(R.string.ext_activity), activityName);
+
+                            if(activityName.equals("Validation")) {
+                                //intent.putExtra(getString(R.string.ext_user_id), userId);
+                                intent.putExtra(getString(R.string.ext_scan_err), "R02011");
+                                intent.putExtra(getString(R.string.ext_offer_id), offerId);
+                            }
+                            startActivity(intent);
+
                         }
 
                     }
@@ -787,8 +824,15 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
                 } else {
 
-                    Intent dispError = new Intent(getApplicationContext(), DisplayFailureActivity.class);
-                    startActivity(dispError);
+
+                    Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+
+                    intent.putExtra(getString(R.string.ext_activity), activityName);
+                    if(activityName.equals("Validation")) {
+                        intent.putExtra(getString(R.string.ext_user_id), userId);
+                        intent.putExtra(getString(R.string.ext_offer_id), offerId);
+                    }
+                    startActivity(intent);
 
                     Log.d(LOGTAG, "Unable to get unique id");
                 }
@@ -805,6 +849,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
             if(cnt >= SCANNING_TIMEOUT) {
 
                 Intent dispError = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                dispError.putExtra(getString(R.string.ext_scan_err), "R02012");
                 startActivity(dispError);
                 finish();
 
@@ -1157,6 +1202,8 @@ public class CloudReco extends Activity implements SampleApplicationControl,
 
                                     Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
                                     intent.putExtra(getString(R.string.ext_scan_err), "R02005");
+                                    intent.putExtra(getString(R.string.ext_activity), "Validation"); // 4 = Validation
+
                                     startActivity(intent);
                                     finish();
 
@@ -1237,6 +1284,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                     //Utils.redirectToError(getApplicationContext());
 
                     Intent errIntent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+
                     startActivity(errIntent);
                 }
 
@@ -1282,6 +1330,8 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                 data.put("target_id", target_id);
 
                 OutputStream os = conn.getOutputStream();
+
+                Log.d(LOGTAG, "Request URL: " + url);
                 Log.d(LOGTAG, "Request: " + data.toString());
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 bufferedWriter.write("data="+data.toString());
@@ -1329,7 +1379,9 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                     if (reader.getString("messageCode").equals("R01001")) {
 
                         Intent intent = new Intent(getApplicationContext(), DisplaySuccessActivity.class);
+
                         intent.putExtra(getString(R.string.ext_scan_err), "R02001");
+                        intent.putExtra(getString(R.string.ext_activity), "Validation"); // 4 = Validation
                         startActivity(intent);
                         finish();
 
@@ -1341,6 +1393,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                         //showInitializationErrorMessage(getString(R.string.error_offer_expired));
 
                         Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        intent.putExtra(getString(R.string.ext_activity), "Validation"); // 4 = Validation
                         intent.putExtra(getString(R.string.ext_scan_err), "R02002");
                         startActivity(intent);
                         finish();
@@ -1354,6 +1407,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                         //showInitializationErrorMessage(getString(R.string.error_wrong_target));
 
                         Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        intent.putExtra(getString(R.string.ext_activity), "Validation"); // 4 = Validation
                         intent.putExtra(getString(R.string.ext_scan_err), "R02003");
                         startActivity(intent);
                         finish();
@@ -1367,6 +1421,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                         //showInitializationErrorMessage(getString(R.string.error_duplicate_validation));
 
                         Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        intent.putExtra(getString(R.string.ext_activity), "Validation"); // 4 = Validation
                         intent.putExtra(getString(R.string.ext_scan_err), "R02004");
                         startActivity(intent);
                         finish();
@@ -1379,6 +1434,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                         //showInitializationErrorMessage(getString(R.string.error_duplicate_validation));
 
                         Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        intent.putExtra(getString(R.string.ext_activity), "Validation"); // 4 = Validation
                         intent.putExtra(getString(R.string.ext_scan_err), "R02006");
                         startActivity(intent);
                         finish();

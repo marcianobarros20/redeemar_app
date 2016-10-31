@@ -30,11 +30,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
 import com.tier5.redeemar.RedeemarConsumerApp.async.ValidatePassCodeAsyncTask;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Banked;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
@@ -68,15 +71,12 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
     private ImageLoader mImageLoader;
     private EditText etRedeemCode;
     private Button btnRedeemScan, btnRedeemPassCode;
-
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
-
-
-
     private GoogleMap mMap;
     private Resources res;
     private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
     private SimpleDateFormat fromDateFormat;
     private SimpleDateFormat toDateFormat;
     private Toolbar toolbar;
@@ -160,16 +160,14 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
         // Check if the user is logged in. if not redirect user to logoff
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-
-        SharedPreferences.Editor editor = sharedpref.edit();
+        editor = sharedpref.edit();
 
 
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {
 
             Log.d(LOGTAG, "No user id found, redirecting to login");
 
-            Intent i = new Intent(getApplicationContext(),
-                    LoginActivity.class);
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(i);
             finish();
 
@@ -185,15 +183,26 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
             toDateFormat = new SimpleDateFormat("MM/dd/yyy HH:mm");
 
 
+            /*String json = sharedpref.getString(res.getString(R.string.spf_single_offer), "");
+            Gson gson = new Gson();
+            Banked offer = gson.fromJson(json, Banked.class);
+
+            Log.d(LOGTAG, "My Saved Offer 1: "+offer.getOfferId());
+            Log.d(LOGTAG, "My Saved Offer 2: "+offer.getOfferDesc());
+            Log.d(LOGTAG, "My Saved Offer 3: "+offer.getExpires());
+
+            if(offer.getOfferDesc() != null)
+                tvOfferTitle.setText(offer.getOfferDesc());*/
+
+
+
             Bundle extras = getIntent().getExtras();
 
             if (extras != null) {
                 offerId = extras.getString(getString(R.string.ext_offer_id));
                 Log.d(LOGTAG, "Validate Offer Id: " + offerId);
                 new GetOffeDetailsAsyncTask().execute(offerId);
-
             }
-
 
             btnRedeemPassCode.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -232,11 +241,14 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                 public void onClick(View view) {
 
                     Log.d(LOGTAG, "Starting validation by scanning...");
+                    editor.putString(getString(R.string.spf_offer_id), offerId); // Storing Redirect Action
+                    editor.commit();
                     Intent intent = new Intent(ValidateOfferActivity.this, CloudReco.class);
                     intent.putExtra(getString(R.string.ext_activity), "Validation");
-                    intent.putExtra(getString(R.string.ext_user_id), user_id);
-                    intent.putExtra(getString(R.string.ext_offer_id), offerId);
+                    //intent.putExtra(getString(R.string.ext_user_id), user_id);
+                    //intent.putExtra(getString(R.string.ext_offer_id), offerId);
                     startActivity(intent);
+                    finish();
                 }
             });
 
@@ -552,13 +564,16 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                             if(!jsonLogoSettings.isNull("logo_name") && !jsonLogoSettings.getString("logo_name").equals("")) {
 
-                                Log.d(LOGTAG, "My Logo URL 2: "+jsonLogoSettings.getString("logo_name"));
+
 
                                 String logoImageUrl = UrlEndpoints.baseLogoMediumURL+ jsonLogoSettings.getString("logo_name");
-                                mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
+                                //mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getImageLoader();
                                 //mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail, R.drawable.icon_watermark, android.R.drawable.ic_dialog_alert));
                                 //mImageLoader.get(logoImageUrl, ImageLoader.getImageListener(logoThumbnail, 0, 0));
                                 //logoThumbnail.setImageUrl(logoImageUrl, mImageLoader);
+
+
+                                Log.d(LOGTAG, "My Logo URL 2: "+logoImageUrl);
 
 
                                 Picasso.with(getApplicationContext())

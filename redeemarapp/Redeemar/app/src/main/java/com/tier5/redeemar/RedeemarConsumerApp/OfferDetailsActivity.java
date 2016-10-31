@@ -28,6 +28,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Address;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Keys;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
@@ -55,7 +56,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
     private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvPayValue, tvDiscount, tvRetailValue, tvExpires;
     private NetworkImageView thumbnail, logoThumbnail;
     private ImageLoader mImageLoader;
-    private Button btnBank,  btnPass,  btnRedeem;
+    private Button btnBank,  btnPass;
     private SharedPreferences sharedpref;
     SharedPreferences.Editor editor;
     private GoogleMap mMap;
@@ -166,6 +167,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                     Intent intent = new Intent(view.getContext(), LoginActivity.class);
                     intent.putExtra(res.getString(R.string.ext_activity), "OfferDetails"); // Settings the activty name where it will be redirected to
                     view.getContext().startActivity(intent);
+                    finish();
 
                 }
                 else {
@@ -195,12 +197,16 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                 editor.putString(getString(R.string.spf_popup_action), "1"); // Storing Last Activity
                 editor.putString(getString(R.string.spf_redeemer_id), redeemarId); // Storing Redeemar Id
                 editor.putString(getString(R.string.spf_brand_name), brandName); // Storing Redeemar Id
+                editor.putString(getString(R.string.spf_more_offers), brandName); // Storing More Offers
+                Keys.moreOffers = 1;
+
                 editor.commit(); // commit changes
 
                 Intent intent = new Intent(view.getContext(), BrowseOffersActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                 view.getContext().startActivity(intent);
+                finish();
 
 
                 /*if(sharedpref.getString(res.getString(R.string.spf_user_id), null) == null) {

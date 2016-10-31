@@ -114,7 +114,8 @@
                 android:padding="8dp"
                 android:layout_marginRight="1dp"
                 android:background="@color/colorPrimary"
-                android:layout_below="@+id/topLayout">
+                android:layout_below="@+id/topLayout"
+                android:visibility="gone">
 
 
                 <TextView

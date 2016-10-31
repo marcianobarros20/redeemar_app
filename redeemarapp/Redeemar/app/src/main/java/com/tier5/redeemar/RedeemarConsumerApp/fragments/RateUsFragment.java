@@ -59,7 +59,7 @@ public class RateUsFragment extends Fragment implements TaskCompleted {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_search).setVisible(false);
+        //menu.findItem(R.id.action_search).setVisible(false);
         super.onPrepareOptionsMenu(menu);
     }
 

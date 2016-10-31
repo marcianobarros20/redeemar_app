@@ -7,7 +7,7 @@ import java.util.List;
 public class Brand implements ParentListItem {
 
     private String companyName, brandInfo, brandLogo, distanceVal;
-    private int countOffers, countOnDemand, countBankedOffers, expanded;
+    private int companyId, countOffers, countOnDemand, countBankedOffers, expanded;
 
     private List<Banked> mBankeds;
 
@@ -16,6 +16,13 @@ public class Brand implements ParentListItem {
 
     }
 
+    public int getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(int companyId) {
+        this.companyId = companyId;
+    }
 
     public String getCompanyName() {
         return companyName;

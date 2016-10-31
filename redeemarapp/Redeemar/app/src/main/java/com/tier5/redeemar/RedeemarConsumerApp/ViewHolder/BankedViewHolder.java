@@ -2,6 +2,8 @@ package com.tier5.redeemar.RedeemarConsumerApp.ViewHolder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -15,11 +17,13 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
 import com.daimajia.swipe.SwipeLayout;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.CustomVolleyRequestQueue;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.ValidateOfferActivity;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Banked;
+import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
@@ -36,6 +40,10 @@ public class BankedViewHolder extends ChildViewHolder {
     private ImageView mapIcon;
     private ImageLoader mImageLoader;
     private LinearLayout distanceLayout, discountLayout;
+    private Banked thisOffer;
+    private Resources res;
+    private SharedPreferences sharedpref;
+    private SharedPreferences.Editor editor;
 
     String imageUrlVal = "";
 
@@ -58,6 +66,8 @@ public class BankedViewHolder extends ChildViewHolder {
         thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
         tvExpires = (TextView) itemView.findViewById(R.id.expires);
         discountLayout = (LinearLayout) itemView.findViewById(R.id.discount_layout);
+
+
 
     }
 
@@ -82,6 +92,13 @@ public class BankedViewHolder extends ChildViewHolder {
 
 
 
+        res = mContext.getResources();
+        sharedpref = mContext.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
+        editor = sharedpref.edit();
+
+
+        thisOffer = banked;
+
 
         offer_id = banked.getOfferId();
         String offer_desc = banked.getOfferDesc();
@@ -105,11 +122,15 @@ public class BankedViewHolder extends ChildViewHolder {
             @Override
             public void onClick(View view) {
 
+                Gson gson = new Gson();
+                String jsonText = gson.toJson(thisOffer);
+                Log.d(LOGTAG, "Category Gson Text: "+jsonText);
+                editor.putString(res.getString(R.string.spf_single_offer), jsonText);
+                editor.commit();
 
                 Intent intent = new Intent(view.getContext(), ValidateOfferActivity.class);
-
-
                 Log.d(LOGTAG, "My Offer Id: "+offer_id);
+
                 intent.putExtra(view.getContext().getString(R.string.ext_offer_id), offer_id);
                 view.getContext().startActivity(intent);
                 swipeLayout.close();

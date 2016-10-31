@@ -98,7 +98,9 @@ public class SplashScreenActivity extends Activity implements CategoriesLoadedLi
         editor.putString(getString(R.string.spf_redeemer_id), ""); // Storing Redeemar id
         editor.putString(getString(R.string.spf_campaign_id), ""); // Storing Campaign Id
         editor.putString(getString(R.string.spf_category_id), ""); // Storing category Id
+        editor.putString(getString(R.string.spf_view_type), "list"); // Storing Saved Offers
         editor.commit();
+
         // Get the menun items from server
         new MenuItemsAsyncTask(this).execute("0");
 

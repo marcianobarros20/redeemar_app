@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 
@@ -99,7 +101,7 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         this.offerList = objects;
         this.activityName = actName;
         this.more_offers = moreOffers;
-        this.more_offers = viewType;
+        this.mViewType = viewType;
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
@@ -211,12 +213,20 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         dcRetail = item.getRetailvalue();
         dcPay = item.getPayValue();
 
+        //DecimalFormat decimalFormat=new DecimalFormat("#.#");
+        //System.out.println(decimalFormat.format(2.0)); //prints 2
+
+        //dcRetail = Double.parseDouble(decimalFormat.format(dcRetail));
+        //dcPay = Double.parseDouble(decimalFormat.format(dcPay));
+        Log.d(LOGTAG, "XX Retail value: " + dcRetail);
+        Log.d(LOGTAG, "XX Pay value: " + dcPay);
+
 
         //viewHolder.tvPayValue.getMeasuredWidth();
 
         Log.d(LOGTAG, "Offer Desc: " + viewHolder.tvPayValue.getMeasuredWidth());
 
-        /*
+
 
         boolean pvFlag = false;
         boolean rvFlag = false;
@@ -238,29 +248,39 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         int maxLimit = 5;
 
         Log.d(LOGTAG, "Offer Desc: " + offer_desc);
-        Log.d(LOGTAG, "Pay Value Length: " + pvLen);
-        Log.d(LOGTAG, "Retails Value Length: " + rvLen);
+        //Log.d(LOGTAG, "Pay Value Length: " + pvLen);
+        //Log.d(LOGTAG, "Retails Value Length: " + rvLen);
+        DisplayMetrics metrics;
+
+        int fontOffset = 3;
 
         if(mViewType.equalsIgnoreCase("thumb")) {
+            fontOffset = 6;
+        }
+
+        /*if(mViewType.equalsIgnoreCase("thumb")) {
 
             pvOffset = 8;
             rvOffset = 6;
 
-            //pvSize = viewHolder.tvPayValue.getTextSize();
-            //rvSize = viewHolder.tvRetailValue.getTextSize();
+            //pvSize = res.getDimension(R.dimen.pay_value_thumb);
+            //rvSize = res.getDimension(R.dimen.retail_value_thumb);
 
-            //textView.setTextSize(getResources().getDimension(R.dimen.textsize));
+            pvSize = viewHolder.tvPayValue.getTextSize();
+            rvSize = viewHolder.tvRetailValue.getTextSize();
 
-            pvSize = res.getDimension(R.dimen.pay_value_thumb);
-            rvSize = res.getDimension(R.dimen.retail_value_thumb);
 
-            Log.d(LOGTAG, "Pay Value Size: " + pvSize);
-            Log.d(LOGTAG, "Pay Value Len: " + pvLen);
+            //int aa = (TypedValue.COMPLEX_UNIT_SP, pvSize);
+
+            //Log.d(LOGTAG, "Pay Value Original Size: " + TypedValue.COMPLEX_UNIT_SP,(pvSize));
+            Log.d(LOGTAG, "Pay Value Original Len: " + pvLen);
+
+
 
             if(pvLen > maxLimit) {
 
                 for (int a = pvLen; a > maxLimit; a--) {
-                    pvSize = pvSize - pvOffset;
+                    pvSize = pvSize - 3;
                     pvFlag = true;
                     cnt1++;
                 }
@@ -270,48 +290,53 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
             if(rvLen >  6) {
                 for (int a = rvLen; a > maxLimit; a--) {
-                    rvSize = rvSize - rvOffset;
+                    rvSize = rvSize - 3;
                     rvFlag = true;
-                    Log.d(LOGTAG, "Retail Value New Size: " + rvSize);
+                    //Log.d(LOGTAG, "Retail Value New Size: " + rvSize);
                 }
             }
 
 
             if(rvSize >= pvSize) {
                 pvFlag = true;
-                rvSize = pvSize-pvOffset;
+                rvSize = pvSize-3;
             }
 
 
         }
-        else {
+        else {*/
 
             pvOffset = 6;
             rvOffset = 4;
 
-            pvSize = res.getDimension(R.dimen.pay_value_list);
-            rvSize = res.getDimension(R.dimen.retail_value_list);
+            //pvSize = res.getDimension(R.dimen.pay_value_list);
+            //rvSize = res.getDimension(R.dimen.retail_value_list);
+            //pvSize = viewHolder.tvPayValue.getTextSize();
+            //rvSize = viewHolder.tvRetailValue.getTextSize();
 
-            Log.d(LOGTAG, "Pay Value Size: " + pvSize);
+
+            metrics = mContext.getResources().getDisplayMetrics();
+            pvSize = viewHolder.tvPayValue.getTextSize()/metrics.density;
+            rvSize = viewHolder.tvRetailValue.getTextSize()/metrics.density;
+
+            Log.d(LOGTAG, "PPay Value Size: " + pvSize);
             Log.d(LOGTAG, "Pay Value Len: " + pvLen);
-            Log.d(LOGTAG, "Retail Value Size: " + rvSize);
+            Log.d(LOGTAG, "RRetail Value Size: " + rvSize);
             Log.d(LOGTAG, "Retail Value Len: " + rvLen);
 
 
             if(pvLen > maxLimit) {
-
                 for (int a = pvLen; a > maxLimit; a--) {
-                    pvSize = pvSize - pvOffset;
+                    pvSize = pvSize-fontOffset;
                     pvFlag = true;
                     //Log.d(LOGTAG, "Pay Value New Size: " + pvSize);
-
                 }
             }
 
             if(rvLen >  maxLimit) {
 
                 for (int a = rvLen; a > maxLimit; a--) {
-                    rvSize = rvSize - rvOffset;
+                    rvSize = rvSize-fontOffset;
                     pvFlag = true;
                     //Log.d(LOGTAG, "Retail Value New Size: " + pvSize);
 
@@ -321,28 +346,32 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
 
 
-            if(rvSize >= pvSize) {
+            if(rvSize > pvSize) {
                 pvFlag = true;
-                rvSize = pvSize-pvOffset;
+                rvSize = pvSize;
             }
 
-        }
+       // }
 
 
+
+
+        Log.d(LOGTAG, "Flag 1: " + pvFlag);
+        Log.d(LOGTAG, "Flag 2: " + rvFlag);
 
         Log.d(LOGTAG, "PAY Value New Size: " + pvSize);
         Log.d(LOGTAG, "RETAIL Value New Size: " + rvSize);
 
 
         if (pvFlag) {
-            viewHolder.tvPayValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, pvSize);
+            //viewHolder.tvPayValue.setTextSize(TypedValue.COMPLEX_UNIT_SP, pvSize);
         }
 
 
         if (rvFlag) {
-            viewHolder.tvRetailValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, rvSize);
+            //viewHolder.tvRetailValue.setTextSize(TypedValue.COMPLEX_UNIT_SP, rvSize);
         }
-        */
+
 
 
         if(offer_desc.length() > 75)
@@ -387,8 +416,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         int valCalc = item.getValueCalculate();
         int valText = item.getValueText();
         Double discVal = item.getDiscount();
-
-
 
 
         if(item.getRetailvalue() > 0 && item.getPayValue() > 0) {

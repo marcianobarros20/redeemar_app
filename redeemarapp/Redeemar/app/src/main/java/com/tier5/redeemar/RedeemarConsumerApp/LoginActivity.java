@@ -50,6 +50,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Keys;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 
@@ -533,23 +534,6 @@ public class LoginActivity extends AppCompatActivity implements
      Revoking access from Google+ account
      */
 
-    private void gPlusRevokeAccess() {
-        if (mGoogleApiClient.isConnected()) {
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-            Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient)
-                    .setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status arg0) {
-                            Log.d(LOGTAG, "User access revoked!");
-                            buildGoogleApiClient();
-                            mGoogleApiClient.connect();
-
-                        }
-
-                    });
-        }
-    }
-
     /*
     Sign-in into the Google + account
     */
@@ -943,6 +927,8 @@ public class LoginActivity extends AppCompatActivity implements
                         editor.putString(getString(R.string.spf_last_name), jsonObject.getString("last_name")); // Storing Last Name
                         editor.putString(getString(R.string.spf_email), jsonObject.getString("email")); // Storing Email
                         editor.putString(getString(R.string.spf_mobile), jsonObject.getString("phone")); // Storing Mobile
+                        editor.putString(getString(R.string.spf_logged_in), "1"); // Storing Mobile
+
                         editor.commit(); // commit changes
 
                         Log.d(LOGTAG, "Login success");
@@ -958,7 +944,7 @@ public class LoginActivity extends AppCompatActivity implements
 
                             Log.d(LOGTAG, "Last Activity: "+lastActivity);
 
-                            if(lastActivity.equalsIgnoreCase("BrowseOffers"))
+                            /*if(lastActivity.equalsIgnoreCase("BrowseOffers"))
                                 intent = new Intent(LoginActivity.this, BrowseOffersActivity.class);
 
                             else if(lastActivity.equalsIgnoreCase("OfferList"))
@@ -975,12 +961,14 @@ public class LoginActivity extends AppCompatActivity implements
                             }
 
                             else
-                                intent = new Intent(LoginActivity.this, BrowseOffersActivity.class);
+                                intent = new Intent(LoginActivity.this, BrowseOffersActivity.class);*/
 
 
-                            //intent = new Intent(LoginActivity.this, LoadingActivity.class);
+                            intent = new Intent(LoginActivity.this, BrowseOffersActivity.class);
 
                             hideProgressDialog();
+
+                            Keys.loggedIn = 1;
 
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);

@@ -216,7 +216,7 @@
                                 android:layout_marginLeft="@dimen/button_padding"
                                 android:layout_marginRight="@dimen/button_padding"
                                 android:layout_weight="1"
-                                android:textSize="18sp"
+                                android:textSize="16sp"
                                 android:textColor="@color/green_text" />
 
                             <TextView
@@ -227,7 +227,7 @@
                                 android:layout_marginLeft="@dimen/button_padding"
                                 android:layout_marginRight="@dimen/button_padding"
                                 android:layout_weight="1"
-                                android:textSize="18sp"
+                                android:textSize="20sp"
                                 android:textColor="@color/green_text"  />
 
                             <TextView
@@ -235,7 +235,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/save"
                                 android:gravity="center"
-                                android:textSize="18sp"
+                                android:textSize="16sp"
                                 android:layout_marginLeft="@dimen/button_padding"
                                 android:layout_marginRight="@dimen/button_padding"
                                 android:layout_weight="1"
