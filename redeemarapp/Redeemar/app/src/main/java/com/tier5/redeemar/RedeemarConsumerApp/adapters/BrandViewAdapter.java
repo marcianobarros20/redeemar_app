@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +22,9 @@ import com.squareup.picasso.Picasso;
 import com.tier5.redeemar.RedeemarConsumerApp.R;
 import com.tier5.redeemar.RedeemarConsumerApp.async.TaskCompleted;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -30,7 +33,6 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
     private static final String LOGTAG = "BrandViewAdapter";
     private Context mContext;
     private ArrayList<User> userList;
-    //private ImageLoader mImageLoader;;
     private SharedPreferences sharedpref;
     private String activityName;
     private Resources res;
@@ -42,7 +44,6 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
         this.mContext = context;
         this.userList = objects;
         this.activityName = actName;
-
         res = context.getResources();
         sharedpref = context.getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
 
@@ -64,16 +65,20 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
 
         //viewHolder.mImageLoader = CustomVolleyRequestQueue.getInstance(mContext).getImageLoader();
 
-        String imageUrl = "", brandImageUrl = "";
-
-
-
+        String imageUrl = "", brandImageUrl = "", brandImagePath = "";
 
 
         try {
 
             if(item.getLogoName() != null && item.getLogoName() != "") {
                 imageUrl = item.getLogoName();
+
+
+                //Uri uri = Uri.fromFile(new File(item.getLogoName()));
+                //Picasso.with(activity).load(uri).resize(96, 96).centerCrop().into(viewHolder.image);
+
+
+
 
                 Picasso.with(mContext)
                         .load(imageUrl)
@@ -83,8 +88,15 @@ public class BrandViewAdapter extends RecyclerView.Adapter<BrandViewAdapter.Simp
 
 
 
+
             if(item.getStoreBrandPic() != null && item.getStoreBrandPic() != "") {
-                brandImageUrl = item.getStoreBrandPic();
+
+                //brandImageUrl = item.getStoreBrandPic();
+                brandImagePath = Constants.brandImgDir+item.getStoreBrandPic();
+
+
+                //Uri uri = Uri.fromFile(new File(brandImageUrl));
+                //Picasso.with(mContext).load(uri).centerCrop().into(viewHolder.thumbnailBrandPic);
 
                 Picasso.with(mContext)
                         .load(brandImageUrl)

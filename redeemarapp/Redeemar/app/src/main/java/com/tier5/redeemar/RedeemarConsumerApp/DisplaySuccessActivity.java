@@ -33,9 +33,9 @@ public class DisplaySuccessActivity extends Activity {
             public void onClick(View arg0) {
 
 
-                Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
-                startActivity(sIntent);
-                finish();
+            Intent sIntent = new Intent(getApplicationContext(), BrowseOffersActivity.class);
+            startActivity(sIntent);
+            finish();
 
             }
         });

@@ -19,9 +19,10 @@
         <!--Bottom View For Right to Left-->
         <LinearLayout
             android:id="@+id/bottom_wrapper"
-            android:layout_width="240dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:weightSum="2"
             android:orientation="horizontal">
 
 
@@ -29,6 +30,8 @@
                 android:id="@+id/passLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:gravity="center"
                 android:layout_weight="1"
                 android:orientation="horizontal"
@@ -49,8 +52,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
                     android:gravity="left|center_vertical"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
                     android:text="@string/more_from_brand"
                     style="@style/WhiteLargeText" />
 
@@ -65,6 +71,8 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:layout_weight="1"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:orientation="horizontal"
                 android:background="@color/green_header">
 
@@ -82,8 +90,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
                     android:gravity="left|center_vertical"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
                     android:text="@string/bank_it"
                     style="@style/WhiteLargeText"  />
 
@@ -231,7 +242,7 @@
                                 android:paddingBottom="2dp"
                                 android:paddingRight="4dp"
                                 android:textStyle="bold"
-                                android:textSize="@dimen/button_title_med"
+                                android:textSize="@dimen/button_title_large"
                                 android:textColor="@color/green_text" />
 
                         </LinearLayout>

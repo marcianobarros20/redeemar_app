@@ -787,33 +787,48 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                         Log.d(LOGTAG, "After Recognition Offer Id: "+offerId);
 
 
-                        if(activityName.equals("Validation") && userId != "" && offerId != "" && targetFound == false) {
+                         // Target found, stop scanning
 
-                            targetFound = true;
-                            //vuforiaAppSession.stopAR();
-                            doStopTrackers();
-                            doDeinitTrackers();
+                        //vuforiaAppSession.stopAR();
+                        doStopTrackers();
+                        doDeinitTrackers();
 
-                            new ValidateOfferAsyncTask().execute(offerId, userId, uniqueTargetId);
 
+
+                        // If it is a case of validation
+                        if(activityName.equals("Validation")) {
+
+                            // Every data is available
+
+                            if(userId != "" && offerId != "" && !targetFound) {
+                                targetFound = true;
+                                new ValidateOfferAsyncTask().execute(offerId, userId, uniqueTargetId);
+                            }
+                            else {
+                                Log.d(LOGTAG, "Logo validation failed, user id or offer id missing: "+activityName);
+
+                                //doStopTrackers();
+                                //doDeinitTrackers();
+
+                                Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                                intent.putExtra(getString(R.string.ext_activity), "Validation");
+
+                                if(activityName.equals("Validation")) {
+                                    //intent.putExtra(getString(R.string.ext_user_id), userId);
+                                    intent.putExtra(getString(R.string.ext_scan_err), "R02011");
+                                    intent.putExtra(getString(R.string.ext_offer_id), offerId);
+                                }
+                                startActivity(intent);
+
+                            }
                         }
                         else {
-                            Log.d(LOGTAG, "Logo validation failed, user id or offer id missing: "+activityName);
-
-                            doStopTrackers();
-                            doDeinitTrackers();
-
-                            Intent intent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
-                            //intent.putExtra(getString(R.string.ext_activity), activityName);
-
-                            if(activityName.equals("Validation")) {
-                                //intent.putExtra(getString(R.string.ext_user_id), userId);
-                                intent.putExtra(getString(R.string.ext_scan_err), "R02011");
-                                intent.putExtra(getString(R.string.ext_offer_id), offerId);
-                            }
-                            startActivity(intent);
-
+                            // Call standard scanning webservice
+                            new ValidateLogoAsyncTask().execute(uniqueTargetId);
                         }
+
+
+
 
                     }
 
@@ -1261,6 +1276,7 @@ public class CloudReco extends Activity implements SampleApplicationControl,
                     else if (reader.getString("messageCode").equals("R01002")) {
 
                         Intent errIntent = new Intent(getApplicationContext(), DisplayFailureActivity.class);
+                        errIntent.putExtra(getString(R.string.ext_activity), "Scan");
                         errIntent.putExtra(getString(R.string.ext_scan_err), "R01002");
                         startActivity(errIntent);
 

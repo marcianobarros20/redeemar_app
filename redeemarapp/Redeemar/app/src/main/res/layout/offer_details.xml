@@ -90,7 +90,7 @@
                     android:text="@string/address"
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:gravity="center"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     style="@style/DarkBgTitle" />
 
 
@@ -103,7 +103,7 @@
                     android:layout_marginLeft="@dimen/content_padding_small"
                     android:layout_marginRight="@dimen/content_padding_small"
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
-                    android:textSize="26sp"
+                    android:textSize="24sp"
                     android:gravity="center"
                     style="@style/GreenLargerText" />
 
@@ -181,7 +181,7 @@
                     android:layout_marginLeft="@dimen/content_padding"
                     android:layout_marginRight="@dimen/content_padding"
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
-                    android:textSize="17sp"
+                    android:textSize="16sp"
                     android:gravity="center"
                     style="@style/MedText" />
 

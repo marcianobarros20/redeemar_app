@@ -77,7 +77,7 @@
     <string name="error_offer_expired">You are scannaing an image not associated this offer or the offer has reached max redemption limit.</string>
     <string name="error_wrong_target">You are scannaing an image not associated with validation.</string>
     <string name="error_duplicate_validation">You have already redeemded this offer.</string>
-    <string name="error_validation_failure">Failed to redeemded the offer.</string>
+    <string name="error_validation_failure">Failed to redeem the offer.</string>
     <string name="error_validation_success">You have successfully redeemded the offer.</string>
     <string name="error_cgi_animation">You have successfully redeemded the offer.</string>
     <string name="error_validation_wrong_redeemar">Unable to get redeemer details.</string>
@@ -178,6 +178,8 @@
     <string name="spf_category_level">spf_category_level</string>
     <string name="spf_location_keyword">spf_location_keyword</string>
     <string name="spf_offers">spf_offers</string>
+    <string name="spf_user_beacons">spf_user_beacons</string>
+    <string name="spf_beacon_triggered">spf_beacon_triggered</string>
     <string name="spf_current_fragment">spf_current_fragment</string>
     <string name="spf_brands">spf_brands</string>
     <string name="ext_more_offers">MORE_OFFERS</string>

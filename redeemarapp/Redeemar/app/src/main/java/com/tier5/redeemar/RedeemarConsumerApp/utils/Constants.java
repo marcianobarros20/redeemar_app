@@ -24,11 +24,15 @@ public interface Constants {
     final String defaultYoutubeVideoId = "qcw0jQ5o-Ls";
 
     final String logoDir = "redeemar/logos/";
+    final String storeImgDir = "redeemar/stores/";
+    final String brandImgDir = "redeemar/brands/";
     final String offerDir = "redeemar/offers/";
 
     final String beaconUUID = "B9407F30-F5F8-466E-AFF9-25556B57FE6D";
 
-
+    // Hour difference before the estimote beacons can again listened to again, usually it will be 24 hours, for now its just 1
+    final int beaconListenDelayHours = 1;
+    final int beaconListenDelaySecs = 600;
 
 
 

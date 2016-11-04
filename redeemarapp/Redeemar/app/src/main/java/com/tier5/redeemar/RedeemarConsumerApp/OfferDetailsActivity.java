@@ -412,7 +412,7 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                                 tvRetailValue.setText(getString(R.string.currency_symbol).concat(jsonObject.getString("retails_value").toString()));
                                 Log.d(LOGTAG, "retails_value: "+jsonObject.getString("retails_value").toString());
 
-                                tvPayValue.setTextSize(14);
+                                //tvPayValue.setTextSize(14);
                             }
 
 
@@ -440,6 +440,8 @@ public class OfferDetailsActivity extends AppCompatActivity implements OnMapRead
                                 tvDiscount.setText(discount_text.concat(perc_sym));
                             else
                                 tvDiscount.setText(cur_sym.concat(discount_text));
+
+
 
 
                             if(jsonObject.getString("expires") != null && jsonObject.getString("expires").toString() != "") {

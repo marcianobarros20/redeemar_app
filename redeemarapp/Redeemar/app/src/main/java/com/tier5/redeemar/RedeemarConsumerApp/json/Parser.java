@@ -29,6 +29,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.pojo.MyItem;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Offer;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.Search;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.DownloadAndReadImage;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Utils;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.MarkerItem;
@@ -38,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -376,11 +378,7 @@ public class Parser {
                                 }
                                 else
                                     offer.setDealsCount(0);
-
                             }
-
-
-
 
                             if(!jsonObject.isNull("company_detail") && !jsonObject.getString("company_detail").equalsIgnoreCase("")) {
                                 JSONArray companyArray = new JSONArray(jsonObject.getString("company_detail"));
@@ -434,7 +432,6 @@ public class Parser {
         }
         return listOffers;
     }
-
 
 
 

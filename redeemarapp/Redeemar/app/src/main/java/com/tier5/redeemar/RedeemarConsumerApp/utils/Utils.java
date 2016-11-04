@@ -252,9 +252,18 @@ public class Utils {
     }
 
 
-    public static String saveToInternalStorage(Bitmap bitmapImage, String filename){
+    public static String saveToInternalStorage(Bitmap bitmapImage, String filename, int type){
 
-        File mediaStorageDirLogo = new File(Environment.getExternalStorageDirectory(), Constants.logoDir);
+        String dir = "";
+
+        if(type == 2)
+            dir = Constants.storeImgDir;
+        else
+            dir = Constants.logoDir;
+
+
+
+        File mediaStorageDirLogo = new File(Environment.getExternalStorageDirectory(), dir);
 
         if (!mediaStorageDirLogo.exists()) {
             if (!mediaStorageDirLogo.mkdirs()) {
@@ -475,4 +484,24 @@ public class Utils {
         return b;
     }
 
+    public static int hoursDifference(Date date1, Date date2) {
+
+        long secs = (date1.getTime() - date2.getTime()) / 1000;
+        int hours = (int) secs / 3600;
+        return hours;
+    }
+
+    public static int minuteDifference(Date date1, Date date2) {
+
+        long secs = (date1.getTime() - date2.getTime()) / 1000;
+        int minutes = (int) secs / 60;
+        return minutes;
+    }
+
+    public static int secondDifference(Date date1, Date date2) {
+
+        long secs = (date1.getTime() - date2.getTime()) / 1000;
+        int seconds = (int) secs;
+        return seconds;
+    }
 }

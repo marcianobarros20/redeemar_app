@@ -90,7 +90,7 @@ import static com.tier5.redeemar.RedeemarConsumerApp.R.string.brand;
 
 public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
-    private String LOGTAG = "HomeFragment";
+    private String LOGTAG = "NearbyFragment";
     private double latitude = 0.0, longitude = 0.0;
     private View rootView;
     GoogleMap mMap;
@@ -451,6 +451,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
        String json = sharedpref.getString(res.getString(R.string.spf_brands), "");
        Gson gson = new Gson();
        brandList = new ArrayList<User>();
+
        //brandList = gson.fromJson(json, brandList.getClass());
 
        Type type = new TypeToken<User>() {}.getType();
@@ -521,6 +522,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         editor.putString(res.getString(R.string.spf_redeemer_id), companyId); // Storing Redeemar Id
         editor.putString(res.getString(R.string.spf_brand_name), companyName); // Storing Redeemar Partner Name
         editor.putString(res.getString(R.string.spf_more_offers), "1"); // Set More Offers to 1
+        editor.putString(res.getString(R.string.spf_view_type), "list"); // Set View Type to list
+
         editor.commit();
 
 

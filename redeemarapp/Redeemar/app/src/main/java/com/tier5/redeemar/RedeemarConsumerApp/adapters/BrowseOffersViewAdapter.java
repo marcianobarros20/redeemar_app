@@ -195,12 +195,12 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
             address_distance = item.getZipcode() + " ";
         }*/
 
-        if(!item.getLocation().equals("")) {
+        if(item.getLocation() != null && !item.getLocation().equals("")) {
             //Log.d(LOGTAG, "Browse Location: "+item.getLocation());
             address_distance = item.getLocation();
         }
 
-        if(!item.getDistance().equalsIgnoreCase("")) {
+        if(item.getDistance() != null && !item.getDistance().equalsIgnoreCase("")) {
             //Log.d(LOGTAG, "Browse Distance: "+item.getDistance());
             if(address_distance.equalsIgnoreCase("")) {
                 address_distance = address_distance + item.getDistance() + " miles";
@@ -371,8 +371,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         if (rvFlag) {
             //viewHolder.tvRetailValue.setTextSize(TypedValue.COMPLEX_UNIT_SP, rvSize);
         }
-
-
 
         if(offer_desc.length() > 75)
             viewHolder.tvOfferDescription.setText(offer_desc.substring(0, 75)+"...");
@@ -695,8 +693,8 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
 
     @Override
     public void onImageDownloaded(Bitmap imBmp) {
-        String logoImagePath = Utils.saveToInternalStorage(imBmp, LogoFileName);
-        this.logoBmp = imBmp;
+        //String logoImagePath = Utils.saveToInternalStorage(imBmp, LogoFileName);
+        //this.logoBmp = imBmp;
         //Utils.setImageView(logoImagePath, viewHolder.logoThumbnail);
     }
 
@@ -750,17 +748,16 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
                 more_offers = sharedpref.getString(res.getString(R.string.spf_more_offers), "0");
             }*/
 
+            View view_instance = (View) itemView.findViewById(R.id.bottom_wrapper);
+            ViewGroup.LayoutParams params=bottomWrapper.getLayoutParams();
 
             if(Keys.moreOffers == 1) {
-
-                View view_instance = (View) itemView.findViewById(R.id.bottom_wrapper);
-                ViewGroup.LayoutParams params=bottomWrapper.getLayoutParams();
-                params.width=400;
-                view_instance.setLayoutParams(params);
-
+                //params.width=240;
+                //view_instance.setLayoutParams(params);
                 passLayout.setVisibility(View.GONE);
             }
             else {
+                //params.width=480;
                 passLayout.setVisibility(View.VISIBLE);
             }
 
@@ -924,7 +921,6 @@ public class BrowseOffersViewAdapter extends RecyclerSwipeAdapter<BrowseOffersVi
         intent.putExtra(res.getString(R.string.ext_redir_to), "BrandOffers");
         intent.putExtra(res.getString(R.string.ext_redeemar_id), redeemarId);
         intent.putExtra(res.getString(R.string.ext_more_offers), "1");
-
         Keys.moreOffers=1;
 
         mContext.startActivity(intent);

@@ -31,6 +31,8 @@ public class BrowseOffersAsyncTask extends AsyncTask<String, Void, ArrayList<Off
 
     public BrowseOffersAsyncTask(OffersLoadedListener myComponent, Context ctx) {
         this.myComponent = myComponent;
+        //volleySingleton = VolleySingleton.getInstance();
+        //requestQueue = volleySingleton.getRequestQueue();
         this.context = ctx;
         Log.d(LOGTAG, "Inside BrowseOffersAsyncTask constructor");
     }

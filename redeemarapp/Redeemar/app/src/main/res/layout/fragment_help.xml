@@ -27,4 +27,25 @@
         android:gravity="center_horizontal"
         android:text="Please visit this section later on" />
 
+
+        <Switch
+            android:id="@+id/beaconSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/subTitle"
+            android:layout_marginTop="20dp"
+            android:text="Beacon Alert" />
+
+        <TextView
+            android:id="@+id/switchStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/beaconSwitch"
+            android:layout_marginTop="22dp"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
 </RelativeLayout>

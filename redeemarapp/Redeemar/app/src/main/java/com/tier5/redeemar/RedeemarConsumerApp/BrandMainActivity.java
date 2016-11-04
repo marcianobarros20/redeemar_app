@@ -32,6 +32,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.callbacks.BrandLoadedListener;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.BrandVideo;
 import com.tier5.redeemar.RedeemarConsumerApp.pojo.User;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.Constants;
+import com.tier5.redeemar.RedeemarConsumerApp.utils.Keys;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.UrlEndpoints;
 
 import java.util.ArrayList;
@@ -319,6 +320,8 @@ public class BrandMainActivity extends YouTubeBaseActivity implements BrandLoade
                 //args.putString(getString(R.string.ext_redeemar_id), redeemarId);
                 intent.putExtra(getString(R.string.ext_redir_to), "BrandOffers");
                 intent.putExtra(getString(R.string.ext_redeemar_id), redeemarId);
+                intent.putExtra(res.getString(R.string.ext_more_offers), "1");
+                Keys.moreOffers=1;
 
                 Log.d(LOGTAG, "Brand Main Redeemar Id: "+redeemarId);
                 //intent.putExtra(getString(R.string.ext_redeemar_id), redeemerId);

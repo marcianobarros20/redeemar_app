@@ -430,11 +430,11 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                     viewType = sharedpref.getString(res.getString(R.string.spf_view_type), null);
 
                     if(viewType.equals("thumb")) {
-                        editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to list
+                        editor.putString(res.getString(R.string.spf_view_type), "map"); // Set view type to map
                         editor.commit();
                     }
                     else {
-                        editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Set view type to list
+                        editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Set view type to thumb
                         editor.commit();
                     }
                 }
@@ -504,7 +504,6 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
             public void onClick(View view) {
                 editor.putString(res.getString(R.string.spf_view_type), "thumb"); // Set view type to thumb
                 editor.commit();
-
                 BrowseOfferFragment fragment2 = new BrowseOfferFragment();
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -597,6 +596,7 @@ public class BrowseOfferFragment extends Fragment implements OffersLoadedListene
                 else if (redirectTo.equals("OnDemand"))
                     new OnDemandOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon);
                 else {
+                    Log.d(LOGTAG, "XSXSXS");
                     new BrowseOffersAsyncTask(this, getActivity().getApplicationContext()).execute(user_id, String.valueOf(latitude), String.valueOf(longitude), selfLat, selfLon, "");
                 }
 

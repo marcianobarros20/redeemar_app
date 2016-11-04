@@ -42,7 +42,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/drawer_header"
-        app:menu="@menu/drawer_view"
+        app:menu="@menu/drawer_menu"
         app:theme="@style/BigText.Drawer"
         android:background="@color/windowBackground">
 

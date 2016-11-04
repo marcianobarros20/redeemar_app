@@ -63,7 +63,6 @@ public class GetNearByOffersAsyncTask extends AsyncTask<String, Void, ArrayList<
         String lat = params[0];
         String lng = params[1];
 
-
         ArrayList<User> listBrands = OfferUtils.loadNearByBrands(requestQueue, lat, lng);
         return listBrands;
 

@@ -66,7 +66,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
     private static final String LOGTAG = "ValidateOffer";
 
     SupportMapFragment mapFragment;
-    private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvDiscount, tvValidateAfter, tvValidateWithin, tvExpires;
+    private TextView tvAddress, tvOfferTitle, tvWhatYouGet, tvPriceRangeId, tvDiscount, tvPay, tvValidateAfter, tvValidateWithin, tvExpires;
     private ImageView thumbnail, logoThumbnail;
     private ImageLoader mImageLoader;
     private EditText etRedeemCode;
@@ -94,16 +94,19 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.validate_offer);
-
-        myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
-
+        //myFont = Typeface.createFromAsset(getAssets(), getString(R.string.default_font));
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         tvAddress = (TextView) findViewById(R.id.address);
         tvOfferTitle = (TextView) findViewById(R.id.offer_title);
         tvWhatYouGet = (TextView) findViewById(R.id.what_you_get);
         tvPriceRangeId = (TextView) findViewById(R.id.price_range_id);
-        //tvPayValue = (TextView) findViewById(R.id.pay_value);
+        tvPay = (TextView) findViewById(R.id.pay_value);
         tvDiscount = (TextView) findViewById(R.id.discount);
         //tvRetailValue = (TextView) findViewById(R.id.retail_value);
         tvValidateWithin = (TextView) findViewById(R.id.validate_within);
@@ -428,9 +431,14 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
 
                             payValue = jsonObject.getDouble("pay_value");
 
+                            tvPay.setText(cur_sym+String.valueOf(Utils.formatPrice(payValue)));
                             //tvPayValue.setText(getString(R.string.currency_symbol).concat(jsonObject.getString("pay_value").toString()));
                             Log.d(LOGTAG, "pay_value: "+jsonObject.getString("pay_value").toString());
                         }
+
+
+
+
 
 
                         if(jsonObject.getString("value_text") != null && jsonObject.getString("value_text").toString() != "") {
@@ -492,7 +500,7 @@ public class ValidateOfferActivity extends AppCompatActivity implements TaskComp
                             }
                         }
 
-                        tvDiscount.setText(sDisc);
+                        tvDiscount.setText("("+sDisc+")");
 
 
                         if(!jsonObject.isNull("myoffer_details") && jsonObject.getString("myoffer_details").trim() != "") {

@@ -65,9 +65,9 @@ import com.tier5.redeemar.RedeemarConsumerApp.utils.MarkerItem;
 import com.tier5.redeemar.RedeemarConsumerApp.utils.SuperConnectionDetector;
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment implements UsersLoadedListener, OnMapReadyCallback {
+public class NearbyFragment extends Fragment implements UsersLoadedListener, OnMapReadyCallback {
 
-    private String LOGTAG = "HomeFragment";
+    private String LOGTAG = "NearbyFragment";
     private double latitude = 0.0, longitude = 0.0;
     private View rootView;
     GoogleMap mMap;
@@ -96,7 +96,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener, OnMap
     String clickIndex = "", companyName="", companyLocation="";
 
 
-    public HomeFragment() {
+    public NearbyFragment() {
         // Required empty public constructor
     }
 
@@ -254,7 +254,7 @@ public class HomeFragment extends Fragment implements UsersLoadedListener, OnMap
                 //mListOffers = MyApplication.getWritableDatabase().readOffers(DBOffers.ALL_OFFERS);
                 //if the database is empty, trigger an AsycnTask to download movie list from the web
                 //if (mListOffers.isEmpty()) {
-                    Log.d(LOGTAG, "HomeFragment: executing task from fragment");
+                    Log.d(LOGTAG, "NearbyFragment: executing task from fragment");
                     new GetNearByBrandsAsyncTask(this).execute(String.valueOf(latitude), String.valueOf(longitude));
                 //}
             }
@@ -371,15 +371,11 @@ public class HomeFragment extends Fragment implements UsersLoadedListener, OnMap
                 for(int a=0; a < myItem.size(); a++) {
 
                     MarkerItem itm = (MarkerItem) myItem.get(a);
-
                     String ind = itm.getTitle();
-
                     User br = brandList.get(Integer.parseInt(ind));
 
                     br.setLogoName(br.getLogoName());
                     br.setTargetId(br.getTargetId());
-
-
                     dispBrandList.add(br);
 
                 }
@@ -526,6 +522,10 @@ public class HomeFragment extends Fragment implements UsersLoadedListener, OnMap
 
             if(clickIndex != null && !clickIndex.equals("")) {
                 User br = brandList.get(Integer.parseInt(clickIndex));
+                //br.setStoreBrandPic();
+
+                Log.d(LOGTAG, "Store Front Image URL: "+br.getStoreFrontImage());
+
                 if(br.getStoreFrontImage() != null && !br.getStoreFrontImage().equals("")) {
 
                     String imageUrl = br.getStoreFrontImage();

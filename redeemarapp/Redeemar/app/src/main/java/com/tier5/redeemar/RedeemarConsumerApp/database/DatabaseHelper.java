@@ -32,6 +32,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_BRANDS = "brands";
     private static final String TABLE_OFFERS = "offers";
     private static final String TABLE_MY_OFFERS = "myoffers";
+    private static final String TABLE_BEACONS = "beacons";
+
 
     private static final String KEY_ID = "id";
     private static final String KEY_PARENT_ID = "parent_id";
@@ -115,6 +117,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_CREATED_BY+ " INTEGER)";
 
         db.execSQL(CREATE_OFFERS_TABLE);
+
+        /*String CREATE_BEACON_TABLE = "CREATE TABLE " + TABLE_BEACONS + "("
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + KEY_UUID+ " INTEGER,"
+                + KEY_MAJOR + " TEXT,"
+                + KEY_MINOR + " INTEGER,"
+                + KEY_CAT_VISIBILITY+ " INTEGER)";
+
+        db.execSQL(CREATE_CATEGORIES_TABLE);*/
 
     }
 

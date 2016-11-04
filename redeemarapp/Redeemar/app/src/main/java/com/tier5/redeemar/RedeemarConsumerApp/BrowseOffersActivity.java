@@ -4,14 +4,12 @@ import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,28 +18,26 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.transition.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.appindexing.Action;
@@ -56,7 +52,7 @@ import com.tier5.redeemar.RedeemarConsumerApp.fragments.BrowseOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.ContactFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.EditProfileFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.HelpFragment;
-import com.tier5.redeemar.RedeemarConsumerApp.fragments.HomeFragment;
+import com.tier5.redeemar.RedeemarConsumerApp.fragments.NearbyFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.MapViewFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.MyOfferFragment;
 import com.tier5.redeemar.RedeemarConsumerApp.fragments.RateUsFragment;
@@ -98,8 +94,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     int lastClick = 0;
+    // beaconTriggered checks for whether the beacon listening should be activated
     private String redirectTo = "", redeemarId = "", campaignId = "", categoryId = "", jsonCatText = "", firstName = "", email = "", keyword = "",
-            catName = "", viewType  = "list", loggedIn = "0";
+            beaconListenActivated = "",  catName = "", viewType  = "list", loggedIn = "0";
+
+
     private final int NavGroupId = 1001;
     private TextView navWelcome, navEmail, navMyOffers, navMyCredits, navEditProfile;
     // For Multilevel Category Menu
@@ -153,7 +152,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         res = getResources();
         sharedpref = getSharedPreferences(res.getString(R.string.spf_key), 0);
         editor = sharedpref.edit();
+
         db = new DatabaseHelper(this);
+
 
 
         pProductArrayList = new ArrayList<Product>();
@@ -186,6 +187,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             loggedIn = sharedpref.getString(res.getString(R.string.spf_logged_in), "");
         }
 
+        if (sharedpref.getString(res.getString(R.string.spf_beacon_triggered), null) != null) {
+            beaconListenActivated = sharedpref.getString(res.getString(R.string.spf_beacon_triggered), "0");
+        }
 
         // Get Data from Intent
         Bundle extras = getIntent().getExtras();
@@ -229,24 +233,9 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         Log.d(LOGTAG, "Hey: "+Keys.loggedIn);
 
-        if(loggedIn.equals("1")) {
-
-            searchBox.setVisibility(View.GONE);
-            getSupportActionBar().setTitle(R.string.my_banked);
-            //actionView.setVisible(false);
-            //mBottomBar.mapColorForTab(0, R.color.md_orange_500);
-
-            Fragment fr = new MyOfferFragment();
-            //fr.setArguments(args);
-            FragmentManager fm = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fm.beginTransaction();
-            fragmentTransaction.replace(R.id.container_body, fr);
-            fragmentTransaction.commit();
-
-        }
-
 
     }
+
 
     public void removeRadio()
     {
@@ -259,6 +248,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         BeaconStatics.beaconTriggred = false;
+                        editor.putString(res.getString(R.string.spf_beacon_triggered), "0");
+                        editor.commit();
                     }
                 })
                 .setNegativeButton("Not Now", new DialogInterface.OnClickListener(){
@@ -266,6 +257,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         BeaconStatics.beaconTriggred = true;
+                        editor.putString(res.getString(R.string.spf_beacon_triggered), "1");
+                        editor.commit();
                     }
                 })						//Do nothing on no
                 .show();
@@ -311,6 +304,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.setMaxFixedTabs(5);
         mBottomBar.setDefaultTabPosition(3);
+        mBottomBar.useFixedMode();
 
 
         mBottomBar.noNavBarGoodness();
@@ -327,6 +321,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 if (menuItemId == R.id.bottom_scan_offer) {
 
                     Intent intent = new Intent(BrowseOffersActivity.this, CloudReco.class);
+                    intent.putExtra(res.getString(R.string.ext_activity), "Scan");
                     startActivity(intent);
 
                 } else if (menuItemId == R.id.bottom_my_offers) {
@@ -346,12 +341,18 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                     Fragment fr = new MyOfferFragment();
                     //fr.setArguments(args);
+
                     FragmentManager fm = getFragmentManager();
+
+
+                    // Sets the current back stack count
+                    int currentStackCount = fm.getBackStackEntryCount();
+
                     FragmentTransaction fragmentTransaction = fm.beginTransaction();
                     fragmentTransaction.replace(R.id.container_body, fr);
                     fragmentTransaction.commit();
 
-                    Log.d(LOGTAG, "Inside bank offers 2");
+                    Log.d(LOGTAG, "Inside bank offers 2: "+currentStackCount);
 
 
 
@@ -360,11 +361,11 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     Keys.moreOffers = 0;
 
                     //Toast.makeText(getApplicationContext(), "Neaby offers selected", Toast.LENGTH_SHORT).show();
-
+                    searchBox.setVisibility(View.GONE);
                     getSupportActionBar().setTitle(R.string.nearby_brands);
                     actionView.setVisible(false);
 
-                    Fragment fr = new HomeFragment();
+                    Fragment fr = new NearbyFragment();
                     args = new Bundle();
                     args.putString(getString(R.string.ext_user_id), user_id);
                     args.putString(getString(R.string.ext_lat), String.valueOf(latitude));
@@ -499,7 +500,7 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                     getSupportActionBar().setTitle(R.string.nearby_brands);
 
 
-                    Fragment fr = new HomeFragment();
+                    Fragment fr = new NearbyFragment();
                     args = new Bundle();
                     args.putString(getString(R.string.ext_user_id), user_id);
                     args.putString(getString(R.string.ext_lat), String.valueOf(latitude));
@@ -564,6 +565,12 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             }
         });
 
+        /*mBottomBar.getBar().setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        mBottomBar.mapColorForTab(0, ContextCompat.getColor(this, R.color.colorAccent));
+        mBottomBar.setActiveTabColor("#ffffff");
+        mBottomBar.setDefaultTabPosition(0);
+        mBottomBar.mapColorForTab(0, "#ff0000");*/
+
     }
 
 
@@ -620,7 +627,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         /*res = getResources();
         sharedpref = getApplicationContext().getSharedPreferences(res.getString(R.string.spf_key), 0); // 0 - for private mode
-
         SharedPreferences.Editor editor = sharedpref.edit();*/
 
         if(sharedpref.getString(res.getString(R.string.spf_user_id), null) != null) {
@@ -632,6 +638,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             navigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
             navigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
         }
+
+
 
 
 
@@ -662,6 +670,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
 
                             case R.id.nav_edit_profile:
+                                searchBox.setVisibility(View.GONE);
+                                actionView.setVisible(false);
                                 getSupportActionBar().setTitle(R.string.nav_item_edit_profile);
                                 Fragment editProfileFragment = new EditProfileFragment();
                                 FragmentManager editProfileFm = getFragmentManager();
@@ -689,6 +699,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
 
                             case R.id.nav_help:
+                                Log.d(LOGTAG, "Help Section");
+                                curFragment = "NoSearch";
+                                searchBox.setVisibility(View.GONE);
+                                actionView.setVisible(false);
                                 getSupportActionBar().setTitle(R.string.nav_item_help);
                                 Fragment helpFragment = new HelpFragment();
                                 FragmentManager helpFm = getFragmentManager();
@@ -698,6 +712,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                                 break;
 
                             case R.id.nav_about:
+                                Log.d(LOGTAG, "About Section");
+                                curFragment = "NoSearch";
+                                searchBox.setVisibility(View.GONE);
+                                actionView.setVisible(false);
                                 getSupportActionBar().setTitle(R.string.nav_item_about);
                                 Fragment aboutFragment = new AboutFragment();
                                 FragmentManager aboutFm = getFragmentManager();
@@ -708,6 +726,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
 
                             case R.id.nav_contact:
+                                Log.d(LOGTAG, "Contact Section");
+                                curFragment = "NoSearch";
+                                searchBox.setVisibility(View.GONE);
+                                actionView.setVisible(false);
                                 getSupportActionBar().setTitle(R.string.nav_item_contact);
                                 Fragment contactFragment = new ContactFragment();
                                 FragmentManager contactFm = getFragmentManager();
@@ -718,6 +740,10 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
 
                             case R.id.nav_rate:
+                                Log.d(LOGTAG, "Rate Section");
+                                curFragment = "NoSearch";
+                                searchBox.setVisibility(View.GONE);
+                                actionView.setVisible(false);
                                 getSupportActionBar().setTitle(R.string.nav_item_rate);
                                 Fragment rateFragment = new RateUsFragment();
                                 FragmentManager rateFm = getFragmentManager();
@@ -831,17 +857,18 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
             @Override
             public void onClick(View v) {
 
-            closeNavDrawer();
+                closeNavDrawer();
 
-            searchBox.setVisibility(View.GONE);
-            getSupportActionBar().setTitle(R.string.my_banked);
-            actionView.setVisible(false);
+                searchBox.setVisibility(View.GONE);
+                getSupportActionBar().setTitle(R.string.my_banked);
+                actionView.setVisible(false);
+                curFragment = "Banked";
 
-            Fragment myOfferFragment = new MyOfferFragment();
-            FragmentManager myOfferFm = getFragmentManager();
-            FragmentTransaction myOfferFragmentTransaction = myOfferFm.beginTransaction();
-            myOfferFragmentTransaction.replace(R.id.container_body, myOfferFragment);
-            myOfferFragmentTransaction.commit();
+                Fragment myOfferFragment = new MyOfferFragment();
+                FragmentManager myOfferFm = getFragmentManager();
+                FragmentTransaction myOfferFragmentTransaction = myOfferFm.beginTransaction();
+                myOfferFragmentTransaction.replace(R.id.container_body, myOfferFragment);
+                myOfferFragmentTransaction.commit();
 
             }
 
@@ -938,23 +965,35 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
         if(loggedIn.equals("1")) {
 
+            if(curFragment.equals("Banked"))
+                getSupportActionBar().setTitle(R.string.my_banked);
+
+
             //searchBox.setVisibility(View.GONE);
-            getSupportActionBar().setTitle(R.string.my_banked);
+
             //actionView.setVisible(false);
+            //mBottomBar.setActiveTabColor(R.color.accent);
         }
         if (sharedpref.getString(res.getString(R.string.spf_view_type), null) != null) {
             viewType = sharedpref.getString(res.getString(R.string.spf_view_type), "");
             Log.d(LOGTAG, "NEW View Type: "+viewType);
 
-            if(viewType.equals("thumb")) {
-                actionView.setIcon(R.drawable.ic_thumb_white);
-            }
-            else if(viewType.equals("map")) {
-                actionView.setIcon(R.drawable.ic_map_white);
+            if(curFragment.equals("NoSearch")){
+                actionView.setVisible(false);
             }
             else {
-                actionView.setIcon(R.drawable.ic_list_white);
+
+                if(viewType.equals("thumb")) {
+                    actionView.setIcon(R.drawable.ic_thumb_white);
+                }
+                else if(viewType.equals("map")) {
+                    actionView.setIcon(R.drawable.ic_map_white);
+                }
+                else {
+                    actionView.setIcon(R.drawable.ic_list_white);
+                }
             }
+
         }
 
         return true;
@@ -1022,10 +1061,6 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
                 return true;
         }
 
-
-
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -1050,6 +1085,14 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
         //SystemRequirementsChecker.checkWithDefaultDialogs(this);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+
+        BeaconStatics.beaconTriggred = true;
+    }
     @Override
     public void passDataToActivity(String currentFragment) {
         //Log.d(LOGTAG, "Data passed from fragment to activity: "+currentFragment);
@@ -1373,6 +1416,8 @@ public class BrowseOffersActivity extends AppCompatActivity implements ActivityC
 
                                 getSupportActionBar().setTitle(R.string.my_banked);
                                 actionView.setVisible(false);
+
+                                //curFragment = "Banked";
 
 
                                 Fragment bankOfferFragment1 = new MyOfferFragment();
